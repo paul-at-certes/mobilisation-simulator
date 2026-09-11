@@ -73,7 +73,13 @@ function rotate<T>(state: GameState, salt: number, list: T[]): T[] {
   return list.slice(k).concat(list.slice(0, k));
 }
 
+/**
+ * Lower-case a label so that it reads inside a sentence — unless it opens with
+ * a proper noun, or with a prefix such as "Event:", which would otherwise be
+ * rendered "event:" mid-sentence.
+ */
 function lowerFirst(s: string): string {
+  if (/^[A-Z][a-z]+:/.test(s)) return s;
   if (/^(Army|Ex-|Strategic|NHS|Treasury|Phase|Chancellor|High Court|MoD|Prime|Parliament)/.test(s)) return s;
   return s.length ? s[0].toLowerCase() + s.slice(1) : s;
 }

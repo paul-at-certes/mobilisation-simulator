@@ -70,7 +70,7 @@ export function renderHoldingPool(state: GameState): HTMLElement | null {
 
   if (o.verdict === 'too_late') {
     lines.push(
-      `Nothing can now turn them into ready soldiers: the shortest course is ${months(o.shortest)} and there ${o.monthsLeft === 1 ? 'is' : 'are'} ${months(o.monthsLeft)} to the deadline. They will be paid, and counted against output, until it.`,
+      `Nothing can now turn them into ready soldiers: the shortest course is ${months(o.shortest)} and there ${o.monthsLeft === 1 ? 'is' : 'are'} ${months(o.monthsLeft)} left. They will be paid to the deadline, and they will not count.`,
     );
   } else if (o.verdict === 'compress_only') {
     lines.push(
