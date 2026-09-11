@@ -123,7 +123,7 @@ model regular cohorts individually). Regular recruits consume
 
 Conscription each month (only if `billStatus == 'passed'`):
 
-1. `called = min(callupPerMonth, conscriptEligible)`; `conscriptEligible −= called`;
+1. `called = min(callupPerMonth, callupCapPerMonth ?? ∞, conscriptEligible)`; `conscriptEligible −= called`;
    `conscriptsCalledTotal += called`; `conscriptionEverActive = true` if called > 0.
    Called conscripts enter `conscriptCalled`.
 2. Allocation: `toTrain = min(holdingPool + conscriptCalled, spareIntake)`.
@@ -144,6 +144,26 @@ Conscription each month (only if `billStatus == 'passed'`):
 
 Holding pool people are paid conscript pay and count for GDP loss but
 produce nothing.
+
+### 5.1 The vetting ceiling
+
+`callupCapPerMonth` (null when absent) is a ceiling on how many people can be
+called in a month, imposed by the `callup_cap` effect: nobody enters training
+without a security clearance, so a congested vetting queue limits the call-up
+regardless of what the training estate could take. `callupCapUntil` is the last
+month it applies (null = indefinite); it is cleared at the start of the month
+after that, before the call-up runs. A second `callup_cap` while one is in
+force keeps the tighter of the two ceilings and the later of the two expiries,
+so an overlapping congestion never loosens the constraint. When the ceiling
+binds, the step emits `callup_capped:<ceiling>:<uncalled>`; when it lifts,
+`callup_cap_lifted`. Both are read by the briefing.
+
+`vettingPriorityMonth` and `vettingRelaxedMonth` record when the military were
+given first claim on the vetting teams (`vetting_priority`) and when the
+standard was lowered (`vetting_relax`). They carry no arithmetic of their own:
+they exist so that the consequences of those two choices can be triggered a
+fixed number of months later, through the `vetting_priority_months` and
+`vetting_relaxed_months` condition keys (−1 when the choice was never made).
 
 ## 6. Reserves
 

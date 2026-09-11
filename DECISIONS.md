@@ -322,3 +322,53 @@ plus the difficulty table (which the brief allows). Primary figures untouched.
   images, so a score of 90+ on mobile is expected but unverified.
 - Nothing has been committed or pushed: the repository was initialised but
   the first commit and the GitHub remote are left for Paul.
+
+## The vetting queue (11 September 2026)
+
+Paul asked for a random event in which the security vetting teams are
+overwhelmed, with three choices and a consequence attached to each. The four
+design questions were put to him and answered; what follows is what was built.
+
+- **A new constraint, not a reskin of an old one.** Nothing in the model
+  limited how fast people could be *called*: `callupPerMonth` was bounded only
+  by the eligible pool, and everything downstream was bounded by the training
+  estate. So the "do nothing" branch needed a real mechanic —
+  `callupCapPerMonth` / `callupCapUntil`, set by a `callup_cap` effect and
+  applied before the call-up each month (spec §5.1). It is the only constraint
+  in the game that bites *upstream* of the training pipeline, which is the
+  point: it is the one thing a player cannot buy their way out of with
+  capacity purchases.
+- **The ceiling expires**, per Paul's answer: 2,000 a month for six months,
+  after which the backlog clears. A player who does nothing is slowed, not
+  stopped, and can wait it out rather than being forced to pick a side.
+- **2,000 a month** was chosen so the ceiling is invisible to a player running
+  the baseline estate (spare intake is a few dozen a month) and painful to one
+  who has bought three or four capacity purchases and compressed the syllabus.
+  It is in `events.json` rather than `parameters.json`, following the existing
+  convention that event-effect magnitudes are content, not model parameters —
+  no event effect in the deck is parameterised. **ASK** if you would rather it
+  were a parameter with a range, in which case it wants a rationale and it will
+  appear in `ASSUMPTIONS.md`.
+- **The consequences fire on a timer, not a dice roll**, per Paul's answer.
+  Two new condition keys, `vetting_priority_months` and
+  `vetting_relaxed_months` (−1 when the choice was never made), let an event
+  trigger a fixed number of months after a choice. This is the first causal
+  chain in the deck; everything else triggers on world state. The Commissioner
+  writes two months after the military are given priority; the recruit who
+  should not have been cleared is arrested three months after the standard is
+  lowered. Both are certain, so the choice reads as a trade the player made
+  rather than as bad luck.
+- **Both consequences offer a way back**, which is what makes the first choice
+  a commitment rather than a one-off charge. Returning the police their vetting
+  slots ends the priority and puts the ceiling back on; re-screening the intake
+  restores the standard, imposes a tighter ceiling for four months and costs
+  £25m. Refusing either is the cheaper action this month and the more expensive
+  one by the deadline — holding the priority also carries
+  `scoring_pc_if_missed −2`.
+- **No figure is quoted in the prose.** UKSV throughput and the police
+  clearance backlog could not be sourced to a published series, so the events
+  quote nothing as fact and carry no `source` block. The player meets the
+  ceiling as a number in the call-up control and in the briefing, where it is a
+  statement about the game state rather than about the world.
+- **The deck is now 33 events**, so the content test's assertion was widened
+  from 28–30 to 28–33 deliberately.

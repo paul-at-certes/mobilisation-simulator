@@ -249,6 +249,19 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     urgent.push(`Political capital fell by ${formatInt(-facts.pcDelta)} this month${why}.`);
   }
 
+  const capped = facts.notes.find((n) => n.startsWith('callup_capped:'));
+  if (capped) {
+    const missed = Math.round(Number(capped.split(':')[2]) || 0);
+    const until = state.callupCapUntil;
+    const left = until == null ? null : Math.max(0, until - turn + 1);
+    urgent.push(
+      `Security vetting cleared ${formatInt(state.callupCapPerMonth ?? 0)} this month and ${formatInt(missed)} of the call-up went uncalled: the queue, not the training estate, is the binding constraint`
+      + (left == null ? '.' : `, and remains so for ${formatInt(left)} more month${left === 1 ? '' : 's'}.`),
+    );
+  } else if (facts.notes.includes('callup_cap_lifted')) {
+    changes.push('The vetting backlog has cleared; the call-up is no longer held to what the security teams can process.');
+  }
+
   if (facts.holdingPoolDelta > 0 && state.pools.holdingPool > 0) {
     urgent.push(
       pick(state, 23, [

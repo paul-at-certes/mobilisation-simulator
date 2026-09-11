@@ -145,7 +145,19 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
       case 'set_callup': {
         const input = h('input', { type: 'number', min: 0, step: 500, value: String(Math.round(state.callupPerMonth)), id: `opt-${id}-n`, 'aria-label': 'Conscripts called per month' }) as HTMLInputElement;
         input.addEventListener('input', () => (optionState.callup = Math.max(0, Number(input.value) || 0)));
-        return h('div', { class: 'action-options' }, h('span', { class: 'field' }, h('label', { for: `opt-${id}-n` }, `Per month (eligible pool ${fmtInt(state.pools.conscriptEligible)})`), input));
+        const field = h('span', { class: 'field' }, h('label', { for: `opt-${id}-n` }, `Per month (eligible pool ${fmtInt(state.pools.conscriptEligible)})`), input);
+        // A ceiling the player cannot see is an unexplained shortfall next month.
+        const cap = state.callupCapPerMonth;
+        if (cap == null) return h('div', { class: 'action-options' }, field);
+        const until = state.callupCapUntil;
+        const left = until == null ? null : Math.max(0, until - state.turn + 1);
+        const when = left == null ? 'until further notice' : `for ${fmtInt(left)} more month${left === 1 ? '' : 's'}`;
+        return h(
+          'div',
+          { class: 'action-options' },
+          field,
+          h('div', { class: 'small muted' }, `Security vetting can clear ${fmtInt(cap)} a month ${when}; anything set above that is not called.`),
+        );
       }
       default:
         return null;

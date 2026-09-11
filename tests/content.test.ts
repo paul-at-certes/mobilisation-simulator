@@ -26,13 +26,15 @@ const CONDITION_KEYS = [
   'capacity_purchases', 'civilian_instructors', 'syllabus_compressed', 'equipment_buy_active',
   'equipment_arrived', 'holding_pool', 'conscripts_in_training', 'conscripts_trained', 'cumulative_cost',
   'cumulative_gdp_loss', 'political_capital', 'force_ready', 'force_ready_pct', 'force_quality',
-  'leadership_factor', 'address_count', 'blame_count', 'spending_raised',
+  'leadership_factor', 'address_count', 'blame_count', 'spending_raised', 'callup_cap',
+  'vetting_priority_months', 'vetting_relaxed_months',
 ];
 const CONDITION_OPS = ['>=', '<=', '==', '>', '<', '!='];
 const EFFECT_TYPES = [
   'pc', 'willingness', 'pool', 'pool_pct', 'reserve_arrival_shift', 'reserve_deployable_fraction_add',
   'ex_regular_ceiling_add', 'trace_strategic', 'capacity_purchases', 'capacity_multiplier',
-  'leaders_spareable_add', 'medical_standard', 'exemptions', 'eligible_pool_pct', 'equipment_delay',
+  'leaders_spareable_add', 'medical_standard', 'exemptions', 'eligible_pool_pct', 'callup_cap',
+  'vetting_priority', 'vetting_relax', 'equipment_delay',
   'cost', 'flag', 'scoring_pc_if_missed', 'end_game', 'random',
 ];
 const POOL_KEYS = [
@@ -90,6 +92,17 @@ function checkEffect(e: AnyEffect, where: string): void {
     case 'eligible_pool_pct':
       expect(Math.abs(e.pct as number)).toBeLessThanOrEqual(20);
       break;
+    case 'callup_cap':
+      expect(typeof e.perMonth).toBe('number');
+      expect(e.perMonth as number, `${where}: a negative ceiling is meaningless`).toBeGreaterThanOrEqual(0);
+      if (e.durationMonths !== undefined) expect(e.durationMonths as number).toBeGreaterThan(0);
+      break;
+    case 'vetting_priority':
+      expect(typeof e.military).toBe('boolean');
+      break;
+    case 'vetting_relax':
+      expect(typeof e.relaxed).toBe('boolean');
+      break;
     case 'cost':
       expect(typeof e.gbp).toBe('number');
       break;
@@ -124,9 +137,9 @@ function numberTokens(text: string): { raw: string; value: number; pct: boolean 
 }
 
 describe('events.json', () => {
-  it('has 28–30 events with unique ids', () => {
+  it('has 28–33 events with unique ids', () => {
     expect(events.length).toBeGreaterThanOrEqual(28);
-    expect(events.length).toBeLessThanOrEqual(30);
+    expect(events.length).toBeLessThanOrEqual(33);
     const ids = events.map((e) => e.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
@@ -365,6 +378,10 @@ function fakeState(over: Partial<GameState> = {}): GameState {
     billPassesMonth: null,
     clauses: { ageBand: '18-30', includeWomen: true, medical: 'peacetime', exemptions: 'broad' },
     callupPerMonth: 0,
+    callupCapPerMonth: null,
+    callupCapUntil: null,
+    vettingPriorityMonth: null,
+    vettingRelaxedMonth: null,
     conscriptionEverActive: false,
     conscriptsCalledTotal: 0,
     eligiblePoolMultiplier: 1,

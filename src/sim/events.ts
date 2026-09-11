@@ -70,6 +70,9 @@ export function conditionVars(s: GameState): Record<ConditionKey, number> {
     address_count: s.addressCount,
     blame_count: s.blameCount,
     spending_raised: s.spendingRaised ? 1 : 0,
+    callup_cap: s.callupCapPerMonth ?? -1,
+    vetting_priority_months: s.vettingPriorityMonth == null ? -1 : s.turn - s.vettingPriorityMonth,
+    vetting_relaxed_months: s.vettingRelaxedMonth == null ? -1 : s.turn - s.vettingRelaxedMonth,
   };
 }
 
@@ -279,6 +282,25 @@ function applyEffect(s: GameState, e: Effect, out: EffectOutcome): void {
       s.eligiblePoolMultiplier = Math.max(0, s.eligiblePoolMultiplier * (1 + e.pct / 100));
       if (s.billStatus === 'passed') recomputeEligible(s);
       out.notes.push(`eligible_pool_pct:${e.pct}`);
+      break;
+    case 'callup_cap': {
+      const cap = Math.max(0, e.perMonth);
+      const until = e.durationMonths != null && e.durationMonths > 0 ? s.turn + e.durationMonths : null;
+      // A second congestion does not undo the first: keep the tighter ceiling,
+      // and the later expiry of the two.
+      if (s.callupCapPerMonth == null || cap < s.callupCapPerMonth) s.callupCapPerMonth = cap;
+      if (s.callupCapUntil != null && until != null) s.callupCapUntil = Math.max(s.callupCapUntil, until);
+      else s.callupCapUntil = until;
+      out.notes.push(`callup_cap:${s.callupCapPerMonth}:${s.callupCapUntil ?? 'indefinite'}`);
+      break;
+    }
+    case 'vetting_priority':
+      s.vettingPriorityMonth = e.military ? s.turn : null;
+      out.notes.push(`vetting_priority:${e.military ? 'military' : 'shared'}`);
+      break;
+    case 'vetting_relax':
+      s.vettingRelaxedMonth = e.relaxed ? s.turn : null;
+      out.notes.push(`vetting_relax:${e.relaxed ? 'relaxed' : 'restored'}`);
       break;
     case 'equipment_delay':
       if (s.equipmentArrivalMonth != null && s.equipmentArrivalMonth > s.turn) {

@@ -147,7 +147,10 @@ export type ConditionKey =
   | 'leadership_factor'
   | 'address_count'
   | 'blame_count'
-  | 'spending_raised'; // 0/1
+  | 'spending_raised' // 0/1
+  | 'callup_cap' // the monthly ceiling on the call-up, or -1 when there is none
+  | 'vetting_priority_months' // months since military applicants were given priority; -1 if never
+  | 'vetting_relaxed_months'; // months since the vetting standard was relaxed; -1 if never
 
 export type ConditionOp = '>=' | '<=' | '==' | '>' | '<' | '!=';
 
@@ -186,6 +189,12 @@ export type Effect =
   | { type: 'medical_standard'; standard: MedicalStandard }
   | { type: 'exemptions'; regime: ExemptionRegime }
   | { type: 'eligible_pool_pct'; pct: number }
+  /** Ceiling on conscripts called per month; expires after `durationMonths`, or never if absent. */
+  | { type: 'callup_cap'; perMonth: number; durationMonths?: number }
+  /** Give (or withdraw) the military first claim on the security vetting teams. */
+  | { type: 'vetting_priority'; military: boolean }
+  /** Lower (or restore) the vetting standard applied to those called up. */
+  | { type: 'vetting_relax'; relaxed: boolean }
   | { type: 'equipment_delay'; months: number }
   | { type: 'cost'; gbp: number }
   | { type: 'flag'; flag: string; value: boolean }
@@ -372,6 +381,14 @@ export interface GameState {
   billPassesMonth: number | null;
   clauses: BillClauses;
   callupPerMonth: number;
+  /** Vetting ceiling on the monthly call-up; null when the queue is not the binding constraint. */
+  callupCapPerMonth: number | null;
+  /** Last month the ceiling applies; null means it does not expire. */
+  callupCapUntil: number | null;
+  /** The month the military were given priority for vetting; null if they never were. */
+  vettingPriorityMonth: number | null;
+  /** The month the vetting standard was lowered; null if it never was. */
+  vettingRelaxedMonth: number | null;
   conscriptionEverActive: boolean;
   conscriptsCalledTotal: number;
   eligiblePoolMultiplier: number; // event-driven adjustments to the eligible pool

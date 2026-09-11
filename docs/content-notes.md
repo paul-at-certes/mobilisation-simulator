@@ -45,6 +45,9 @@ that carry an effect; empty-choice events are purely informational.
 | `junior_entry_useless` | turn 1–6 (weight 2) — informational | Sourced: `junior_entry_attrition`, `junior_entry_lead_months` |
 | `women_clause_row` | Bill introduced or passed; women excluded — informational | Sourced: `women_included_support_pct`, `ew_pop_18_30`, `ew_pop_f_18_30` |
 | `medical_rejections_reality` | peacetime medical standard; conscription active | Sourced: `army_medical_rejections_jul24_jan26` |
+| `vetting_backlog` | turn ≥ 2; conscription active | Fiction, no numbers |
+| `police_vetting_row` | two months after the military were given vetting priority | Fiction, no numbers |
+| `vetting_failure` | three months after the vetting standard was lowered | Fiction, no numbers |
 
 ## Notes on particular events
 
@@ -64,6 +67,20 @@ that carry an effect; empty-choice events are purely informational.
   explicitly (`pc −3`) in case `applyEffects` does not.
 - `instructor_revolt` / `treasury_letter` use `capacity_purchases: −1`; whether
   the diverted junior leaders return is the sim's decision.
+- The vetting trilogy (`vetting_backlog` → `police_vetting_row` /
+  `vetting_failure`) is the deck's only branching chain. The opening event's
+  three choices are mutually exclusive and each has its own consequence:
+  giving the military priority brings the Commissioner's letter two months
+  later; lowering the standard brings the recruit who should not have been
+  cleared three months later; doing nothing imposes the vetting ceiling on the
+  call-up (2,000 a month for six months, spec §5.1) and brings nothing after
+  it, because the queue is the consequence. No figure appears in the prose:
+  UKSV throughput and the police clearance backlog could not be sourced to a
+  published series, so the ceiling lives in the effect, where the player meets
+  it as a number in the call-up control and the briefing rather than as a
+  claim about the world. Sizing it at 2,000 a month makes it bite for a player
+  who has bought training capacity but leaves a baseline estate (spare intake
+  of a few dozen a month) untouched.
 - Numbers deliberately not quoted anywhere because they could not be sourced
   (see `docs/source-verification.md`): the £49k Phase 1 + 2 training cost,
   the £3.5–5k per-head kit cost, "6.8 medical rejections per intake", the

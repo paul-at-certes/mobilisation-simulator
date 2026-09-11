@@ -87,6 +87,10 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
     billPassesMonth: null,
     clauses: { ageBand: '18-30', includeWomen: true, medical: 'peacetime', exemptions: 'broad' },
     callupPerMonth: 0,
+    callupCapPerMonth: null,
+    callupCapUntil: null,
+    vettingPriorityMonth: null,
+    vettingRelaxedMonth: null,
     conscriptionEverActive: false,
     conscriptsCalledTotal: 0,
     eligiblePoolMultiplier: 1,
@@ -363,6 +367,13 @@ function advanceMonth(s: GameState, arrivals: { label: string; count: number }[]
     s.capacityMultiplierUntil = null;
   }
 
+  // b2. Vetting-queue expiry: the backlog clears and the ceiling comes off.
+  if (s.callupCapUntil != null && s.callupCapUntil < s.turn) {
+    s.callupCapPerMonth = null;
+    s.callupCapUntil = null;
+    notes.push('callup_cap_lifted');
+  }
+
   // c. Equipment arrival: flip every trained cohort.
   let newlyEquipped = 0;
   const equipped = equipmentArrived(s);
@@ -386,7 +397,10 @@ function advanceMonth(s: GameState, arrivals: { label: string; count: number }[]
   // e. Conscription: call-up and allocation.
   const spare = spareIntake(s);
   if (s.billStatus === 'passed') {
-    const called = Math.min(Math.max(0, s.callupPerMonth), s.pools.conscriptEligible);
+    const wanted = Math.max(0, s.callupPerMonth);
+    const cleared = s.callupCapPerMonth != null ? Math.min(wanted, s.callupCapPerMonth) : wanted;
+    if (cleared < wanted) notes.push(`callup_capped:${s.callupCapPerMonth}:${wanted - cleared}`);
+    const called = Math.min(cleared, s.pools.conscriptEligible);
     if (called > 0) {
       s.pools.conscriptEligible -= called;
       s.conscriptsCalledTotal += called;

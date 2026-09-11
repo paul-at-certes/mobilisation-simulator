@@ -17,7 +17,7 @@ import { leadershipFactor } from '../src/sim/effectiveness.js';
 import { next, seedFromString, pickWeighted, uniform } from '../src/sim/rng.js';
 import { score } from '../src/sim/score.js';
 import { STRATEGIES } from '../src/sim/strategies.js';
-import { eligibleEvents } from '../src/sim/events.js';
+import { applyEffects, conditionVars, eligibleEvents, eventEligible } from '../src/sim/events.js';
 
 const NOTHING: TurnInput = { actions: [], eventChoice: null };
 
@@ -513,6 +513,116 @@ describe('event cadence', () => {
         }
       }
     }
+  });
+});
+
+describe('the vetting queue', () => {
+  // The deck stays empty: these tests apply the three events' effects directly
+  // and ask whether a trigger passes, so nothing depends on what the draw
+  // happens to offer.
+  const clauses = { ageBand: '18-30', includeWomen: true, medical: 'peacetime', exemptions: 'broad' } as const;
+
+  /** A game with the Act in force and a call-up set well above any ceiling. */
+  function conscripting(seed: number, callup = 20_000): GameState {
+    let s = newGame(seed, 'corps');
+    s = step(s, { actions: [{ id: 'introduce_bill', procedure: 'emergency', clauses }], eventChoice: null });
+    s = idle(s, P.bill_months_emergency - 1);
+    expect(s.billStatus).toBe('passed');
+    return step(s, { actions: [{ id: 'set_callup', perMonth: callup }], eventChoice: null });
+  }
+
+  const event = (id: string): GameEvent => DECK.find((e) => e.id === id)!;
+
+  /** Apply one event's choice to a state without waiting for the deck to draw it. */
+  function choose(s: GameState, eventId: string, choice: number): GameState {
+    const next = structuredClone(s);
+    applyEffects(next, event(eventId).choices[choice].effects);
+    return next;
+  }
+
+  const triggers = (s: GameState, id: string): boolean => eventEligible(event(id), s, conditionVars(s));
+
+  it('holds the call-up to the ceiling and lifts it when the backlog clears', () => {
+    const before = conscripting(31);
+    const calledFree = before.conscriptsCalledTotal;
+    expect(calledFree).toBeGreaterThan(5_000);
+
+    // "Leave it to them": a ceiling of 2,000 a month for six months.
+    let s = choose(before, 'vetting_backlog', 2);
+    expect(s.callupCapPerMonth).toBe(2000);
+    expect(s.callupCapUntil).toBe(s.turn + 6);
+
+    const calledBefore = s.conscriptsCalledTotal;
+    s = step(s, NOTHING);
+    expect(s.conscriptsCalledTotal - calledBefore).toBe(2000);
+    expect(s.briefing.notes.some((n) => n.startsWith('callup_capped:'))).toBe(true);
+
+    // Five more months under the ceiling, then it expires.
+    for (let i = 0; i < 5; i += 1) s = step(s, NOTHING);
+    expect(s.callupCapPerMonth).toBe(2000);
+    s = step(s, NOTHING);
+    expect(s.briefing.notes).toContain('callup_cap_lifted');
+    expect(s.callupCapPerMonth).toBeNull();
+    const uncapped = s.conscriptsCalledTotal;
+    s = step(s, NOTHING);
+    expect(s.conscriptsCalledTotal - uncapped).toBeGreaterThan(2000);
+  });
+
+  it('leaves the call-up alone on the other two branches', () => {
+    const base = conscripting(32);
+    for (const choice of [0, 1]) {
+      const s = step(choose(base, 'vetting_backlog', choice), NOTHING);
+      expect(s.callupCapPerMonth).toBeNull();
+      expect(s.briefing.notes.some((n) => n.startsWith('callup_capped:'))).toBe(false);
+    }
+    // Lowering the threshold also releases the volunteers stuck in the queue.
+    const relaxed = choose(base, 'vetting_backlog', 1);
+    expect(relaxed.pools.regularUntrained - base.pools.regularUntrained).toBeCloseTo(1500, 6);
+  });
+
+  it('brings the Commissioner two months after the military take priority', () => {
+    let s = choose(conscripting(33), 'vetting_backlog', 0);
+    expect(s.vettingPriorityMonth).toBe(s.turn);
+    expect(triggers(s, 'police_vetting_row')).toBe(false);
+    s = idle(s, 2);
+    expect(triggers(s, 'police_vetting_row')).toBe(true);
+
+    // Returning the slots ends the priority and puts the ceiling back on.
+    const returned = choose(s, 'police_vetting_row', 0);
+    expect(returned.vettingPriorityMonth).toBeNull();
+    expect(returned.callupCapPerMonth).toBe(2000);
+    // Holding it costs capital now and again at the scoring table.
+    const held = choose(s, 'police_vetting_row', 1);
+    expect(held.politicalCapital).toBe(s.politicalCapital - 5);
+    expect(held.scoringPcIfMissed).toBe(s.scoringPcIfMissed - 2);
+    expect(held.callupCapPerMonth).toBeNull();
+  });
+
+  it('lets a bad character through three months after the threshold is lowered', () => {
+    let s = choose(conscripting(34), 'vetting_backlog', 1);
+    expect(s.vettingRelaxedMonth).toBe(s.turn);
+    s = idle(s, 2);
+    expect(triggers(s, 'vetting_failure')).toBe(false);
+    s = idle(s, 1);
+    expect(triggers(s, 'vetting_failure')).toBe(true);
+
+    // Re-screening restores the standard and slows the call-up while it runs.
+    const rescreened = choose(s, 'vetting_failure', 0);
+    expect(rescreened.vettingRelaxedMonth).toBeNull();
+    expect(rescreened.callupCapPerMonth).toBe(1500);
+    expect(rescreened.callupCapUntil).toBe(s.turn + 4);
+    // Brazening it out keeps the shortened check and costs capital and willingness.
+    const brazen = choose(s, 'vetting_failure', 1);
+    expect(brazen.vettingRelaxedMonth).toBe(s.vettingRelaxedMonth);
+    expect(brazen.politicalCapital).toBe(s.politicalCapital - 6);
+    expect(brazen.willingnessBoosts.at(-1)).toEqual({ delta: -3, until: s.turn + 6 });
+  });
+
+  it('keeps the tighter ceiling and the later expiry when two congestions overlap', () => {
+    const s = conscripting(35);
+    const both = choose(choose(s, 'vetting_backlog', 2), 'vetting_failure', 0);
+    expect(both.callupCapPerMonth).toBe(1500);
+    expect(both.callupCapUntil).toBe(s.turn + 6);
   });
 });
 
