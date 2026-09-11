@@ -680,10 +680,7 @@
     "title": "This note has leaked",
     "text": "Last month's briefing note is on the front page. The holding-pool figure is in the headline and the leadership paragraph is in the second paragraph. The Cabinet Office has begun a leak inquiry. It will find nothing.",
     "trigger": {
-      "minTurn": 3,
-      "repeatable": true,
-      "cooldownMonths": 3,
-      "maxFires": 3
+      "minTurn": 3
     },
     "weight": 2,
     "choices": [
@@ -744,9 +741,6 @@
     "text": "Before the crisis the Army was losing 3,311 trained soldiers a year to voluntary outflow. The regimental sergeant-majors report that applications to leave rose sharply this month, mostly from experienced corporals and sergeants who can see what is coming. Nobody is obliged to stay.",
     "trigger": {
       "minTurn": 3,
-      "repeatable": true,
-      "cooldownMonths": 3,
-      "maxFires": 3,
       "conditions": [
         { "key": "stop_loss", "op": "==", "value": 0 }
       ]

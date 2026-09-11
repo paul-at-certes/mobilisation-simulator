@@ -61,7 +61,7 @@ export const ACTION_COPY: Record<ActionId, ActionCopy> = {
   set_callup: {
     group: 'conscription',
     title: 'Monthly call-up',
-    html: `How many to call each month. Anyone the training estate has no room for goes into a holding pool: paid, counted in GDP loss, producing nothing. Free; does not use an action.`,
+    html: `How many to call each month. Anyone the training estate has no room for goes into a holding pool: paid, counted in GDP loss, producing nothing. Free: does not use an action slot.`,
   },
   expand_capacity: {
     group: 'pipeline',

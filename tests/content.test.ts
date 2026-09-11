@@ -203,7 +203,7 @@ describe('events.json', () => {
     // resignation, the photographs from the barracks, the bounce attributed to
     // your address. What may repeat is parliamentary and administrative
     // routine, whose prose reads the same the second time.
-    const RECURRING = ['pac_hearing', 'nato_liaison', 'briefing_leak', 'regular_retention_wobble', 'opposition_motion'];
+    const RECURRING = ['pac_hearing', 'nato_liaison', 'opposition_motion'];
     const recurring = events.filter((e) => e.trigger.repeatable).map((e) => e.id);
     expect(recurring.sort()).toEqual([...RECURRING].sort());
     for (const e of events.filter((ev) => ev.trigger.repeatable)) {

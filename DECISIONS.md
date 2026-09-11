@@ -174,17 +174,20 @@ plus the difficulty table (which the brief allows). Primary figures untouched.
   that turning the constant back down does not shift the sequence for a seed.
   The final month never shows one — the game is already over when the draw
   would happen.
-- **Five events became repeatable** with a `cooldownMonths` (3–6) and a
-  `maxFires` cap (2–3): the leaked briefing note, the Opposition day, notices
-  to quit, the NATO liaison visit and the PAC hearing. The test is whether the
-  event is a recurring process of government whose prose reads the same the
-  second time. Ten were marked repeatable at first; five were reverted to
-  one-shot on review because they are single incidents told with unique detail
-  — the fire-extinguisher resignation, the photographs from the barracks, the
-  three named NHS trusts, the employers' joint letter, and a poll bounce
-  attributed to a particular address. A truly random one-off should happen
-  once. `tests/content.test.ts` pins the repeatable list so that adding to it
-  is a deliberate act.
+- **Three events may repeat** with a `cooldownMonths` (4–6) and a `maxFires`
+  cap (2–3): the Opposition day, the NATO liaison visit and the PAC hearing.
+  All three are summonses or visits from an institution outside the Department
+  that exists to repeat them. The test is whether the event is a recurring
+  process of government whose prose reads the same the second time. Ten were
+  marked repeatable at first and seven were reverted on review: five because
+  they are single incidents told with unique detail (the fire-extinguisher
+  resignation, the photographs from the barracks, the three named NHS trusts,
+  the employers' joint letter, the poll bounce attributed to a particular
+  address), then the leaked briefing note and notices to quit on Paul's
+  reading — a leak and a wave of resignations land once in a story, whatever
+  the underlying process does. A truly random one-off should happen once.
+  `tests/content.test.ts` pins the repeatable list so that adding to it is a
+  deliberate act.
 - **What it costs.** Over 6 strategies × 60 seeds: events per game rise from
   4.0 to 5.0 (Brigade), 8.0 to 10.7 (Division), 9.9 to 13.5 (Corps). Mean
   final political capital falls about 4 points and the Division resignation
@@ -192,10 +195,11 @@ plus the difficulty table (which the brief allows). Primary figures untouched.
   manage PC well). The deck costs PC on average, so more events is a
   difficulty increase as well as a texture one. **ASK:** if that is too harsh,
   the dials are the `maxFires` caps or the monthly PC income, not the cadence.
-- **The deck still runs out in long games.** With 30 events, Brigade is now
-  covered every month and Division about 90%, but Corps only reaches ~76% of
-  months on active play and much less if the player does nothing, because most
-  triggers are conditioned on things a passive player never causes. Filling a
+- **The deck still runs out in long games.** With 30 events and only three of
+  them repeatable, Brigade is covered every playable month and active play
+  reaches ~92% of months at both Division and Corps, but passive play falls to
+  29–47% at Corps, because most triggers are conditioned on things a passive
+  player never causes. Filling a
   24-month game properly needs more content, and the content test deliberately
   caps the deck at 30. **ASK:** whether to write a further tranche of events
   (the honest filler would be number-free, so no new sourcing) and raise the

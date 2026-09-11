@@ -147,7 +147,7 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
     case 'set_callup':
       return s.billStatus !== 'passed'
         ? { id, available: false, reason: 'The National Service Bill has not passed.', pcDelta: 0 }
-        : { id, available: true, reason: 'Free: does not use an action slot.', pcDelta: 0 };
+        : { id, available: true, pcDelta: 0 };
     case 'expand_capacity': {
       const spare = leadersSpareable(s);
       const note =
