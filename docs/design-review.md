@@ -280,9 +280,9 @@ that there is nothing to earn.
 
 ---
 
-### F7 — The first screen is too long to play on a phone · *Open*
+### F7 — The first screen is too long to play on a phone · *Addressed*
 
-**Evidence**, measured at a 375×812 viewport on the Day 0 turn screen:
+**Evidence as found**, measured at a 375×812 viewport on the Day 0 turn screen:
 
 - **899 words**, **5.8 screens** of scroll.
 - The action list alone runs **3,500px** — 4.3 phone screens — with fifteen
@@ -291,11 +291,50 @@ that there is nothing to earn.
 - **The gauges are not sticky.** Only the turn bar (month label and Restart) is.
   So the player chooses a −12 PC action with no view of their political capital.
 
-**Three fixes, in order of value.** Sticky gauges; a fixed footer carrying
-*End month* and the action counter; and progressive disclosure — hide the
-conscription and pipeline groups until there is a bill or something to train.
-The action menu already knows enough to do the third: it hides `set_callup`
-until the bill passes.
+**Fix.** All three of the fixes named when this was written, plus one bug found
+while making them:
+
+1. **A sticky status strip** under the turn bar — Ready, Quality, Capital, one
+   line, 33px — so the three numbers ride along with the player. The full
+   gauges keep the bars, the forecast (F5) and the leadership note. Both read
+   their thresholds from the same helpers in `gauges.ts`, so the strip and the
+   gauges cannot disagree about whether a number is in trouble. The strip is
+   `aria-hidden`: it duplicates the gauges, and a screen reader user has no
+   scroll problem to solve.
+2. **A fixed footer** carrying the action counter and *End month*. The counter
+   moved out of the actions heading, where it could not be read while choosing.
+   It is last in the DOM, so it is last in the tab order.
+3. **Progressive disclosure.** The four action groups are now `<details>`.
+   Open on arrival when they hold a live decision: reserves close themselves
+   once every lever has been pulled, the training pipeline stays shut until
+   there is a Bill or somebody to train. Closed is one tap away, never hidden —
+   pre-building capacity ahead of the legislation is a real strategy. A group
+   the player opens by hand stays open in later months.
+4. **A bug.** `.action-options` set `display: flex`, which beats the user
+   agent's `[hidden]` rule, so every action's dropdowns were on screen from the
+   start whether or not the action was ticked — five of them on the Bill alone.
+   That was 323px of the Day 0 screen.
+
+**Measured after**, same viewport and seed:
+
+| | before | after |
+|---|---|---|
+| Day 0 words | 899 | **643** |
+| Day 0 scroll | 5.8 screens | **4.5 screens** |
+| Day 0 action list | 3,500px | **1,750px** |
+| mid-game turn (month 8) | — | **2.6 screens** |
+| *End month* | 5.5 screens down | **always on screen** |
+| political capital | off screen from screen 2 | **always on screen** |
+
+No simulation code was touched and no parameter moved, so the benchmark table
+above is unchanged.
+
+**What is still long.** 4.5 screens on Day 0 is better, not short. The rest is
+the Permanent Secretary's opening note and the event card, which are the prose
+the game is for. If it has to come down further, the next cut is the action
+descriptions — title and cost first, the paragraph behind a tap — and that
+trades away the sourced copy that carries the argument. Do it only against a
+playtest that says the length is still losing people.
 
 ---
 

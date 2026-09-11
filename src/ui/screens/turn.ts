@@ -1,7 +1,7 @@
 /** Turn screen: gauges, the Permanent Secretary's note, an event if any, decisions, ledger, end month. */
 import type { ActionAvailability, GameEvent, GameState, TurnInput } from '../../types';
 import { h } from '../dom';
-import { renderGauges } from '../components/gauges';
+import { renderGauges, renderStatusStrip } from '../components/gauges';
 import { forecast } from '../../sim/forecast';
 import { renderHoldingPool } from '../components/holding';
 import { renderLedger } from '../components/ledger';
@@ -42,13 +42,21 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
 
   return h(
     'div',
-    { class: 'fade-in' },
+    // `turn-screen` is what main.ts keys the body padding off, so the fixed footer never covers the ledger.
+    { class: 'fade-in turn-screen' },
+    // Sticky: the month, and the three gauge readings, stay with the player down
+    // a screen that is several phone-heights long (F7).
     h(
       'div',
-      { class: 'turnbar' },
-      h('span', { class: 'turn' }, monthLabel),
-      h('span', { class: 'small muted' }, remaining > 0 ? `${remaining} month${remaining === 1 ? '' : 's'} to the deadline` : 'Deadline'),
-      h('button', { class: 'btn btn-quiet', style: 'min-height:36px;padding:0.3rem 0.6rem;font-size:0.8rem', onclick: d.onRestart }, 'Restart'),
+      { class: 'turnhead' },
+      h(
+        'div',
+        { class: 'turnbar' },
+        h('span', { class: 'turn' }, monthLabel),
+        h('span', { class: 'small muted' }, remaining > 0 ? `${remaining} month${remaining === 1 ? '' : 's'} to the deadline` : 'Deadline'),
+        h('button', { class: 'btn btn-quiet', style: 'min-height:36px;padding:0.3rem 0.6rem;font-size:0.8rem', onclick: d.onRestart }, 'Restart'),
+      ),
+      renderStatusStrip(state),
     ),
     renderGauges(state, forecast(state)),
     renderHoldingPool(state),
@@ -56,7 +64,14 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
     eventEl,
     menu.element,
     renderLedger(state),
-    h('div', { class: 'btn-row', style: 'align-items:center' }, endBtn, hint),
+    // Fixed: *End month* was five and a half screens down, and the action
+    // counter was at the top where it could not be read while choosing (F7).
+    // Last in the DOM, so it is also last in the tab order.
+    h(
+      'div',
+      { class: 'turnfoot' },
+      h('div', { class: 'turnfoot-inner' }, h('div', { class: 'turnfoot-status' }, menu.counter, hint), endBtn),
+    ),
   );
 }
 

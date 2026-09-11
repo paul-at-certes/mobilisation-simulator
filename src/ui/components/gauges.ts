@@ -3,12 +3,22 @@ import type { GameState } from '../../types';
 import type { Forecast } from '../../sim/forecast';
 import { h, fmtInt } from '../dom';
 
+/**
+ * The three thresholds, in one place: the gauges and the sticky strip must
+ * never disagree about whether a number is in trouble.
+ */
+const readyState = (pct: number): Tone => (pct >= 100 ? 'ok' : pct >= 60 ? 'warn' : 'bad');
+const qualityState = (q: number): Tone => (q >= 0.65 ? 'ok' : q >= 0.45 ? 'warn' : 'bad');
+const pcState = (pc: number): Tone => (pc >= 40 ? 'ok' : pc >= 20 ? 'warn' : 'bad');
+type Tone = 'ok' | 'warn' | 'bad';
+const barClass = (t: Tone): string => (t === 'ok' ? 'bar-ok' : t === 'warn' ? 'bar-warn' : '');
+
 export function renderGauges(state: GameState, projection?: Forecast): HTMLElement {
   const g = state.gauges;
   const pct = Math.min(100, g.forceReadyPct);
-  const readyClass = g.forceReadyPct >= 100 ? 'bar-ok' : g.forceReadyPct >= 60 ? 'bar-warn' : '';
-  const qClass = g.forceQuality >= 0.65 ? 'bar-ok' : g.forceQuality >= 0.45 ? 'bar-warn' : '';
-  const pcClass = g.politicalCapital >= 40 ? 'bar-ok' : g.politicalCapital >= 20 ? 'bar-warn' : '';
+  const readyClass = barClass(readyState(g.forceReadyPct));
+  const qClass = barClass(qualityState(g.forceQuality));
+  const pcClass = barClass(pcState(g.politicalCapital));
 
   const gauge = (label: string, value: string, sub: string, barPct: number, cls: string, note: Node | string | null, ariaValue: string) =>
     h(
@@ -46,5 +56,36 @@ function forecastNote(state: GameState, projection?: Forecast): HTMLElement | nu
     { class: 'forecast' },
     h('span', { class: 'forecast-label' }, 'On present decisions'),
     `: ${fmtInt(projection.forceReady)} by month ${state.deadlineMonths} (${Math.round(projection.forceReadyPct)}%).`,
+  );
+}
+
+/**
+ * The same three numbers, compressed into one line for the sticky header.
+ *
+ * The gauges sit at the top of a turn screen that is several phone screens
+ * long, so by the time the player reaches the action that costs 12 political
+ * capital, the political capital reading has been off screen for four screens
+ * (F7). This strip rides along with the turn bar.
+ *
+ * Hidden from assistive technology: it is a duplicate of the gauges above, and
+ * a screen reader user has no scroll problem to solve. The gauges keep the
+ * roles and the labels; this is a visual affordance only.
+ */
+export function renderStatusStrip(state: GameState): HTMLElement {
+  const g = state.gauges;
+  const item = (label: string, value: string, sub: string, tone: Tone) =>
+    h(
+      'span',
+      { class: 'ss-item' },
+      h('span', { class: 'ss-label' }, label),
+      h('span', { class: `ss-value tone-${tone}` }, value),
+      sub ? h('span', { class: 'ss-sub' }, sub) : null,
+    );
+  return h(
+    'div',
+    { class: 'statusstrip', 'aria-hidden': 'true' },
+    item('Ready', fmtInt(g.forceReady), `/ ${fmtInt(state.target)}`, readyState(g.forceReadyPct)),
+    item('Quality', g.forceQuality.toFixed(2), '', qualityState(g.forceQuality)),
+    item('Capital', String(Math.round(g.politicalCapital)), '', pcState(g.politicalCapital)),
   );
 }

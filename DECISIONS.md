@@ -592,3 +592,44 @@ design questions were put to him and answered; what follows is what was built.
   to buy while the leadership factor is under 0.85, so under the new model it
   is self-limiting. The earlier entry's "four purchases … and eight" was
   corrected to "three … and five" against a measured run.
+
+## The turn screen on a phone (11 September 2026)
+
+F7 in `docs/design-review.md`: the Day 0 turn screen was 899 words and 5.8
+phone screens, *End month* was 5.5 screens down, and the gauges scrolled away
+so the player chose a −12 political-capital action with no view of their
+political capital. The audience arrives from LinkedIn's in-app browser, so this
+is the first thing most players meet.
+
+Four changes, no simulation code touched and no parameter moved — the benchmark
+table is unchanged.
+
+- **A sticky status strip** under the turn bar: Ready, Quality, Capital on one
+  33px line. The full gauges stay where they were and keep the bars, the
+  forecast and the leadership note. The strip and the gauges read their
+  thresholds from the same helpers, so they cannot disagree about whether a
+  number is in trouble. **The strip is `aria-hidden`:** it is a duplicate of
+  the gauges, which keep the roles and the labels, and a screen reader user has
+  no scroll problem to solve. It is a visual affordance only.
+- **A fixed footer** carrying the action counter and *End month*. The counter
+  moved out of the Decisions heading, where it could not be read while
+  choosing. Last in the DOM, so last in the tab order.
+- **Progressive disclosure.** The four action groups are `<details>`, open when
+  they hold a live decision: reserves close once every lever has been pulled,
+  the pipeline stays shut until there is a Bill or somebody to train. They are
+  **closed, not hidden** — buying training capacity ahead of the legislation is
+  a real strategy and has to stay reachable. A group the player opens by hand
+  stays open in later months; because `<details>` fires `toggle` for the state
+  it was rendered in, only a deviation from the default is recorded as the
+  player's doing.
+- **A bug.** `.action-options` set `display: flex`, which beats the user
+  agent's `[hidden]` rule on specificity, so every action's dropdowns were on
+  screen whether or not the action was ticked — five of them on the Bill alone,
+  323px of Day 0.
+
+Day 0 is now 643 words and 4.5 screens, the action list 1,750px rather than
+3,500px, and a mid-game turn is 2.6 screens. That is better, not short: the
+rest is the Permanent Secretary's note and the event card, which are the prose
+the game is for. The next cut would put the action descriptions behind a tap
+and trade away the sourced copy that carries the argument — worth doing only
+against a playtest that says the length is still losing people.

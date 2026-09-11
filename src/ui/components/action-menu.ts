@@ -14,7 +14,44 @@ const mOf = (id: string): number => getParam(id)?.value ?? 0;
 
 export interface ActionMenuController {
   element: HTMLElement;
+  /** The "n of 2 actions chosen" readout. The turn screen puts it in the fixed footer, beside *End month*. */
+  counter: HTMLElement;
   selectedActions(): Action[];
+}
+
+const GROUP_ORDER: ActionGroup[] = ['reserves', 'conscription', 'pipeline', 'political'];
+
+/**
+ * Which groups the player has opened or closed by hand, kept across turns.
+ * Module scope on purpose: the menu is rebuilt from scratch every month, and a
+ * group the player opened in month 3 should not shut again in month 4.
+ */
+const openOverrides = new Map<ActionGroup, boolean>();
+
+/** Anything in the estate to train, or about to be. Governs whether the pipeline group opens. */
+const somethingToTrain = (state: GameState): boolean =>
+  state.billStatus === 'passed' || state.trainingCohorts.length > 0 || state.pools.holdingPool > 0;
+
+/**
+ * Which groups are open on arrival. The Day 0 action list is some 2,900px on a
+ * 375px screen (F7) and most of it is not a live decision yet: there is nobody
+ * to train until there is a Bill. Closed is one tap away, never hidden —
+ * buying training capacity ahead of the legislation is a real strategy and has
+ * to stay reachable.
+ */
+function defaultOpen(group: ActionGroup, state: GameState, liveCount: number): boolean {
+  switch (group) {
+    // Closes itself once every reserve lever has been pulled, which is most of the middle game.
+    case 'reserves':
+      return liveCount > 0;
+    // The Bill is the headline decision of Day 0, and the monthly call-up lives here once it passes.
+    case 'conscription':
+      return true;
+    case 'pipeline':
+      return somethingToTrain(state);
+    case 'political':
+      return true;
+  }
 }
 
 const ORDER: ActionId[] = [
@@ -60,12 +97,8 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
     onChange();
   };
 
-  const groups: Record<ActionGroup, HTMLElement> = {
-    reserves: h('div', { class: 'action-group' }, h('h4', {}, GROUP_TITLES.reserves)),
-    conscription: h('div', { class: 'action-group' }, h('h4', {}, GROUP_TITLES.conscription)),
-    pipeline: h('div', { class: 'action-group' }, h('h4', {}, GROUP_TITLES.pipeline)),
-    political: h('div', { class: 'action-group' }, h('h4', {}, GROUP_TITLES.political)),
-  };
+  const rows: Record<ActionGroup, HTMLElement[]> = { reserves: [], conscription: [], pipeline: [], political: [] };
+  const liveCount: Record<ActionGroup, number> = { reserves: 0, conscription: 0, pipeline: 0, political: 0 };
 
   for (const id of ORDER) {
     const a = avail.get(id);
@@ -73,16 +106,48 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
     const copy = ACTION_COPY[id];
     // Hide one-shots that are exhausted and free controls that are not yet unlocked.
     if (a.exhausted && id !== 'set_callup') {
-      groups[copy.group].append(exhaustedRow(id, a));
+      rows[copy.group].push(exhaustedRow(id, a));
       continue;
     }
     if (id === 'set_callup' && state.billStatus !== 'passed') continue;
     if (id === 'amend_bill' && state.billStatus === 'none') continue;
-    groups[copy.group].append(actionRow(id, a));
+    rows[copy.group].push(actionRow(id, a));
+    if (a.available) liveCount[copy.group]++;
   }
 
-  const root = h('section', { class: 'actions', 'aria-label': 'Decisions' }, h('div', { class: 'actions-head' }, h('h2', {}, 'Decisions'), counter), groups.reserves, groups.conscription, groups.pipeline, groups.political);
+  // A fresh run forgets what the last one had open.
+  if (state.turn === 0) openOverrides.clear();
+
+  const root = h(
+    'section',
+    { class: 'actions', 'aria-label': 'Decisions' },
+    h('div', { class: 'actions-head' }, h('h2', {}, 'Decisions')),
+    ...GROUP_ORDER.map((g) => groupEl(g, rows[g], liveCount[g])),
+  );
   updateCounter();
+
+  function groupEl(group: ActionGroup, children: HTMLElement[], live: number): HTMLElement {
+    const byDefault = defaultOpen(group, state, live);
+    const el = h(
+      'details',
+      { class: 'action-group', open: openOverrides.get(group) ?? byDefault },
+      h(
+        'summary',
+        {},
+        h('span', { class: 'group-title' }, GROUP_TITLES[group]),
+        h('span', { class: 'group-count' }, live > 0 ? `${live} available` : 'none available'),
+      ),
+      ...children,
+    ) as HTMLDetailsElement;
+    // `toggle` also fires for the state we just rendered, so only a deviation
+    // from the default counts as the player's doing. Otherwise the first
+    // render's defaults are recorded as overrides and never move again.
+    el.addEventListener('toggle', () => {
+      if (el.open === byDefault) openOverrides.delete(group);
+      else openOverrides.set(group, el.open);
+    });
+    return el;
+  }
 
   function exhaustedRow(id: ActionId, a: ActionAvailability): HTMLElement {
     return h('div', { class: 'action unavailable' }, h('div', { class: 'action-body' }, h('div', { class: 'action-title' }, ACTION_COPY[id].title, h('span', { class: 'action-pc' }, 'Done')), h('div', { class: 'action-desc' }, a.reason ?? '')));
@@ -168,6 +233,7 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
 
   return {
     element: root,
+    counter,
     selectedActions(): Action[] {
       const out: Action[] = [];
       for (const id of selected) {

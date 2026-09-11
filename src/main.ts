@@ -64,6 +64,8 @@ function randomSeed(): number {
 function show(el: HTMLElement): void {
   clear(app);
   app.append(el);
+  // The turn screen carries a fixed footer; the page has to end above it.
+  document.body.classList.toggle('has-turnfoot', el.classList.contains('turn-screen'));
   window.scrollTo({ top: 0 });
   const heading = el.querySelector<HTMLElement>('h1, .turnbar');
   heading?.setAttribute('tabindex', '-1');

@@ -156,8 +156,19 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 /* Action menu */
 .actions { margin: 1rem 0; }
 .actions-head { display: flex; justify-content: space-between; align-items: baseline; }
-.action-group { margin-top: 0.75rem; }
-.action-group h4 { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin: 0.5rem 0 0.3rem; }
+.actions-head h2 { margin-bottom: 0.25rem; }
+/* Groups are <details>: the list is too long for a phone with everything open (F7). */
+.action-group { margin-top: 0.5rem; border-top: 1px solid var(--rule); }
+.action-group > summary {
+  cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;
+  padding: 0.6rem 0.1rem; min-height: 44px;
+}
+.action-group > summary::-webkit-details-marker { display: none; }
+.action-group .group-title { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
+.action-group .group-count { font-size: 0.78rem; color: var(--ink-3); white-space: nowrap; }
+.action-group .group-count::after { content: " +"; font-variant-numeric: tabular-nums; }
+.action-group[open] .group-count::after { content: " −"; }
+.action-group[open] > summary { border-bottom: 1px solid var(--rule); margin-bottom: 0.4rem; }
 .action { display: flex; gap: 0.6rem; align-items: flex-start; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.55rem 0.7rem; margin-bottom: 0.4rem; }
 .action.selected { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .action.unavailable { opacity: 0.6; }
@@ -168,6 +179,10 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 .action .action-desc { font-size: 0.88rem; color: var(--ink-2); }
 .action .action-reason { font-size: 0.8rem; color: var(--warn); }
 .action .action-options { margin-top: 0.4rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 0.88rem; }
+/* The options are revealed by ticking the action. `display: flex` above beats the
+   user agent's [hidden] rule on specificity, so say it again here or every
+   dropdown — five of them on the Bill — is on screen from the start. */
+.action .action-options[hidden] { display: none; }
 .action select, .action input[type="number"] { max-width: 100%; font: inherit; font-size: 0.9rem; padding: 0.3rem; min-height: 36px; border: 1px solid var(--rule); border-radius: var(--radius); background: #fff; }
 .action input[type="number"] { width: 7.5rem; }
 .field { display: inline-flex; flex-direction: column; gap: 0.15rem; max-width: 100%; }
@@ -185,9 +200,33 @@ details.ledger .ledger-body { padding: 0 0.8rem 0.8rem; }
 .kv dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
 .kv dd.neg { color: var(--bad); }
 
-/* Turn bar */
-.turnbar { position: sticky; top: 0; z-index: 10; background: var(--paper); padding: 0.5rem 0; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
-.turnbar .turn { font-family: var(--serif); font-weight: 600; }
+/* Turn bar and the sticky status strip under it */
+.turnhead { position: sticky; top: 0; z-index: 10; background: var(--paper); border-bottom: 1px solid var(--rule); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.turnbar { padding: 0.5rem 0 0.35rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.turnbar .turn { font-family: var(--serif); font-weight: 600; white-space: nowrap; }
+/* The deadline gives way rather than wrapping the bar onto a second line. */
+.turnbar .small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 420px) { .turnbar .small { font-size: 0.78rem; } }
+.statusstrip { display: flex; gap: 0.9rem; align-items: baseline; padding: 0 0 0.4rem; font-size: 0.82rem; overflow-x: auto; }
+.statusstrip .ss-item { display: flex; gap: 0.3rem; align-items: baseline; white-space: nowrap; }
+.statusstrip .ss-label { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.statusstrip .ss-value { font-family: var(--serif); font-weight: 600; font-variant-numeric: tabular-nums; }
+.statusstrip .ss-sub { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.tone-ok { color: var(--ok); }
+.tone-warn { color: var(--warn); }
+.tone-bad { color: var(--bad); }
+
+/* Fixed decision footer: *End month* and the action counter, always in reach (F7) */
+.turnfoot {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: var(--paper); border-top: 1px solid var(--rule); box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+  padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+}
+.turnfoot .turnfoot-inner { max-width: var(--maxw); margin: 0 auto; display: flex; align-items: center; gap: 0.6rem; }
+/* Counter over hint, so the bar keeps its height in the months that carry an event. */
+.turnfoot .turnfoot-status { display: flex; flex-direction: column; min-width: 0; font-size: 0.8rem; line-height: 1.3; }
+.turnfoot .btn { margin-left: auto; flex: none; }
+body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)); }
 
 /* Opening */
 .premise { font-family: var(--serif); font-size: 1.08rem; }
