@@ -222,8 +222,11 @@ describe('events.json', () => {
     // A one-off incident must not happen twice: the fire-extinguisher
     // resignation, the photographs from the barracks, the bounce attributed to
     // your address. What may repeat is parliamentary and administrative
-    // routine, whose prose reads the same the second time.
-    const RECURRING = ['pac_hearing', 'nato_liaison', 'opposition_motion'];
+    // routine, whose prose reads the same the second time. `reservist_employers`
+    // qualifies on that test and only since it was rewritten: adjudication of
+    // exemption applications is a standing process under the Reserve Forces Act,
+    // not the incident ("three NHS trusts report ward closures") it used to be.
+    const RECURRING = ['pac_hearing', 'nato_liaison', 'opposition_motion', 'reservist_employers'];
     const recurring = events.filter((e) => e.trigger.repeatable).map((e) => e.id);
     expect(recurring.sort()).toEqual([...RECURRING].sort());
     for (const e of events.filter((ev) => ev.trigger.repeatable)) {

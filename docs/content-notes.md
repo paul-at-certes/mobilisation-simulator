@@ -25,7 +25,7 @@ that carry an effect; empty-choice events are purely informational.
 | `ally_asks_behind` | 3 turns remaining; Force Ready < 50% of target | Fiction, no numbers |
 | `equipment_delay` | turn ≥ 3; equipment ordered, not yet arrived | Fiction, no numbers |
 | `poll_bounce` | turn ≥ 1; at least one address to the nation (weight 2) | Fiction, no numbers |
-| `reservist_employers` | reservists mobilised > 10,000 | Fiction, no numbers |
+| `reservist_employers` | turn ≥ 3; reservists mobilised > 5,000; repeatable ×3, 3-month cooldown | Sourced: `reserve_exemption_application_rate`, `reserve_exemption_employer_share` |
 | `strategic_records` | turn 0–3; no trace attempted | Sourced: `strategic_reserve_recall_age`, `strategic_reserve_claimed`, `ex_regular_tracked` |
 | `employer_assistance_cap` | turn ≥ 2; any reservists mobilised | Sourced: `employer_assistance_daily` |
 | `holding_pool_scandal` | holding pool > 5,000 | Fiction, no numbers |
@@ -50,6 +50,19 @@ that carry an effect; empty-choice events are purely informational.
 | `vetting_failure` | three months after the vetting standard was lowered | Fiction, no numbers |
 
 ## Notes on particular events
+
+- `reservist_employers` **is the only recurring event that is not parliamentary
+  routine**, and it earns that by being administrative routine instead. It used
+  to be an incident — three NHS trusts reporting ward closures, fired once,
+  2,000 people removed — which is exactly what the repeatability test forbids.
+  Rewritten as the adjudication of exemption applications under the Reserve
+  Forces Act, it is a standing process whose prose reads the same the third
+  time, and its effect is now proportional (`pool_pct −11`) rather than a flat
+  2,000, so the cost of holding reservists scales with how many are held. That
+  is the ongoing reserve cost `docs/design-review.md` F1 asked for. The −11%
+  is `reserve_exemption_application_rate` × `reserve_exemption_employer_share`
+  (0.247 × 0.455 = 0.112), both derived from HC 57.
+
 
 - `junior_entry_useless`: `ConditionKey` has no key for the junior-entry action
   having been taken, so the event cannot fire *because* the player chose it.

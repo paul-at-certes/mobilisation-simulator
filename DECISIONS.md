@@ -716,3 +716,78 @@ effects are still political-capital deltas, and most event choices are still
 "lose 5 PC" against "lose a small thing". There is now something to earn, which
 was the missing side of the ledger; making the *spending* side more interesting
 is a content problem in `events.json`, not a model one.
+
+## The reserves, measured against a real mobilisation (11 September 2026)
+
+Paul supplied HC 57 — House of Commons Defence Committee, *Lessons of Iraq*,
+Third Report of Session 2003–04, chapter 5 — which is the only primary record
+the project has of what a compulsory call-out of the British reserves actually
+yields. Operation Telic 1, Army: **6,540 call-out notices served, 4,873
+reported, 3,787 accepted into service.** Tri-service: 8,492 / 6,478 / 5,221.
+Five parameters come out of it, and two existing assumptions stop being
+assumptions.
+
+**`reserve_volunteer_deployable_fraction` was right, and is no longer a
+guess.** It was 0.50, assumed from the composition of the trained figure. The
+same quantity measured: 3,787 / 6,540 = 0.579 of notices served were accepted
+(`reserve_mobilisation_acceptance_rate`), and 0.901 of the trained strength is
+available to be served one at all (23,517 less 1,720 on full-time service and
+615 already mobilised, SPS Table 6a). 0.901 × 0.579 = 0.522. **Held at 0.50,
+not raised to 0.52**, for two reasons that both push the true figure down:
+HC 57 ¶112 says MoD allowed for expected wastage *before* deciding whom to
+serve, so the denominator was pre-filtered; and the trained figure has counted
+Phase-1-only personnel since October 2016. The value does not move, its
+confidence goes `assumption` → `derived`, and the balance table is untouched
+by this half of the change.
+
+**The employer is now a standing pressure rather than a one-off news story.**
+HC 57 ¶113: 2,021 applications for exemption and 80 for deferral against 8,492
+notices — **24.7% of notices contested** — and **920 of the 2,021 exemption
+applications came from employers**, not from reservists: 45.5%. The
+`reservist_employers` event was an incident (three NHS trusts, ward closures,
+fires once, removes a flat 2,000). It is now the adjudication of those
+applications under the Reserve Forces Act, recurring up to three times on a
+three-month cooldown, removing `0.247 × 0.455 = 11%` of the mobilised strength
+each time, against a political cost for refusing. This is the ongoing,
+proportional reserve cost the design review's F1 asked for by name, and it
+needed no new screen.
+
+**What it did to the balance** (`npm run dist -- 40`). At Division the marginal
+value of active play over pure reserves goes from **+359 ESE (1.7%) to +1,444
+(7.1%)**; `reserves_only` falls from meeting the target on 33% of seeds to 3%,
+while `reserves_plus_light` holds at 43% → 45%, inside F2's band. Leadership
+medians (0.64 / 0.45) and F4's monotonic capacity penalty are unchanged, and
+`do_nothing` does not move at any rung. Corps gets modestly harder —
+`reserves_plus_light` resignations 33% → 35% — so F9's fix holds: about
+two-thirds of competent Corps runs still reach the deadline. **Reserves alone
+no longer make a division. Reserves plus a restrained pipeline still do.**
+
+**This is the exception F8 anticipated, and it is worth being explicit about.**
+F8 says "do not 'fix' this by making the reserves smaller. The reserve figures
+are primary." The reserve *strengths* have not been touched and remain primary.
+What changed is the *yield*, which is now also primary. The distinction is the
+whole justification, and any future change that makes the reserves smaller
+without a source behind it is the thing F8 was warning about.
+
+**Two things taken from HC 57 and deliberately not acted on.**
+
+- **The medical asymmetry.** ¶119: of those who reported to the mobilisation
+  centre, **48% of Regular Reserves failed the medical against 14% of the TA**.
+  That makes `ex_regular_report_ceiling` (0.50) an upper bound — the medical
+  alone leaves 0.52 before any allowance for the incomplete records MoD has
+  admitted to. The two rates are recorded as primary parameters and the range
+  is tightened to [0.30, 0.52], but **the value is not lowered**: that is a
+  balance change landing on the same strategies this pass has just moved.
+  Recorded as F11 (*Watch*) in the design review. **ASK:** whether to take it.
+- **Tour length is not a cap here, and an earlier proposal in this session was
+  wrong about that.** HC 57 ¶123–124 gives 4–6 months in theatre and 7–9 months
+  total absence, which suggested mobilised reservists should time out. They
+  should not. Telic was called out under RFA96 s.54 (operations outside the
+  UK); this game's scenario is an Article 5 attack, which is s.52 — *national
+  danger, great emergency or an actual or apprehended attack on the United
+  Kingdom* — and s.52 sets **no maximum period**: the order "shall have effect
+  until it is revoked" (legislation.gov.uk). So 7–9 months grounds when
+  employer and family pressure peaks, which is what the event above models, and
+  not an expiry. Checking which section a figure was produced under mattered
+  more than the figure.
+

@@ -7,8 +7,16 @@
       "minTurn": 2,
       "maxTurn": 4,
       "conditions": [
-        { "key": "ex_regular_recall_active", "op": "==", "value": 1 },
-        { "key": "strategic_traced", "op": "==", "value": 0 }
+        {
+          "key": "ex_regular_recall_active",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "key": "strategic_traced",
+          "op": "==",
+          "value": 0
+        }
       ]
     },
     "weight": 5,
@@ -17,8 +25,13 @@
         "label": "Spend a month tracing",
         "summary": "Costs political capital and a month of staff time; some of the untracked pool is found and reports at low effectiveness.",
         "effects": [
-          { "type": "pc", "delta": -3 },
-          { "type": "trace_strategic" }
+          {
+            "type": "pc",
+            "delta": -3
+          },
+          {
+            "type": "trace_strategic"
+          }
         ]
       },
       {
@@ -30,7 +43,10 @@
     "source": {
       "name": "MoD Service Personnel Statistics, 1 July 2026, Table 8a; Forces News, 15 January 2026",
       "url": "https://www.forcesnews.com/services/tri-service/strategic-reserve-age-limit-raised-65-so-more-can-be-recalled-should-war-loom",
-      "paramIds": ["ex_regular_tracked_tri_service", "strategic_reserve_claimed"]
+      "paramIds": [
+        "ex_regular_tracked_tri_service",
+        "strategic_reserve_claimed"
+      ]
     }
   },
   {
@@ -41,8 +57,16 @@
       "minTurn": 1,
       "maxTurn": 4,
       "conditions": [
-        { "key": "reserve_notice", "op": "==", "value": 180 },
-        { "key": "reserve_mobilised", "op": "==", "value": 0 }
+        {
+          "key": "reserve_notice",
+          "op": "==",
+          "value": 180
+        },
+        {
+          "key": "reserve_mobilised",
+          "op": "==",
+          "value": 0
+        }
       ]
     },
     "weight": 5,
@@ -51,8 +75,14 @@
         "label": "Back the amendment",
         "summary": "Costs political capital with the Treasury; the reservists already called out arrive three months sooner.",
         "effects": [
-          { "type": "pc", "delta": -5 },
-          { "type": "reserve_arrival_shift", "months": -3 }
+          {
+            "type": "pc",
+            "delta": -5
+          },
+          {
+            "type": "reserve_arrival_shift",
+            "months": -3
+          }
         ]
       },
       {
@@ -64,7 +94,10 @@
     "source": {
       "name": "Armed Forces Bill 2026, amendment papers (Select Committee, 14 April 2026; Public Bill Committee, 16 April 2026)",
       "url": "https://publications.parliament.uk/pa/bills/cbill/59-01/0367/amend/armedforces_day_sc_0414.pdf",
-      "paramIds": ["reserve_notice_days_default", "reserve_notice_days_amended"]
+      "paramIds": [
+        "reserve_notice_days_default",
+        "reserve_notice_days_amended"
+      ]
     }
   },
   {
@@ -73,7 +106,11 @@
     "text": "Three commanding officers have written, through the chain of command and then around it. Each has lost about a third of his section commanders to the training estate and expects to lose more. The letter uses the word hollow. It has been shown to the Chief of the General Staff. He did not disagree with it.",
     "trigger": {
       "conditions": [
-        { "key": "capacity_purchases", "op": ">=", "value": 3 }
+        {
+          "key": "capacity_purchases",
+          "op": ">=",
+          "value": 3
+        }
       ]
     },
     "weight": 4,
@@ -82,14 +119,20 @@
         "label": "Accept the cost",
         "summary": "The field army stays hollowed out; the leadership factor over every conscript cohort falls.",
         "effects": [
-          { "type": "leaders_spareable_add", "delta": -500 }
+          {
+            "type": "leaders_spareable_add",
+            "delta": -500
+          }
         ]
       },
       {
         "label": "Return a tranche of instructors",
         "summary": "One capacity expansion is stood down and its junior leaders go back to their units.",
         "effects": [
-          { "type": "capacity_purchases", "delta": -1 }
+          {
+            "type": "capacity_purchases",
+            "delta": -1
+          }
         ]
       }
     ]
@@ -101,8 +144,16 @@
     "trigger": {
       "minTurn": 4,
       "conditions": [
-        { "key": "medical_standard", "op": "==", "value": 2 },
-        { "key": "conscripts_in_training", "op": ">", "value": 0 }
+        {
+          "key": "medical_standard",
+          "op": "==",
+          "value": 2
+        },
+        {
+          "key": "conscripts_in_training",
+          "op": ">",
+          "value": 0
+        }
       ]
     },
     "weight": 4,
@@ -111,14 +162,20 @@
         "label": "Restore the peacetime standard",
         "summary": "The eligible pool shrinks and training attrition falls; the inquest loses its headline.",
         "effects": [
-          { "type": "medical_standard", "standard": "peacetime" }
+          {
+            "type": "medical_standard",
+            "standard": "peacetime"
+          }
         ]
       },
       {
         "label": "Hold the line",
         "summary": "The standard stays; the cost is political and it is paid now.",
         "effects": [
-          { "type": "pc", "delta": -8 }
+          {
+            "type": "pc",
+            "delta": -8
+          }
         ]
       }
     ]
@@ -129,8 +186,16 @@
     "text": "The first conscientious-objection case under the Act has reached the High Court. The applicant is articulate, photogenic and a nurse. Counsel advise that the exemption schedule is defensible but that the judge may not be. The hearing is next week.",
     "trigger": {
       "conditions": [
-        { "key": "conscription_active", "op": "==", "value": 1 },
-        { "key": "willingness", "op": "<", "value": 25 }
+        {
+          "key": "conscription_active",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "key": "willingness",
+          "op": "<",
+          "value": 25
+        }
       ]
     },
     "weight": 4,
@@ -139,22 +204,43 @@
         "label": "Concede a broad exemption",
         "summary": "The eligible pool shrinks by a tenth; the Government is seen to be reasonable.",
         "effects": [
-          { "type": "eligible_pool_pct", "pct": -10 },
-          { "type": "pc", "delta": 3 }
+          {
+            "type": "eligible_pool_pct",
+            "pct": -10
+          },
+          {
+            "type": "pc",
+            "delta": 3
+          }
         ]
       },
       {
         "label": "Contest the case",
         "summary": "Costs political capital to fight; an even chance of winning modestly or losing badly.",
         "effects": [
-          { "type": "pc", "delta": -3 },
+          {
+            "type": "pc",
+            "delta": -3
+          },
           {
             "type": "random",
             "chance": 0.5,
-            "then": [{ "type": "pc", "delta": 2 }],
+            "then": [
+              {
+                "type": "pc",
+                "delta": 2
+              }
+            ],
             "else": [
-              { "type": "pc", "delta": -5 },
-              { "type": "willingness", "delta": -3, "durationMonths": 6 }
+              {
+                "type": "pc",
+                "delta": -5
+              },
+              {
+                "type": "willingness",
+                "delta": -3,
+                "durationMonths": 6
+              }
             ]
           }
         ]
@@ -167,8 +253,16 @@
     "text": "The Chancellor has written to the Prime Minister, copying you as a courtesy. The letter notes that the mobilisation is now the largest unfunded commitment on the books and asks what is to be stopped to pay for it. It runs to two pages. The second page is a list.",
     "trigger": {
       "conditions": [
-        { "key": "cumulative_cost", "op": ">", "value": 10000000000 },
-        { "key": "capacity_purchases", "op": ">=", "value": 1 }
+        {
+          "key": "cumulative_cost",
+          "op": ">",
+          "value": 10000000000
+        },
+        {
+          "key": "capacity_purchases",
+          "op": ">=",
+          "value": 1
+        }
       ]
     },
     "weight": 4,
@@ -177,14 +271,20 @@
         "label": "Stand down a capacity tranche",
         "summary": "One training expansion is cancelled and the letter is answered.",
         "effects": [
-          { "type": "capacity_purchases", "delta": -1 }
+          {
+            "type": "capacity_purchases",
+            "delta": -1
+          }
         ]
       },
       {
         "label": "Fight for the money",
         "summary": "The Prime Minister backs you, at a price in political capital.",
         "effects": [
-          { "type": "pc", "delta": -6 }
+          {
+            "type": "pc",
+            "delta": -6
+          }
         ]
       }
     ]
@@ -196,7 +296,11 @@
     "trigger": {
       "turnsRemaining": 3,
       "conditions": [
-        { "key": "force_ready_pct", "op": ">=", "value": 50 }
+        {
+          "key": "force_ready_pct",
+          "op": ">=",
+          "value": 50
+        }
       ]
     },
     "weight": 5,
@@ -205,15 +309,24 @@
         "label": "Tell him where you are",
         "summary": "The figures are shared as they stand; he is reassured, up to a point.",
         "effects": [
-          { "type": "pc", "delta": 2 }
+          {
+            "type": "pc",
+            "delta": 2
+          }
         ]
       },
       {
         "label": "Promise it",
         "summary": "A boost now; a heavy cost at the reckoning if the target is missed.",
         "effects": [
-          { "type": "pc", "delta": 5 },
-          { "type": "scoring_pc_if_missed", "delta": -15 }
+          {
+            "type": "pc",
+            "delta": 5
+          },
+          {
+            "type": "scoring_pc_if_missed",
+            "delta": -15
+          }
         ]
       }
     ]
@@ -225,7 +338,11 @@
     "trigger": {
       "turnsRemaining": 3,
       "conditions": [
-        { "key": "force_ready_pct", "op": "<", "value": 50 }
+        {
+          "key": "force_ready_pct",
+          "op": "<",
+          "value": 50
+        }
       ]
     },
     "weight": 5,
@@ -234,15 +351,24 @@
         "label": "Tell him the truth",
         "summary": "He is not reassured; some political cost now, none later.",
         "effects": [
-          { "type": "pc", "delta": -4 }
+          {
+            "type": "pc",
+            "delta": -4
+          }
         ]
       },
       {
         "label": "Promise it anyway",
         "summary": "A boost now; a heavy cost at the reckoning if the target is missed.",
         "effects": [
-          { "type": "pc", "delta": 5 },
-          { "type": "scoring_pc_if_missed", "delta": -15 }
+          {
+            "type": "pc",
+            "delta": 5
+          },
+          {
+            "type": "scoring_pc_if_missed",
+            "delta": -15
+          }
         ]
       }
     ]
@@ -254,8 +380,16 @@
     "trigger": {
       "minTurn": 3,
       "conditions": [
-        { "key": "equipment_buy_active", "op": "==", "value": 1 },
-        { "key": "equipment_arrived", "op": "==", "value": 0 }
+        {
+          "key": "equipment_buy_active",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "key": "equipment_arrived",
+          "op": "==",
+          "value": 0
+        }
       ]
     },
     "weight": 4,
@@ -264,15 +398,24 @@
         "label": "Accept the slip",
         "summary": "Equipment arrives two months later than planned; trained conscripts wait unequipped.",
         "effects": [
-          { "type": "equipment_delay", "months": 2 }
+          {
+            "type": "equipment_delay",
+            "months": 2
+          }
         ]
       },
       {
         "label": "Source abroad",
         "summary": "Costs money and a little political capital; the original date holds.",
         "effects": [
-          { "type": "cost", "gbp": 40000000 },
-          { "type": "pc", "delta": -2 }
+          {
+            "type": "cost",
+            "gbp": 40000000
+          },
+          {
+            "type": "pc",
+            "delta": -2
+          }
         ]
       }
     ]
@@ -284,7 +427,11 @@
     "trigger": {
       "minTurn": 1,
       "conditions": [
-        { "key": "address_count", "op": ">=", "value": 1 }
+        {
+          "key": "address_count",
+          "op": ">=",
+          "value": 1
+        }
       ]
     },
     "weight": 2,
@@ -293,37 +440,64 @@
         "label": "Noted",
         "summary": "Willingness to serve rises for a few months.",
         "effects": [
-          { "type": "willingness", "delta": 4, "durationMonths": 4 }
+          {
+            "type": "willingness",
+            "delta": 4,
+            "durationMonths": 4
+          }
         ]
       }
     ]
   },
   {
     "id": "reservist_employers",
-    "title": "The wards close",
-    "text": "Three NHS trusts report ward closures attributable to mobilised reservists: theatre nurses, anaesthetists, a paediatric consultant. The Health Secretary has raised it in Cabinet. The reservists in question are exactly the ones the field hospital needs.",
+    "title": "The adjudication officer's return",
+    "text": "Applications to be excused call-out are running at the rate the last compulsory mobilisation of this size produced: 25% of notices served are contested, and 46% of the exemption applications come from the employer rather than the reservist. The adjudication officer decides each one; a refused employer may appeal to the Reserve Forces Appeal Tribunal, and the units are short while the appeals run. The Health Secretary has a list of closed wards. The Business Secretary has a list of firms.",
     "trigger": {
+      "minTurn": 3,
+      "repeatable": true,
+      "maxFires": 3,
+      "cooldownMonths": 3,
       "conditions": [
-        { "key": "reserve_mobilised", "op": ">", "value": 10000 }
+        {
+          "key": "reserve_mobilised",
+          "op": ">",
+          "value": 5000
+        }
       ]
     },
     "weight": 4,
     "choices": [
       {
-        "label": "Exempt clinical staff",
-        "summary": "Around two thousand reservists are released back to the NHS.",
+        "label": "Grant the employer applications",
+        "summary": "The contested cases go home to their employers, and the mobilised strength falls with them.",
         "effects": [
-          { "type": "pool", "pool": "reserveVolunteerMobilised", "delta": -2000 }
+          {
+            "type": "pool_pct",
+            "pool": "reserveVolunteerMobilised",
+            "pct": -11
+          }
         ]
       },
       {
-        "label": "Hold them",
-        "summary": "The wards stay closed and the political cost is paid.",
+        "label": "Refuse them",
+        "summary": "The notices stand and the units keep their people; the wards stay closed and the cost is political.",
         "effects": [
-          { "type": "pc", "delta": -5 }
+          {
+            "type": "pc",
+            "delta": -5
+          }
         ]
       }
-    ]
+    ],
+    "source": {
+      "name": "House of Commons Defence Committee, Lessons of Iraq, Third Report of Session 2003-04, HC 57-I, paragraphs 112-113 and 126",
+      "url": "https://publications.parliament.uk/pa/cm200304/cmselect/cmdfence/57/5709.htm",
+      "paramIds": [
+        "reserve_exemption_application_rate",
+        "reserve_exemption_employer_share"
+      ]
+    }
   },
   {
     "id": "strategic_records",
@@ -333,7 +507,11 @@
       "minTurn": 0,
       "maxTurn": 3,
       "conditions": [
-        { "key": "strategic_traced", "op": "==", "value": 0 }
+        {
+          "key": "strategic_traced",
+          "op": "==",
+          "value": 0
+        }
       ]
     },
     "weight": 3,
@@ -342,8 +520,14 @@
         "label": "Write to every last address",
         "summary": "A small political cost now; a few more ex-regulars report when recalled.",
         "effects": [
-          { "type": "pc", "delta": -1 },
-          { "type": "ex_regular_ceiling_add", "delta": 0.05 }
+          {
+            "type": "pc",
+            "delta": -1
+          },
+          {
+            "type": "ex_regular_ceiling_add",
+            "delta": 0.05
+          }
         ]
       },
       {
@@ -355,7 +539,11 @@
     "source": {
       "name": "MoD press release, 15 January 2026; Forces News, 15 January 2026; MoD SPS 1 July 2026, Table 8a",
       "url": "https://www.gov.uk/government/news/major-boost-to-pool-of-skilled-former-military-personnel-called-upon-in-crises-as-uk-strengthen-preparedness",
-      "paramIds": ["strategic_reserve_recall_age", "strategic_reserve_claimed", "ex_regular_tracked_tri_service"]
+      "paramIds": [
+        "strategic_reserve_recall_age",
+        "strategic_reserve_claimed",
+        "ex_regular_tracked_tri_service"
+      ]
     }
   },
   {
@@ -365,7 +553,11 @@
     "trigger": {
       "minTurn": 2,
       "conditions": [
-        { "key": "reserve_mobilised", "op": ">", "value": 0 }
+        {
+          "key": "reserve_mobilised",
+          "op": ">",
+          "value": 0
+        }
       ]
     },
     "weight": 3,
@@ -374,23 +566,38 @@
         "label": "Raise the cap",
         "summary": "Costs money for the length of the mobilisation; the employers go quiet.",
         "effects": [
-          { "type": "cost", "gbp": 100000000 },
-          { "type": "pc", "delta": 1 }
+          {
+            "type": "cost",
+            "gbp": 100000000
+          },
+          {
+            "type": "pc",
+            "delta": 1
+          }
         ]
       },
       {
         "label": "Hold the cap",
         "summary": "A handful of appeals succeed, a few hundred reservists go home, and some political capital is spent.",
         "effects": [
-          { "type": "pool_pct", "pool": "reserveVolunteerMobilised", "pct": -5 },
-          { "type": "pc", "delta": -3 }
+          {
+            "type": "pool_pct",
+            "pool": "reserveVolunteerMobilised",
+            "pct": -5
+          },
+          {
+            "type": "pc",
+            "delta": -3
+          }
         ]
       }
     ],
     "source": {
       "name": "Reserve Forces (Call-out and Recall) (Financial Assistance) Regulations 2005, SI 2005/859, regulation 6(3)",
       "url": "https://www.legislation.gov.uk/uksi/2005/859/regulation/6/made",
-      "paramIds": ["employer_assistance_daily"]
+      "paramIds": [
+        "employer_assistance_daily"
+      ]
     }
   },
   {
@@ -399,7 +606,11 @@
     "text": "A newspaper has photographs from inside a barracks where several thousand conscripts have been waiting for a training place for weeks. Card games, a broken boiler, a sergeant who has not been home since the call-out. The caption says the Army does not know what to do with them. Nobody in the Department can say otherwise.",
     "trigger": {
       "conditions": [
-        { "key": "holding_pool", "op": ">", "value": 5000 }
+        {
+          "key": "holding_pool",
+          "op": ">",
+          "value": 5000
+        }
       ]
     },
     "weight": 4,
@@ -408,15 +619,25 @@
         "label": "Send the surplus home",
         "summary": "A fifth of the holding pool is released on deferred call-up; a little political capital is spent.",
         "effects": [
-          { "type": "pool_pct", "pool": "holdingPool", "pct": -20 },
-          { "type": "pc", "delta": -2 }
+          {
+            "type": "pool_pct",
+            "pool": "holdingPool",
+            "pct": -20
+          },
+          {
+            "type": "pc",
+            "delta": -2
+          }
         ]
       },
       {
         "label": "Keep them",
         "summary": "They stay, they are paid, they produce nothing, and the story runs for a month.",
         "effects": [
-          { "type": "pc", "delta": -5 }
+          {
+            "type": "pc",
+            "delta": -5
+          }
         ]
       }
     ]
@@ -427,8 +648,16 @@
     "text": "The first conscript cohorts have completed Phase Two. They are parading in training-issue clothing with no body armour, no helmets to scale and rifles on loan from the schools. No emergency equipment order has been placed. Until one is, they are not soldiers you can send anywhere.",
     "trigger": {
       "conditions": [
-        { "key": "equipment_buy_active", "op": "==", "value": 0 },
-        { "key": "conscripts_trained", "op": ">", "value": 500 }
+        {
+          "key": "equipment_buy_active",
+          "op": "==",
+          "value": 0
+        },
+        {
+          "key": "conscripts_trained",
+          "op": ">",
+          "value": 500
+        }
       ]
     },
     "weight": 4,
@@ -437,7 +666,10 @@
         "label": "Take the hit",
         "summary": "The political cost of the photographs, and nothing else changes.",
         "effects": [
-          { "type": "pc", "delta": -3 }
+          {
+            "type": "pc",
+            "delta": -3
+          }
         ]
       },
       {
@@ -448,7 +680,12 @@
             "type": "random",
             "chance": 0.5,
             "then": [],
-            "else": [{ "type": "pc", "delta": -6 }]
+            "else": [
+              {
+                "type": "pc",
+                "delta": -6
+              }
+            ]
           }
         ]
       }
@@ -460,8 +697,16 @@
     "text": "The junior NCOs running Phase One have been on a six-day week since the call-out and are sleeping in the accommodation blocks. Two have been medically downgraded this month, and one has resigned in a manner involving a fire extinguisher. The commandant asks for either more people or fewer recruits.",
     "trigger": {
       "conditions": [
-        { "key": "leadership_factor", "op": "<", "value": 0.85 },
-        { "key": "conscripts_in_training", "op": ">", "value": 0 }
+        {
+          "key": "leadership_factor",
+          "op": "<",
+          "value": 0.85
+        },
+        {
+          "key": "conscripts_in_training",
+          "op": ">",
+          "value": 0
+        }
       ]
     },
     "weight": 4,
@@ -470,15 +715,25 @@
         "label": "Rest the instructors",
         "summary": "Throughput dips for two months while the rota is rebuilt.",
         "effects": [
-          { "type": "capacity_multiplier", "factor": 0.85, "durationMonths": 2 }
+          {
+            "type": "capacity_multiplier",
+            "factor": 0.85,
+            "durationMonths": 2
+          }
         ]
       },
       {
         "label": "Press on",
         "summary": "The rota holds; more junior leaders are stripped from the field army and a little political capital is spent.",
         "effects": [
-          { "type": "leaders_spareable_add", "delta": -250 },
-          { "type": "pc", "delta": -2 }
+          {
+            "type": "leaders_spareable_add",
+            "delta": -250
+          },
+          {
+            "type": "pc",
+            "delta": -2
+          }
         ]
       }
     ]
@@ -489,8 +744,16 @@
     "text": "Phase One was 14 weeks before the crisis. Compressing it has not reduced the number of section commanders needed to run it. It has only reduced the time each of them has to make a soldier. The training schools report that they can fill the extra intake places or staff them, but not both.",
     "trigger": {
       "conditions": [
-        { "key": "syllabus_compressed", "op": "==", "value": 1 },
-        { "key": "conscripts_in_training", "op": ">", "value": 0 }
+        {
+          "key": "syllabus_compressed",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "key": "conscripts_in_training",
+          "op": ">",
+          "value": 0
+        }
       ]
     },
     "weight": 3,
@@ -499,21 +762,30 @@
         "label": "Accept the shortfall",
         "summary": "Throughput falls for a few months while the schools staff up.",
         "effects": [
-          { "type": "capacity_multiplier", "factor": 0.8, "durationMonths": 3 }
+          {
+            "type": "capacity_multiplier",
+            "factor": 0.8,
+            "durationMonths": 3
+          }
         ]
       },
       {
         "label": "Strip the field army",
         "summary": "More junior leaders are pulled into the schools; the leadership factor over the conscript force drops.",
         "effects": [
-          { "type": "leaders_spareable_add", "delta": -300 }
+          {
+            "type": "leaders_spareable_add",
+            "delta": -300
+          }
         ]
       }
     ],
     "source": {
       "name": "House of Lords written question HL1629, answered 26 February 2020",
       "url": "https://questions-statements.parliament.uk/written-questions/detail/2020-02-13/hl1629",
-      "paramIds": ["phase1_weeks"]
+      "paramIds": [
+        "phase1_weeks"
+      ]
     }
   },
   {
@@ -526,7 +798,11 @@
       "cooldownMonths": 6,
       "maxFires": 2,
       "conditions": [
-        { "key": "cumulative_cost", "op": ">", "value": 5000000000 }
+        {
+          "key": "cumulative_cost",
+          "op": ">",
+          "value": 5000000000
+        }
       ]
     },
     "weight": 3,
@@ -535,7 +811,10 @@
         "label": "Send the Permanent Secretary",
         "summary": "The Accounting Officer takes the hearing; a modest political cost.",
         "effects": [
-          { "type": "pc", "delta": -2 }
+          {
+            "type": "pc",
+            "delta": -2
+          }
         ]
       },
       {
@@ -545,8 +824,18 @@
           {
             "type": "random",
             "chance": 0.5,
-            "then": [{ "type": "pc", "delta": 3 }],
-            "else": [{ "type": "pc", "delta": -5 }]
+            "then": [
+              {
+                "type": "pc",
+                "delta": 3
+              }
+            ],
+            "else": [
+              {
+                "type": "pc",
+                "delta": -5
+              }
+            ]
           }
         ]
       }
@@ -554,7 +843,9 @@
     "source": {
       "name": "Written answer (Luke Pollard MP to James Cartlidge MP), FY2023-24 Phase 1 cost at ATC Pirbright, as reported by UK Defence Journal, 22 October 2024",
       "url": "https://ukdefencejournal.org.uk/how-much-does-it-cost-to-train-a-british-army-recruit/",
-      "paramIds": ["training_cost_per_recruit"]
+      "paramIds": [
+        "training_cost_per_recruit"
+      ]
     }
   },
   {
@@ -563,8 +854,16 @@
     "text": "The employers' organisations have written jointly, using the Treasury's own figures: each person removed from the workforce is worth £51,100 a year in wages alone and £88,800 in output. They note that the Government is removing the youngest and the healthiest, and ask which industries are to be protected.",
     "trigger": {
       "conditions": [
-        { "key": "conscription_active", "op": "==", "value": 1 },
-        { "key": "cumulative_gdp_loss", "op": ">", "value": 2000000000 }
+        {
+          "key": "conscription_active",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "key": "cumulative_gdp_loss",
+          "op": ">",
+          "value": 2000000000
+        }
       ]
     },
     "weight": 3,
@@ -573,22 +872,34 @@
         "label": "Widen the exemptions schedule",
         "summary": "The eligible pool shrinks by a tenth; the employers are placated.",
         "effects": [
-          { "type": "eligible_pool_pct", "pct": -10 },
-          { "type": "pc", "delta": 2 }
+          {
+            "type": "eligible_pool_pct",
+            "pct": -10
+          },
+          {
+            "type": "pc",
+            "delta": 2
+          }
         ]
       },
       {
         "label": "Refuse",
         "summary": "The letter is published; some political cost.",
         "effects": [
-          { "type": "pc", "delta": -3 }
+          {
+            "type": "pc",
+            "delta": -3
+          }
         ]
       }
     ],
     "source": {
       "name": "ONS: compensation of employees 2025 (DTWM) per employee (MGRN); GDP 2025 (YBHA) per person in employment (MGRZ)",
       "url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/dtwm",
-      "paramIds": ["output_per_worker_labour_share", "output_per_worker_gross"]
+      "paramIds": [
+        "output_per_worker_labour_share",
+        "output_per_worker_gross"
+      ]
     }
   },
   {
@@ -597,8 +908,16 @@
     "text": "A coalition of charities has been granted permission to seek judicial review of the exemptions schedule. Their case is that a minimal schedule is irrational and that the consultation lasted a fortnight. Counsel say the Department has a case. Counsel are paid to say that.",
     "trigger": {
       "conditions": [
-        { "key": "exemptions", "op": "==", "value": 2 },
-        { "key": "bill_status", "op": "==", "value": 2 }
+        {
+          "key": "exemptions",
+          "op": "==",
+          "value": 2
+        },
+        {
+          "key": "bill_status",
+          "op": "==",
+          "value": 2
+        }
       ]
     },
     "weight": 4,
@@ -610,10 +929,21 @@
           {
             "type": "random",
             "chance": 0.5,
-            "then": [{ "type": "pc", "delta": 2 }],
+            "then": [
+              {
+                "type": "pc",
+                "delta": 2
+              }
+            ],
             "else": [
-              { "type": "pc", "delta": -6 },
-              { "type": "exemptions", "regime": "broad" }
+              {
+                "type": "pc",
+                "delta": -6
+              },
+              {
+                "type": "exemptions",
+                "regime": "broad"
+              }
             ]
           }
         ]
@@ -622,8 +952,14 @@
         "label": "Settle",
         "summary": "The schedule is widened to the broad regime now; a small political cost.",
         "effects": [
-          { "type": "exemptions", "regime": "broad" },
-          { "type": "pc", "delta": -2 }
+          {
+            "type": "exemptions",
+            "regime": "broad"
+          },
+          {
+            "type": "pc",
+            "delta": -2
+          }
         ]
       }
     ]
@@ -635,7 +971,11 @@
     "trigger": {
       "minTurn": 2,
       "conditions": [
-        { "key": "bill_status", "op": ">=", "value": 1 }
+        {
+          "key": "bill_status",
+          "op": ">=",
+          "value": 1
+        }
       ]
     },
     "weight": 3,
@@ -644,16 +984,29 @@
         "label": "Negotiate",
         "summary": "Some local flexibility is conceded and a small share of the pool is lost.",
         "effects": [
-          { "type": "eligible_pool_pct", "pct": -5 },
-          { "type": "pc", "delta": -1 }
+          {
+            "type": "eligible_pool_pct",
+            "pct": -5
+          },
+          {
+            "type": "pc",
+            "delta": -1
+          }
         ]
       },
       {
         "label": "Overrule",
         "summary": "Political cost, and willingness to serve dips for a time.",
         "effects": [
-          { "type": "pc", "delta": -4 },
-          { "type": "willingness", "delta": -2, "durationMonths": 3 }
+          {
+            "type": "pc",
+            "delta": -4
+          },
+          {
+            "type": "willingness",
+            "delta": -2,
+            "durationMonths": 3
+          }
         ]
       }
     ]
@@ -668,8 +1021,16 @@
       "cooldownMonths": 4,
       "maxFires": 2,
       "conditions": [
-        { "key": "conscripts_trained", "op": ">", "value": 0 },
-        { "key": "force_quality", "op": "<", "value": 0.6 }
+        {
+          "key": "conscripts_trained",
+          "op": ">",
+          "value": 0
+        },
+        {
+          "key": "force_quality",
+          "op": "<",
+          "value": 0.6
+        }
       ]
     },
     "weight": 3,
@@ -688,15 +1049,25 @@
         "label": "Say nothing",
         "summary": "The story runs its course; political cost.",
         "effects": [
-          { "type": "pc", "delta": -4 }
+          {
+            "type": "pc",
+            "delta": -4
+          }
         ]
       },
       {
         "label": "Publish the whole series",
         "summary": "Candour is expensive, but willingness to serve edges up for a time.",
         "effects": [
-          { "type": "pc", "delta": -2 },
-          { "type": "willingness", "delta": 2, "durationMonths": 3 }
+          {
+            "type": "pc",
+            "delta": -2
+          },
+          {
+            "type": "willingness",
+            "delta": 2,
+            "durationMonths": 3
+          }
         ]
       }
     ]
@@ -708,7 +1079,11 @@
     "trigger": {
       "minTurn": 2,
       "conditions": [
-        { "key": "address_count", "op": ">=", "value": 1 }
+        {
+          "key": "address_count",
+          "op": ">=",
+          "value": 1
+        }
       ]
     },
     "weight": 3,
@@ -717,22 +1092,35 @@
         "label": "Fast-track them",
         "summary": "Costs money for extra assessment capacity; the regular pipeline gains a few hundred more entrants.",
         "effects": [
-          { "type": "cost", "gbp": 20000000 },
-          { "type": "pool", "pool": "regularUntrained", "delta": 600 }
+          {
+            "type": "cost",
+            "gbp": 20000000
+          },
+          {
+            "type": "pool",
+            "pool": "regularUntrained",
+            "delta": 600
+          }
         ]
       },
       {
         "label": "Let the system cope",
         "summary": "A smaller number get through the process this month.",
         "effects": [
-          { "type": "pool", "pool": "regularUntrained", "delta": 250 }
+          {
+            "type": "pool",
+            "pool": "regularUntrained",
+            "delta": 250
+          }
         ]
       }
     ],
     "source": {
       "name": "MoD Service Personnel Statistics, 1 July 2026, Table 5a (Army untrained intake, 12 months to 30 June 2026)",
       "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
-      "paramIds": ["regular_untrained_intake_annual"]
+      "paramIds": [
+        "regular_untrained_intake_annual"
+      ]
     }
   },
   {
@@ -742,7 +1130,11 @@
     "trigger": {
       "minTurn": 3,
       "conditions": [
-        { "key": "stop_loss", "op": "==", "value": 0 }
+        {
+          "key": "stop_loss",
+          "op": "==",
+          "value": 0
+        }
       ]
     },
     "weight": 3,
@@ -751,23 +1143,39 @@
         "label": "Offer a retention payment",
         "summary": "Costs money; a few hundred withdraw their notice.",
         "effects": [
-          { "type": "cost", "gbp": 120000000 },
-          { "type": "pool", "pool": "regularTrained", "delta": 400 }
+          {
+            "type": "cost",
+            "gbp": 120000000
+          },
+          {
+            "type": "pool",
+            "pool": "regularTrained",
+            "delta": 400
+          }
         ]
       },
       {
         "label": "Let them go",
         "summary": "The field army loses a few hundred experienced soldiers, and some junior leaders with them.",
         "effects": [
-          { "type": "pool", "pool": "regularTrained", "delta": -400 },
-          { "type": "leaders_spareable_add", "delta": -150 }
+          {
+            "type": "pool",
+            "pool": "regularTrained",
+            "delta": -400
+          },
+          {
+            "type": "leaders_spareable_add",
+            "delta": -150
+          }
         ]
       }
     ],
     "source": {
       "name": "MoD Service Personnel Statistics, 1 July 2026, Tables 4 and 5d (Army trade-trained voluntary outflow, 12 months to 30 June 2026)",
       "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
-      "paramIds": ["regular_voluntary_outflow_annual"]
+      "paramIds": [
+        "regular_voluntary_outflow_annual"
+      ]
     }
   },
   {
@@ -780,7 +1188,11 @@
       "cooldownMonths": 4,
       "maxFires": 3,
       "conditions": [
-        { "key": "political_capital", "op": "<", "value": 30 }
+        {
+          "key": "political_capital",
+          "op": "<",
+          "value": 30
+        }
       ]
     },
     "weight": 4,
@@ -792,8 +1204,18 @@
           {
             "type": "random",
             "chance": 0.6,
-            "then": [{ "type": "pc", "delta": 3 }],
-            "else": [{ "type": "pc", "delta": -6 }]
+            "then": [
+              {
+                "type": "pc",
+                "delta": 3
+              }
+            ],
+            "else": [
+              {
+                "type": "pc",
+                "delta": -6
+              }
+            ]
           }
         ]
       },
@@ -801,8 +1223,15 @@
         "label": "Concede an independent review",
         "summary": "A small cost now and a review that will report after the deadline.",
         "effects": [
-          { "type": "pc", "delta": -2 },
-          { "type": "flag", "flag": "review_conceded", "value": true }
+          {
+            "type": "pc",
+            "delta": -2
+          },
+          {
+            "type": "flag",
+            "flag": "review_conceded",
+            "value": true
+          }
         ]
       }
     ]
@@ -814,7 +1243,11 @@
     "trigger": {
       "minTurn": 4,
       "conditions": [
-        { "key": "strategic_traced", "op": "==", "value": 1 }
+        {
+          "key": "strategic_traced",
+          "op": "==",
+          "value": 1
+        }
       ]
     },
     "weight": 3,
@@ -822,7 +1255,9 @@
     "source": {
       "name": "Derived: 95,000 Strategic Reserve liability (Forces News, 15 January 2026) less 34,755 tracked (MoD SPS 1 July 2026, Table 8a)",
       "url": "https://www.forcesnews.com/services/tri-service/strategic-reserve-age-limit-raised-65-so-more-can-be-recalled-should-war-loom",
-      "paramIds": ["strategic_reserve_untracked_tri_service"]
+      "paramIds": [
+        "strategic_reserve_untracked_tri_service"
+      ]
     }
   },
   {
@@ -838,7 +1273,10 @@
     "source": {
       "name": "Forces News, 13 November 2025 (AFC Harrogate non-completion 2018–2023); minimum deployment age of 18",
       "url": "https://www.forcesnews.com/services/gurkhas/gurkha-recruits-record-perfect-pass-rate-wider-army-dropout-figures-revealed",
-      "paramIds": ["junior_entry_attrition", "junior_entry_lead_months"]
+      "paramIds": [
+        "junior_entry_attrition",
+        "junior_entry_lead_months"
+      ]
     }
   },
   {
@@ -847,8 +1285,16 @@
     "text": "The Bill excludes women. The Department's polling file records that 72% of the public supported including them when last asked. The population tables show that excluding them roughly halves the eligible pool. The Opposition has noticed both figures. An amendment is available to you.",
     "trigger": {
       "conditions": [
-        { "key": "include_women", "op": "==", "value": 0 },
-        { "key": "bill_status", "op": ">=", "value": 1 }
+        {
+          "key": "include_women",
+          "op": "==",
+          "value": 0
+        },
+        {
+          "key": "bill_status",
+          "op": ">=",
+          "value": 1
+        }
       ]
     },
     "weight": 4,
@@ -856,7 +1302,11 @@
     "source": {
       "name": "YouGov daily results, 26 January 2024; ONS mid-2025 population estimates for England and Wales (MYE2)",
       "url": "https://yougov.com/en-gb/daily-results/20240126-2b544-3",
-      "paramIds": ["women_included_support_pct", "ew_pop_18_30", "ew_pop_f_18_30"]
+      "paramIds": [
+        "women_included_support_pct",
+        "ew_pop_18_30",
+        "ew_pop_f_18_30"
+      ]
     }
   },
   {
@@ -865,8 +1315,16 @@
     "text": "In the nineteen months to last January the Army rejected 45,680 applications on medical grounds. The call-up is applying the same standard to the cohort and getting the same answer. The Surgeon General notes that a standard designed to keep people out of a volunteer army was never designed to let them into a conscript one.",
     "trigger": {
       "conditions": [
-        { "key": "medical_standard", "op": "==", "value": 0 },
-        { "key": "conscription_active", "op": "==", "value": 1 }
+        {
+          "key": "medical_standard",
+          "op": "==",
+          "value": 0
+        },
+        {
+          "key": "conscription_active",
+          "op": "==",
+          "value": 1
+        }
       ]
     },
     "weight": 3,
@@ -875,8 +1333,14 @@
         "label": "Relax the standard",
         "summary": "The eligible pool grows, training attrition rises a little, and the usual political cost applies.",
         "effects": [
-          { "type": "medical_standard", "standard": "relaxed" },
-          { "type": "pc", "delta": -3 }
+          {
+            "type": "medical_standard",
+            "standard": "relaxed"
+          },
+          {
+            "type": "pc",
+            "delta": -3
+          }
         ]
       },
       {
@@ -888,7 +1352,9 @@
     "source": {
       "name": "Written question 116544 (James Cartlidge MP), answered 9 March 2026: Army applications rejected on medical grounds, 5 July 2024 to 31 January 2026",
       "url": "https://questions-statements.parliament.uk/written-questions/detail/2026-02-27/116544/",
-      "paramIds": ["army_medical_rejections_jul24_jan26"]
+      "paramIds": [
+        "army_medical_rejections_jul24_jan26"
+      ]
     }
   },
   {
@@ -898,7 +1364,11 @@
     "trigger": {
       "minTurn": 2,
       "conditions": [
-        { "key": "conscription_active", "op": "==", "value": 1 }
+        {
+          "key": "conscription_active",
+          "op": "==",
+          "value": 1
+        }
       ]
     },
     "weight": 4,
@@ -907,24 +1377,44 @@
         "label": "Give the military priority",
         "summary": "Service applicants go to the front of the queue and clearances keep pace with the call-up; the Home Office will have something to say about the rest of the queue.",
         "effects": [
-          { "type": "vetting_priority", "military": true },
-          { "type": "pc", "delta": -1 }
+          {
+            "type": "vetting_priority",
+            "military": true
+          },
+          {
+            "type": "pc",
+            "delta": -1
+          }
         ]
       },
       {
         "label": "Lower the threshold",
         "summary": "A shorter check, applied faster: the call-up is not held back, and a backlog of cleared volunteers is released into the regular pipeline.",
         "effects": [
-          { "type": "vetting_relax", "relaxed": true },
-          { "type": "pool", "pool": "regularUntrained", "delta": 1500 },
-          { "type": "pc", "delta": -2 }
+          {
+            "type": "vetting_relax",
+            "relaxed": true
+          },
+          {
+            "type": "pool",
+            "pool": "regularUntrained",
+            "delta": 1500
+          },
+          {
+            "type": "pc",
+            "delta": -2
+          }
         ]
       },
       {
         "label": "Leave it to them",
         "summary": "The queue clears at its own pace over the next half-year, and until it does the monthly call-up cannot run ahead of what vetting can clear.",
         "effects": [
-          { "type": "callup_cap", "param": "vetting_throughput_monthly", "durationMonths": 6 }
+          {
+            "type": "callup_cap",
+            "param": "vetting_throughput_monthly",
+            "durationMonths": 6
+          }
         ]
       }
     ]
@@ -935,7 +1425,11 @@
     "text": "The Commissioner has written to the Home Secretary and copied the letter to you. Police recruitment has stalled: officers who passed their boards in the spring are still waiting on clearances that now go to the Army first, and two forces have started to lose candidates to other work. The letter is polite, detailed, and already with the Lobby.",
     "trigger": {
       "conditions": [
-        { "key": "vetting_priority_months", "op": ">=", "value": 2 }
+        {
+          "key": "vetting_priority_months",
+          "op": ">=",
+          "value": 2
+        }
       ]
     },
     "weight": 5,
@@ -944,17 +1438,33 @@
         "label": "Return the police their slots",
         "summary": "Vetting goes back to a shared queue; the call-up is held to what the teams can clear for the next half-year, and the Home Secretary is satisfied.",
         "effects": [
-          { "type": "vetting_priority", "military": false },
-          { "type": "callup_cap", "param": "vetting_throughput_monthly", "durationMonths": 6 },
-          { "type": "pc", "delta": 2 }
+          {
+            "type": "vetting_priority",
+            "military": false
+          },
+          {
+            "type": "callup_cap",
+            "param": "vetting_throughput_monthly",
+            "durationMonths": 6
+          },
+          {
+            "type": "pc",
+            "delta": 2
+          }
         ]
       },
       {
         "label": "Hold the priority",
         "summary": "The Army keeps the queue. The letter is published, the Home Office briefs against the Department, and the police numbers will be remembered if the division is not raised.",
         "effects": [
-          { "type": "pc", "delta": -5 },
-          { "type": "scoring_pc_if_missed", "delta": -2 }
+          {
+            "type": "pc",
+            "delta": -5
+          },
+          {
+            "type": "scoring_pc_if_missed",
+            "delta": -2
+          }
         ]
       }
     ]
@@ -965,7 +1475,11 @@
     "text": "A recruit cleared under the shortened check has been arrested at his depot. He had been dismissed from a police force for cause, and had written things in public that the old check would have found in an afternoon. The Ministry of Defence Police want to know how many more like him are in training, and so does everybody else.",
     "trigger": {
       "conditions": [
-        { "key": "vetting_relaxed_months", "op": ">=", "value": 3 }
+        {
+          "key": "vetting_relaxed_months",
+          "op": ">=",
+          "value": 3
+        }
       ]
     },
     "weight": 5,
@@ -974,18 +1488,38 @@
         "label": "Re-screen the whole intake",
         "summary": "The full check is restored and everyone cleared since the change is screened again; the call-up is held down while it is done, and it is not cheap.",
         "effects": [
-          { "type": "vetting_relax", "relaxed": false },
-          { "type": "callup_cap", "param": "vetting_rescreen_throughput_monthly", "durationMonths": 4 },
-          { "type": "cost", "gbp": 25000000 },
-          { "type": "pc", "delta": -2 }
+          {
+            "type": "vetting_relax",
+            "relaxed": false
+          },
+          {
+            "type": "callup_cap",
+            "param": "vetting_rescreen_throughput_monthly",
+            "durationMonths": 4
+          },
+          {
+            "type": "cost",
+            "gbp": 25000000
+          },
+          {
+            "type": "pc",
+            "delta": -2
+          }
         ]
       },
       {
         "label": "Say it was one man",
         "summary": "The shortened check stays. The story runs for weeks, the Department is asked each day how many more there are, and willingness to serve falls with it.",
         "effects": [
-          { "type": "pc", "delta": -6 },
-          { "type": "willingness", "delta": -3, "durationMonths": 6 }
+          {
+            "type": "pc",
+            "delta": -6
+          },
+          {
+            "type": "willingness",
+            "delta": -3,
+            "durationMonths": 6
+          }
         ]
       }
     ]

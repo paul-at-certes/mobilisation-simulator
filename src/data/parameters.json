@@ -183,15 +183,73 @@
       "label": "Reservists who actually deploy",
       "description": "Share of the trained Army Reserve that reports, passes medical and is available on call-out.",
       "section": "reserves",
-      "source": "Modelling assumption",
-      "url": "",
-      "asOf": "2026-09-11",
-      "confidence": "assumption",
-      "range": [
-        0.4,
-        0.75
-      ],
-      "rationale": "Since October 2016 the Army Reserve 'trained' strength counts anyone who has completed Phase 1 (SPS note 32), so part of it is not trade-trained; 1,720 are already on full-time service and 615 already mobilised; medical downgrades and employer or family exemptions remove more."
+      "source": "Derived from House of Commons Defence Committee, Lessons of Iraq, Third Report of Session 2003-04, HC 57-I, chapter 5 (Use of Reserves); MoD Service Personnel Statistics, 1 July 2026, Table 6a",
+      "url": "https://publications.parliament.uk/pa/cm200304/cmselect/cmdfence/57/5709.htm",
+      "asOf": "2004-03-16",
+      "confidence": "derived",
+      "derivation": "Two stages. Structural: of 23,517 trained Army Reserve (SPS Table 6a), 1,720 are on full-time reserve service and 615 already mobilised, leaving 0.901 of the strength available to be served a notice. Empirical: reserve_mobilisation_acceptance_rate, 0.579 of notices served were accepted into service on Operation Telic 1. 0.901 x 0.579 = 0.522, held at 0.50.",
+      "note": "This was an assumption of 0.50 reasoned from the composition of the trained figure; Operation Telic gives the first primary measurement of the same quantity and puts it at 0.52, so the value is unchanged and its standing is not. Held at 0.50 rather than raised to 0.52 because the Telic denominator had already been filtered for expected wastage (HC 57 paragraph 112) and because the trained figure has counted Phase-1-only personnel since October 2016 (SPS note 32), neither of which the two stages above capture. Both push the true figure below 0.522, not above it."
+    },
+    "reserve_mobilisation_acceptance_rate": {
+      "value": 0.579,
+      "unit": "ratio",
+      "label": "Reservists accepted per call-out notice",
+      "description": "Share of Army reservists served a compulsory call-out notice who were accepted into service, after non-reporting, medical failure and exemption.",
+      "section": "reserves",
+      "source": "Derived from House of Commons Defence Committee, Lessons of Iraq, Third Report of Session 2003-04, HC 57-I, chapter 5 (Use of Reserves)",
+      "url": "https://publications.parliament.uk/pa/cm200304/cmselect/cmdfence/57/5709.htm",
+      "asOf": "2004-03-16",
+      "confidence": "derived",
+      "derivation": "Operation Telic 1, Army, HC 57 Table 1: 3,787 accepted into service / 6,540 call-out notices served = 0.579. Tri-service the same table gives 5,221 / 8,492 = 0.615.",
+      "note": "The denominator is notices served, not the trained reserve: HC 57 paragraph 112 records that MoD made allowance for expected wastage before deciding whom to serve. The rate therefore sits downstream of a list that had already been filtered."
+    },
+    "reserve_exemption_application_rate": {
+      "value": 0.247,
+      "unit": "ratio",
+      "label": "Call-out notices contested",
+      "description": "Share of call-out notices that produced an application for exemption or deferral, from the reservist or the employer.",
+      "section": "reserves",
+      "source": "Derived from House of Commons Defence Committee, Lessons of Iraq, Third Report of Session 2003-04, HC 57-I, chapter 5 (Use of Reserves)",
+      "url": "https://publications.parliament.uk/pa/cm200304/cmselect/cmdfence/57/5709.htm",
+      "asOf": "2004-03-16",
+      "confidence": "derived",
+      "derivation": "Operation Telic 1, HC 57 paragraph 113: 2,021 applications for exemption + 80 for deferral = 2,101, against 8,492 notices served (Table 1) = 0.247."
+    },
+    "reserve_exemption_employer_share": {
+      "value": 0.455,
+      "unit": "ratio",
+      "label": "Exemption applications made by employers",
+      "description": "Share of applications for exemption from call-out that came from the reservist's employer rather than the reservist.",
+      "section": "reserves",
+      "source": "Derived from House of Commons Defence Committee, Lessons of Iraq, Third Report of Session 2003-04, HC 57-I, chapter 5 (Use of Reserves)",
+      "url": "https://publications.parliament.uk/pa/cm200304/cmselect/cmdfence/57/5709.htm",
+      "asOf": "2004-03-16",
+      "confidence": "derived",
+      "derivation": "Operation Telic 1, HC 57 paragraph 113: of 2,021 applications for exemption, 920 were from employers and 1,101 from reservists. 920 / 2,021 = 0.455."
+    },
+    "reserve_medical_fail_ex_regular": {
+      "value": 0.48,
+      "unit": "ratio",
+      "label": "Ex-regulars failing the mobilisation medical",
+      "description": "Share of Regular Reserve personnel who reported to the mobilisation centre and failed the medical.",
+      "section": "reserves",
+      "source": "House of Commons Defence Committee, Lessons of Iraq, Third Report of Session 2003-04, HC 57-I, chapter 5 (Use of Reserves)",
+      "url": "https://publications.parliament.uk/pa/cm200304/cmselect/cmdfence/57/5709.htm",
+      "asOf": "2004-03-16",
+      "confidence": "primary",
+      "note": "HC 57 paragraph 119, on the Reserves Training and Mobilisation Centre at Chilwell. The Committee recommended MoD consider how to return these reservists to being fit for role."
+    },
+    "reserve_medical_fail_volunteer": {
+      "value": 0.14,
+      "unit": "ratio",
+      "label": "Volunteer reservists failing the mobilisation medical",
+      "description": "Share of Territorial Army personnel who reported to the mobilisation centre and failed the medical.",
+      "section": "reserves",
+      "source": "House of Commons Defence Committee, Lessons of Iraq, Third Report of Session 2003-04, HC 57-I, chapter 5 (Use of Reserves)",
+      "url": "https://publications.parliament.uk/pa/cm200304/cmselect/cmdfence/57/5709.htm",
+      "asOf": "2004-03-16",
+      "confidence": "primary",
+      "note": "HC 57 paragraph 119. The 48% / 14% gap between the ex-regular and volunteer reserves is the only primary measurement of that asymmetry the model has."
     },
     "reserve_notice_days_default": {
       "value": 180,
@@ -280,9 +338,9 @@
       "confidence": "assumption",
       "range": [
         0.3,
-        0.7
+        0.52
       ],
-      "rationale": "The MoD has acknowledged that address records for the Regular Reserve are incomplete; medical and age exemptions remove more."
+      "rationale": "The MoD has acknowledged that address records for the Regular Reserve are incomplete; medical and age exemptions remove more. Now an upper bound rather than a central estimate: reserve_medical_fail_ex_regular puts the medical failure rate for ex-regulars who actually reported at 0.48 (HC 57 paragraph 119), so the medical alone leaves 0.52 before any allowance for records or age. Lowering it is a balance change and has not been made; see docs/design-review.md F11."
     },
     "ex_regular_report_rate_monthly": {
       "value": 0.2,

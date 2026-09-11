@@ -85,40 +85,40 @@ leadership factor at the end.
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
 | do_nothing | 3,591 | 3,611 | 3,611 | 0 | 0 | 1.00 |
-| reserves_only | 16,413 | 18,661 | 19,999 | 100 | 0 | 1.00 |
-| reserves_plus_light | 17,298 | 19,131 | 20,198 | 100 | 0 | 1.00 |
+| reserves_only | 16,978 | 18,828 | 19,999 | 100 | 0 | 1.00 |
+| reserves_plus_light | 17,722 | 19,199 | 20,198 | 100 | 0 | 1.00 |
 | conscription_max_capacity | 3,466 | 3,466 | 3,486 | 0 | 0 | 1.00 |
 | conscription_over_capacity | 3,560 | 3,560 | 3,580 | 0 | 0 | 1.00 |
-| capacity_heavy | 12,802 | 14,402 | 14,402 | 100 | 0 | 1.00 |
-| max_effort | 11,336 | 12,936 | 12,936 | 100 | 0 | 1.00 |
+| capacity_heavy | 13,367 | 14,402 | 14,402 | 100 | 0 | 1.00 |
+| max_effort | 11,901 | 12,936 | 12,936 | 100 | 0 | 1.00 |
 
 ### Division — target 22,000 in 12 months
 
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
 | do_nothing | 3,699 | 3,699 | 3,699 | 0 | 0 | 1.00 |
-| reserves_only | 20,576 | 21,592 | 22,863 | 33 | 0 | 1.00 |
-| **reserves_plus_light** | 21,297 | **21,951** | 22,446 | **43** | 0 | 0.95 |
+| reserves_only | 19,401 | 20,466 | 21,702 | **3** | 0 | 1.00 |
+| **reserves_plus_light** | 20,803 | **21,910** | 22,934 | **45** | 0 | 0.94 |
 | conscription_max_capacity | 4,974 | 5,418 | 5,866 | 0 | 10 | 0.60 |
 | conscription_over_capacity | 4,307 | 4,915 | 5,256 | 0 | 80 | 1.00 |
-| capacity_heavy | 18,630 | 19,048 | 20,764 | 0 | 0 | 0.64 |
-| max_effort | 16,371 | 16,788 | 18,859 | 0 | 0 | 0.45 |
+| capacity_heavy | 18,322 | 19,427 | 20,764 | 0 | 0 | 0.64 |
+| max_effort | 15,958 | 17,336 | 18,897 | 0 | 0 | 0.45 |
 
 ### Corps — target 45,000 in 24 months
 
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
 | do_nothing | 3,742 | 3,764 | 3,797 | 0 | **100** | 1.00 |
-| reserves_only | 21,540 | 22,621 | 23,893 | 0 | 25 | 1.00 |
-| **reserves_plus_light** | 23,854 | **23,928** | 24,068 | 0 | **33** | 0.68 |
+| reserves_only | 20,365 | 21,446 | 22,717 | 0 | 38 | 1.00 |
+| **reserves_plus_light** | 22,575 | **22,737** | 22,898 | 0 | **35** | 0.68 |
 | conscription_max_capacity | 6,568 | 7,251 | 7,968 | 0 | 100 | 0.35 |
 | conscription_over_capacity | 4,307 | 4,915 | 5,805 | 0 | 100 | 1.00 |
-| capacity_heavy | 21,089 | 21,311 | 21,887 | 0 | 10 | 0.40 |
-| max_effort | 18,729 | 19,423 | 20,210 | 0 | 35 | 0.27 |
+| capacity_heavy | 19,956 | 20,288 | 20,875 | 0 | 15 | 0.40 |
+| max_effort | 17,762 | 18,536 | 19,076 | 0 | 38 | 0.27 |
 
 **The three numbers to watch.** If any of these drifts, something has broken:
 
-- `reserves_plus_light` at Division meets the target on **43%** of seeds. Below
+- `reserves_plus_light` at Division meets the target on **45%** of seeds. Below
   ~25% the headline difficulty is a coin flip again (F2); above ~65% it is a
   walkover.
 - The median leadership factor for `capacity_heavy` and `max_effort` is **0.64
@@ -132,7 +132,7 @@ leadership factor at the end.
 
 ## Findings
 
-### F1 — The game plays itself after turn 1 · *Partly addressed*
+### F1 — The game plays itself after turn 1 · *Addressed*
 
 **Symptom.** Almost all of the score arrives from decisions taken on Day 0, on
 a timer, with no further input.
@@ -150,18 +150,42 @@ action each, then they arrive on a schedule. Together they were 16,800 of the
 **What was done.** The forecast line (F5) makes the lag legible, and the
 leadership change (F3) turned capacity purchases from a free buy into a trade.
 
-**The residue, and it is real.** The marginal value of active play at Division
-is now **+359 median ESE (1.7%)** over pure reserves. It matters only because
-the target happens to sit inside that gap — met% goes 33% → 43%. That is thin.
-The underlying shape is unchanged: the reserve levers are still one-shot
+**The residue as recorded.** The marginal value of active play at Division was
+**+359 median ESE (1.7%)** over pure reserves. It mattered only because the
+target happened to sit inside that gap — met% went 33% → 43%. That was thin,
+and the underlying shape was unchanged: the reserve levers were still one-shot
 switches with no ongoing decision.
 
-**The fix worth trying.** Give mobilised reserves an ongoing cost that scales
-with how many you hold, so keeping them is a monthly decision rather than a
-free accumulation. The `reservist_employers` event (NHS ward closures) is
-already the seed of this; it fires once and removes 2,000 people. Making that
-pressure continuous and proportional would put a decision in every month of
-the middle game without any new screens.
+**The fix, taken.** The residue entry named it: *"give mobilised reserves an
+ongoing cost that scales with how many you hold… the `reservist_employers`
+event is already the seed of this; it fires once and removes 2,000 people."*
+That event is now the adjudication of exemption applications under the Reserve
+Forces Act — recurring up to three times on a three-month cooldown, and
+proportional rather than flat, at **−11% of the mobilised strength** each time.
+The magnitude is sourced: 24.7% of call-out notices were contested on Operation
+Telic 1, and 45.5% of the exemption applications came from employers rather
+than from reservists (HC 57 ¶113); 0.247 × 0.455 = 0.112.
+
+**What it did.**
+
+| at Division | before | after |
+|---|---|---|
+| `reserves_only` median | 21,592 | **20,466** |
+| `reserves_plus_light` median | 21,951 | **21,910** |
+| marginal value of active play | +359 (1.7%) | **+1,444 (7.1%)** |
+| `reserves_only` met% | 33 | **3** |
+| `reserves_plus_light` met% | 43 | **45** |
+
+Reserves alone no longer make a division; reserves plus a restrained pipeline
+still do, on 45% of seeds. The one-shot shape is gone — the event fires its
+full three times in 38 of 40 Corps runs, spread through the middle game, and
+each firing is a real choice between soldiers and political capital.
+
+**The residue of the residue.** Every scripted strategy takes choice 0, which
+is the *release* arm, so all of the above is a floor. A player who refuses and
+pays the capital keeps the soldiers — which is the decision, and no bot ever
+makes it. Do not treat the Division figures as settled until a human has played
+against this event.
 
 ---
 
@@ -550,6 +574,38 @@ The mitigation already in place is that `reserves_plus_light` is *also* active
 play, just restrained, and it is the best performer. So the lesson is "choose
 well", not "do nothing". Watch for the reading going wrong in playtests. If it
 does, the answer is a supply-side lever (below), not a softer factor.
+
+---
+
+### F11 — The ex-regular ceiling is now an upper bound, not an estimate · *Watch*
+
+`ex_regular_report_ceiling` is 0.50: the share of the tracked Ex-Regular
+Reserve who ever report. It was an assumption reasoned from two effects —
+incomplete address records, and medical and age exemptions.
+
+HC 57 ¶119 measures one of those directly. Of the Regular Reserve personnel
+who **actually turned up** at the mobilisation centre on Operation Telic,
+**48% failed the medical**, against **14% of the Territorial Army**. So the
+medical alone leaves 0.52 of those who report, before any allowance for the
+records the MoD has admitted are incomplete, or for age.
+
+That makes 0.50 an upper bound rather than a central estimate: the true figure
+is below it, probably well below. **The value has not been changed**, because
+lowering it is a balance change and not a sourcing one, and it would land on
+the same strategies F1's employer change has just moved. Its range is tightened
+to [0.30, 0.52] and its rationale now says so.
+
+**Two things this is good for regardless.** The 48%/14% split is the only
+primary measurement the model has of the ex-regular-versus-volunteer
+asymmetry, and the model currently treats the two as differing only in
+effectiveness, not in who arrives at all. And it is the honest answer to any
+future argument that the ex-regular recall should yield more: it should almost
+certainly yield less.
+
+**Watch for.** If a later pass lowers this, re-run the benchmark — `where_are_they`
+and the whole ex-regular branch sit downstream of it, and at Corps the
+ex-regular tail is what the delivery credit (F6) is being paid on from about
+month 8.
 
 ---
 

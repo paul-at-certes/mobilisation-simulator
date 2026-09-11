@@ -62,7 +62,7 @@ availability and displayed PC delta. Rules:
 
 | Action | Available when | Effect | PC |
 |---|---|---|---|
-| `call_out_reserve` {notice} | not yet called out | `reserveCalledOut = true`; `reserveNotice = notice`; schedule arrival of `reserveVolunteerAvailable × reserve_volunteer_deployable_fraction` at `turn + reserve_arrival_months_default` (180) or `_amended` (90). Move that many from Available → Pending. | `pc_cost_call_out_reserve`, plus `pc_cost_ninety_day_notice` if notice = 90 |
+| `call_out_reserve` {notice} | not yet called out | `reserveCalledOut = true`; `reserveNotice = notice`; schedule arrival of `reserveVolunteerAvailable × reserve_volunteer_deployable_fraction` (0.50, now derived from the Operation Telic 1 mobilisation yield — see `reserve_mobilisation_acceptance_rate`) at `turn + reserve_arrival_months_default` (180) or `_amended` (90). Move that many from Available → Pending. | `pc_cost_call_out_reserve`, plus `pc_cost_ninety_day_notice` if notice = 90 |
 | `recall_ex_regular` | not yet active | `exRegularRecallActive = true; exRegularRecallMonth = turn` | `pc_cost_recall_ex_regular` |
 | `trace_strategic_reserve` | not yet traced or in progress | `strategicTraceMonth = turn + strategic_trace_delay_months` | `pc_cost_trace_strategic` |
 | `stop_loss` | not active | `stopLoss = true` | `pc_cost_stop_loss` |
