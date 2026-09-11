@@ -61,6 +61,12 @@ found by hand:
    screen is longest once the Bill passes and the pipeline group opens — the
    second pass on F7 corrected a benchmark that had been taken the passive way.
 
+**Clear `localStorage` between hand-played runs.** A run is saved under
+`mobilisation-minister:run` and resumed silently — opening `?seed=1&…` does
+*not* start a fresh game if one is in progress. A measurement taken on top of a
+resumed run is measuring a state you did not play, and it looks like a finding.
+`localStorage.clear()` first, every time.
+
 The scripted strategies are a poor proxy for a human — they never re-plan, and
 `reserves_only` addresses the nation whenever political capital drops below 30,
 which is self-harm under the current rules. Treat their numbers as a floor.
