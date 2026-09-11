@@ -980,15 +980,15 @@
       "label": "Equipment lead time",
       "description": "Months from placing an emergency equipment order to kit being issued.",
       "section": "pipeline",
-      "source": "Modelling assumption",
-      "url": "",
+      "source": "Modelling assumption, against NAO, The Equipment Plan 2023-2033 (HC 315, Session 2023-24, 4 December 2023), paragraphs 2.5 and 2.20",
+      "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
       "asOf": "2026-09-11",
       "confidence": "assumption",
       "range": [
-        3,
-        8
+        4,
+        12
       ],
-      "rationale": "Design brief."
+      "rationale": "Design brief. The NAO puts the evidence against it: a decade of \"lean\" stockpiles and \"just in time\" delivery of spares has left no buffer to draw on, the MoD has had to earmark more than GBP 5 billion over ten years to re-establish war holdings, and it records that \"the lead time for replenishing stock and establishing war holdings presents challenges\" (HC 315 para 2.20). The Army separately told the NAO that semiconductor lead times had gone from one to three weeks to more than fifty (para 2.5), though that is components rather than the clothing, body armour, helmet and rifle this parameter buys. Four months is therefore the optimistic end of the range, not the middle, and the range is widened upward to say so. Not raised, because moving it is a balance change and the NAO figures are not measurements of this quantity."
     },
     "junior_entry_attrition": {
       "value": 0.34,
