@@ -1607,68 +1607,56 @@
       "derivation": "3,033,866 / 34,165 ≈ £88,800 per worker."
     },
     "gdp_age_multiplier_18_25": {
-      "value": 0.6,
+      "value": 0.407,
       "unit": "multiplier",
       "label": "Output multiplier, 18–25",
       "description": "Output per worker in the 18–25 band relative to the all-age average.",
       "section": "gdp",
-      "source": "Modelling assumption",
-      "url": "",
-      "asOf": "2026-09-11",
-      "confidence": "assumption",
-      "range": [
-        0.5,
-        0.7
-      ],
-      "rationale": "Lower employment rates and earnings among the youngest workers."
+      "source": "Derived from ONS, Annual Survey of Hours and Earnings, Table 6.1a (gross weekly pay, all employee jobs, by age group), UK 2025 provisional; ONS, Labour market status by age group (Table A05 SA), UK, Apr-Jun 2026; ONS mid-2025 population estimates",
+      "url": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/agegroupashetable6",
+      "asOf": "2026-08-18",
+      "confidence": "derived",
+      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
+      "note": "Was an assumption of 0.6. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
     },
     "gdp_age_multiplier_18_30": {
-      "value": 0.75,
+      "value": 0.547,
       "unit": "multiplier",
       "label": "Output multiplier, 18–30",
       "description": "Output per worker in the 18–30 band relative to the all-age average.",
       "section": "gdp",
-      "source": "Modelling assumption",
-      "url": "",
-      "asOf": "2026-09-11",
-      "confidence": "assumption",
-      "range": [
-        0.65,
-        0.85
-      ],
-      "rationale": "Design brief."
+      "source": "Derived from ONS, Annual Survey of Hours and Earnings, Table 6.1a (gross weekly pay, all employee jobs, by age group), UK 2025 provisional; ONS, Labour market status by age group (Table A05 SA), UK, Apr-Jun 2026; ONS mid-2025 population estimates",
+      "url": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/agegroupashetable6",
+      "asOf": "2026-08-18",
+      "confidence": "derived",
+      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
+      "note": "Was an assumption of 0.75. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
     },
     "gdp_age_multiplier_18_40": {
-      "value": 0.9,
+      "value": 0.717,
       "unit": "multiplier",
       "label": "Output multiplier, 18–40",
       "description": "Output per worker in the 18–40 band relative to the all-age average.",
       "section": "gdp",
-      "source": "Modelling assumption",
-      "url": "",
-      "asOf": "2026-09-11",
-      "confidence": "assumption",
-      "range": [
-        0.8,
-        1.0
-      ],
-      "rationale": "Design brief."
+      "source": "Derived from ONS, Annual Survey of Hours and Earnings, Table 6.1a (gross weekly pay, all employee jobs, by age group), UK 2025 provisional; ONS, Labour market status by age group (Table A05 SA), UK, Apr-Jun 2026; ONS mid-2025 population estimates",
+      "url": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/agegroupashetable6",
+      "asOf": "2026-08-18",
+      "confidence": "derived",
+      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
+      "note": "Was an assumption of 0.9. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
     },
     "gdp_age_multiplier_18_65": {
-      "value": 1.0,
+      "value": 0.762,
       "unit": "multiplier",
       "label": "Output multiplier, 18–65",
       "description": "Output per worker in the 18–65 band relative to the all-age average.",
       "section": "gdp",
-      "source": "Modelling assumption",
-      "url": "",
-      "asOf": "2026-09-11",
-      "confidence": "assumption",
-      "range": [
-        1.0,
-        1.0
-      ],
-      "rationale": "Design brief."
+      "source": "Derived from ONS, Annual Survey of Hours and Earnings, Table 6.1a (gross weekly pay, all employee jobs, by age group), UK 2025 provisional; ONS, Labour market status by age group (Table A05 SA), UK, Apr-Jun 2026; ONS mid-2025 population estimates",
+      "url": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/agegroupashetable6",
+      "asOf": "2026-08-18",
+      "confidence": "derived",
+      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
+      "note": "Was an assumption of 1.0. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
     },
     "gdp_pc_penalty_step_pct": {
       "value": 0.25,

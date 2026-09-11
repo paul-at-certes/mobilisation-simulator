@@ -1036,3 +1036,54 @@ express one. The fix is a clause shape — a movable lower bound — not a bigge
 `conscription_refusal_conversion`, which would scale every band equally and
 change nothing about the decision. **ASK.**
 
+## The GDP arm, priced properly and found to be inert (11 September 2026)
+
+Paul supplied ASHE Table 6.1a (gross weekly pay by age group, UK 2025
+provisional) and ONS Table A05 SA (labour market status by age, Apr–Jun 2026),
+which were the data F14's clause shape needed. Two results came out of them,
+and the second is more important than the first.
+
+**The four `gdp_age_multiplier_*` are now derived, and every one was too high.**
+They were an assumed ladder — 0.6 / 0.75 / 0.9 / 1.0 — keyed to the band's
+upper bound. Derived as employment rate × mean pay relative to the all-employee
+mean, weighted by the population of each single year of age in the band, they
+are **0.407 / 0.547 / 0.717 / 0.762**. The assumed ladder priced a conscript as
+an average employee scaled for age, when most 18–24s are not employees at all
+(59.1%) and those who are earn less than half the all-employee mean. Mean
+rather than median pay, because `output_per_worker_labour_share` is itself a
+mean.
+
+**Crucially, the derivation has lower-bound sensitivity, which the ladder could
+not have.** A 25–40 band costs 0.852 of average output per head against 18–30's
+0.547. That is the economic counterweight F14's popular band was supposed to be
+paid for with.
+
+**Except that output costs the player nothing.** A GDP penalty step is 0.25% of
+GDP — **£7.6bn of lost output** — and the largest cumulative GDP loss any
+strategy produces at any difficulty across 40 seeds is **£4.35bn**, 57% of one
+step. **The GDP penalty has never fired once, anywhere.** So the whole GDP arm
+reaches the player through the scoring screen and one event trigger, and
+nothing else. Recorded by extending F13, which already said the same of the
+Treasury cost penalty — both money penalties are dormant, for the same reason:
+the thresholds sit above the range the game produces.
+
+The re-derivation changed the benchmark by almost nothing, which is the proof
+of that finding rather than a disappointment. The only movement is
+`gdp_employers` firing less often, because its trigger is a £2bn cumulative
+loss that the lower multipliers now reach less often.
+
+**So F14 was not built, and should not be until F13 is.** A 25–40 band is more
+willing *and* has a bigger pool than 18–30; its only cost is peak earnings, and
+peak earnings cost nothing. Shipping it now would put a strictly better option
+in the Bill — a free lever, which is the thing this whole pass has been
+removing. F13 and F14 are one change: a counterweight and the thing it
+counterweighs.
+
+**And a correction to F14 as first written.** It claimed a movable lower bound
+would widen the clause's span "from 13 points to about 36". That was wrong: 36
+is the raw spread between 18–24 and the over-65s, and a mobilisation cannot
+conscript only the over-65s. Across every militarily plausible band the span is
+**15.2 points**, against the 13.6 the current four already cover. Replacing
+18–40 with 25–40 buys +6 against the default instead of +3. The clause shape is
+still worth changing; it is worth about two points of range, not twenty-three.
+
