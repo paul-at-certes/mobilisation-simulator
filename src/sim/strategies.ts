@@ -12,14 +12,15 @@ import { spareIntake } from './pipeline.js';
 import { costPenaltySteps, effectiveWillingness } from './politics.js';
 
 export type Strategy = (state: GameState) => TurnInput;
-export type StrategyId = 'do_nothing' | 'reserves_only' | 'conscription_max_capacity' | 'conscription_over_capacity' | 'mixed' | 'max_effort';
+export type StrategyId = 'do_nothing' | 'reserves_only' | 'reserves_plus_light' | 'conscription_max_capacity' | 'conscription_over_capacity' | 'capacity_heavy' | 'max_effort';
 
 export const STRATEGY_IDS: readonly StrategyId[] = [
   'do_nothing',
   'reserves_only',
+  'reserves_plus_light',
   'conscription_max_capacity',
   'conscription_over_capacity',
-  'mixed',
+  'capacity_heavy',
   'max_effort',
 ];
 
@@ -127,6 +128,35 @@ export const reservesOnly: Strategy = (s) => {
 };
 
 /**
+ * **The sensible strategy** — the brief's criterion (d) is measured against
+ * this one.
+ *
+ * The reserves in full, then the smallest conscript programme that can
+ * graduate before the deadline: one capacity purchase, the civilian
+ * instructors who cost no junior leaders, a compressed syllabus and the
+ * equipment to make the graduates count.
+ *
+ * It holds that title because of what the derived leadership ratio did to the
+ * balance (DECISIONS.md, 11 September 2026). Every leader teaching is a leader
+ * not leading, and the discount falls on the ex-regulars and Strategic
+ * Reservists already fielded as well as on the conscripts the purchase
+ * produces — so a little conscription pays and a lot of it does not. This is
+ * the best-performing strategy at Division and the one that meets the target;
+ * `capacity_heavy` and `max_effort` are now the two worst.
+ */
+export const reservesPlusLight: Strategy = (s) => {
+  const actions: Action[] = [];
+  if (s.turn === 0) actions.push({ id: 'call_out_reserve', notice: 90 }, { id: 'recall_ex_regular' });
+  else if (s.turn === 1) actions.push({ id: 'introduce_bill', procedure: 'emergency', clauses: STANDARD_CLAUSES }, { id: 'trace_strategic_reserve' });
+  else if (s.turn === 2) actions.push({ id: 'compress_syllabus' }, { id: 'contract_civilian_instructors' });
+  else if (s.turn === 3) actions.push({ id: 'expand_capacity' }, { id: 'equipment_buy' });
+  else if (s.turn === 4) actions.push({ id: 'stop_loss' });
+  else actions.push(...politicalUpkeep(s));
+  actions.push(...callupAtCapacity(s));
+  return input(s, actions);
+};
+
+/**
  * Two slots a turn means the spec's "expand ×2 on turns 1–3 and compress at
  * turn 1" cannot all fit; compression takes one of turn 1's slots and the
  * fourth purchase lands on turn 3 alongside the civilian contract.
@@ -161,8 +191,19 @@ export const conscriptionOverCapacity: Strategy = (s) => {
   return input(s, actions);
 };
 
-/** A sensible mixed strategy: legislate and buy capacity first, because the pipeline is slow; reserves in parallel. */
-export const mixed: Strategy = (s) => {
+/**
+ * Reserves in parallel with a substantial training-capacity programme: three
+ * purchases, the bill, equipment.
+ *
+ * Named `mixed` until 11 September 2026, when it was the intended sensible
+ * play. Under the derived leadership ratio it is not: the three purchases take
+ * 1,875 junior leaders out of the field force and the resulting factor of
+ * about 0.6 is charged against everything raised. It is kept as the control
+ * for a plausible-looking programme that over-buys capacity — the failure mode
+ * a minister is most likely to walk into, because every individual purchase
+ * reads as progress.
+ */
+export const capacityHeavy: Strategy = (s) => {
   const actions: Action[] = [];
   if (s.turn === 0) actions.push({ id: 'introduce_bill', procedure: 'emergency', clauses: STANDARD_CLAUSES }, { id: 'call_out_reserve', notice: 90 });
   else if (s.turn === 1) actions.push({ id: 'expand_capacity' }, { id: 'recall_ex_regular' });
@@ -199,8 +240,9 @@ export const maxEffort: Strategy = (s) => {
 export const STRATEGIES: Record<StrategyId, Strategy> = {
   do_nothing: doNothing,
   reserves_only: reservesOnly,
+  reserves_plus_light: reservesPlusLight,
   conscription_max_capacity: conscriptionMaxCapacity,
   conscription_over_capacity: conscriptionOverCapacity,
-  mixed,
+  capacity_heavy: capacityHeavy,
   max_effort: maxEffort,
 };

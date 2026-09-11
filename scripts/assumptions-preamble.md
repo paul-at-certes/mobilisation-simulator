@@ -6,7 +6,7 @@ the source popover on that number.
 
 1. **Only a slice of the regular Army counts toward Force Ready.** The premise
    is that the new formation is raised on top of the standing Army's existing
-   commitments. `regular_deployable_fraction` (default 10%, range 5–25%) of
+   commitments. `regular_deployable_fraction` (default 5%, range 3–20%) of
    the trade-trained strength is counted at effectiveness 1.0. The whole
    regular Army is still paid, still drains through voluntary outflow, and
    still supplies the junior leaders.
@@ -14,11 +14,22 @@ the source popover on that number.
 2. **Junior leaders are the binding constraint.** The cadre is Corporals to
    Staff Sergeants plus Second Lieutenants to Captains (29,563 at 1 April
    2026). Only a spareable fraction (default 30%) can be taken out of regular
-   units. Each +5,000/yr block of training capacity diverts 625 of them as
-   instructors; every eight conscripts in training or fielded need one more.
-   When demand exceeds supply the leadership factor falls below 1 and scales
-   the effectiveness of every conscript bucket. Reservists and ex-regulars
-   bring their own rank structure and are not scaled.
+   units. The ratio at which soldiers need leaders is *derived* rather than
+   assumed: the Army's 70,951 trade-trained soldiers are led by that cadre,
+   which is one leader per 2.4 (SPS Tables 3a and 11a). It is a whole-Army
+   manning ratio, staff and headquarters posts included, and is used because
+   it is the rate at which the Army actually finds leaders for the soldiers it
+   has. The ratio at which one leader can *instruct* recruits is a separate
+   assumption (`instructor_ratio`, default 8, range 6-10) and governs only how
+   many junior leaders each +5,000/yr block of training capacity diverts (625).
+   The factor is charged for everyone raised on top of the standing Army who
+   does not arrive in formed units: recalled ex-regulars, traced Strategic
+   Reservists and conscripts. Mobilised volunteer reservists are not charged,
+   because the Army Reserve's trained strength is held in sub-units with their
+   own corporals and sergeants. A recall of ex-regulars both demands leadership
+   and supplies it, returning junior leaders in the Army's own proportion,
+   discounted for rust. When demand exceeds supply the leadership factor falls
+   below 1 and scales the effectiveness of all three buckets.
 
 3. **The training estate is one estate.** Regular recruiting continues at its
    2025/26 rate and uses the baseline pipeline first. Conscripts can only use

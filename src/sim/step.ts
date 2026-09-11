@@ -357,8 +357,26 @@ interface MonthOutcome {
   outflow: number;
 }
 
-/** 3a–3j: one calendar month of the pipeline, money and GDP. `s.turn` is already incremented. */
-function advanceMonth(s: GameState, arrivals: { label: string; count: number }[], notes: string[]): MonthOutcome {
+export interface MonthOptions {
+  /**
+   * Replace the month's random draws with their expected value and leave the
+   * generator alone. The forecast (`forecast.ts`) runs months that must not
+   * consume the run's randomness or claim to know which way a draw will fall.
+   */
+  expectedDraws?: boolean;
+}
+
+/**
+ * 3a–3j: one calendar month of the pipeline, money and GDP. `s.turn` is
+ * already incremented. Exported for `forecast.ts`, which runs the pipeline
+ * forward without the politics or the deck.
+ */
+export function advanceMonth(
+  s: GameState,
+  arrivals: { label: string; count: number }[],
+  notes: string[],
+  opts: MonthOptions = {},
+): MonthOutcome {
   // a. Legislation.
   if (advanceBillClock(s)) notes.push(`bill_passed:${s.turn}`);
 
@@ -467,15 +485,23 @@ function advanceMonth(s: GameState, arrivals: { label: string; count: number }[]
     }
   }
   if (!s.strategicTraceDone && s.strategicTraceMonth != null && s.strategicTraceMonth <= s.turn) {
-    const draw = uniform(s.rngState, P.strategic_trace_yield_min, P.strategic_trace_yield_max);
-    s.rngState = draw.state;
-    const located = s.pools.strategicUntracked * draw.value;
+    // A forecast takes the mid-point of the yield range: it may not spend the
+    // run's randomness, and it may not pretend to know the draw.
+    let yield_: number;
+    if (opts.expectedDraws) {
+      yield_ = (P.strategic_trace_yield_min + P.strategic_trace_yield_max) / 2;
+    } else {
+      const draw = uniform(s.rngState, P.strategic_trace_yield_min, P.strategic_trace_yield_max);
+      s.rngState = draw.state;
+      yield_ = draw.value;
+    }
+    const located = s.pools.strategicUntracked * yield_;
     const traced = located * P.strategic_report_fraction;
     s.pools.strategicUntracked -= located;
     s.pools.strategicTraced += traced;
     s.strategicTraceDone = true;
     arrivals.push({ label: 'Strategic Reserve traced and reporting', count: traced });
-    notes.push(`strategic_trace_yield:${draw.value}`);
+    notes.push(`strategic_trace_yield:${yield_}`);
   }
 
   // h. Outflow.

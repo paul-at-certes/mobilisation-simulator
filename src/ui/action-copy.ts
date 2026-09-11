@@ -66,7 +66,7 @@ export const ACTION_COPY: Record<ActionId, ActionCopy> = {
   expand_capacity: {
     group: 'pipeline',
     title: 'Expand training capacity',
-    html: `Each purchase adds ${s('capacity_purchase_annual')} a year to trained output after ${s('capacity_standup_months')} months and costs ${s('capacity_purchase_cost')}. New places are filled from the holding pool and the month's call-up together. Each one pulls ${s('leaders_per_capacity_purchase')} junior leaders out of the field force as instructors. The Army has ${s('junior_leaders')} junior leaders; about ${s('junior_leaders_spareable_fraction')} of them can be spared before regular units stop working.`,
+    html: `Each purchase adds ${s('capacity_purchase_annual')} a year to trained output after ${s('capacity_standup_months')} months and costs ${s('capacity_purchase_cost')}. New places are filled from the holding pool and the month's call-up together. Each one pulls ${s('leaders_per_capacity_purchase')} junior leaders out of the field force as instructors. The Army has ${s('junior_leaders')} junior leaders; about ${s('junior_leaders_spareable_fraction')} of them can be spared before regular units stop working. Every leader teaching is a leader not leading, and the leadership factor falls for the recalled and the conscripted alike.`,
   },
   compress_syllabus: {
     group: 'pipeline',

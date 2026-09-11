@@ -1,6 +1,6 @@
 # Assumptions
 
-*Generated from `src/data/parameters.json` (v0.2.0) by `npm run assumptions` on 2026-09-11. Edit the JSON or `scripts/assumptions-preamble.md`, not this file.*
+*Generated from `src/data/parameters.json` (v0.3.0) by `npm run assumptions` on 2026-09-11. Edit the JSON or `scripts/assumptions-preamble.md`, not this file.*
 
 ## Structural assumptions
 
@@ -10,7 +10,7 @@ the source popover on that number.
 
 1. **Only a slice of the regular Army counts toward Force Ready.** The premise
    is that the new formation is raised on top of the standing Army's existing
-   commitments. `regular_deployable_fraction` (default 10%, range 5–25%) of
+   commitments. `regular_deployable_fraction` (default 5%, range 3–20%) of
    the trade-trained strength is counted at effectiveness 1.0. The whole
    regular Army is still paid, still drains through voluntary outflow, and
    still supplies the junior leaders.
@@ -18,11 +18,22 @@ the source popover on that number.
 2. **Junior leaders are the binding constraint.** The cadre is Corporals to
    Staff Sergeants plus Second Lieutenants to Captains (29,563 at 1 April
    2026). Only a spareable fraction (default 30%) can be taken out of regular
-   units. Each +5,000/yr block of training capacity diverts 625 of them as
-   instructors; every eight conscripts in training or fielded need one more.
-   When demand exceeds supply the leadership factor falls below 1 and scales
-   the effectiveness of every conscript bucket. Reservists and ex-regulars
-   bring their own rank structure and are not scaled.
+   units. The ratio at which soldiers need leaders is *derived* rather than
+   assumed: the Army's 70,951 trade-trained soldiers are led by that cadre,
+   which is one leader per 2.4 (SPS Tables 3a and 11a). It is a whole-Army
+   manning ratio, staff and headquarters posts included, and is used because
+   it is the rate at which the Army actually finds leaders for the soldiers it
+   has. The ratio at which one leader can *instruct* recruits is a separate
+   assumption (`instructor_ratio`, default 8, range 6-10) and governs only how
+   many junior leaders each +5,000/yr block of training capacity diverts (625).
+   The factor is charged for everyone raised on top of the standing Army who
+   does not arrive in formed units: recalled ex-regulars, traced Strategic
+   Reservists and conscripts. Mobilised volunteer reservists are not charged,
+   because the Army Reserve's trained strength is held in sub-units with their
+   own corporals and sergeants. A recall of ex-regulars both demands leadership
+   and supplies it, returning junior leaders in the Army's own proportion,
+   discounted for rust. When demand exceeds supply the leadership factor falls
+   below 1 and scales the effectiveness of all three buckets.
 
 3. **The training estate is one estate.** Regular recruiting continues at its
    2025/26 rate and uses the baseline pipeline first. Conscripts can only use
@@ -93,7 +104,7 @@ Every parameter tagged `assumption` in the game, with its plausible range and th
 
 | Parameter | Value | Range | Rationale |
 |---|---|---|---|
-| `junior_leader_ratio` · Recruits per junior leader | 8 | 6 – 10 | Infantry section of eight soldiers under a corporal; training-platoon instructor ratios are similar. |
+| `instructor_ratio` · Recruits per instructor | 8 | 6 – 10 | Infantry section of eight soldiers under a corporal; Phase 1 training-platoon instructor ratios are similar. |
 | `junior_leaders_spareable_fraction` · Spareable junior leaders | 0.3 | 0.2 – 0.4 | Regular battalions need most of their own corporals and sergeants. Stripping more than roughly a third hollows out the units that are supposed to be the core of the force; Russia's 2022 mobilisation showed what happens when mobilised men arrive without leaders. |
 
 ### Reserve forces
@@ -183,7 +194,7 @@ Every parameter tagged `assumption` in the game, with its plausible range and th
 | `cost_pc_penalty_per_step` · Cost penalty per £5bn | 2 | 1 – 4 | Design brief. |
 | `gdp_pc_penalty_step_pct` · GDP penalty step | 0.25% | 0.1% – 0.5% | Design brief. |
 | `gdp_pc_penalty_per_step` · GDP penalty per step | 3 | 1 – 5 | Design brief. |
-| `pc_start` · Starting political capital | 70 | 50 – 70 | Design brief gave 60. Raised to the top of the range in the balance pass so that a full mixed strategy is feasible but tight (see DECISIONS.md). |
+| `pc_start` · Starting political capital | 70 | 50 – 70 | Design brief gave 60. Raised to the top of the range in the balance pass so that a full programme of actions is feasible but tight (see DECISIONS.md). |
 | `pc_baseline_drain` · Monthly drain | 1 | 0 – 2 | Design brief. |
 | `pc_momentum_bonus` · Momentum bonus | 3 | 1 – 4 | Design brief. Tuned in the balance pass (see DECISIONS.md). |
 | `pc_momentum_threshold` · Momentum threshold | 0.05 | 0.03 – 0.1 | Design brief. |
@@ -221,9 +232,9 @@ Every parameter tagged `assumption` in the game, with its plausible range and th
 
 | Parameter | Value | Range | Rationale |
 |---|---|---|---|
-| `target_brigade` · Brigade target | 8,000 | 5,000 – 10,000 | A brigade group with enablers. The regulars' uncommitted slice covers under half of it. |
-| `deadline_brigade` · Brigade deadline | 5 | 4 – 12 | Changed from the brief's 12 months in the balance pass: with 12 months the reserves alone make a brigade several times over. Five months means the Army Reserve's 180-day notice arrives too late; the puzzle is the 90-day amendment and the ex-regular recall. |
-| `target_division` · Division target | 25,000 | 20,000 – 30,000 | A deployable division with enablers. |
+| `target_brigade` · Brigade target | 10,000 | 5,000 – 10,000 | A brigade group with enablers. The regulars' uncommitted slice covers under half of it. |
+| `deadline_brigade` · Brigade deadline | 4 | 4 – 12 | Changed from the brief's 12 months in the balance pass: with 12 months the reserves alone make a brigade several times over. Five months means the Army Reserve's 180-day notice arrives too late; the puzzle is the 90-day amendment and the ex-regular recall. |
+| `target_division` · Division target | 22,000 | 20,000 – 30,000 | A deployable division with enablers. |
 | `deadline_division` · Division deadline | 12 | 9 – 18 | Design brief. |
 | `target_corps` · Corps target | 45,000 | 40,000 – 80,000 | Changed from the brief's 60,000 in the balance pass: the best scripted run reached about 32,000 effective soldiers by month 15 before political capital ran out (see DECISIONS.md). |
 | `deadline_corps` · Corps deadline | 24 | 12 – 24 | Changed from the brief's 18 months in the balance pass: 18 months does not allow enough conscript cohorts to graduate and mature for 60,000 to be reachable by any strategy (see DECISIONS.md). |
@@ -236,7 +247,8 @@ Figures computed from primary sources, with the arithmetic.
 |---|---|---|---|
 | `training_attrition` · Training attrition | 0.26 | 2022 / 7771 = 0.260 | [MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Tables 5a and 5c](https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026) |
 | `junior_leaders` · Junior leaders | 29,563 | 10752 (OR-4) + 7404 (OR-6) + 5099 (OR-7) + 2047 (OF-1) + 4261 (OF-2) = 29563 | [MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Table 11a (rank structure at 1 April 2026)](https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026) |
-| `leaders_per_capacity_purchase` · Instructors per capacity purchase | 625 | 5000 / 8 = 625 | Derived from junior_leader_ratio |
+| `junior_leader_ratio` · Soldiers per junior leader | 2.4 | regular_trained_start / junior_leaders = 70951 / 29563 = 2.4 | [Derived from MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Tables 3a and 11a](https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026) |
+| `leaders_per_capacity_purchase` · Instructors per capacity purchase | 625 | capacity_purchase_annual / instructor_ratio = 5000 / 8 = 625 | Derived from capacity_purchase_annual and instructor_ratio |
 | `reserve_notice_days_default` · Army Reserve call-out notice | 180 | Readiness category R9 = 180 days, as stated in the amendment text; the Act itself sets no fixed period. | [Armed Forces Bill 2026, amendment papers (Select Committee, 14–15 Apr 2026): Army Reserve Group A standard notice is readiness category R9 (180 days)](https://publications.parliament.uk/pa/bills/cbill/59-01/0367/amend/armedforces_day_sc_0414.pdf) |
 | `reserve_notice_days_amended` · Amended call-out notice | 90 | Proposed amendment, not enacted; the Government's reply was that readiness levels are reviewed annually. | [Armed Forces Bill 2026, amendment 24 (Public Bill Committee, sixth sitting, 16 Apr 2026): proposed reduction to R8 (90 days)](https://hansard.parliament.uk/Commons/2026-04-16/debates/3430fe85-c68e-4e24-b43c-e53fbcad227c/ArmedForcesBill(SixthSitting)) |
 | `reserve_arrival_months_default` · Reservist arrival, default notice | 6 | 180 days ≈ 6 months; refresher assumed to overlap with the notice period. | Derived from reserve_notice_days_default |

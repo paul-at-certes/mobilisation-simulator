@@ -7,13 +7,13 @@ import { beforeAll, afterAll, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { GameEvent, GameState, TurnInput } from '../src/types.js';
-import { P } from '../src/sim/params.js';
+import { P, param } from '../src/sim/params.js';
 import { getEvents, setEvents } from '../src/sim/content.js';
 import { newGame, step, derive } from '../src/sim/step.js';
 import { availableActions } from '../src/sim/actions.js';
 import { eligiblePoolSize } from '../src/sim/legislation.js';
 import { spareIntake, courseMonths } from '../src/sim/pipeline.js';
-import { leadershipFactor } from '../src/sim/effectiveness.js';
+import { leadershipFactor, ledPersonnel, leadersNeeded, leadersRecalled, leadersAvailable, leadersSpareable } from '../src/sim/effectiveness.js';
 import { next, seedFromString, pickWeighted, uniform } from '../src/sim/rng.js';
 import { score } from '../src/sim/score.js';
 import { STRATEGIES } from '../src/sim/strategies.js';
@@ -337,6 +337,57 @@ describe('scenarios without events', () => {
     expect(s.gauges.leadershipFactor).toBeLessThan(lf);
   });
 
+  it('charges the cadre for everyone raised who does not arrive in formed units', () => {
+    // Volunteer reservists come as sub-units with their own corporals and
+    // sergeants; ex-regulars, traced Strategic Reservists and conscripts come
+    // as individuals and have to be given a chain of command.
+    let s = newGame(31, 'corps');
+    s.pools.reserveVolunteerMobilised = 20_000;
+    s = derive(s);
+    expect(ledPersonnel(s)).toBe(0);
+    expect(s.gauges.leadershipFactor).toBe(1);
+
+    s.pools.exRegularReported = 12_000;
+    s.pools.strategicTraced = 6_000;
+    s.trainingCohorts.push({ size: 20_000, startMonth: 0, graduationMonth: 8, syllabus: 'normal', medical: 'peacetime' });
+    s = derive(s);
+    expect(ledPersonnel(s)).toBe(38_000);
+    expect(leadersNeeded(s)).toBeCloseTo(38_000 / P.junior_leader_ratio, 9);
+    // The recall returns junior leaders in the Army's own proportion, rusty.
+    expect(leadersRecalled(s)).toBeCloseTo((12_000 / P.junior_leader_ratio) * P.eff_ex_regular, 9);
+    expect(leadersAvailable(s)).toBeCloseTo(leadersSpareable(s) + leadersRecalled(s), 9);
+    expect(s.gauges.leadershipFactor).toBeCloseTo(leadersAvailable(s) / leadersNeeded(s), 9);
+    expect(s.gauges.leadershipFactor).toBeLessThan(1);
+  });
+
+  it('scales every bucket it charges, and no others', () => {
+    let s = newGame(37, 'corps');
+    s.pools.reserveVolunteerMobilised = 8_000;
+    s.pools.exRegularReported = 14_000;
+    s.pools.strategicTraced = 7_000;
+    s.trainedCohorts.push({ size: 11_000, graduationMonth: 0, syllabus: 'normal', equipped: true });
+    s = derive(s);
+    const lf = s.gauges.leadershipFactor;
+    expect(lf).toBeLessThan(1);
+    const c = s.composition;
+    // Regulars are already led; volunteer reservists bring their own cadre.
+    expect(c.regulars.ese).toBeCloseTo(c.regulars.headcount * P.eff_regular, 6);
+    expect(c.reservists.ese).toBeCloseTo(8_000 * P.eff_reserve_volunteer, 6);
+    // The three that had to be formed are discounted by the factor.
+    expect(c.exRegulars.ese).toBeCloseTo(14_000 * P.eff_ex_regular * lf, 6);
+    expect(c.strategic.ese).toBeCloseTo(7_000 * P.eff_strategic * lf, 6);
+    expect(c.conscripts.ese).toBeCloseTo(11_000 * P.eff_conscript_normal_start * lf, 6);
+  });
+
+  it('derives the field ratio from the Army’s own strength and cadre', () => {
+    // The ratio is read off two primary figures, not assumed. The instructor
+    // ratio is a different number doing a different job.
+    expect(P.junior_leader_ratio).toBeCloseTo(P.regular_trained_start / P.junior_leaders, 2);
+    expect(P.leaders_per_capacity_purchase).toBeCloseTo(P.capacity_purchase_annual / P.instructor_ratio, 6);
+    expect(param('junior_leader_ratio').confidence).toBe('derived');
+    expect(param('instructor_ratio').confidence).toBe('assumption');
+  });
+
   it('a third paid action in one turn is ignored', () => {
     let s = newGame(23, 'division');
     s = step(s, { actions: [{ id: 'stop_loss' }, { id: 'equipment_buy' }, { id: 'recall_ex_regular' }], eventChoice: null });
@@ -484,7 +535,7 @@ describe('event cadence', () => {
         let months = 0;
         let withEvent = 0;
         while (!s.over) {
-          s = step(s, STRATEGIES.mixed(s));
+          s = step(s, STRATEGIES.capacity_heavy(s));
           months += 1;
           if (s.pendingEvent) withEvent += 1;
           // The deck never offers an event on the last month: the game is over.
@@ -501,7 +552,7 @@ describe('event cadence', () => {
     for (const difficulty of ['division', 'corps'] as const) {
       for (const seed of ['churchill', '11', '12']) {
         let s = newGame(seed, difficulty);
-        while (!s.over) s = step(s, STRATEGIES.mixed(s));
+        while (!s.over) s = step(s, STRATEGIES.capacity_heavy(s));
         const turnsById = new Map<string, number[]>();
         for (const e of s.eventLog) turnsById.set(e.eventId, [...(turnsById.get(e.eventId) ?? []), e.turn]);
         for (const [id, turns] of turnsById) {
@@ -648,7 +699,7 @@ describe('determinism', () => {
       let s = newGame('churchill', 'corps');
       const inputs: TurnInput[] = [];
       while (!s.over) {
-        const input = STRATEGIES.mixed(s);
+        const input = STRATEGIES.capacity_heavy(s);
         inputs.push(structuredClone(input));
         s = step(s, input);
       }

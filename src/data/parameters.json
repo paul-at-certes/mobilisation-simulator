@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "generated": "2026-09-11",
   "sections": {
     "regular": "Regular Army (MoD Service Personnel Statistics, 1 July 2026)",
@@ -110,10 +110,23 @@
       "derivation": "10752 (OR-4) + 7404 (OR-6) + 5099 (OR-7) + 2047 (OF-1) + 4261 (OF-2) = 29563"
     },
     "junior_leader_ratio": {
+      "value": 2.4,
+      "unit": "ratio",
+      "label": "Soldiers per junior leader",
+      "description": "Soldiers the Army mans itself at per junior leader: its trade-trained strength divided by its Corporal-to-Captain cadre. Applied to everyone raised on top of the standing Army who does not arrive as a formed unit.",
+      "section": "leaders",
+      "source": "Derived from MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Tables 3a and 11a",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-04-01",
+      "confidence": "derived",
+      "derivation": "regular_trained_start / junior_leaders = 70951 / 29563 = 2.4",
+      "note": "This is the whole-Army manning ratio, staff and headquarters posts included, not a doctrinal section-commander ratio. It is used because it is the rate at which the Army actually finds leaders for the soldiers it has. The instructor ratio is a separate parameter (instructor_ratio)."
+    },
+    "instructor_ratio": {
       "value": 8,
       "unit": "ratio",
-      "label": "Recruits per junior leader",
-      "description": "Number of recruits or newly fielded conscripts one junior leader can instruct or lead. A section is eight; a Phase 1 platoon of ~30 has three or four instructors.",
+      "label": "Recruits per instructor",
+      "description": "Recruits one junior leader can instruct in the training estate. Sets how many junior leaders each training-capacity purchase takes out of the field force.",
       "section": "leaders",
       "source": "Modelling assumption",
       "url": "",
@@ -123,7 +136,7 @@
         6,
         10
       ],
-      "rationale": "Infantry section of eight soldiers under a corporal; training-platoon instructor ratios are similar."
+      "rationale": "Infantry section of eight soldiers under a corporal; Phase 1 training-platoon instructor ratios are similar."
     },
     "junior_leaders_spareable_fraction": {
       "value": 0.3,
@@ -147,11 +160,11 @@
       "label": "Instructors per capacity purchase",
       "description": "Junior leaders diverted from the field force for each +5,000/yr block of training capacity.",
       "section": "leaders",
-      "source": "Derived from junior_leader_ratio",
+      "source": "Derived from capacity_purchase_annual and instructor_ratio",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "derived",
-      "derivation": "5000 / 8 = 625"
+      "derivation": "capacity_purchase_annual / instructor_ratio = 5000 / 8 = 625"
     },
     "reserve_volunteer_trained": {
       "value": 23517,
@@ -1399,7 +1412,7 @@
         50,
         70
       ],
-      "rationale": "Design brief gave 60. Raised to the top of the range in the balance pass so that a full mixed strategy is feasible but tight (see DECISIONS.md)."
+      "rationale": "Design brief gave 60. Raised to the top of the range in the balance pass so that a full programme of actions is feasible but tight (see DECISIONS.md)."
     },
     "pc_baseline_drain": {
       "value": 1,
@@ -1914,7 +1927,7 @@
       "rationale": "Game pacing."
     },
     "target_brigade": {
-      "value": 8000,
+      "value": 10000,
       "unit": "people",
       "label": "Brigade target",
       "description": "Effective-soldier equivalents required at Brigade difficulty.",
@@ -1930,7 +1943,7 @@
       "rationale": "A brigade group with enablers. The regulars' uncommitted slice covers under half of it."
     },
     "deadline_brigade": {
-      "value": 5,
+      "value": 4,
       "unit": "months",
       "label": "Brigade deadline",
       "description": "Months to the deadline at Brigade difficulty.",
@@ -1946,7 +1959,7 @@
       "rationale": "Changed from the brief's 12 months in the balance pass: with 12 months the reserves alone make a brigade several times over. Five months means the Army Reserve's 180-day notice arrives too late; the puzzle is the 90-day amendment and the ex-regular recall."
     },
     "target_division": {
-      "value": 25000,
+      "value": 22000,
       "unit": "people",
       "label": "Division target",
       "description": "Effective-soldier equivalents required at Division difficulty.",

@@ -56,6 +56,11 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
       sourced(String(pv('eff_conscript_normal_start')), 'eff_conscript_normal_start'),
       ', and less if there are not enough junior leaders to lead them. Every number can be tapped for its source. The weightings are modelling assumptions and are labelled as such.',
     ),
+    h(
+      'p',
+      {},
+      'Almost nothing arrives in the month you decide it. Under Force Ready the Department publishes a projection: where the decisions already taken will land by the deadline, if you take no others. It assumes no further decisions and no news, so it is a statement about your orders rather than a prediction of the year.',
+    ),
     h('h2', {}, 'Difficulty'),
     h(
       'div',

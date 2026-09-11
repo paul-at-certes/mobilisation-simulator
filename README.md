@@ -24,7 +24,7 @@ npm run build        # validates parameters, regenerates ASSUMPTIONS.md, typeche
 ```
 
 Replay any run from its share link: `?seed=42&difficulty=division`. Add
-`&auto=mixed` (or any strategy id from `src/sim/strategies.ts`) to have a
+`&auto=capacity_heavy` (or any strategy id from `src/sim/strategies.ts`) to have a
 scripted strategy play the run to the scoring screen.
 
 ## Layout
@@ -73,7 +73,8 @@ each quarter. The 1 October 2026 edition is due in December 2026. To update:
    | `junior_leaders` | 11a | Army OR-4 + OR-6 + OR-7 + OF-1 + OF-2 (1 April figures; update `derivation`) |
    | `strategic_reserve_untracked_tri_service` | derived | `strategic_reserve_claimed − ex_regular_tracked_tri_service` |
    | `strategic_reserve_untracked` | derived | the above × `ex_regular_tracked ÷ ex_regular_tracked_tri_service` |
-   | `leaders_per_capacity_purchase` | derived | unchanged unless the ratio changes |
+   | `junior_leader_ratio` | derived | `regular_trained_start ÷ junior_leaders`; recompute when either moves |
+   | `leaders_per_capacity_purchase` | derived | `capacity_purchase_annual ÷ instructor_ratio`; unchanged unless the instructor ratio changes |
 
 3. Update the SPS `url` on those entries to the new release page.
 4. Regenerate `docs/sps_<date>_key_figures.csv` (the transcription script is

@@ -2,6 +2,7 @@
 import type { ActionAvailability, GameEvent, GameState, TurnInput } from '../../types';
 import { h } from '../dom';
 import { renderGauges } from '../components/gauges';
+import { forecast } from '../../sim/forecast';
 import { renderHoldingPool } from '../components/holding';
 import { renderLedger } from '../components/ledger';
 import { renderActionMenu } from '../components/action-menu';
@@ -49,7 +50,7 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
       h('span', { class: 'small muted' }, remaining > 0 ? `${remaining} month${remaining === 1 ? '' : 's'} to the deadline` : 'Deadline'),
       h('button', { class: 'btn btn-quiet', style: 'min-height:36px;padding:0.3rem 0.6rem;font-size:0.8rem', onclick: d.onRestart }, 'Restart'),
     ),
-    renderGauges(state),
+    renderGauges(state, forecast(state)),
     renderHoldingPool(state),
     h('div', { class: 'note' }, h('div', { class: 'note-head' }, `Permanent Secretary · ${monthLabel}`), ...d.briefing.map((s) => h('p', { html: s }))),
     eventEl,

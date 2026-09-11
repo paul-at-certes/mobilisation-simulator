@@ -393,3 +393,163 @@ design questions were put to him and answered; what follows is what was built.
   statement about the game state rather than about the world.
 - **The deck is now 33 events**, so the content test's assertion was widened
   from 28–30 to 28–33 deliberately.
+
+## The projection under Force Ready (11 September 2026)
+
+- **Why.** Almost nothing in this game arrives in the month it is decided: the
+  Bill takes three months, a training place two, a course eight, reservists
+  three to six at amended notice. The gauges reported only the past, so the lag
+  was invisible until the deadline, and the first three months of every run
+  read as though nothing the player did had worked. The projection states where
+  the decisions already taken will land.
+- **What it is.** `forecast(state)` in `src/sim/forecast.ts` clones the state,
+  runs `advanceMonth` to the deadline and reads Force Ready off the result. It
+  holds every decision in force constant and adds none. It appears as one line
+  under the Force Ready gauge: *On present decisions: 22,299 by month 12 (89%).*
+- **What it leaves out, and why.** No politics and no events. Neither is
+  knowable a month ahead, and a projection that guessed at them would be
+  reporting the seed rather than the player's orders. Running the politics
+  would also be self-defeating: a projection in which the minister takes no
+  action accrues the idle penalty and resigns, so the line would report the
+  consequence of reading it. The methodology page says all of this in prose.
+- **Random draws take their mid-point.** `advanceMonth` gained a
+  `MonthOptions` argument; under `expectedDraws` an outstanding Strategic
+  Reserve trace yields the mid-point of its 20–50% range and the generator is
+  not advanced. Two rules: a projection may not spend the run's randomness
+  (the UI would change the seed by rendering), and it may not claim to know a
+  draw it has not made. `tests/forecast.test.ts` pins both — the projection is
+  unchanged when the generator state is scrambled, and the caller's state is
+  byte-identical afterwards.
+- **The central test plays the future for real.** With the deck empty and no
+  actions, `forecast(s)` is asserted equal to the Force Ready actually reached
+  by stepping to the deadline, both from Day 0 and from a mid-game state with
+  five clocks running (reserves, ex-regulars, a trace, a passed bill, a
+  standing call-up). The claim in the UI is narrow enough to test exactly, and
+  is tested exactly.
+- **No balance change.** `npm run sim -- --all` is identical before and after,
+  which is the check that `expectedDraws` did not leak into normal play.
+- **An emergent property worth keeping.** If the player does nothing, the
+  projection falls month on month, because voluntary outflow compounds. The
+  bathtub was previously only visible as a line in the ledger; it is now
+  visible as a number that gets worse while you watch.
+- **Not styled as a sourced value.** A dotted underline means "tap for a
+  source" everywhere else in this UI, and the projection has no source: it is
+  an output of the model. It sits below a dashed rule inside the gauge, with
+  an uppercase label in the same idiom as the gauge headings.
+
+## The leadership ratio, re-derived (11 September 2026)
+
+- **The mechanic had never fired.** Across the whole balance matrix, and every
+  seed tried, the leadership factor was 1.00. The arithmetic made it
+  unreachable: the spareable cadre of 8,869 at 1:8 supports 70,952 people, and
+  the training estate caps conscripts at six to thirteen thousand. The
+  constraint the game exists to demonstrate was in series behind a tighter one
+  and could never bind. Several verdicts in `verdicts.json` were unreachable
+  for the same reason.
+- **The ratio is now derived, not assumed.** `junior_leader_ratio` =
+  `regular_trained_start / junior_leaders` = 70,951 / 29,563 = **2.4** — the
+  rate at which the Army actually mans itself, read off SPS Tables 3a and 11a.
+  It moves from `assumption` (8, range 6–10) to `derived`. No new sourcing:
+  both figures were already in the file.
+- **1:8 was not wrong, it was a different ratio.** It is the instructor ratio,
+  and the project already used it correctly for
+  `leaders_per_capacity_purchase` (5,000 ÷ 8 = 625). It is now its own
+  parameter, `instructor_ratio` (8, assumption, range 6–10), and governs the
+  instructor draw and nothing else. Two ratios doing two jobs; they had been
+  the same number, which is why one of them was invisible.
+- **The honest caveat, stated in the parameter's `note` and on the
+  methodology page:** 2.4 is a whole-Army manning ratio, staff and
+  headquarters posts included, not a doctrinal section-commander ratio. It is
+  used because it is the rate at which the Army finds leaders for the soldiers
+  it has.
+- **Re-deriving alone was not enough.** With the factor still charged for
+  conscripts only it bit at Corps (0.77) and nowhere else, for the same reason
+  as before. It is now charged for everyone raised on top of the standing Army
+  who does not arrive in formed units: recalled ex-regulars, traced Strategic
+  Reservists and conscripts — and it scales their effectiveness, not the
+  conscripts' alone.
+- **Volunteer reservists are exempt, and that is the whole decision.** The
+  Army Reserve's trained strength is held in sub-units containing their own
+  corporals, sergeants and subalterns, so it arrives led. Charging it would
+  have made the factor bite on every path including the pure-reserves one;
+  exempting it means the cost lands on the minister who tries to conscript
+  their way out, which is the point. The alternative was tried and rejected.
+- **Ex-regulars supply leaders as well as demanding them.** A recall returns
+  junior leaders in the Army's own proportion, discounted by `eff_ex_regular`
+  for the same rust that discounts their soldiering. Without this the recall
+  was charged for a problem it half solves. Net demand is 0.17 leaders a head
+  rather than 0.42, so the loop is monotone and cannot run away.
+
+### What it did to the balance
+
+| strategy (Division, 40 seeds) | median ESE | leadership | met% |
+|---|---|---|---|
+| do_nothing | 3,699 | 1.00 | 0% |
+| reserves_only | 21,592 | 1.00 | 33% |
+| reserves_plus_light | 21,926 | 0.96 | 40% |
+| conscription_max_capacity | 5,338 | 0.64 | 0% |
+| capacity_heavy (was `mixed`) | 19,034 | 0.63 | 0% |
+| max_effort | 16,892 | 0.45 | 0% |
+
+- **The curve is now the lesson.** A little conscription pays: one capacity
+  purchase plus the civilian instructors who cost no junior leaders beats the
+  pure-reserves play. A lot of it does not: four purchases lose 2,900 effective
+  soldiers and eight lose 4,700, because every leader teaching is a leader not
+  leading, and the discount falls on the ex-regulars and Strategic Reservists
+  already fielded as well as on the conscripts the purchase produces. The two
+  "do everything" strategies are now the two worst at Division. That is the
+  finding, and the player can see it happening in the leadership gauge note
+  and in the projection.
+- **A new scripted strategy, `reserves_plus_light`,** was added as the
+  measuring instrument for restraint — the reserves in full, then the smallest
+  conscript programme that can graduate before the deadline. It is the
+  best-performing strategy at Division and the one that meets the target.
+- **Targets rebalanced** (all inside their existing ranges):
+  - `target_division` 25,000 → **22,000**. The ceiling with the new model is
+    about 24,000; at 22,000 the restrained strategy meets it on 40% of seeds
+    and the pure-reserves play on 33%, so it is a genuine knife-edge rather
+    than the guaranteed loss it had become (1 seed in 10 before this pass).
+  - `target_brigade` 8,000 → **10,000** and `deadline_brigade` 5 → **4**. The
+    reserves produce a brigade three times over, which is itself a true
+    finding, so Brigade stays the rung you win — but four months means the
+    180-day notice period no longer delivers before the deadline, which makes
+    the notice clause a real decision rather than a formality.
+  - `target_corps` unchanged at 45,000, still the deliberately unreachable
+    finding. **ASK** in the earlier balance note still stands.
+  - `regular_deployable_fraction` was raised to 0.10 during the pass and put
+    back to **0.05**. At 0.10 everything gains 3,548 and `do_nothing` reaches
+    91% of Brigade, which is what the 0.05 was for in the first place.
+- **The fuzz invariants still hold** over 1,000 random games; ESE ≤ headcount
+  is unaffected because the factor only ever scales down.
+
+## `mixed` becomes `capacity_heavy` (11 September 2026)
+
+- **The name had stopped being true.** `mixed` was written as the sensible
+  play — legislate, buy capacity, reserves in parallel — and the balance table
+  used it to test the brief's criterion (d), "a sensible mixed strategy can
+  make Division". Under the derived leadership ratio it is the second-worst
+  strategy at Division: its three capacity purchases take 1,875 junior leaders
+  out of the field force, and the resulting factor of about 0.6 is charged
+  against everything raised. A strategy named for its good judgement that
+  demonstrates the opposite is a misleading instrument.
+- **Renamed rather than retuned.** Retuning it would have destroyed the only
+  control for the failure mode a minister is most likely to walk into: a
+  plausible-looking capacity programme in which every individual purchase reads
+  as progress. It is kept exactly as it was and renamed for what it does.
+- **`reserves_plus_light` carries the "sensible" role**, and criterion (d) is
+  now measured against it. Its id was left descriptive rather than changed to
+  something like `sensible`: every other id in the file names a behaviour
+  (`do_nothing`, `reserves_only`, `conscription_over_capacity`), not a
+  judgement about it, and a value-laden id would go stale the next time the
+  balance moves — which is exactly what has just happened to `mixed`.
+- **Scope of the rename.** `StrategyId`, `STRATEGY_IDS`, the exported function
+  (`mixed` → `capacityHeavy`), the `STRATEGIES` record, three test call sites
+  that use it as a generic active-player driver, `docs/sim-spec.md` §13, the
+  README's `?auto=` example, and one `pc_start` rationale in
+  `parameters.json` that named it in passing. The three tests were renamed and
+  not repointed: they measure event cadence and determinism, and the strategy
+  that pulls the most levers is the right driver for both.
+- **Older DECISIONS.md entries keep the old name.** They are a log of what was
+  decided when, and were true as written. `docs/sim-spec.md` and the strategy's
+  own docstring both record the former name so the balance tables in those
+  entries can still be read.

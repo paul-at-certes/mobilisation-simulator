@@ -26,21 +26,56 @@ export function leadersTotal(s: GameState): number {
   return P.junior_leaders - s.ledger.juniorLeadersLostToOutflow;
 }
 
-/** Junior leaders that can be taken out of units, after diversions and events. */
+/**
+ * Junior leaders that can be taken out of regular units, after diversions and
+ * events. This is the supply the training estate draws instructors from, and
+ * `actions.ts` tests a capacity purchase against it.
+ */
 export function leadersSpareable(s: GameState): number {
   return leadersTotal(s) * P.junior_leaders_spareable_fraction - s.ledger.juniorLeadersDiverted + s.leadersSpareableAdjust;
 }
 
-/** Leaders the conscript force needs at 1 : junior_leader_ratio. */
+/**
+ * Everyone raised on top of the standing Army who has to be given a chain of
+ * command: recalled ex-regulars, traced Strategic Reservists and conscripts.
+ *
+ * Mobilised volunteer reservists are not here. The Army Reserve's trained
+ * strength is counted in formed sub-units and contains its own corporals,
+ * sergeants and subalterns, so it arrives led. The other three arrive as
+ * individuals.
+ */
+export function ledPersonnel(s: GameState): number {
+  return (
+    s.pools.exRegularReported
+    + s.pools.strategicTraced
+    + s.pools.conscriptInTraining
+    + conscriptsTrained(s.pools)
+  );
+}
+
+/** Leaders the raised force needs at the Army's own ratio of 1 : junior_leader_ratio. */
 export function leadersNeeded(s: GameState): number {
-  const conscripts = s.pools.conscriptInTraining + conscriptsTrained(s.pools);
-  return conscripts / P.junior_leader_ratio;
+  return ledPersonnel(s) / P.junior_leader_ratio;
+}
+
+/**
+ * The junior leaders inside the recalled ex-regular pool. A recall of former
+ * regulars returns corporals and sergeants in the same proportion the Army
+ * holds them, discounted for the same rust that discounts their soldiering.
+ */
+export function leadersRecalled(s: GameState): number {
+  return (s.pools.exRegularReported / P.junior_leader_ratio) * P.eff_ex_regular;
+}
+
+/** Leaders available to lead the raised force: the spareable cadre plus what the recall returned. */
+export function leadersAvailable(s: GameState): number {
+  return leadersSpareable(s) + leadersRecalled(s);
 }
 
 export function leadershipFactor(s: GameState): number {
   const needed = leadersNeeded(s);
   if (needed <= 0) return 1;
-  return clamp01(leadersSpareable(s) / needed);
+  return clamp01(leadersAvailable(s) / needed);
 }
 
 /** Effectiveness of one trained conscript cohort at the given turn. */
@@ -60,8 +95,12 @@ export function computeForce(s: GameState): ForceSummary {
     headcount: s.pools.reserveVolunteerMobilised,
     ese: s.pools.reserveVolunteerMobilised * P.eff_reserve_volunteer,
   };
-  const exRegulars = { headcount: s.pools.exRegularReported, ese: s.pools.exRegularReported * P.eff_ex_regular };
-  const strategic = { headcount: s.pools.strategicTraced, ese: s.pools.strategicTraced * P.eff_strategic };
+  // The leadership factor applies to everyone counted in `ledPersonnel`: a
+  // recalled ex-regular without a section commander is worth no more than a
+  // conscript without one. Regulars are already led; volunteer reservists
+  // bring their own cadre.
+  const exRegulars = { headcount: s.pools.exRegularReported, ese: s.pools.exRegularReported * P.eff_ex_regular * lf };
+  const strategic = { headcount: s.pools.strategicTraced, ese: s.pools.strategicTraced * P.eff_strategic * lf };
   let conscriptEse = 0;
   let conscriptHead = 0;
   for (const c of s.trainedCohorts) {

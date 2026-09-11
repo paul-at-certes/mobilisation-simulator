@@ -69,7 +69,7 @@ availability and displayed PC delta. Rules:
 | `introduce_bill` {procedure, clauses} | `billStatus == 'none'` | `billStatus = 'in_progress'; billPassesMonth = turn + bill_months_<procedure>; clauses = clauses` | `pc_cost_bill_<procedure>` plus clause costs (§3.1) |
 | `amend_bill` {clauses} | `billStatus != 'none'` | merge clauses; recompute eligible pool if passed | clause costs for changed clauses only |
 | `set_callup` {perMonth} | `billStatus == 'passed'` | `callupPerMonth = max(0, perMonth)` | 0 (free; no slot) |
-| `expand_capacity` | always; note if `regularTrained` cannot spare 625 | `capacityPurchases += 1; capacityPurchaseMonths.push(turn + capacity_standup_months)`; `regularTrained -= leaders_per_capacity_purchase`; `ledger.juniorLeadersDiverted += 625`; cost `capacity_purchase_cost` | `pc_cost_expand_capacity` |
+| `expand_capacity` | always; note if `regularTrained` cannot spare `leaders_per_capacity_purchase` | `capacityPurchases += 1; capacityPurchaseMonths.push(turn + capacity_standup_months)`; `regularTrained -= leaders_per_capacity_purchase`; `ledger.juniorLeadersDiverted += 625`; cost `capacity_purchase_cost` | `pc_cost_expand_capacity` |
 | `compress_syllabus` | syllabus normal | `syllabus = 'compressed'` (affects cohorts starting from next month) | `pc_cost_compress_syllabus` |
 | `contract_civilian_instructors` | not contracted | `civilianInstructors = true; civilianInstructorsMonth = turn + civilian_instructor_delay_months` | `pc_cost_civilian_instructors` |
 | `junior_entry` | not taken | `juniorEntryTaken = true` (flavour only; briefing note explains why nothing happens) | `pc_cost_junior_entry` |
@@ -196,9 +196,28 @@ outflow × (`junior_leaders` / `regular_trained_start`), accumulated in
 ```
 leadersTotal     = junior_leaders − juniorLeadersLostToOutflow
 leadersSpareable = leadersTotal × junior_leaders_spareable_fraction − juniorLeadersDiverted + leadersSpareableAdjust
-leadersNeeded    = (conscriptInTraining + conscriptTrainedUnequipped + conscriptTrainedEquipped) / junior_leader_ratio
-leadershipFactor = leadersNeeded == 0 ? 1 : clamp(leadersSpareable / leadersNeeded, 0, 1)
+ledPersonnel     = exRegularReported + strategicTraced
+                 + conscriptInTraining + conscriptTrainedUnequipped + conscriptTrainedEquipped
+leadersNeeded    = ledPersonnel / junior_leader_ratio
+leadersRecalled  = (exRegularReported / junior_leader_ratio) × eff_ex_regular
+leadersAvailable = leadersSpareable + leadersRecalled
+leadershipFactor = leadersNeeded == 0 ? 1 : clamp(leadersAvailable / leadersNeeded, 0, 1)
 ```
+
+`junior_leader_ratio` is **derived**, not assumed: `regular_trained_start /
+junior_leaders` = 70,951 / 29,563 = 2.4, the rate at which the Army mans itself
+(SPS Tables 3a and 11a). The instructor ratio is a separate parameter,
+`instructor_ratio` (8, assumption), and sets `leaders_per_capacity_purchase`
+only. Two ratios doing two jobs: one leads soldiers in the field, one teaches
+recruits in the training estate.
+
+`ledPersonnel` is everyone raised on top of the standing Army who does not
+arrive in formed units. Mobilised volunteer reservists are excluded: the Army
+Reserve's trained strength is held in sub-units that contain their own
+corporals, sergeants and subalterns. Recalled ex-regulars both demand
+leadership and supply it — a recall returns junior leaders in the Army's own
+proportion, discounted by `eff_ex_regular` for the same rust that discounts
+their soldiering.
 
 Effectiveness per bucket:
 
@@ -206,8 +225,8 @@ Effectiveness per bucket:
 |---|---|---|
 | Regulars (deployable slice) | `regularTrained × regular_deployable_fraction` | `eff_regular` |
 | Volunteer reservists, mobilised | `reserveVolunteerMobilised` | `eff_reserve_volunteer` |
-| Ex-regulars, reported | `exRegularReported` | `eff_ex_regular` |
-| Strategic, traced | `strategicTraced` | `eff_strategic` |
+| Ex-regulars, reported | `exRegularReported` | `eff_ex_regular` × leadershipFactor |
+| Strategic, traced | `strategicTraced` | `eff_strategic` × leadershipFactor |
 | Conscript cohort, equipped | cohort size | `min(cap, start + eff_conscript_growth_monthly × (turn − graduationMonth))` × leadershipFactor, start/cap by syllabus |
 | Conscript cohort, unequipped | cohort size | `eff_conscript_unequipped` × leadershipFactor |
 | In training / holding / pending | not counted | 0 |
@@ -215,6 +234,32 @@ Effectiveness per bucket:
 `forceReady` (ESE) = Σ headcount × effectiveness. `headcountCounted` = Σ of the
 headcount column. `forceQuality = forceReady / headcountCounted` (0 if none).
 `composition` groups these five rows (strategic separate from ex-regulars).
+
+### 7.1 The projection (`forecast.ts`)
+
+`forecast(state)` reports where Force Ready lands at the deadline if no
+further decision is taken. It clones the state and runs `advanceMonth` for
+`deadlineMonths − turn` months, then reads `computeForce`. It therefore holds
+constant every decision in force (call-up, syllabus, capacity purchased,
+recalls and traces under way, bill clock) and adds none.
+
+What it deliberately omits, and why:
+
+- **Politics.** `monthlyPcChanges` is not run and the game does not end on
+  resignation inside a projection. The projection is a statement about the
+  pipeline; a projection that resigned on the idle penalty would report the
+  consequence of consulting it.
+- **The event deck.** No event is drawn or resolved. Events are not knowable
+  a month ahead, and a projection that drew them would be reporting the seed.
+- **Random draws.** `advanceMonth` takes a `MonthOptions` argument; with
+  `expectedDraws: true` an outstanding Strategic Reserve trace yields
+  `(strategic_trace_yield_min + strategic_trace_yield_max) / 2` and the
+  generator is left untouched. A projection may not spend the run's
+  randomness, and must not claim to know which way a draw will fall.
+
+Returns `{ forceReady, forceReadyPct, monthsProjected, meetsTarget }`.
+`monthsProjected` is 0 once the deadline is reached, and the UI suppresses the
+line in that case. Pure: the caller's state is unchanged (`tests/forecast.test.ts`).
 
 ## 8. Money and GDP
 
@@ -336,9 +381,10 @@ not a decision and the simulation does not count it as one.
 
 - `do_nothing` (the control: it takes no action ever, and wears the idle penalty)
 - `reserves_only`: turn 0 call out reserve (90-day notice) + recall ex-regulars; turn 1 trace strategic + stop-loss; then political upkeep when PC < 30.
+- `reserves_plus_light` — **the sensible strategy**, against which the brief's balance criterion (d) is measured: the reserves_only levers, then the smallest conscript programme that can graduate in time (bill, trace, compressed syllabus, civilian instructors, one capacity purchase, equipment, stop-loss), then political upkeep. Best performer at Division under the derived leadership ratio.
 - `conscription_max_capacity` (a control: it deliberately never uses the political levers, to show what that failure mode costs): turn 0 bill (emergency, 18–30, women on, relaxed, broad) + equipment buy; turns 1–3 expand capacity ×2/turn until 4 purchases, then civilian instructors; when passed, set callup = spare intake capacity; compress syllabus at turn 1.
 - `conscription_over_capacity`: as above but callup = 20,000/month and only one capacity purchase.
-- `mixed`: reserves_only levers in turns 0–1, then bill (emergency), equipment, 3 capacity purchases, callup at capacity, political upkeep thereafter.
+- `capacity_heavy` (named `mixed` until 11 September 2026): reserves_only levers in turns 0–1, then bill (emergency), equipment, 3 capacity purchases, callup at capacity, political upkeep thereafter. Now a control for over-buying capacity rather than the sensible play.
 - `max_effort`: everything, paced — the ceiling of what the levers deliver; political upkeep and further capacity purchases once the script runs out.
 
 Event choices: strategies pick choice 0 unless they define a policy.
