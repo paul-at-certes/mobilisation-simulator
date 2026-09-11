@@ -286,7 +286,14 @@ plus the difficulty table (which the brief allows). Primary figures untouched.
   under the gauges whenever the pool is not empty, with the month's change and
   how many months the current spare intake would need to clear it (against how
   many months are left). It is deliberately not a fourth gauge: it has no
-  target and no good value, and an empty pool says nothing worth a tile.
+  target and no good value, and an empty pool says nothing worth a tile. It
+  also names the way out, because nothing else in the interface did: the words
+  "holding pool" appeared only in the call-up copy and the briefing, while the
+  three actions that actually drain it — capacity, civilian instructors, a
+  shorter syllabus — talked about "trained output" and never connected the two.
+  The indicator now names all three, adds "a lower monthly call-up would stop
+  it growing" while it is growing, and `expand_capacity` says that new places
+  are filled from the holding pool and the month's call-up together.
 - **The monthly call-up says that it persists.** The checkbox is unticked every
   month because the decisions menu is rebuilt each turn, which read as though
   the call-up had lapsed; the figure is in fact in force until changed. The

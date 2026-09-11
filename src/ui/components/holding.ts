@@ -30,6 +30,12 @@ export function renderHoldingPool(state: GameState): HTMLElement | null {
         ? `At this month's spare intake of ${fmtInt(spare)} it would take ${fmtInt(months)} months to place them all, and there are ${fmtInt(left)} left.`
         : `At this month's spare intake of ${fmtInt(spare)} it would take ${fmtInt(months)} months to place them all.`;
 
+  // Naming the levers matters: nothing else in the interface connects the pool
+  // to the three actions that drain it, and a player looking at a six-figure
+  // number needs to know what to do about it.
+  const levers = 'Only spare training places clear it: expanding capacity, contracting civilian instructors, or a shorter syllabus.';
+  const stopGrowing = delta > 0 ? ' A lower monthly call-up would stop it growing.' : '';
+
   return h(
     'section',
     { class: 'holding', role: 'group', 'aria-label': 'Holding pool' },
@@ -37,5 +43,6 @@ export function renderHoldingPool(state: GameState): HTMLElement | null {
     h('span', { class: 'holding-value' }, fmtInt(pool)),
     h('span', { class: 'holding-change small muted' }, change),
     h('div', { class: 'holding-note' }, 'Called up, paid, counted in lost output, and producing nothing until a training place opens. ', clearance),
+    h('div', { class: 'holding-note' }, levers + stopGrowing),
   );
 }
