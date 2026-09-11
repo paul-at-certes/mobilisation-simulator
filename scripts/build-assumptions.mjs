@@ -37,7 +37,7 @@ for (const [sec, title] of Object.entries(sections)) {
   if (!rows.length) continue;
   out += `### ${title}\n\n| Parameter | Value | Range | Rationale |\n|---|---|---|---|\n`;
   for (const [id, p] of rows) {
-    out += `| \`${id}\` — ${p.label} | ${fmt(p.value, p.unit)} | ${fmt(p.range[0], p.unit)} – ${fmt(p.range[1], p.unit)} | ${p.rationale} |\n`;
+    out += `| \`${id}\` · ${p.label} | ${fmt(p.value, p.unit)} | ${fmt(p.range[0], p.unit)} – ${fmt(p.range[1], p.unit)} | ${p.rationale} |\n`;
   }
   out += '\n';
 }
@@ -46,14 +46,14 @@ out += `## Derived figures\n\nFigures computed from primary sources, with the ar
 for (const [id, p] of Object.entries(data.parameters)) {
   if (p.confidence !== 'derived') continue;
   const src = p.url ? `[${p.source}](${p.url})` : p.source;
-  out += `| \`${id}\` — ${p.label} | ${fmt(p.value, p.unit)} | ${p.derivation ?? ''} | ${src} |\n`;
+  out += `| \`${id}\` · ${p.label} | ${fmt(p.value, p.unit)} | ${p.derivation ?? ''} | ${src} |\n`;
 }
 out += '\n';
 
 out += `## Primary figures\n\n| Parameter | Value | As of | Source |\n|---|---|---|---|\n`;
 for (const [id, p] of Object.entries(data.parameters)) {
   if (p.confidence !== 'primary') continue;
-  out += `| \`${id}\` — ${p.label} | ${fmt(p.value, p.unit)} | ${p.asOf} | [${p.source}](${p.url}) |\n`;
+  out += `| \`${id}\` · ${p.label} | ${fmt(p.value, p.unit)} | ${p.asOf} | [${p.source}](${p.url}) |\n`;
 }
 out += '\n';
 

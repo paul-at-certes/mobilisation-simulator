@@ -70,7 +70,7 @@
   {
     "id": "instructor_revolt",
     "title": "The instructors' revolt",
-    "text": "Three commanding officers have written, through the chain of command and then around it. Each has lost about a third of his section commanders to the training estate and expects to lose more. The letter uses the word hollow. It has been shown to the Chief of the General Staff, who did not disagree with it.",
+    "text": "Three commanding officers have written, through the chain of command and then around it. Each has lost about a third of his section commanders to the training estate and expects to lose more. The letter uses the word hollow. It has been shown to the Chief of the General Staff. He did not disagree with it.",
     "trigger": {
       "conditions": [
         { "key": "capacity_purchases", "op": ">=", "value": 3 }
@@ -239,7 +239,7 @@
       },
       {
         "label": "Promise it anyway",
-        "summary": "A boost now; a heavy cost at the reckoning if the target is missed, which it may well be.",
+        "summary": "A boost now; a heavy cost at the reckoning if the target is missed.",
         "effects": [
           { "type": "pc", "delta": 5 },
           { "type": "scoring_pc_if_missed", "delta": -15 }
@@ -250,7 +250,7 @@
   {
     "id": "equipment_delay",
     "title": "A slip on body armour",
-    "text": "The body-armour supplier reports a two-month slip on the emergency order. The plates are fine; the ceramic supplier's ceramic supplier is not. The contract has penalty clauses. The penalty is money, which does not stop anything.",
+    "text": "The body-armour supplier reports a two-month slip on the emergency order. The plates are fine; the ceramic supplier's ceramic supplier is not. The contract has penalty clauses. The penalty is money, and money does not make ceramic.",
     "trigger": {
       "minTurn": 3,
       "conditions": [
@@ -396,7 +396,7 @@
   {
     "id": "holding_pool_scandal",
     "title": "Idle in barracks",
-    "text": "A newspaper has photographs from inside a barracks where several thousand conscripts have been waiting for a training place for weeks. Card games, a broken boiler, a sergeant who has not been home since the call-out. The caption says the Army does not know what to do with them. The caption is accurate.",
+    "text": "A newspaper has photographs from inside a barracks where several thousand conscripts have been waiting for a training place for weeks. Card games, a broken boiler, a sergeant who has not been home since the call-out. The caption says the Army does not know what to do with them. Nobody in the Department can say otherwise.",
     "trigger": {
       "conditions": [
         { "key": "holding_pool", "op": ">", "value": 5000 }
@@ -424,7 +424,7 @@
   {
     "id": "body_armour_shortage",
     "title": "Trained, unequipped",
-    "text": "The first conscript cohorts have completed Phase Two. They are parading in training-issue clothing with no body armour, no helmets to scale and rifles on loan from the schools. No emergency equipment order has been placed. Under the model they count at a fraction of a soldier, which is generous.",
+    "text": "The first conscript cohorts have completed Phase Two. They are parading in training-issue clothing with no body armour, no helmets to scale and rifles on loan from the schools. No emergency equipment order has been placed. Until one is, they are not soldiers you can send anywhere.",
     "trigger": {
       "conditions": [
         { "key": "equipment_buy_active", "op": "==", "value": 0 },
@@ -486,7 +486,7 @@
   {
     "id": "phase1_instructor_shortage",
     "title": "A shorter course, the same instructors",
-    "text": "Phase One was 14 weeks before the crisis. Compressing it has not compressed the number of section commanders required to run it, only the time each has to make a soldier. The training schools report that they can fill the extra intake places or staff them, but not both.",
+    "text": "Phase One was 14 weeks before the crisis. Compressing it has not reduced the number of section commanders needed to run it. It has only reduced the time each of them has to make a soldier. The training schools report that they can fill the extra intake places or staff them, but not both.",
     "trigger": {
       "conditions": [
         { "key": "syllabus_compressed", "op": "==", "value": 1 },
@@ -519,7 +519,7 @@
   {
     "id": "pac_hearing",
     "title": "The Public Accounts Committee",
-    "text": "The Committee has summoned the Department. Its brief notes that the last published cost of training a Phase One recruit was £47,800 and asks what the emergency programme is spending per head, and why nobody can say. The chair has a reputation. The hearing is televised.",
+    "text": "The Committee has summoned the Department. Its brief notes that the last published cost of training a Phase One recruit was £47,800. It asks what the emergency programme is spending per head, and why nobody can say. The chair has a reputation. The hearing is televised.",
     "trigger": {
       "minTurn": 4,
       "conditions": [
@@ -628,7 +628,7 @@
   {
     "id": "devolved_objection",
     "title": "The devolved administrations",
-    "text": "The First Ministers have issued a joint statement that the Act was passed without consent and that their governments will not assist with registration. The statement is legally meaningless and politically not. The territorial departments ask for a line.",
+    "text": "The First Ministers have issued a joint statement that the Act was passed without consent and that their governments will not assist with registration. The statement has no legal force. It has a great deal of political force. The territorial departments ask for a line.",
     "trigger": {
       "minTurn": 2,
       "conditions": [
@@ -672,7 +672,7 @@
   {
     "id": "briefing_leak",
     "title": "This note has leaked",
-    "text": "Last month's briefing note is on the front page. The holding-pool figure is in the headline and the leadership paragraph is in the second paragraph. The Cabinet Office has begun a leak inquiry, which will find nothing, as they do.",
+    "text": "Last month's briefing note is on the front page. The holding-pool figure is in the headline and the leadership paragraph is in the second paragraph. The Cabinet Office has begun a leak inquiry. It will find nothing.",
     "trigger": {
       "minTurn": 3
     },
@@ -698,7 +698,7 @@
   {
     "id": "recruiting_surge",
     "title": "The recruiting offices are busy",
-    "text": "Regular recruiting has picked up sharply since the address. Applications are running well ahead of last year's intake of 7,771, and the recruiting partner is asking for staff. The applicants are volunteers, which is the good news, and untrained, which is the rest of it.",
+    "text": "Regular recruiting has picked up sharply since the address. Applications are running well ahead of last year's intake of 7,771, and the recruiting partner is asking for staff. The applicants are volunteers. They are also untrained, and the pipeline that would train them is already full.",
     "trigger": {
       "minTurn": 2,
       "conditions": [
@@ -767,7 +767,7 @@
   {
     "id": "opposition_motion",
     "title": "An Opposition day",
-    "text": "The Opposition has tabled a motion of no confidence in the mobilisation programme, not in the Government, which is cleverer. Backbenchers who supported the Bill are asking what it would cost them to abstain. The Chief Whip asks what you can offer them.",
+    "text": "The Opposition has tabled a motion of no confidence in the mobilisation programme rather than in the Government, so a backbencher can vote for it without bringing anything down. Those who voted for the Bill are asking what it would cost them to abstain. The Chief Whip asks what you can offer them.",
     "trigger": {
       "minTurn": 3,
       "conditions": [
@@ -819,7 +819,7 @@
   {
     "id": "junior_entry_useless",
     "title": "Junior entry, considered",
-    "text": "The Army has circulated a proposal to expand junior entry at the Foundation College. The note observes that non-completion there averaged 34% over the last published period, the worst of any training establishment, and that a recruit taken at sixteen cannot be deployed until eighteen: a lead time of 24 months against a deadline shorter than that. The proposal has been filed.",
+    "text": "The Army has circulated a proposal to expand junior entry at the Foundation College. The note observes that non-completion there averaged 34% over the last published period, the worst of any training establishment. It also observes that a recruit taken at sixteen cannot be deployed until eighteen. That is a lead time of 24 months, against a deadline shorter than that. The proposal has been filed.",
     "trigger": {
       "minTurn": 1,
       "maxTurn": 6
@@ -835,7 +835,7 @@
   {
     "id": "women_clause_row",
     "title": "The women clause",
-    "text": "The Bill excludes women. The Department's polling file records that 72% of the public supported including them when last asked, and the population tables show that excluding them roughly halves the eligible pool. The Opposition has noticed both figures. An amendment is available to you.",
+    "text": "The Bill excludes women. The Department's polling file records that 72% of the public supported including them when last asked. The population tables show that excluding them roughly halves the eligible pool. The Opposition has noticed both figures. An amendment is available to you.",
     "trigger": {
       "conditions": [
         { "key": "include_women", "op": "==", "value": 0 },

@@ -46,7 +46,7 @@ root.innerHTML = `
       ${effRow('Conscript cap, compressed syllabus', 'eff_conscript_compressed_cap')}
       ${effRow('Conscript growth per month of collective training', 'eff_conscript_growth_monthly')}
       ${effRow('Conscript, trained, unequipped', 'eff_conscript_unequipped')}
-      <tr><td>In training, holding pool, pending arrival</td><td class="num">0</td><td>—</td></tr>
+      <tr><td>In training, holding pool, pending arrival</td><td class="num">0</td><td>By definition</td></tr>
     </tbody>
   </table></div>
   <p class="small muted">Caveats. Trevor Dupuy's <em>Numbers, Predictions and War</em> (1979) is the best-known attempt to put multipliers on combat effectiveness and has been criticised ever since for fitting history rather than predicting it. Stephen Biddle's <em>Military Power</em> (2004) argues that force employment, not headcount or materiel, explains modern outcomes. Ian Malcolm Brown's <em>British Logistics on the Western Front, 1914–1919</em> (1998) shows how far logistics rather than manpower governed what a force could do. The game uses multipliers because a game needs a score, not because the numbers are known.</p>
@@ -115,7 +115,7 @@ function pct(id: string): string {
 }
 function effRow(label: string, id: string): string {
   const p = PARAMS[id];
-  const range = p.range ? `${p.range[0]} – ${p.range[1]}` : '—';
+  const range = p.range ? `${p.range[0]} – ${p.range[1]}` : 'n/a';
   return `<tr><td>${escapeHtml(label)}</td><td class="num">${sourcedHtml(String(p.value), id)}</td><td>${range} <span class="badge badge-assumption">Assumption</span></td></tr>`;
 }
 

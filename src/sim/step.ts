@@ -288,7 +288,7 @@ function resolvePendingEvent(s: GameState, choice: number | null, pcReasons: PcR
     chosen = choice == null || !Number.isInteger(choice) ? 0 : Math.min(Math.max(0, choice), ev.choices.length - 1);
     if (chosen !== choice) notes.push(`event_choice_defaulted:${id}`);
     const out = applyEffects(s, ev.choices[chosen].effects ?? []);
-    if (out.pcDelta !== 0) pcReasons.push({ label: `Event: ${ev.title} — ${ev.choices[chosen].label}`, delta: out.pcDelta });
+    if (out.pcDelta !== 0) pcReasons.push({ label: `Event: ${ev.title} (${ev.choices[chosen].label})`, delta: out.pcDelta });
     notes.push(...out.notes.map((n) => `event:${id}:${n}`));
   }
   s.eventLog.push({ turn: s.turn, eventId: id, choice: chosen });

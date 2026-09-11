@@ -103,7 +103,7 @@ function run(seed: string, strategy: StrategyId, difficulty: Difficulty, verbose
     console.log(header);
     for (const r of rows) console.log(r);
     const sc = score(s);
-    console.log(`\nResult: ${sc.met ? 'TARGET MET' : 'target missed'}${sc.resigned ? ' (resigned)' : ''} — over: ${s.overReason}`);
+    console.log(`\nResult: ${sc.met ? 'TARGET MET' : 'target missed'}${sc.resigned ? ' (resigned)' : ''}; over: ${s.overReason}`);
     console.log(`  ESE ${k(sc.ese)} / ${k(sc.target)} (shortfall ${k(sc.shortfall)}), headcount ${k(sc.headcount)}, quality ${sc.quality.toFixed(2)} (${sc.qualityBand}), leadership ${sc.leadership.toFixed(2)} (${sc.leadershipBand})`);
     console.log(`  cost £${bn(sc.cost)}bn (${sc.costPctDefenceBudget.toFixed(1)}% of defence budget), GDP loss £${bn(sc.gdpLoss)}bn (${sc.gdpLossPctGdp.toFixed(2)}% of GDP)`);
     const c = sc.composition;

@@ -28,7 +28,7 @@ function svRatioPct(id: ParamId): string {
 
 /** 70951 → "70,951". Rounds to the nearest integer. */
 export function formatInt(n: number): string {
-  if (!Number.isFinite(n)) return '—';
+  if (!Number.isFinite(n)) return 'n/a';
   const r = Math.round(n);
   const sign = r < 0 ? '−' : '';
   return sign + String(Math.abs(r)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -36,7 +36,7 @@ export function formatInt(n: number): string {
 
 /** A sum in pounds → "£12.3bn", or "£85m" below a billion. */
 export function formatGbpBn(n: number): string {
-  if (!Number.isFinite(n)) return '—';
+  if (!Number.isFinite(n)) return 'n/a';
   const abs = Math.abs(n);
   const sign = n < 0 ? '−' : '';
   if (abs < 1e9) return `${sign}£${Math.round(abs / 1e6)}m`;
@@ -46,7 +46,7 @@ export function formatGbpBn(n: number): string {
 
 /** A percentage number (43.2) → "43%". */
 export function formatPct(n: number): string {
-  if (!Number.isFinite(n)) return '—';
+  if (!Number.isFinite(n)) return 'n/a';
   return `${Math.round(n)}%`;
 }
 
@@ -127,13 +127,13 @@ function openingNote(state: GameState): string[] {
   ]);
 
   const point = pick(state, 3, [
-    'Headcount is not the score; trained, led and equipped soldiers are, and those are slow.',
+    'Headcount is not the score. Trained, led and equipped soldiers are the score, and they take time.',
     'The score counts soldiers rather than bodies, and the difference between the two is the training estate and the sergeants to run it.',
   ]);
 
   const close = pick(state, 4, [
     `You may take ${sv('actions_per_turn')} actions a month. The Prime Minister has asked you to make it happen.`,
-    `You have ${sv('actions_per_turn')} actions a month and the Prime Minister's confidence, in that order of usefulness.`,
+    `You have ${sv('actions_per_turn')} actions a month, and the Prime Minister's confidence for as long as the figures hold.`,
   ]);
 
   return [premise, strength, point, close];
@@ -171,7 +171,7 @@ function finalNote(state: GameState): string[] {
     ]),
   );
 
-  out.push(resigned ? "The general's assessment follows, as it would have anyway." : "The general's assessment follows.");
+  out.push("The general's assessment follows.");
   return out;
 }
 
@@ -247,7 +247,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
   }
 
   if (facts.forceReadyDelta >= P.pc_momentum_threshold * state.target) {
-    changes.push(`Force Ready rose by ${formatInt(facts.forceReadyDelta)}, which counts as momentum.`);
+    changes.push(`Force Ready rose by ${formatInt(facts.forceReadyDelta)}. Number Ten is calling it momentum.`);
   }
 
   const unequipped = state.pools.conscriptTrainedUnequipped;
@@ -325,7 +325,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
 
   if (state.juniorEntryTaken && facts.notes.some((n) => /junior/i.test(n))) {
     colour.push(
-      `Junior entry has been reopened; its first recruits would reach deployable age in ${sv('junior_entry_lead_months')} months and ${svRatioPct('junior_entry_attrition')} would not complete, so it changes nothing within the deadline.`,
+      `Junior entry has been reopened. Its first recruits reach deployable age in ${sv('junior_entry_lead_months')} months, and ${svRatioPct('junior_entry_attrition')} of them will not complete. Nothing from it arrives before the deadline.`,
     );
   }
 
@@ -340,7 +340,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
   if (out.length < 2) {
     out.push(
       pick(state, 28, [
-        'Nothing of consequence changed this month, which is itself of consequence.',
+        'Nothing changed this month that will show in the figures.',
         'No arrivals, no graduations, no news; the deadline is a month closer.',
       ]),
     );
