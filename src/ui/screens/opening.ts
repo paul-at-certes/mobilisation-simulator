@@ -72,6 +72,6 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
       h('span', { id: 'seed-help' }, '. The same seed gives the same events. Share links carry it.'),
     ),
     h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => opts.onStart(difficulty, Math.max(1, Math.floor(Number(seedInput.value) || 1))) }, 'Take office')),
-    h('p', { class: 'small muted' }, 'A calculator wearing a costume. No combat, no maps. Ten minutes, on a phone.'),
+    h('p', { class: 'small muted' }, 'The mechanics of mobilisation. No combat, no maps. Ten minutes, on a phone.'),
   );
 }

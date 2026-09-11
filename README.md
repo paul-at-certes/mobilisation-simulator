@@ -5,7 +5,7 @@ Defence. A NATO ally has been attacked; the Prime Minister wants a deployable
 division in twelve months. You have the levers UK law actually gives you and
 the capacity the UK training system actually has.
 
-The game is a calculator wearing a costume. Every number on screen is drawn
+The game is the mechanics of mobilisation. Every number on screen is drawn
 from `src/data/parameters.json`, where each entry carries a value, a source, a
 URL, an as-of date and a confidence tag (primary, derived, assumption). Tap any
 number in the game to see where it came from.

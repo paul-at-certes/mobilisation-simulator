@@ -10,7 +10,7 @@
 
 A single-page, turn-based crisis game in which the player is the UK Secretary of State for Defence and must field a deployable force within a deadline using only the real levers available under UK law and the real capacity of the UK training system.
 
-The game is a **calculator wearing a costume**. Every number the player sees is drawn from a sourced dataset. The fun comes from the trade-offs; the credibility comes from the sourcing. If a choice must be made between "more fun" and "traceable to a primary source", sourcing wins.
+The game is **the mechanics of mobilisation**. Every number the player sees is drawn from a sourced dataset. The fun comes from the trade-offs; the credibility comes from the sourcing. If a choice must be made between "more fun" and "traceable to a primary source", sourcing wins.
 
 **Audience:** LinkedIn, many of them senior defence professionals. They will check the numbers. They will also share it if it makes a point they already suspect but have never seen quantified.
 
