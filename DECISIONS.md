@@ -294,6 +294,18 @@ plus the difficulty table (which the brief allows). Primary figures untouched.
   The indicator now names all three, adds "a lower monthly call-up would stop
   it growing" while it is growing, and `expand_capacity` says that new places
   are filled from the holding pool and the month's call-up together.
+- **And it says when nothing can save them.** Only a conscript who graduates
+  counts, so the question is not when a place opens but whether one opens early
+  enough to finish the course. A cohort forming in month T graduates in
+  T + course, so the last useful start month is `deadline − course`. That gives
+  three states, computed by `holdingOutlook()` and unit-tested: *clearable*,
+  which also reports how many of them could start in time at the current
+  intake; *compress_only*, when the standing syllabus can no longer finish but
+  a compressed one still can; and *too_late*, when even the shortest course
+  cannot, which is the one case where the interface says outright that the
+  people in the pool will be paid to the deadline and never counted. Nothing a
+  player can buy shortens the course below the compressed syllabus, which is
+  what makes that safe to state as fact rather than as discouragement.
 - **The monthly call-up says that it persists.** The checkbox is unticked every
   month because the decisions menu is rebuilt each turn, which read as though
   the call-up had lapsed; the figure is in fact in force until changed. The

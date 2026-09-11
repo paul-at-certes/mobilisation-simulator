@@ -130,6 +130,8 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 .holding-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 .holding-value { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .holding-note { flex-basis: 100%; font-size: 0.75rem; color: var(--ink-3); }
+.holding.holding-lost { border-left-color: var(--bad); }
+.holding.holding-lost .holding-note { color: var(--ink-2); }
 
 /* Briefing note */
 .note {

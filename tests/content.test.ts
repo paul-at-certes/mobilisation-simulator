@@ -9,6 +9,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { BriefingFacts, GameEvent, GameState, Verdict } from '../src/types.js';
 import { briefingText, formatGbpBn, formatInt, formatPct } from '../src/ui/briefing.js';
+import { holdingOutlook } from '../src/ui/components/holding.js';
+import { courseMonths } from '../src/sim/pipeline.js';
 
 const root = resolve(__dirname, '..');
 const read = (p: string) => JSON.parse(readFileSync(resolve(root, p), 'utf8'));
@@ -281,6 +283,48 @@ describe('verdicts.json', () => {
       const filled = v.oneLiner.replace(/\{(\w+)\}/g, (_, k) => sample[k]);
       expect(filled.length, `${v.id}: filled oneLiner too long`).toBeLessThanOrEqual(90);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Holding pool outlook
+// ---------------------------------------------------------------------------
+
+describe('holding pool outlook', () => {
+  const course = courseMonths('normal');
+  const shortest = courseMonths('compressed');
+  const withPool = (turn: number, holdingPool: number): GameState => {
+    const s = fakeState({ turn, deadlineMonths: 12 });
+    return { ...s, pools: { ...s.pools, holdingPool } };
+  };
+
+  it('knows when a cohort can still graduate, and when only compression can', () => {
+    // A cohort forming next month graduates `course` months later, so the last
+    // useful start month is deadline − course.
+    const early = holdingOutlook(withPool(1, 5000));
+    expect(early.verdict).toBe('clearable');
+    expect(early.startWindow).toBe(12 - course - 1);
+
+    const late = holdingOutlook(withPool(12 - course, 5000));
+    expect(late.startWindow).toBe(0);
+    expect(late.verdict).toBe('compress_only');
+  });
+
+  it('says it is too late only when even the shortest course cannot finish', () => {
+    const hopeless = holdingOutlook(withPool(12 - shortest, 5000));
+    expect(hopeless.bestWindow).toBe(0);
+    expect(hopeless.verdict).toBe('too_late');
+
+    // One month earlier a compressed course still finishes.
+    const last = holdingOutlook(withPool(11 - shortest, 5000));
+    expect(last.bestWindow).toBe(1);
+    expect(last.verdict).not.toBe('too_late');
+  });
+
+  it('counts only those who could start in time', () => {
+    const o = holdingOutlook(withPool(1, 500_000));
+    expect(o.placeable).toBe(Math.floor(o.spare * o.startWindow));
+    expect(o.placeable).toBeLessThan(o.pool);
   });
 });
 
