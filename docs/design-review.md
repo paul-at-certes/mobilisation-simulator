@@ -343,10 +343,43 @@ manages without them, and only above it.
    `conscription_over_capacity` still resigns on 100% of Corps seeds.
 
 **The residue, and it is the half this did not touch.** The *spending* side is
-unchanged: 35 of 60 event effects are still PC deltas and most event choices
-are still a flat tax with no strategic angle. What existed was a ledger with
-only one side; there are now two. Making the outgoing side interesting is a
-content problem in `events.json`, not a model one.
+mostly unchanged. What existed was a ledger with only one side; there are now
+two. Making the outgoing side interesting is a content problem in
+`events.json`, not a model one.
+
+**Measure it properly before working on it.** The original entry said "only
+about a third of choices move a pool, a date or a rate", which undercounts in
+one direction and overcounts in the other. Counted across 33 events and 58
+choices:
+
+| what the choice actually moves | choices | |
+|---|---|---|
+| a binding constraint or a date | 27 | 47% |
+| **routes back to PC** (`willingness`, `cost`) | 7 | 12% |
+| **downstream of a cap that binds first** (`eligible_pool_pct`, `exemptions`) | 5 | 9% |
+| end screen only (`scoring_pc_if_missed`) | 4 | 7% |
+| a PC delta, or nothing at all | 15 | 26% |
+
+More choices carry typed effects than the entry credited — but **28% of them
+are typed effects that are secretly PC again**. The worst case is
+`willingness`: its only consequence anywhere in the model is the
+refusal-cases PC penalty, so an event that moves public willingness is an
+event that moves political capital with extra steps. That makes this finding
+and F4's residue the same problem, and means **the data that fixes one fixes
+the other**.
+
+**Two of the seventeen have since been fixed** — `treasury_letter`'s arms are
+now a cut to training capacity against a two-month equipment slip, with the
+Chancellor quoting the NAO's £16.9bn Equipment Plan deficit rather than
+asserting. `pac_hearing` was deliberately left political. The remaining
+fifteen follow the same pattern and the deck is at its 33-event cap, so they
+are rewrites, not additions.
+
+**A trap to know about.** Every scripted strategy takes choice 0, so
+`npm run dist` is blind to any change that lives in choice 1 — the benchmark
+was byte-identical across the `treasury_letter` rewrite. Cover those arms with
+direct tests (`tests/step.test.ts`, "the Chancellor's letter") or they ship
+unexercised.
 
 ---
 

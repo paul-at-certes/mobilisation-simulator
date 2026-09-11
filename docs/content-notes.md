@@ -20,7 +20,7 @@ that carry an effect; empty-choice events are purely informational.
 | `instructor_revolt` | capacity purchases ≥ 3 | Fiction, no numbers |
 | `medical_scandal` | turn ≥ 4; wartime medical standard; conscripts in training | Fiction, no numbers |
 | `refusal_test_case` | conscription active; willingness < 25% | Fiction, no numbers |
-| `treasury_letter` | cumulative cost > £10bn; at least one capacity purchase | Fiction, no numbers |
+| `treasury_letter` | cumulative cost > £10bn; at least one capacity purchase | Sourced: `equipment_plan_deficit`, `defence_budget_deficit_10yr`, `army_capability_gap` |
 | `ally_asks` | 3 turns remaining; Force Ready ≥ 50% of target | Fiction, no numbers |
 | `ally_asks_behind` | 3 turns remaining; Force Ready < 50% of target | Fiction, no numbers |
 | `equipment_delay` | turn ≥ 3; equipment ordered, not yet arrived | Fiction, no numbers |
@@ -32,7 +32,7 @@ that carry an effect; empty-choice events are purely informational.
 | `body_armour_shortage` | no equipment order; trained conscripts > 500 | Fiction, no numbers |
 | `junior_leader_exhaustion` | leadership factor < 0.85; conscripts in training | Fiction, no numbers |
 | `phase1_instructor_shortage` | syllabus compressed; conscripts in training | Sourced: `phase1_weeks` |
-| `pac_hearing` | turn ≥ 4; cumulative cost > £5bn | Sourced: `training_cost_per_recruit` |
+| `pac_hearing` | turn ≥ 4; cumulative cost > £5bn | Sourced: `training_cost_per_recruit`, `equipment_plan_deficit` |
 | `gdp_employers` | conscription active; cumulative GDP loss > £2bn | Sourced: `output_per_worker_labour_share`, `output_per_worker_gross` |
 | `judicial_review` | minimal exemptions; Bill passed | Fiction, no numbers |
 | `devolved_objection` | turn ≥ 2; Bill introduced or passed | Fiction, no numbers |
@@ -50,6 +50,24 @@ that carry an effect; empty-choice events are purely informational.
 | `vetting_failure` | three months after the vetting standard was lowered | Fiction, no numbers |
 
 ## Notes on particular events
+
+- **The two Treasury events, and why only one of them changed shape.**
+  `treasury_letter` used to resolve into a flat political charge — "fight for
+  the money", −6 PC, nothing else moved — which is exactly what the design
+  review's F6 complains about. Its second arm now takes the money out of the
+  equipment programme instead: `equipment_delay +2` and a smaller −3 PC, so the
+  choice is a cut to training capacity against a slip in equipment rather than
+  a cut against a bill. **`pac_hearing` was deliberately left alone.** It is a
+  televised select committee hearing, and political capital is genuinely the
+  thing at stake; mechanising it would have been mechanising the one event in
+  the deck that is honestly about politics. Both got the NAO's figures in their
+  prose, which is what the Chancellor and the Committee would actually be
+  quoting.
+- **The scripted strategies never take the second arm**, so `npm run dist`
+  cannot see this change at all — the benchmark is byte-identical across it.
+  The arms are covered by direct tests in `tests/step.test.ts` instead
+  ("the Chancellor's letter"). Any future event whose interesting arm is
+  choice 1 needs the same treatment.
 
 - `reservist_employers` **is the only recurring event that is not parliamentary
   routine**, and it earns that by being administrative routine instead. It used

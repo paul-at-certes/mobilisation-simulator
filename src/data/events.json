@@ -254,7 +254,7 @@
   {
     "id": "treasury_letter",
     "title": "A letter from the Chancellor",
-    "text": "The Chancellor has written to the Prime Minister, copying you as a courtesy. The letter notes that the mobilisation is now the largest unfunded commitment on the books and asks what is to be stopped to pay for it. It runs to two pages. The second page is a list.",
+    "text": "The Chancellor has written to the Prime Minister, copying you as a courtesy. The letter observes that the Equipment Plan was £16.9 billion short of its own budget before any of this began, that the ten-year defence deficit stands at £42.5 billion, and that the Army had already told the National Audit Office it could need £12 billion more to field what it has promised. It asks what is to be stopped to pay for the mobilisation. It runs to two pages. The second page is a list.",
     "trigger": {
       "conditions": [
         {
@@ -282,16 +282,29 @@
         ]
       },
       {
-        "label": "Fight for the money",
-        "summary": "The Prime Minister backs you, at a price in political capital.",
+        "label": "Take it from the Plan",
+        "summary": "The Treasury is answered out of the equipment programme, and the emergency order slips in behind the things it was taken from.",
         "effects": [
           {
+            "type": "equipment_delay",
+            "months": 2
+          },
+          {
             "type": "pc",
-            "delta": -6
+            "delta": -3
           }
         ]
       }
-    ]
+    ],
+    "source": {
+      "name": "NAO, The Equipment Plan 2023-2033, HC 315, Session 2023-24, 4 December 2023",
+      "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
+      "paramIds": [
+        "equipment_plan_deficit",
+        "defence_budget_deficit_10yr",
+        "army_capability_gap"
+      ]
+    }
   },
   {
     "id": "ally_asks",
@@ -803,7 +816,7 @@
   {
     "id": "pac_hearing",
     "title": "The Public Accounts Committee",
-    "text": "The Committee has summoned the Department. Its brief notes that the last published cost of training a Phase One recruit was £47,800. It asks what the emergency programme is spending per head, and why nobody can say. The chair has a reputation. The hearing is televised.",
+    "text": "The Committee has summoned the Department. Its brief notes that the last published cost of training a Phase One recruit was £47,800, and that the National Audit Office had already found the Equipment Plan £16.9 billion short of its budget before the mobilisation began. It asks what the emergency programme is spending per head, and why nobody can say. The chair has a reputation. The hearing is televised.",
     "trigger": {
       "minTurn": 4,
       "repeatable": true,
@@ -853,10 +866,11 @@
       }
     ],
     "source": {
-      "name": "Written answer (Luke Pollard MP to James Cartlidge MP), FY2023-24 Phase 1 cost at ATC Pirbright, as reported by UK Defence Journal, 22 October 2024",
+      "name": "Written answer (Luke Pollard MP to James Cartlidge MP), FY2023-24 Phase 1 cost at ATC Pirbright, as reported by UK Defence Journal, 22 October 2024; NAO, The Equipment Plan 2023-2033, HC 315, Session 2023-24, 4 December 2023",
       "url": "https://ukdefencejournal.org.uk/how-much-does-it-cost-to-train-a-british-army-recruit/",
       "paramIds": [
-        "training_cost_per_recruit"
+        "training_cost_per_recruit",
+        "equipment_plan_deficit"
       ]
     }
   },

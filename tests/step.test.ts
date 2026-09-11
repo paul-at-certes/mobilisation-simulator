@@ -537,6 +537,58 @@ describe('scenarios without events', () => {
   });
 });
 
+describe("the Chancellor's letter", () => {
+  // The scripted strategies always take choice 0, so the balance harness never
+  // exercises the second arm and cannot catch a regression in it. Test it here.
+  const letter = (): GameEvent => {
+    const e = DECK.find((x) => x.id === 'treasury_letter');
+    expect(e, 'treasury_letter is no longer in the deck').toBeDefined();
+    return e!;
+  };
+
+  function stateWithOrder(): GameState {
+    let s = newGame(23, 'corps');
+    s = step(s, { actions: [{ id: 'equipment_buy' }, { id: 'expand_capacity' }], eventChoice: null });
+    expect(s.equipmentArrivalMonth, 'no order to delay').not.toBeNull();
+    return s;
+  }
+
+  it('answers the Treasury out of the equipment programme, not only out of capital', () => {
+    const s = stateWithOrder();
+    const arm = letter().choices[1];
+    expect(arm.effects.some((e) => e.type === 'equipment_delay')).toBe(true);
+
+    const before = s.equipmentArrivalMonth!;
+    const pcBefore = s.politicalCapital;
+    const after = structuredClone(s);
+    const out = applyEffects(after, arm.effects);
+    expect(after.equipmentArrivalMonth).toBe(before + 2);
+    expect(after.politicalCapital).toBe(pcBefore - 3);
+    expect(out.pcDelta).toBe(-3);
+    expect(out.notes).toContain('equipment_delay:2');
+  });
+
+  it('costs only the capital when there is no order to slip', () => {
+    // Nothing to delay is not a bug: the minister who has bought no equipment
+    // has nothing for the Treasury to take, and pays the smaller political bill.
+    const s = newGame(23, 'corps');
+    expect(s.equipmentArrivalMonth).toBeNull();
+    const after = structuredClone(s);
+    applyEffects(after, letter().choices[1].effects);
+    expect(after.equipmentArrivalMonth).toBeNull();
+    expect(after.politicalCapital).toBe(s.politicalCapital - 3);
+  });
+
+  it('leaves the first arm a real cut rather than a political one', () => {
+    const s = stateWithOrder();
+    expect(s.capacityPurchases).toBe(1);
+    const after = structuredClone(s);
+    const out = applyEffects(after, letter().choices[0].effects);
+    expect(after.capacityPurchases).toBe(0);
+    expect(out.pcDelta).toBe(0);
+  });
+});
+
 describe('political capital for delivery', () => {
   const DELIVERY = /Soldiers reaching their units/;
 

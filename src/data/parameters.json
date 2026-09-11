@@ -1398,6 +1398,42 @@
       "confidence": "derived",
       "derivation": "47,388.7 + 23,067.1 = £62,455.8m, reported as £62.3bn in the Commons Library briefing CBP-8175; the rounded figure is used."
     },
+    "equipment_plan_deficit": {
+      "value": 16900000000,
+      "unit": "gbp",
+      "label": "Equipment Plan funding deficit",
+      "description": "Amount by which the Ministry of Defence's own forecast costs for the ten-year Equipment Plan exceed its budget.",
+      "section": "money",
+      "source": "NAO, The Equipment Plan 2023-2033, HC 315, Session 2023-24, 4 December 2023",
+      "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
+      "asOf": "2023-12-04",
+      "confidence": "primary",
+      "note": "Forecast costs GBP 305.5bn against a budget of GBP 288.6bn over ten years, which the NAO records as the largest deficit since it began reporting on the Plan. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
+    },
+    "defence_budget_deficit_10yr": {
+      "value": 42500000000,
+      "unit": "gbp",
+      "label": "Ten-year defence budget deficit",
+      "description": "Amount by which forecast spending across the whole defence budget exceeds it over ten years.",
+      "section": "money",
+      "source": "NAO, The Equipment Plan 2023-2033, HC 315, Session 2023-24, 4 December 2023",
+      "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
+      "asOf": "2023-12-04",
+      "confidence": "primary",
+      "note": "Against a GBP 4.3bn shortfall the year before. All six Top Level Budgets forecast costs above their ten-year budgets. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
+    },
+    "army_capability_gap": {
+      "value": 12000000000,
+      "unit": "gbp",
+      "label": "The Army's own stated capability gap",
+      "description": "Further funding the Army estimated it could need to provide in full the capability it is committed to.",
+      "section": "money",
+      "source": "NAO, The Equipment Plan 2023-2033, HC 315, Session 2023-24, 4 December 2023",
+      "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
+      "asOf": "2023-12-04",
+      "confidence": "primary",
+      "note": "Reported by the NAO as the Army's own estimate, alongside a declared Army deficit of GBP 1.2bn for the year. It is the number that makes the Chancellor's letter in this game a quotation rather than an invention. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
+    },
     "uk_gdp_2025": {
       "value": 3033900000000,
       "unit": "gbp",

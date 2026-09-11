@@ -865,3 +865,55 @@ between two published endpoints rather than free-floating, which is the
 difference between this and the constant it replaced. Recorded as F12 in the
 design review.
 
+## The Chancellor gets an audit to quote (11 September 2026)
+
+Paul supplied the NAO's *Equipment Plan 2023–2033* (HC 315, Session 2023-24,
+4 December 2023). Three figures from it are now parameters, all primary:
+`equipment_plan_deficit` (£16.9bn — forecast costs £305.5bn against a £288.6bn
+budget, which the NAO calls the largest deficit since it began reporting on the
+Plan), `defence_budget_deficit_10yr` (£42.5bn, against £4.3bn the year before),
+and `army_capability_gap` (£12bn, the Army's own estimate of what it would need
+to field what it has promised).
+
+**The deck is at its cap of 33 events, so this is a rewrite of the two Treasury
+events rather than new ones.** That constraint decided the shape of the work
+and was the right constraint to have.
+
+**`treasury_letter` was a flat political charge and is now a trade.** The
+Chancellor's letter was invented rhetoric resolving into "fight for the money,
+−6 PC" — one of the seventeen choices the design review counts as *a PC delta
+or nothing at all*. The letter now quotes the audit, and the second arm takes
+the money where a Chancellor would actually take it: out of the equipment
+programme. `equipment_delay +2` and −3 PC, against the first arm's cut to
+training capacity. The choice is now capacity against equipment, with a
+political charge on top of one side, rather than capacity against a bill.
+
+**`pac_hearing` was deliberately not mechanised.** Its brief gains the NAO
+deficit, because that is what the Committee would be holding. Its arms stay a
+political gamble, because a televised select committee hearing is the one event
+in the deck that is honestly about political capital, and converting it would
+have been applying F6's lesson where F6 does not apply. Not every event needs a
+non-PC arm; most do.
+
+**The balance did not move at all, and that is the finding.** `npm run dist --
+40` is **byte-identical** across the change, because every scripted strategy
+takes choice 0 and the second arm is never exercised. The harness is blind to
+any change that lives in choice 1. Three direct tests in `tests/step.test.ts`
+cover the arms instead — the delay applies and costs 3 PC, it costs only the
+capital when there is no order to slip, and the first arm is still a real cut
+with no political charge. **Any future event whose interesting arm is choice 1
+needs the same treatment**, or it ships untested.
+
+**A staleness note worth keeping.** The Equipment Plan is audited annually and
+a 2026 edition would supersede this one; each of the three parameters records
+that in its `note`. The figures are used because they are the most recent the
+project has, and because the Chancellor in this game would be quoting the last
+published audit rather than an unpublished one.
+
+**What this does not fix.** F6's spending side is better by two choices out of
+seventeen. The structural version — a finite, raidable pot of money to manage
+rather than a bill to pay — is available in the same report: the Plan's
+contingency is down to £4.1bn from £5.9bn in 2021. That would be a new action
+and a new resource rather than an event rewrite, and it has not been done.
+**ASK.**
+
