@@ -19,7 +19,8 @@ is the training pipeline and the junior leadership cadre.
 npm install
 npm run dev          # http://localhost:5173
 npm test             # vitest: deterministic scenarios, invariants, content checks
-npm run sim -- --all # balance matrix: every scripted strategy × every difficulty
+npm run sim -- --all # balance matrix: every scripted strategy × every difficulty, one seed
+npm run dist -- 40   # the same over 40 seeds: percentiles, met and resignation rates
 npm run build        # validates parameters, regenerates ASSUMPTIONS.md, typechecks, builds to dist/
 ```
 
@@ -45,10 +46,17 @@ scripts/
   build-assumptions.mjs         regenerates ASSUMPTIONS.md from parameters.json
   sim.ts                        CLI balance runner
 tests/                          step, invariants (1,000 fuzz runs), content
-docs/                           spec, source verification, transcribed source CSVs
+docs/sim-spec.md                the model, section by section
+docs/design-review.md           standing findings on playability, with benchmarks
+docs/                           source verification, transcribed source CSVs
 ASSUMPTIONS.md                  generated; every assumption with range and rationale
 DECISIONS.md                    decisions taken during the build, with reasoning
 ```
+
+`docs/design-review.md` is the standing record of what makes the game hard to
+play, what has been fixed and what has not, and the seed-distribution
+benchmarks a balance change must be checked against. Read it before changing a
+mechanic or a difficulty number.
 
 ## Updating the numbers when the next SPS lands
 

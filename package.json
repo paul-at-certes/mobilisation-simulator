@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "sim": "node --experimental-strip-types scripts/sim.ts",
+    "dist": "node --experimental-strip-types scripts/distribution.ts",
     "assumptions": "node scripts/build-assumptions.mjs"
   },
   "devDependencies": {

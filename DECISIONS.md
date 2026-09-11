@@ -493,8 +493,8 @@ design questions were put to him and answered; what follows is what was built.
 
 - **The curve is now the lesson.** A little conscription pays: one capacity
   purchase plus the civilian instructors who cost no junior leaders beats the
-  pure-reserves play. A lot of it does not: four purchases lose 2,900 effective
-  soldiers and eight lose 4,700, because every leader teaching is a leader not
+  pure-reserves play. A lot of it does not: three purchases lose 2,900 effective
+  soldiers and five lose 5,100, because every leader teaching is a leader not
   leading, and the discount falls on the ex-regulars and Strategic Reservists
   already fielded as well as on the conscripts the purchase produces. The two
   "do everything" strategies are now the two worst at Division. That is the
@@ -553,3 +553,42 @@ design questions were put to him and answered; what follows is what was built.
   decided when, and were true as written. `docs/sim-spec.md` and the strategy's
   own docstring both record the former name so the balance tables in those
   entries can still be read.
+
+## A standing design review (11 September 2026)
+
+- **Why a separate file.** `DECISIONS.md` is a log: newest last, entries true
+  as written, never revised. That is the right shape for decisions and the
+  wrong shape for findings, which have a current status. A finding recorded
+  here would be buried under later entries and would not say whether it still
+  holds. `docs/design-review.md` is the living counterpart: every finding
+  carries Open / Partly addressed / Addressed / By design, and is renumbered
+  never.
+- **It carries the benchmarks.** The seed-distribution table is in that file,
+  with the instruction to update it in the same commit as any change that moves
+  it, and three named numbers that indicate breakage: the sensible strategy's
+  met-rate at Division (40%), the median leadership factor for the
+  capacity-heavy strategies (0.63 and 0.45), and `do_nothing`'s share of each
+  rung.
+- **`npm run dist` is new**, and the reason the benchmarks can exist.
+  `npm run sim -- --all` reports one seed, which is enough to see a mechanic
+  fire and not enough to balance against: the 10th-to-90th-percentile spread at
+  Division is about 2,000 effective soldiers, most of the margin the difficulty
+  is tuned to. Every balance claim in the review file is a 40-seed figure.
+- **Two findings are recorded as deliberately unfixed.** Brigade is won by
+  anyone who calls out the reserves, because the Army Reserve really can raise
+  a brigade in five months and really cannot raise a division in twelve; the
+  file says so and says not to shrink the reserve figures, which are primary.
+  And the two "do everything" strategies are now the two worst at Division,
+  which is the lesson rather than a fault — with a note to watch playtests in
+  case it reads as punishing engagement.
+- **A correction carried in both files.** The first estimate of what the
+  derived leadership ratio would do (a factor of 0.29) was wrong: it applied
+  the ratio to all non-regular bodies. Re-deriving the ratio alone would have
+  made the mechanic bite at Corps only. The review file keeps the correction
+  next to the finding, because the general lesson — check which population a
+  ratio applies to, and which constraint sits upstream of it — is the most
+  reusable thing in the document.
+- **`max_effort` buys five capacity blocks, not eight.** Its own guard declines
+  to buy while the leadership factor is under 0.85, so under the new model it
+  is self-limiting. The earlier entry's "four purchases … and eight" was
+  corrected to "three … and five" against a measured run.
