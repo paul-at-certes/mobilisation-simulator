@@ -238,6 +238,21 @@ Note on access: `hansard.parliament.uk`, `questions-statements.parliament.uk`, `
 
 ---
 
+## 22. UK Security Vetting throughput and congestion (added 11 September 2026)
+
+- **Figure/claim:** UKSV is chronically over capacity; supporting figures supplied by Paul give ~15,217 core clearances processed a month (~182,600 a year), split ~13,725 CTC/SC and ~1,492 DV; staffing of 877 against a requirement of 1,145 at the peak of the backlog; post-lockdown demand 60% (CTC/SC) and 57% (DV) above forecast; performance collapsing to 15% of CTC/SC and 7% of DV meeting target in 2022; mid-2026 turnarounds of 8-14 weeks (SC) and 6-9 months (DV), with a renewed surge driven by the SDR and nuclear newbuild.
+- **URLs:**
+  - NAO, *Investigation into the performance of UK Security Vetting*, January 2023: https://www.nao.org.uk/reports/investigation-into-the-performance-of-uk-security-vetting/
+  - Full report PDF: https://www.nao.org.uk/wp-content/uploads/2023/01/investigation-into-the-performance-of-uk-security-vetting.pdf
+  - Public Accounts Committee work page: https://committees.parliament.uk/work/7226/performance-of-the-uk-security-vetting-service/publications/
+- **Summary:** The NAO report is real and its central claims match. Confirmed from the report and its press coverage: performance is the worst since UKSV was created in 2017; in September 2022 only **15%** of routine CTC/SC checks were completed within 25 days against an **85%** target; DV clearances in hand peaked at **14,600** (June 2022) and CTC/SC at **27,900** (November 2022); UKSV attributed this to an inability to recruit and retain staff and to "old and unstable" IT, with an IT modernisation programme ~50% over budget and £2.5m written off.
+- **Not confirmed in this session:** the monthly throughput figure (15,217), the 877/1,145 staffing split, the 60%/57% demand overshoot, and everything dated 2025-2026 (mid-2026 turnaround times, the SDR and Hinkley/Sizewell surge) — the last of these post-dates the 2023 report and would need a separate source.
+- **Bearing on the game:** none of it is quoted in player-facing prose. It supports the *premise* of the `vetting_backlog` event and sets the order of magnitude for `vetting_throughput_monthly` (2,000 a month for the Army against a service handling roughly fifteen thousand a month across government). Both vetting parameters are tagged `assumption` with a range, so the game does not assert any of these numbers as fact.
+- **As of:** NAO report January 2023; supplied figures 11 September 2026.
+- **Confidence:** NAO report and the 15%/85%, 14,600 and 27,900 figures **verified**. The throughput, staffing and 2025-26 surge figures **unverified** — do not quote them in the game without further work.
+
+---
+
 ## Summary table
 
 | # | Item | Status |
@@ -263,3 +278,4 @@ Note on access: `hansard.parliament.uk`, `questions-statements.parliament.uk`, `
 | 18 | SPS 1 Jul 2026 URL | verified (3,311 not checked) |
 | 19 | Russia 2022 NCO/instructor constraint | verified (RUSI) |
 | 20 | Dupuy/Biddle/Brown | verified |
+| 22 | UKSV throughput and congestion | NAO report verified; throughput/staffing figures unverified |

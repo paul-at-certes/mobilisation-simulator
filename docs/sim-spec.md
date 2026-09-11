@@ -150,7 +150,14 @@ produce nothing.
 `callupCapPerMonth` (null when absent) is a ceiling on how many people can be
 called in a month, imposed by the `callup_cap` effect: nobody enters training
 without a security clearance, so a congested vetting queue limits the call-up
-regardless of what the training estate could take. `callupCapUntil` is the last
+regardless of what the training estate could take. The effect names a parameter
+(`vetting_throughput_monthly`, `vetting_rescreen_throughput_monthly`) rather
+than carrying a number, so the magnitude keeps its range and rationale;
+`callupCapParam` records which one is in force, for the source popover. An
+effect naming an id that is not in parameters.json is skipped with an
+`unknown_param` note. The `durationMonths` stays a literal in the event: how
+long a story runs is pacing, like `EVENT_FIRE_PROBABILITY`, not a claim about
+the world. `callupCapUntil` is the last
 month it applies (null = indefinite); it is cleared at the start of the month
 after that, before the call-up runs. A second `callup_cap` while one is in
 force keeps the tighter of the two ceilings and the later of the two expiries,

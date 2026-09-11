@@ -12,7 +12,7 @@
  * missing or empty the deck is simply empty and nothing ever fires.
  */
 import type { ConditionKey, Effect, GameEvent, GameState, PoolKey } from '../types.js';
-import { P } from './params.js';
+import { P, isParamId } from './params.js';
 import { getEvents } from './content.js';
 import { next, pickWeighted } from './rng.js';
 import { computeForce } from './effectiveness.js';
@@ -284,11 +284,19 @@ function applyEffect(s: GameState, e: Effect, out: EffectOutcome): void {
       out.notes.push(`eligible_pool_pct:${e.pct}`);
       break;
     case 'callup_cap': {
-      const cap = Math.max(0, e.perMonth);
+      // The magnitude lives in parameters.json, with its range and rationale.
+      if (!isParamId(e.param)) {
+        out.notes.push(`unknown_param:${e.param}`);
+        break;
+      }
+      const cap = Math.max(0, P[e.param]);
       const until = e.durationMonths != null && e.durationMonths > 0 ? s.turn + e.durationMonths : null;
       // A second congestion does not undo the first: keep the tighter ceiling,
       // and the later expiry of the two.
-      if (s.callupCapPerMonth == null || cap < s.callupCapPerMonth) s.callupCapPerMonth = cap;
+      if (s.callupCapPerMonth == null || cap < s.callupCapPerMonth) {
+        s.callupCapPerMonth = cap;
+        s.callupCapParam = e.param;
+      }
       if (s.callupCapUntil != null && until != null) s.callupCapUntil = Math.max(s.callupCapUntil, until);
       else s.callupCapUntil = until;
       out.notes.push(`callup_cap:${s.callupCapPerMonth}:${s.callupCapUntil ?? 'indefinite'}`);

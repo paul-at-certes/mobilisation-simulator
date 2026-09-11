@@ -136,6 +136,8 @@ Every parameter tagged `assumption` in the game, with its plausible range and th
 | `civilian_instructor_capacity_annual` · Civilian instructor capacity | 2,000 | 1,000 – 4,000 | Design brief. |
 | `civilian_instructor_delay_months` · Civilian instructor lead time | 3 | 2 – 6 | Design brief. |
 | `equipment_lead_months` · Equipment lead time | 4 | 3 – 8 | Design brief. |
+| `vetting_throughput_monthly` · Vetting clearances a month | 2,000 | 1,000 – 4,000 | The share of UKSV throughput the Army could expect during a congestion, against a service that handles roughly fifteen thousand clearances a month across all of government. Sized so the ceiling is invisible on the baseline training estate (spare intake of a few dozen a month) and binding once capacity has been bought (spare intake 2,900-4,900). |
+| `vetting_rescreen_throughput_monthly` · Vetting clearances a month while re-screening | 1,500 | 750 – 3,000 | Three-quarters of the ordinary congested throughput: re-screening work competes with new clearances for the same officers, so a review of past cases costs roughly a quarter of current capacity. |
 
 ### Effectiveness multipliers (modelling assumptions)
 

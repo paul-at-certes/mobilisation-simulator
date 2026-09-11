@@ -943,6 +943,38 @@
       "confidence": "derived",
       "derivation": "UK policy: under-18s are not deployed on operations. Entry at 16 implies a two-year lead."
     },
+    "vetting_throughput_monthly": {
+      "value": 2000,
+      "unit": "people",
+      "label": "Vetting clearances a month",
+      "description": "Ceiling on how many people can be called up in a month while the security vetting queue is congested. Nobody enters training without a clearance, so this bounds the call-up regardless of what the training estate could take.",
+      "section": "pipeline",
+      "source": "Modelling assumption. UKSV scale and the fact of chronic congestion from NAO, Investigation into the performance of UK Security Vetting (January 2023); the ceiling itself is a game figure, not an NAO one.",
+      "url": "https://www.nao.org.uk/reports/investigation-into-the-performance-of-uk-security-vetting/",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1000,
+        4000
+      ],
+      "rationale": "The share of UKSV throughput the Army could expect during a congestion, against a service that handles roughly fifteen thousand clearances a month across all of government. Sized so the ceiling is invisible on the baseline training estate (spare intake of a few dozen a month) and binding once capacity has been bought (spare intake 2,900-4,900)."
+    },
+    "vetting_rescreen_throughput_monthly": {
+      "value": 1500,
+      "unit": "people",
+      "label": "Vetting clearances a month while re-screening",
+      "description": "The tighter ceiling that applies while every recruit cleared under a lowered standard is screened again. Re-screening consumes the same teams that clear new applicants.",
+      "section": "pipeline",
+      "source": "Modelling assumption. UKSV scale and the fact of chronic congestion from NAO, Investigation into the performance of UK Security Vetting (January 2023); the ceiling itself is a game figure, not an NAO one.",
+      "url": "https://www.nao.org.uk/reports/investigation-into-the-performance-of-uk-security-vetting/",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        750,
+        3000
+      ],
+      "rationale": "Three-quarters of the ordinary congested throughput: re-screening work competes with new clearances for the same officers, so a review of past cases costs roughly a quarter of current capacity."
+    },
     "eff_regular": {
       "value": 1.0,
       "unit": "ratio",

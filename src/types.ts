@@ -189,8 +189,12 @@ export type Effect =
   | { type: 'medical_standard'; standard: MedicalStandard }
   | { type: 'exemptions'; regime: ExemptionRegime }
   | { type: 'eligible_pool_pct'; pct: number }
-  /** Ceiling on conscripts called per month; expires after `durationMonths`, or never if absent. */
-  | { type: 'callup_cap'; perMonth: number; durationMonths?: number }
+  /**
+   * Ceiling on conscripts called per month, named as a parameter id so the
+   * magnitude stays in parameters.json with its range and rationale. Expires
+   * after `durationMonths`, or never if absent.
+   */
+  | { type: 'callup_cap'; param: string; durationMonths?: number }
   /** Give (or withdraw) the military first claim on the security vetting teams. */
   | { type: 'vetting_priority'; military: boolean }
   /** Lower (or restore) the vetting standard applied to those called up. */
@@ -383,6 +387,8 @@ export interface GameState {
   callupPerMonth: number;
   /** Vetting ceiling on the monthly call-up; null when the queue is not the binding constraint. */
   callupCapPerMonth: number | null;
+  /** Parameter the ceiling came from, so the UI can show its source popover. */
+  callupCapParam: string | null;
   /** Last month the ceiling applies; null means it does not expire. */
   callupCapUntil: number | null;
   /** The month the military were given priority for vetting; null if they never were. */

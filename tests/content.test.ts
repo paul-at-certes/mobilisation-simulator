@@ -92,11 +92,16 @@ function checkEffect(e: AnyEffect, where: string): void {
     case 'eligible_pool_pct':
       expect(Math.abs(e.pct as number)).toBeLessThanOrEqual(20);
       break;
-    case 'callup_cap':
-      expect(typeof e.perMonth).toBe('number');
-      expect(e.perMonth as number, `${where}: a negative ceiling is meaningless`).toBeGreaterThanOrEqual(0);
+    case 'callup_cap': {
+      // The magnitude must live in parameters.json, never in the event.
+      expect(e.perMonth, `${where}: inline ceiling; name a parameter instead`).toBeUndefined();
+      const p = parameters[e.param as string];
+      expect(p, `${where}: unknown parameter ${e.param}`).toBeDefined();
+      expect(p.unit, `${where}: a ceiling is a headcount`).toBe('people');
+      expect(p.value, `${where}: a negative ceiling is meaningless`).toBeGreaterThanOrEqual(0);
       if (e.durationMonths !== undefined) expect(e.durationMonths as number).toBeGreaterThan(0);
       break;
+    }
     case 'vetting_priority':
       expect(typeof e.military).toBe('boolean');
       break;
@@ -379,6 +384,7 @@ function fakeState(over: Partial<GameState> = {}): GameState {
     clauses: { ageBand: '18-30', includeWomen: true, medical: 'peacetime', exemptions: 'broad' },
     callupPerMonth: 0,
     callupCapPerMonth: null,
+    callupCapParam: null,
     callupCapUntil: null,
     vettingPriorityMonth: null,
     vettingRelaxedMonth: null,

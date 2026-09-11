@@ -549,12 +549,12 @@ describe('the vetting queue', () => {
 
     // "Leave it to them": a ceiling of 2,000 a month for six months.
     let s = choose(before, 'vetting_backlog', 2);
-    expect(s.callupCapPerMonth).toBe(2000);
+    expect(s.callupCapPerMonth).toBe(P.vetting_throughput_monthly);
     expect(s.callupCapUntil).toBe(s.turn + 6);
 
     const calledBefore = s.conscriptsCalledTotal;
     s = step(s, NOTHING);
-    expect(s.conscriptsCalledTotal - calledBefore).toBe(2000);
+    expect(s.conscriptsCalledTotal - calledBefore).toBe(P.vetting_throughput_monthly);
     expect(s.briefing.notes.some((n) => n.startsWith('callup_capped:'))).toBe(true);
 
     // Five more months under the ceiling, then it expires.
@@ -565,7 +565,7 @@ describe('the vetting queue', () => {
     expect(s.callupCapPerMonth).toBeNull();
     const uncapped = s.conscriptsCalledTotal;
     s = step(s, NOTHING);
-    expect(s.conscriptsCalledTotal - uncapped).toBeGreaterThan(2000);
+    expect(s.conscriptsCalledTotal - uncapped).toBeGreaterThan(P.vetting_throughput_monthly);
   });
 
   it('leaves the call-up alone on the other two branches', () => {
@@ -590,7 +590,7 @@ describe('the vetting queue', () => {
     // Returning the slots ends the priority and puts the ceiling back on.
     const returned = choose(s, 'police_vetting_row', 0);
     expect(returned.vettingPriorityMonth).toBeNull();
-    expect(returned.callupCapPerMonth).toBe(2000);
+    expect(returned.callupCapPerMonth).toBe(P.vetting_throughput_monthly);
     // Holding it costs capital now and again at the scoring table.
     const held = choose(s, 'police_vetting_row', 1);
     expect(held.politicalCapital).toBe(s.politicalCapital - 5);
@@ -609,7 +609,7 @@ describe('the vetting queue', () => {
     // Re-screening restores the standard and slows the call-up while it runs.
     const rescreened = choose(s, 'vetting_failure', 0);
     expect(rescreened.vettingRelaxedMonth).toBeNull();
-    expect(rescreened.callupCapPerMonth).toBe(1500);
+    expect(rescreened.callupCapPerMonth).toBe(P.vetting_rescreen_throughput_monthly);
     expect(rescreened.callupCapUntil).toBe(s.turn + 4);
     // Brazening it out keeps the shortened check and costs capital and willingness.
     const brazen = choose(s, 'vetting_failure', 1);
@@ -618,10 +618,24 @@ describe('the vetting queue', () => {
     expect(brazen.willingnessBoosts.at(-1)).toEqual({ delta: -3, until: s.turn + 6 });
   });
 
+  it('takes the ceiling from the parameter, not from the event', () => {
+    const s = choose(conscripting(36), 'vetting_backlog', 2);
+    expect(s.callupCapParam).toBe('vetting_throughput_monthly');
+    expect(s.callupCapPerMonth).toBe(P.vetting_throughput_monthly);
+    // No callup_cap effect in the deck may carry its own magnitude.
+    for (const ev of DECK) {
+      for (const c of ev.choices) {
+        for (const eff of c.effects) {
+          if (eff.type === 'callup_cap') expect((eff as { perMonth?: number }).perMonth).toBeUndefined();
+        }
+      }
+    }
+  });
+
   it('keeps the tighter ceiling and the later expiry when two congestions overlap', () => {
     const s = conscripting(35);
     const both = choose(choose(s, 'vetting_backlog', 2), 'vetting_failure', 0);
-    expect(both.callupCapPerMonth).toBe(1500);
+    expect(both.callupCapPerMonth).toBe(P.vetting_rescreen_throughput_monthly);
     expect(both.callupCapUntil).toBe(s.turn + 6);
   });
 });

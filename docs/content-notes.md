@@ -73,14 +73,15 @@ that carry an effect; empty-choice events are purely informational.
   giving the military priority brings the Commissioner's letter two months
   later; lowering the standard brings the recruit who should not have been
   cleared three months later; doing nothing imposes the vetting ceiling on the
-  call-up (2,000 a month for six months, spec §5.1) and brings nothing after
-  it, because the queue is the consequence. No figure appears in the prose:
-  UKSV throughput and the police clearance backlog could not be sourced to a
-  published series, so the ceiling lives in the effect, where the player meets
-  it as a number in the call-up control and the briefing rather than as a
-  claim about the world. Sizing it at 2,000 a month makes it bite for a player
-  who has bought training capacity but leaves a baseline estate (spare intake
-  of a few dozen a month) untouched.
+  call-up (`vetting_throughput_monthly`, six months, spec §5.1) and brings
+  nothing after it, because the queue is the consequence. No figure appears in
+  the prose: the player meets the ceiling as a number in the call-up control
+  and the briefing, carrying its source popover like every other parameter,
+  rather than as a claim in the text. The two ceilings are the only event
+  magnitudes in the deck that are parameterised, because they are the only ones
+  that model a real-world rate rather than a political consequence; both are
+  `assumption` with a range, and the UKSV evidence behind their order of
+  magnitude is in `docs/source-verification.md` item 22.
 - Numbers deliberately not quoted anywhere because they could not be sourced
   (see `docs/source-verification.md`): the £49k Phase 1 + 2 training cost,
   the £3.5–5k per-head kit cost, "6.8 medical rejections per intake", the

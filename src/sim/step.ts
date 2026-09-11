@@ -88,6 +88,7 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
     clauses: { ageBand: '18-30', includeWomen: true, medical: 'peacetime', exemptions: 'broad' },
     callupPerMonth: 0,
     callupCapPerMonth: null,
+    callupCapParam: null,
     callupCapUntil: null,
     vettingPriorityMonth: null,
     vettingRelaxedMonth: null,
@@ -370,6 +371,7 @@ function advanceMonth(s: GameState, arrivals: { label: string; count: number }[]
   // b2. Vetting-queue expiry: the backlog clears and the ceiling comes off.
   if (s.callupCapUntil != null && s.callupCapUntil < s.turn) {
     s.callupCapPerMonth = null;
+    s.callupCapParam = null;
     s.callupCapUntil = null;
     notes.push('callup_cap_lifted');
   }

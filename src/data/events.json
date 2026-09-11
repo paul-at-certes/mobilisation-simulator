@@ -924,7 +924,7 @@
         "label": "Leave it to them",
         "summary": "The queue clears at its own pace over the next half-year, and until it does the monthly call-up cannot run ahead of what vetting can clear.",
         "effects": [
-          { "type": "callup_cap", "perMonth": 2000, "durationMonths": 6 }
+          { "type": "callup_cap", "param": "vetting_throughput_monthly", "durationMonths": 6 }
         ]
       }
     ]
@@ -945,7 +945,7 @@
         "summary": "Vetting goes back to a shared queue; the call-up is held to what the teams can clear for the next half-year, and the Home Secretary is satisfied.",
         "effects": [
           { "type": "vetting_priority", "military": false },
-          { "type": "callup_cap", "perMonth": 2000, "durationMonths": 6 },
+          { "type": "callup_cap", "param": "vetting_throughput_monthly", "durationMonths": 6 },
           { "type": "pc", "delta": 2 }
         ]
       },
@@ -975,7 +975,7 @@
         "summary": "The full check is restored and everyone cleared since the change is screened again; the call-up is held down while it is done, and it is not cheap.",
         "effects": [
           { "type": "vetting_relax", "relaxed": false },
-          { "type": "callup_cap", "perMonth": 1500, "durationMonths": 4 },
+          { "type": "callup_cap", "param": "vetting_rescreen_throughput_monthly", "durationMonths": 4 },
           { "type": "cost", "gbp": 25000000 },
           { "type": "pc", "delta": -2 }
         ]

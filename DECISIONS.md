@@ -344,11 +344,32 @@ design questions were put to him and answered; what follows is what was built.
 - **2,000 a month** was chosen so the ceiling is invisible to a player running
   the baseline estate (spare intake is a few dozen a month) and painful to one
   who has bought three or four capacity purchases and compressed the syllabus.
-  It is in `events.json` rather than `parameters.json`, following the existing
-  convention that event-effect magnitudes are content, not model parameters —
-  no event effect in the deck is parameterised. **ASK** if you would rather it
-  were a parameter with a range, in which case it wants a rationale and it will
-  appear in `ASSUMPTIONS.md`.
+  It started as a literal in `events.json`, following the convention that
+  event-effect magnitudes are content rather than model parameters; Paul asked
+  for it to be a parameter with a range instead, which is what it now is.
+  `callup_cap` therefore names a parameter and cannot carry a number at all
+  (the content test enforces this), so the two ceilings —
+  `vetting_throughput_monthly` 2,000 and
+  `vetting_rescreen_throughput_monthly` 1,500 — keep their ranges, their
+  rationales and their source popovers, and appear in `ASSUMPTIONS.md`. They
+  are the only parameterised event magnitudes in the deck, on the principle
+  that they model a real-world rate where every other effect models a political
+  consequence.
+- **The durations stay literal.** Six months of congestion and four of
+  re-screening are pacing — how long a story runs — which the project already
+  keeps out of `parameters.json` (see `EVENT_FIRE_PROBABILITY`). Say the word
+  if you would rather they were parameters too.
+- **Where the 2,000 comes from.** Paul supplied UKSV figures: ~15,217 core
+  clearances a month across government, staffing of 877 against a requirement
+  of 1,145, and a collapse to 15% of standard checks meeting the 25-day target
+  in 2022. The NAO report behind them is real and its central claims check out;
+  the monthly throughput and staffing figures could not be confirmed in this
+  session, and the 2025-26 surge post-dates the report entirely
+  (`docs/source-verification.md` item 22). None of it is quoted in the game.
+  It sets the order of magnitude only: 2,000 a month for the Army is a
+  plausible share of a service handling roughly fifteen thousand, which is why
+  the parameter is an `assumption` with a 1,000-4,000 range rather than a
+  sourced figure.
 - **The consequences fire on a timer, not a dice roll**, per Paul's answer.
   Two new condition keys, `vetting_priority_months` and
   `vetting_relaxed_months` (−1 when the choice was never made), let an event

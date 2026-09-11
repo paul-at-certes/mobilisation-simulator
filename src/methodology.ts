@@ -20,7 +20,7 @@ root.innerHTML = `
   <p class="premise">The game is the mechanics of mobilisation. Every number the player sees is drawn from a sourced dataset and can be inspected by tapping it. This page lists all of them, explains the model, and says what it leaves out.</p>
   <p class="toc">
     <a href="#model">The model</a> <a href="#effectiveness">Effectiveness</a> <a href="#assumptions">Assumptions</a>
-    <a href="#parameters">All parameters</a> <a href="#ignored">What is ignored</a> <a href="#sources">Sources</a> <a href="#update">Updating</a>
+    <a href="#parameters">All parameters</a> <a href="#ignored">What is ignored</a> <a href="#sources">Sources</a>
   </p>
 
   <h2 id="model">The model</h2>
@@ -72,9 +72,6 @@ root.innerHTML = `
 
   <h2 id="sources">Principal sources</h2>
   <ul id="sources-list"></ul>
-
-  <h2 id="update">Updating the numbers</h2>
-  <p>When the next Service Personnel Statistics land (the 1 October 2026 release is due in December 2026), edit <code>src/data/parameters.json</code>: change <code>value</code>, <code>asOf</code> and the table reference in <code>source</code> for each SPS-derived entry, then run <code>npm run validate</code> and <code>npm run sim -- --all</code> to check the balance still holds. The README has the full list of which parameters come from which table.</p>
 `;
 
 // Structural assumptions: minimal markdown → HTML for the preamble's numbered list and bold.

@@ -7,7 +7,7 @@ import type { Action, ActionAvailability, ActionId, AgeBand, BillClauses, BillPr
 import { FREE_ACTIONS } from '../../types';
 import { h, fmtInt, signed } from '../dom';
 import { ACTION_COPY, GROUP_TITLES, type ActionGroup } from '../action-copy';
-import { getParam } from './sourced';
+import { getParam, sourced } from './sourced';
 
 const pcOf = (id: string): string => { const v = getParam(id)?.value ?? 0; return v > 0 ? `+${v}` : String(v); };
 const mOf = (id: string): number => getParam(id)?.value ?? 0;
@@ -152,11 +152,13 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
         const until = state.callupCapUntil;
         const left = until == null ? null : Math.max(0, until - state.turn + 1);
         const when = left == null ? 'until further notice' : `for ${fmtInt(left)} more month${left === 1 ? '' : 's'}`;
+        // The ceiling is a parameter, so it carries its source popover like every other.
+        const capEl = state.callupCapParam ? sourced(fmtInt(cap), state.callupCapParam) : h('span', {}, fmtInt(cap));
         return h(
           'div',
           { class: 'action-options' },
           field,
-          h('div', { class: 'small muted' }, `Security vetting can clear ${fmtInt(cap)} a month ${when}; anything set above that is not called.`),
+          h('div', { class: 'small muted' }, 'Security vetting can clear ', capEl, ` a month ${when}; anything set above that is not called.`),
         );
       }
       default:
