@@ -577,6 +577,38 @@ does, the answer is a supply-side lever (below), not a softer factor.
 
 ---
 
+### F11 — The ex-regular ceiling is now an upper bound, not an estimate · *Watch*
+
+`ex_regular_report_ceiling` is 0.50: the share of the tracked Ex-Regular
+Reserve who ever report. It was an assumption reasoned from two effects —
+incomplete address records, and medical and age exemptions.
+
+HC 57 ¶119 measures one of those directly. Of the Regular Reserve personnel
+who **actually turned up** at the mobilisation centre on Operation Telic,
+**48% failed the medical**, against **14% of the Territorial Army**. So the
+medical alone leaves 0.52 of those who report, before any allowance for the
+records the MoD has admitted are incomplete, or for age.
+
+That makes 0.50 an upper bound rather than a central estimate: the true figure
+is below it, probably well below. **The value has not been changed**, because
+lowering it is a balance change and not a sourcing one, and it would land on
+the same strategies F1's employer change has just moved. Its range is tightened
+to [0.30, 0.52] and its rationale now says so.
+
+**Two things this is good for regardless.** The 48%/14% split is the only
+primary measurement the model has of the ex-regular-versus-volunteer
+asymmetry, and the model currently treats the two as differing only in
+effectiveness, not in who arrives at all. And it is the honest answer to any
+future argument that the ex-regular recall should yield more: it should almost
+certainly yield less.
+
+**Watch for.** If a later pass lowers this, re-run the benchmark — `where_are_they`
+and the whole ex-regular branch sit downstream of it, and at Corps the
+ex-regular tail is what the delivery credit (F6) is being paid on from about
+month 8.
+
+---
+
 ### F12 — Stop-loss was a one-way switch with no cost after the first month · *Addressed*
 
 **Evidence as found.** `stop_loss` cost −9 PC once and then set voluntary
@@ -638,38 +670,6 @@ it — AFCAS has never recorded the Army outside 17–23, so everything above th
 band is extrapolation beyond the evidence. If a later pass adds more intention
 effects, check the ceiling is still unreachable by ordinary play; a run that
 pins at 40 is asserting something the survey does not support.
-
----
-
-### F11 — The ex-regular ceiling is now an upper bound, not an estimate · *Watch*
-
-`ex_regular_report_ceiling` is 0.50: the share of the tracked Ex-Regular
-Reserve who ever report. It was an assumption reasoned from two effects —
-incomplete address records, and medical and age exemptions.
-
-HC 57 ¶119 measures one of those directly. Of the Regular Reserve personnel
-who **actually turned up** at the mobilisation centre on Operation Telic,
-**48% failed the medical**, against **14% of the Territorial Army**. So the
-medical alone leaves 0.52 of those who report, before any allowance for the
-records the MoD has admitted are incomplete, or for age.
-
-That makes 0.50 an upper bound rather than a central estimate: the true figure
-is below it, probably well below. **The value has not been changed**, because
-lowering it is a balance change and not a sourcing one, and it would land on
-the same strategies F1's employer change has just moved. Its range is tightened
-to [0.30, 0.52] and its rationale now says so.
-
-**Two things this is good for regardless.** The 48%/14% split is the only
-primary measurement the model has of the ex-regular-versus-volunteer
-asymmetry, and the model currently treats the two as differing only in
-effectiveness, not in who arrives at all. And it is the honest answer to any
-future argument that the ex-regular recall should yield more: it should almost
-certainly yield less.
-
-**Watch for.** If a later pass lowers this, re-run the benchmark — `where_are_they`
-and the whole ex-regular branch sit downstream of it, and at Corps the
-ex-regular tail is what the delivery credit (F6) is being paid on from about
-month 8.
 
 ---
 
