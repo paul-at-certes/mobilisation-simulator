@@ -196,8 +196,8 @@ Every parameter tagged `assumption` in the game, with its plausible range and th
 | `gdp_pc_penalty_per_step` · GDP penalty per step | 3 | 1 – 5 | Design brief. |
 | `pc_start` · Starting political capital | 70 | 50 – 70 | Design brief gave 60. Raised to the top of the range in the balance pass so that a full programme of actions is feasible but tight (see DECISIONS.md). |
 | `pc_baseline_drain` · Monthly drain | 1 | 0 – 2 | Design brief. |
-| `pc_momentum_bonus` · Momentum bonus | 3 | 1 – 4 | Design brief. Tuned in the balance pass (see DECISIONS.md). |
-| `pc_momentum_threshold` · Momentum threshold | 0.05 | 0.03 – 0.1 | Design brief. |
+| `pc_delivery_per_credit` · Soldiers per point of political credit | 500 | 250 – 1,500 | One point per 500 delivered is one point per month's worth of the Army's own trained-strength gain (regular_gains_annual, 5,933 a year, is 494 a month). The minister earns political credit at the rate at which the Army in peacetime produces soldiers, and only above it. Replaces pc_momentum_bonus / pc_momentum_threshold, which were a share of target and so unreachable at Corps scale (see DECISIONS.md and docs/design-review.md F6). |
+| `pc_delivery_max` · Monthly cap on delivery credit | 3 | 2 – 5 | The same 3 as the momentum bonus it replaces, so the best possible month is no larger than before; what changes is that an ordinary delivering month can now reach it. Uncapped, the month the reserves arrive would pay for the rest of the game. |
 | `pc_low_willingness_penalty` · Refusal-cases penalty | 2 | 1 – 4 | Design brief. |
 | `pc_idle_grace_months` · Idle months tolerated | 2 | 1 – 4 | A minister may take a month to think and a second to consult. Beyond that, doing nothing visible reads as drift. |
 | `pc_idle_penalty` · Penalty for a government seen to be doing nothing | 3 | 1 – 5 | Three times the baseline drain: visible inaction costs a government more than the crisis itself does. |

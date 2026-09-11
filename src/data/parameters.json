@@ -1430,37 +1430,37 @@
       ],
       "rationale": "Design brief."
     },
-    "pc_momentum_bonus": {
+    "pc_delivery_per_credit": {
+      "value": 500,
+      "unit": "people",
+      "label": "Soldiers per point of political credit",
+      "description": "Soldiers reaching their units in a month — reservists mobilised, ex-regulars and Strategic Reserve reporting, conscripts graduating — per point of political capital earned for delivery.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        250,
+        1500
+      ],
+      "rationale": "One point per 500 delivered is one point per month's worth of the Army's own trained-strength gain (regular_gains_annual, 5,933 a year, is 494 a month). The minister earns political credit at the rate at which the Army in peacetime produces soldiers, and only above it. Replaces pc_momentum_bonus / pc_momentum_threshold, which were a share of target and so unreachable at Corps scale (see DECISIONS.md and docs/design-review.md F6)."
+    },
+    "pc_delivery_max": {
       "value": 3,
       "unit": "pc",
-      "label": "Momentum bonus",
-      "description": "Political capital gained in a month when Force Ready rises by at least 5% of target.",
+      "label": "Monthly cap on delivery credit",
+      "description": "Most political capital that can be earned in one month for soldiers reaching their units.",
       "section": "politics",
       "source": "Modelling assumption",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "assumption",
       "range": [
-        1,
-        4
+        2,
+        5
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
-    },
-    "pc_momentum_threshold": {
-      "value": 0.05,
-      "unit": "ratio",
-      "label": "Momentum threshold",
-      "description": "Share of target by which Force Ready must rise in a month to earn the momentum bonus.",
-      "section": "politics",
-      "source": "Modelling assumption",
-      "url": "",
-      "asOf": "2026-09-11",
-      "confidence": "assumption",
-      "range": [
-        0.03,
-        0.1
-      ],
-      "rationale": "Design brief."
+      "rationale": "The same 3 as the momentum bonus it replaces, so the best possible month is no larger than before; what changes is that an ordinary delivering month can now reach it. Uncapped, the month the reserves arrive would pay for the rest of the game."
     },
     "pc_low_willingness_penalty": {
       "value": 2,

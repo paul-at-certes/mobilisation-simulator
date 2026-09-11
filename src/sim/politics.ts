@@ -2,9 +2,9 @@
  * politics.ts — monthly political-capital arithmetic (spec §9).
  *
  * `monthlyPcChanges` returns the list of reasons with deltas for the month
- * (baseline drain, cost and GDP penalties, momentum, refusal cases, and the
- * penalty for a minister who has pulled no levers for months). Action and
- * event deltas are applied when they happen and merely listed alongside.
+ * (baseline drain, cost and GDP penalties, the delivery credit, refusal cases,
+ * and the penalty for a minister who has pulled no levers for months). Action
+ * and event deltas are applied when they happen and merely listed alongside.
  */
 import type { GameState } from '../types.js';
 import { P } from './params.js';
@@ -32,18 +32,37 @@ export function gdpPenaltySteps(s: GameState): number {
 }
 
 /**
- * The month's automatic PC movements. `forceReady` is the new ESE and
- * `previousForceReady` the ESE at the start of the step.
+ * Political capital earned for the month's delivery: one point per
+ * `pc_delivery_per_credit` soldiers who actually reached their units, capped
+ * at `pc_delivery_max`.
+ *
+ * Two properties are deliberate. It counts **headcount, not effectiveness**:
+ * the credit is what a minister can announce, and the gap between what can be
+ * announced and what can fight is the whole subject of the game. And it counts
+ * only people the minister moved — reservists mobilised, ex-regulars and the
+ * Strategic Reserve reporting, conscripts graduating — never the regular
+ * pipeline's own monthly gain, which arrives whatever the minister does and
+ * would be an idle income.
  */
-export function monthlyPcChanges(s: GameState, forceReady: number, previousForceReady: number): PcReason[] {
+export function deliveryCredit(delivered: number): number {
+  if (!(delivered > 0)) return 0;
+  return Math.min(P.pc_delivery_max, Math.floor(delivered / P.pc_delivery_per_credit));
+}
+
+/**
+ * The month's automatic PC movements. `delivered` is the headcount that
+ * reached units this month (graduations plus arrivals).
+ */
+export function monthlyPcChanges(s: GameState, delivered: number): PcReason[] {
   const reasons: PcReason[] = [];
   reasons.push({ label: 'The crisis grinds on', delta: -P.pc_baseline_drain });
   const costSteps = costPenaltySteps(s);
   if (costSteps > 0) reasons.push({ label: 'Treasury pressure over cumulative cost', delta: -P.cost_pc_penalty_per_step * costSteps });
   const gdpSteps = gdpPenaltySteps(s);
   if (gdpSteps > 0) reasons.push({ label: 'Economic damage from lost output', delta: -P.gdp_pc_penalty_per_step * gdpSteps });
-  if (forceReady - previousForceReady >= P.pc_momentum_threshold * s.target) {
-    reasons.push({ label: 'Visible momentum on Force Ready', delta: P.pc_momentum_bonus });
+  const credit = deliveryCredit(delivered);
+  if (credit > 0) {
+    reasons.push({ label: `Soldiers reaching their units (${Math.round(delivered).toLocaleString('en-GB')})`, delta: credit });
   }
   if (s.conscriptionEverActive && effectiveWillingness(s) < P.willingness_low_threshold_pct) {
     reasons.push({ label: 'Refusal cases in the courts', delta: -P.pc_low_willingness_penalty });

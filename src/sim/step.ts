@@ -229,10 +229,11 @@ export function step(state: GameState, input: TurnInput): GameState {
   s.turn += 1;
   const month = advanceMonth(s, arrivals, notes);
 
-  // 4. Politics.
+  // 4. Politics. The delivery credit is paid on the headcount that actually
+  // reached units this month: graduations plus the month's arrivals (§9).
   expireWillingnessBoosts(s);
-  const forceNow = computeForce(s).forceReady;
-  for (const r of monthlyPcChanges(s, forceNow, previousForceReady)) {
+  const delivered = month.graduations + arrivals.reduce((total, a) => total + a.count, 0);
+  for (const r of monthlyPcChanges(s, delivered)) {
     s.politicalCapital += r.delta;
     pcReasons.push(r);
   }

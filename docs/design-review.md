@@ -75,7 +75,7 @@ which is self-harm under the current rules. Treat their numbers as a floor.
 
 ## Benchmarks
 
-Output of `npm run dist -- 40`, at commit `4c79e0e`. **If a change moves these,
+Output of `npm run dist -- 40`, at commit `31f213f`. **If a change moves these,
 update this table in the same commit.** Median final ESE, percentage of the 40
 seeds that met the target, percentage that ended in resignation, and the median
 leadership factor at the end.
@@ -98,33 +98,35 @@ leadership factor at the end.
 |---|---|---|---|---|---|---|
 | do_nothing | 3,699 | 3,699 | 3,699 | 0 | 0 | 1.00 |
 | reserves_only | 20,576 | 21,592 | 22,863 | 33 | 0 | 1.00 |
-| **reserves_plus_light** | 21,297 | **21,926** | 23,231 | **40** | 0 | 0.96 |
-| conscription_max_capacity | 4,610 | 5,338 | 5,710 | 0 | 43 | 0.64 |
-| conscription_over_capacity | 4,307 | 4,757 | 5,256 | 0 | 100 | 1.00 |
-| capacity_heavy | 18,642 | 19,034 | 20,370 | 0 | 0 | 0.63 |
-| max_effort | 16,371 | 16,788 | 18,859 | 0 | 3 | 0.45 |
+| **reserves_plus_light** | 21,297 | **21,951** | 22,446 | **43** | 0 | 0.95 |
+| conscription_max_capacity | 4,974 | 5,418 | 5,866 | 0 | 10 | 0.60 |
+| conscription_over_capacity | 4,307 | 4,915 | 5,256 | 0 | 80 | 1.00 |
+| capacity_heavy | 18,630 | 19,048 | 20,764 | 0 | 0 | 0.64 |
+| max_effort | 16,371 | 16,788 | 18,859 | 0 | 0 | 0.45 |
 
 ### Corps — target 45,000 in 24 months
 
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
-| do_nothing | 3,742 | 3,764 | 3,797 | 0 | 100 | 1.00 |
-| reserves_only | 21,582 | 22,621 | 23,767 | 0 | 75 | 1.00 |
-| reserves_plus_light | 22,447 | 23,203 | 23,581 | 0 | 100 | 0.79 |
-| conscription_max_capacity | 4,679 | 6,142 | 7,074 | 0 | 100 | 0.58 |
-| conscription_over_capacity | 4,307 | 4,757 | 5,256 | 0 | 100 | 1.00 |
-| capacity_heavy | 19,032 | 20,175 | 21,508 | 0 | 100 | 0.52 |
-| max_effort | 16,295 | 16,978 | 19,614 | 0 | 100 | 0.44 |
+| do_nothing | 3,742 | 3,764 | 3,797 | 0 | **100** | 1.00 |
+| reserves_only | 21,540 | 22,621 | 23,893 | 0 | 25 | 1.00 |
+| **reserves_plus_light** | 23,854 | **23,928** | 24,068 | 0 | **33** | 0.68 |
+| conscription_max_capacity | 6,568 | 7,251 | 7,968 | 0 | 100 | 0.35 |
+| conscription_over_capacity | 4,307 | 4,915 | 5,805 | 0 | 100 | 1.00 |
+| capacity_heavy | 21,089 | 21,311 | 21,887 | 0 | 10 | 0.40 |
+| max_effort | 18,729 | 19,423 | 20,210 | 0 | 35 | 0.27 |
 
 **The three numbers to watch.** If any of these drifts, something has broken:
 
-- `reserves_plus_light` at Division meets the target on **40%** of seeds. Below
+- `reserves_plus_light` at Division meets the target on **43%** of seeds. Below
   ~25% the headline difficulty is a coin flip again (F2); above ~65% it is a
   walkover.
-- The median leadership factor for `capacity_heavy` and `max_effort` is **0.63
+- The median leadership factor for `capacity_heavy` and `max_effort` is **0.64
   and 0.45**. If either returns to 1.00, the mechanic has stopped firing (F3).
-- `do_nothing` is **17%** of Division and **36%** of Brigade. If it climbs past
-  ~60% of any rung, that rung is free.
+- `do_nothing` is **17%** of Division and **36%** of Brigade, and still resigns
+  on **100%** of Corps seeds. If it climbs past ~60% of any rung, that rung is
+  free; if it stops resigning at Corps, the delivery credit has become an idle
+  income (F6).
 
 ---
 
@@ -149,8 +151,8 @@ action each, then they arrive on a schedule. Together they were 16,800 of the
 leadership change (F3) turned capacity purchases from a free buy into a trade.
 
 **The residue, and it is real.** The marginal value of active play at Division
-is now **+334 median ESE (1.5%)** over pure reserves. It matters only because
-the target happens to sit inside that gap — met% goes 33% → 40%. That is thin.
+is now **+359 median ESE (1.7%)** over pure reserves. It matters only because
+the target happens to sit inside that gap — met% goes 33% → 43%. That is thin.
 The underlying shape is unchanged: the reserve levers are still one-shot
 switches with no ongoing decision.
 
@@ -174,7 +176,7 @@ earlier pass; the vetting ceiling and a wider event deck had moved it since.
 
 **Fix.** `target_division` 25,000 → 22,000, inside its existing range
 [20,000, 30,000], after the leadership rework lowered the ceiling. Now met on
-40% of seeds by the sensible strategy.
+43% of seeds by the sensible strategy.
 
 **Watch for.** Any change that moves the Division ceiling moves this. The
 target is an assumption and may be moved again — but move it against a
@@ -227,10 +229,10 @@ strategy makes:
 
 | purchases | strategy | median ESE | vs. one purchase |
 |---|---|---|---|
-| 0 | reserves_only | 21,592 | −334 |
-| 1 | reserves_plus_light | **21,926** | — |
-| 3 | capacity_heavy | 19,034 | −2,892 |
-| 5 | max_effort | 16,788 | −5,138 |
+| 0 | reserves_only | 21,592 | −359 |
+| 1 | reserves_plus_light | **21,951** | — |
+| 3 | capacity_heavy | 19,048 | −2,903 |
+| 5 | max_effort | 16,788 | −5,163 |
 
 A little conscription pays and a lot of it loses, monotonically. The decision
 has a shape. (`max_effort` is scripted to buy up to eight and stops at five:
@@ -272,23 +274,55 @@ event resolves, which gives events a visible consequence they did not have.
 
 ---
 
-### F6 — Political capital is a tax, not a currency · *Open*
+### F6 — Political capital is a tax, not a currency · *Partly addressed*
 
-**Evidence.** 35 of roughly 60 event effects are political-capital deltas. Most
-event choices are "lose 5 PC" against "lose a small thing", with no strategic
-angle; only about a third of choices move a pool, a date or a rate. After
-roughly month 7 there is no renewable income at all: the addresses are spent,
-blame is spent, and the momentum bonus is out of reach at Corps scale, so the
-best possible month is −1 and every event is a net negative.
+**Evidence as found.** 35 of roughly 60 event effects are political-capital
+deltas. Most event choices are "lose 5 PC" against "lose a small thing", with
+no strategic angle; only about a third of choices move a pool, a date or a
+rate. After roughly month 7 there was no renewable income at all: the addresses
+are spent, blame is spent, and the momentum bonus was out of reach at Corps
+scale, so the best possible month was −1 and every event a net negative.
 
-**Consequence.** Political capital, not the pipeline, is the dominant failure
-mode. Every scripted strategy resigns at Corps (see F9).
+**Consequence as found.** Political capital, not the pipeline, was the dominant
+failure mode. Every scripted strategy resigned at Corps (see F9).
 
 **Not a new finding.** The earlier balance work reached the same conclusion from
 the mechanics side and recorded it in `DECISIONS.md`: *"the real fix, if one is
-wanted, is renewable political capital."* This entry records that the content
-side agrees. The dial is not the idle penalty and not the event cadence; it is
-that there is nothing to earn.
+wanted, is renewable political capital."* This entry recorded that the content
+side agreed. The dial was not the idle penalty and not the event cadence; it
+was that there was nothing to earn.
+
+**Fix: there is now something to earn.** One point of political capital per
+500 soldiers who actually reach their units in the month — graduations plus
+arrivals — capped at 3. It replaces the momentum bonus, which was the same idea
+done wrong: paying on a *share of target* made it scale with the difficulty
+rather than with the minister, so it fired twice in a good Division run and
+never at Corps. Parameters `pc_delivery_per_credit` and `pc_delivery_max`,
+model in `docs/sim-spec.md` §9, reasoning in `DECISIONS.md`.
+
+**Why 500.** `regular_gains_annual` is 5,933 a year, or 494 a month: what the
+Army produces on its own. The minister earns credit at the rate the Army
+manages without them, and only above it.
+
+**Three properties to preserve if it is ever rewritten.**
+
+1. **It excludes the regular pipeline's own monthly gain.** That arrives
+   whatever the minister does, and crediting it would make the income idle.
+   `do_nothing` earns nothing at every difficulty and still resigns on 100% of
+   Corps seeds — that number is now a load-bearing benchmark, not a curiosity.
+2. **It pays on headcount, not effectiveness.** The credit is what a minister
+   can announce; the score is what can fight. Charging the leadership factor
+   against the credit too would say the same thing twice. Leaving the gap open
+   puts the game's thesis into the currency the player spends.
+3. **The holding pool earns nothing.** Calling up above the training estate's
+   spare intake buys no political credit, because nobody was delivered.
+   `conscription_over_capacity` still resigns on 100% of Corps seeds.
+
+**The residue, and it is the half this did not touch.** The *spending* side is
+unchanged: 35 of 60 event effects are still PC deltas and most event choices
+are still a flat tax with no strategic angle. What existed was a ledger with
+only one side; there are now two. Making the outgoing side interesting is a
+content problem in `events.json`, not a model one.
 
 ---
 
@@ -472,18 +506,36 @@ primary.
 
 ---
 
-### F9 — Corps teaches the wrong lesson · *Open, with an existing ASK*
+### F9 — Corps teaches the wrong lesson · *Addressed*
 
-Every scripted strategy resigns at Corps; none exceeds 52% of target. The game
-is meant to demonstrate that the pipeline cannot deliver a corps. What it
-actually demonstrates is that the political capital economy funds about 12–15
-months of play and Corps is 24 months long, so the run ends in resignation
-before the pipeline argument is made.
+**Evidence as found.** Every scripted strategy resigned at Corps; none exceeded
+52% of target. The game is meant to demonstrate that the pipeline cannot
+deliver a corps. What it actually demonstrated was that the political capital
+economy funded about 12–15 months of play and Corps is 24 months long, so the
+run ended in resignation before the pipeline argument was made. `DECISIONS.md`
+carried an open **ASK** on whether Corps should end in a shortfall verdict
+rather than a resignation.
 
-`DECISIONS.md` carries an open **ASK** on whether Corps should end in a
-shortfall verdict rather than a resignation. This finding is the same question
-from the player's side: a resignation at month 15 tells the player nothing
-about mobilisation. It is downstream of F6.
+**Fix.** F6's delivery credit, with no special case in the ending. Because it
+is downstream of F6, fixing F6 fixed this: the credit funds the months in which
+the pipeline is actually delivering, which at Corps is most of them.
+
+| at Corps | before | after |
+|---|---|---|
+| `reserves_plus_light` resign% | 100 | **33** |
+| `reserves_only` resign% | 75 | **25** |
+| `capacity_heavy` resign% | 100 | **10** |
+| `do_nothing` resign% | 100 | **100** |
+| `reserves_plus_light` median ESE | 23,203 | **23,928** |
+
+Two-thirds of competently played Corps runs now reach month 24 and end in a
+shortfall verdict, which is the argument the rung exists to make: twenty-four
+months of sensible mobilisation delivers half a corps. The **ASK is answered by
+the mechanic**, not by a rule about how Corps ends — and `do_nothing` still
+resigns on every seed, so reaching the deadline is earned rather than granted.
+
+**Watch for.** If `do_nothing` ever stops resigning at Corps, the credit has
+become an idle income and both this and F6 have regressed.
 
 ---
 

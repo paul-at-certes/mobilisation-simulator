@@ -132,7 +132,7 @@ plus the difficulty table (which the brief allows). Primary figures untouched.
 | `regular_deployable_fraction` | 0.10 | 0.05 | Do-nothing was 92% of Brigade on its own |
 | Action PC costs (14 of them) | brief values | roughly two-thirds | So a full mixed strategy is feasible but tight |
 | `pc_start` | 60 | 70 | Top of range |
-| `pc_momentum_bonus` | 2 | 3 | Rewards visible progress |
+| `pc_momentum_bonus` | 2 | 3 | Rewards visible progress (since replaced by the delivery credit — see *Political capital you can earn*, below) |
 | `willingness_low_threshold_pct` | 30 | 25 | An address (+5 on 20) now lifts willingness clear of the refusal-cases penalty for three months, so addresses are a real counter rather than a flat tax |
 | `deadline_brigade` | 12 | 5 | With 12 months reserves make a brigade three times over; five months makes the 180-day notice period the puzzle |
 | `deadline_corps` | 18 | 24 | Conscript cohorts need time |
@@ -633,3 +633,86 @@ rest is the Permanent Secretary's note and the event card, which are the prose
 the game is for. The next cut would put the action descriptions behind a tap
 and trade away the sourced copy that carries the argument — worth doing only
 against a playtest that says the length is still losing people.
+
+## Political capital you can earn (11 September 2026)
+
+The standing review's F6 said political capital is a tax rather than a
+currency: after about month 7 there is no renewable income at all, the best
+possible month is −1, and every event is a net negative. F9 is the same
+finding from the player's side — every scripted strategy resigned at Corps
+before the pipeline argument was made. The earlier balance note had already
+named the fix and deferred it: *"renewable political capital for delivering —
+crediting graduations or arrivals — which is what the momentum bonus was meant
+to do."* This is that change.
+
+**What the momentum bonus got wrong.** It paid 3 PC in a month when Force
+Ready rose by 5% of target. Expressing the trigger as a *share of target* made
+it scale with the difficulty rather than with the minister: 5% of Brigade is
+500 effective soldiers and 5% of Corps is 2,250. It fired twice in a good
+Division run — in the two months the reservists arrive — and then never again,
+and at Corps it was unreachable in exactly the months a minister most needed
+it. It was also paid on effectiveness, so the leadership factor could cancel a
+month's delivery out of existence.
+
+**What replaces it.** One point of political capital per 500 soldiers who
+actually reach their units in the month, capped at 3. `delivered` is the
+month's graduations plus its arrivals — reservists mobilised, ex-regulars
+reported, the Strategic Reserve traced. Two parameters,
+`pc_delivery_per_credit` (500, range 250–1,500) and `pc_delivery_max` (3,
+range 2–5), replace `pc_momentum_bonus` and `pc_momentum_threshold`, which are
+deleted. Spec §9.
+
+**Why 500.** `regular_gains_annual` is 5,933 a year, which is 494 a month: the
+rate at which the Army produces trained soldiers in the ordinary course of
+events. A minister earns political credit at the rate the Army manages on its
+own, and only above it. That is an assumption dressed in a sourced figure
+rather than a derived parameter — the figure is primary, the decision to use it
+as the unit of political credit is not — so it carries a range and can be
+tuned.
+
+**Three properties that are the point, not side effects.**
+
+- **It is renewable and it is not idle income.** The regular pipeline's own
+  monthly gain is deliberately excluded: it arrives whatever the minister does.
+  `do_nothing` earns nothing, at every difficulty, and still resigns at Corps
+  on 100% of seeds.
+- **It pays on headcount, not effectiveness.** The credit is what a minister
+  can announce; the score is what can fight. Charging the leadership factor
+  against the political credit as well as the score would have said the same
+  thing twice; leaving the gap open puts the game's central tension into the
+  currency the player spends.
+- **The holding pool earns nothing.** People called up and parked have not been
+  delivered, so calling up above the training estate's spare intake buys no
+  political credit either. `conscription_over_capacity` still resigns on 100%
+  of Corps seeds and 80% of Division seeds.
+
+**What it did to the balance** (`npm run dist -- 40`, before → after):
+
+| | Brigade | Division | Corps |
+|---|---|---|---|
+| `reserves_plus_light` met% | 100 → 100 | 40 → **43** | 0 → 0 |
+| `reserves_plus_light` resign% | 0 → 0 | 0 → 0 | 100 → **33** |
+| `reserves_only` resign% | 0 → 0 | 0 → 0 | 75 → **25** |
+| `capacity_heavy` resign% | 0 → 0 | 0 → 0 | 100 → **10** |
+| `do_nothing` resign% | 0 → 0 | 0 → 0 | 100 → **100** |
+| `do_nothing` median ESE | 3,611 → 3,611 | 3,699 → 3,699 | 3,764 → 3,764 |
+
+Brigade is untouched to the ESE. Division moves within the noise and stays
+inside F2's 25–65% band; the leadership medians for `capacity_heavy` and
+`max_effort` are 0.64 and 0.45, so F3's mechanic is still firing and F4's
+monotonic penalty for over-buying capacity is intact.
+
+**Corps is the change worth reading.** Two-thirds of runs that used to end in
+resignation now play all 24 months and end in a shortfall: median 23,928
+against a target of 45,000. **That answers the open ASK on whether Corps should
+end in a shortfall verdict rather than a resignation — without a special case
+in the ending.** The mechanic funds the run to the deadline, and what the
+player then sees is the thing the difficulty was built to demonstrate: twenty-
+four months of competent mobilisation delivers half a corps. `do_nothing`
+still resigns, so the ending is still earned rather than granted.
+
+**What this does not fix.** F6's other half stands: 35 of roughly 60 event
+effects are still political-capital deltas, and most event choices are still
+"lose 5 PC" against "lose a small thing". There is now something to earn, which
+was the missing side of the ledger; making the *spending* side more interesting
+is a content problem in `events.json`, not a model one.

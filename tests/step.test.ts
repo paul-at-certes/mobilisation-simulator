@@ -482,6 +482,57 @@ describe('scenarios without events', () => {
   });
 });
 
+describe('political capital for delivery', () => {
+  const DELIVERY = /Soldiers reaching their units/;
+
+  it('pays nothing to a minister who delivers nobody', () => {
+    let s = newGame(5, 'division');
+    for (let i = 0; i < 6; i += 1) {
+      s = step(s, NOTHING);
+      expect(s.briefing.graduations).toBe(0);
+      expect(s.briefing.arrivals).toHaveLength(0);
+      expect(s.briefing.pcReasons.some((r) => DELIVERY.test(r.label)), `month ${s.turn}`).toBe(false);
+    }
+  });
+
+  it('pays a point per threshold delivered, capped, in the month they arrive', () => {
+    let s = newGame(5, 'brigade');
+    s = step(s, { actions: [{ id: 'call_out_reserve', notice: 90 }], eventChoice: null });
+    let paidMonths = 0;
+    while (!s.over) {
+      const delivered = s.briefing.graduations + s.briefing.arrivals.reduce((a, x) => a + x.count, 0);
+      const expected = Math.min(P.pc_delivery_max, Math.floor(delivered / P.pc_delivery_per_credit));
+      const credit = s.briefing.pcReasons.find((r) => DELIVERY.test(r.label));
+      expect(credit?.delta ?? 0, `month ${s.turn}, ${delivered} delivered`).toBe(expected);
+      if (expected > 0) paidMonths += 1;
+      s = step(s, NOTHING);
+    }
+    expect(paidMonths, 'the reserves arrived and earned nothing').toBeGreaterThan(0);
+  });
+
+  it('never pays for the regular pipeline, which arrives whatever the minister does', () => {
+    let s = newGame(5, 'division');
+    const before = s.pools.regularTrained;
+    s = step(s, NOTHING);
+    expect(s.pools.regularTrained, 'the regular pipeline did not run').not.toBe(before);
+    expect(s.briefing.pcReasons.some((r) => DELIVERY.test(r.label))).toBe(false);
+  });
+
+  it('is reachable at every difficulty, unlike the momentum bonus it replaced', () => {
+    for (const difficulty of ['brigade', 'division', 'corps'] as const) {
+      let s = newGame(5, difficulty);
+      s = step(s, { actions: [{ id: 'call_out_reserve', notice: 90 }], eventChoice: null });
+      let earned = 0;
+      while (!s.over) {
+        earned += s.briefing.pcReasons.filter((r) => DELIVERY.test(r.label)).reduce((a, r) => a + r.delta, 0);
+        s = step(s, NOTHING);
+      }
+      earned += s.briefing.pcReasons.filter((r) => DELIVERY.test(r.label)).reduce((a, r) => a + r.delta, 0);
+      expect(earned, `nothing earned at ${difficulty}`).toBeGreaterThan(0);
+    }
+  });
+});
+
 describe('a government seen to be doing nothing', () => {
   it('tolerates two idle months, then charges for every one after', () => {
     let s = newGame(5, 'division');

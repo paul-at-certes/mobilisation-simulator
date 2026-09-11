@@ -298,10 +298,29 @@ pcDelta  = −pc_baseline_drain
          + action costs (already applied at action time, but listed in pcReasons)
          − cost_pc_penalty_per_step × floor(cumulativeCost / (cost_pc_penalty_threshold × (spendingRaised ? raise_spending_threshold_multiplier : 1)))
          − gdp_pc_penalty_per_step × floor((cumulativeGdpLoss / uk_gdp_2025 × 100) / gdp_pc_penalty_step_pct)
-         + (forceReady − previous forceReady ≥ pc_momentum_threshold × target ? pc_momentum_bonus : 0)
+         + min(pc_delivery_max, floor(delivered / pc_delivery_per_credit))
          − (conscriptionEverActive && effectiveWillingness < willingness_low_threshold_pct ? pc_low_willingness_penalty : 0)
          − (idleMonths > pc_idle_grace_months ? pc_idle_penalty : 0)
 ```
+
+`delivered` is the **headcount that reached units this month**: the month's
+graduations (3f) plus its arrivals (3g) — reservists mobilised, ex-regulars
+reported, the Strategic Reserve traced and reporting. Two exclusions are
+deliberate:
+
+- **The regular pipeline's own monthly gain does not count.** It arrives
+  whatever the minister does, and crediting it would be an idle income: a
+  minister who never pulls a lever must never earn political capital.
+- **It is headcount, not effectiveness.** The credit is what a minister can
+  announce; the score is what can fight. The gap between the two is the
+  subject of the game, and the leadership factor (§7) does not soften it.
+
+People sitting in the holding pool have not been delivered, so a call-up above
+the training estate's spare intake buys no political credit either — the same
+lesson the pipeline already teaches, charged again in the other currency.
+
+This replaces the momentum bonus, which paid on a *share of target* and was
+therefore unreachable at Corps scale (see `docs/design-review.md` F6, F9).
 
 `effectiveWillingness = willingness + Σ active boosts`. Boosts with `until < turn` are dropped.
 

@@ -9,6 +9,7 @@
  */
 import type { BriefingFacts, GameState } from '../types.js';
 import { type ParamId, P } from '../sim/params.js';
+import { deliveryCredit } from '../sim/politics.js';
 
 // Sourced helpers: every parameter-based number in a briefing carries its popover.
 import { sourcedHtml } from './components/sourced';
@@ -282,8 +283,17 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     changes.push(pick(state, 24, [`This month ${joined}${verb}.`, `Arrivals this month: ${joined}${verb}.`]));
   }
 
-  if (facts.forceReadyDelta >= P.pc_momentum_threshold * state.target) {
-    changes.push(`Force Ready rose by ${formatInt(facts.forceReadyDelta)}. Number Ten is calling it momentum.`);
+  // The delivery credit is the only renewable political income in the game, so
+  // the briefing names the figure it was paid on and what it was worth (§9).
+  const delivered = arrivals.reduce((total, a) => total + a.count, 0) + Math.max(0, grads);
+  const credit = deliveryCredit(delivered);
+  if (credit > 0) {
+    changes.push(
+      pick(state, 26, [
+        `${formatInt(delivered)} soldiers reached their units this month: a figure Number Ten can use, and worth ${credit} political capital.`,
+        `Number Ten has the month's delivery figure — ${formatInt(delivered)} soldiers into units — and it is worth ${credit} political capital.`,
+      ]),
+    );
   }
 
   const unequipped = state.pools.conscriptTrainedUnequipped;
