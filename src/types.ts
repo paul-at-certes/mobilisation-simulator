@@ -62,6 +62,7 @@ export type ActionId =
   | 'recall_ex_regular'
   | 'trace_strategic_reserve'
   | 'stop_loss'
+  | 'draw_contingency'
   | 'introduce_bill'
   | 'amend_bill'
   | 'set_callup'
@@ -79,6 +80,7 @@ export type Action =
   | { id: 'recall_ex_regular' }
   | { id: 'trace_strategic_reserve' }
   | { id: 'stop_loss' }
+  | { id: 'draw_contingency' }
   | { id: 'introduce_bill'; procedure: BillProcedure; clauses: BillClauses }
   | { id: 'amend_bill'; clauses: Partial<BillClauses> }
   /** Free control: does not consume an action slot. */
@@ -124,6 +126,7 @@ export type ConditionKey =
   | 'ex_regular_reported' // headcount
   | 'strategic_traced' // 0/1 (trace attempted)
   | 'stop_loss' // 0/1
+  | 'contingency_drawn' // 0/1
   | 'outflow_intent'
   | 'bill_status' // 0 none, 1 in progress, 2 passed
   | 'conscription_active' // 0/1 (bill passed and callup > 0 at least once)
@@ -381,6 +384,8 @@ export interface GameState {
   strategicTraceMonth: number | null; // month the trace completes
   strategicTraceDone: boolean;
   stopLoss: boolean;
+  /** The Equipment Plan's contingency has been spent on the mobilisation (spec §8a). */
+  contingencyDrawn: boolean;
   /** Intention to leave, in points; starts at `regular_outflow_intent_pct` (spec §6a). */
   outflowIntent: number;
 

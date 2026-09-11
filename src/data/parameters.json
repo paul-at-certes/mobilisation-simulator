@@ -1434,6 +1434,50 @@
       "confidence": "primary",
       "note": "Reported by the NAO as the Army's own estimate, alongside a declared Army deficit of GBP 1.2bn for the year. It is the number that makes the Chancellor's letter in this game a quotation rather than an invention. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
     },
+    "equipment_plan_contingency": {
+      "value": 4100000000,
+      "unit": "gbp",
+      "label": "Contingency held in the Equipment Plan",
+      "description": "Money set aside inside the Equipment Plan to fund new equipment projects or absorb unexpected cost increases.",
+      "section": "money",
+      "source": "NAO, The Equipment Plan 2023-2033, HC 315, Session 2023-24, 4 December 2023, paragraph 1.9",
+      "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
+      "asOf": "2023-12-04",
+      "confidence": "primary",
+      "note": "Down from GBP 4.3bn the year before and GBP 5.9bn in 2021. It is the only pot in the NAO's account that a minister could plausibly reach for at short notice, and it is the buffer the Plan relies on, which is what makes spending it a decision rather than a windfall."
+    },
+    "contingency_drawn_penalty_add": {
+      "value": 2,
+      "unit": "pc",
+      "label": "Extra Treasury charge once the buffer is gone",
+      "description": "Added to the political capital charged for each step of cumulative cost, once the Equipment Plan's contingency has been spent.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0,
+        3
+      ],
+      "rationale": "The contingency exists to absorb unexpected cost increases (NAO 1.9). Spend it on the mobilisation and every subsequent overrun lands on the Plan instead of on the buffer, so the Treasury's tolerance narrows. Doubling cost_pc_penalty_per_step rather than adding one to it, because the crossover has to sit inside the spend the game actually produces: a full Corps run costs GBP 4.6-11.1bn, so at +1 the draw was better everywhere and the decision was no decision. At +2 the draw wins while it clears your only step of Treasury pressure and loses from the second step on — crossover at about GBP 9bn of cumulative cost, which sits between what a restrained Corps programme spends (6.8) and what max_effort spends (9.7)."
+    },
+    "contingency_equipment_delay_months": {
+      "value": 3,
+      "unit": "months",
+      "label": "Equipment slip after the contingency is spent",
+      "description": "Months added to the emergency equipment order when the Equipment Plan's contingency has been spent on the mobilisation instead.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        6
+      ],
+      "rationale": "The contingency's first stated purpose is to fund new equipment projects (NAO 1.9); an emergency order for tens of thousands of sets is exactly that. Spent elsewhere, the order joins the queue rather than jumping it. Three months against an equipment_lead_months of four roughly doubles the wait, which is the right order of magnitude for losing your place in a programme the NAO already describes as delay-prone."
+    },
     "uk_gdp_2025": {
       "value": 3033900000000,
       "unit": "gbp",

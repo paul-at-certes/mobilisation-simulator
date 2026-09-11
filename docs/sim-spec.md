@@ -326,12 +326,42 @@ monthlyGdpLoss = removed × output_per_worker_labour_share × gdp_age_multiplier
 
 The age multiplier applies to conscripts; reservists use 1.0.
 
+### 8a. The Equipment Plan's contingency
+
+The `draw_contingency` action spends the £4.1bn the Ministry of Defence holds
+inside the Equipment Plan "to help fund new equipment projects or absorb any
+unexpected cost increases" (NAO HC 315 ¶1.9). It is the only money in the
+published account a minister could plausibly reach for at short notice.
+
+```
+chargeableCost     = max(0, cumulativeCost − (contingencyDrawn ? equipment_plan_contingency : 0))
+costPenaltyPerStep = cost_pc_penalty_per_step + (contingencyDrawn ? contingency_drawn_penalty_add : 0)
+```
+
+It costs **no political capital**, which is the point, and carries two costs
+instead:
+
+- **Every later step of Treasury pressure costs more**, because there is no
+  buffer left to absorb an overrun. The draw therefore wins while it clears
+  your only step of pressure and loses from the second step on — a crossover
+  at about £9bn of cumulative cost, which sits between what a restrained Corps
+  programme spends (£6.8bn) and what `max_effort` spends (£9.7bn).
+- **The emergency equipment order takes `contingency_equipment_delay_months`
+  longer**, whether it was already placed (the arrival month slips) or is
+  bought afterwards (it is quoted the longer lead time). The contingency's
+  first stated purpose is funding new equipment projects; spent elsewhere, the
+  order joins the queue rather than jumping it.
+
+Against `raise_spending`, which costs 6 political capital and doubles the
+threshold for the rest of the run, the contingency is the better buy on a
+small programme and the worse one on a large — the fork the action exists for.
+
 ## 9. Politics (per month)
 
 ```
 pcDelta  = −pc_baseline_drain
          + action costs (already applied at action time, but listed in pcReasons)
-         − cost_pc_penalty_per_step × floor(cumulativeCost / (cost_pc_penalty_threshold × (spendingRaised ? raise_spending_threshold_multiplier : 1)))
+         − costPenaltyPerStep × floor(chargeableCost / (cost_pc_penalty_threshold × (spendingRaised ? raise_spending_threshold_multiplier : 1)))   [§8a]
          − gdp_pc_penalty_per_step × floor((cumulativeGdpLoss / uk_gdp_2025 × 100) / gdp_pc_penalty_step_pct)
          + min(pc_delivery_max, floor(delivered / pc_delivery_per_credit))
          − (conscriptionEverActive && effectiveWillingness < willingness_low_threshold_pct ? pc_low_willingness_penalty : 0)

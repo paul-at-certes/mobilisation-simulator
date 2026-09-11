@@ -77,6 +77,29 @@ function affordable(s: GameState, pcDelta: number): boolean {
   return s.politicalCapital + pcDelta >= PC_SAFETY_FLOOR;
 }
 
+/**
+ * Is spending the Equipment Plan's contingency the better buy?
+ *
+ * It takes `equipment_plan_contingency` off the bill the Treasury counts and
+ * costs no political capital now, but every later step then costs
+ * `contingency_drawn_penalty_add` more — so it wins on a small programme and
+ * loses on a large one. A strategy compares the two against the spend it is
+ * heading for rather than the spend it has, because the penalty it is buying
+ * is paid at the end, not now.
+ */
+function contingencyPaysOff(s: GameState): boolean {
+  if (s.contingencyDrawn) return false;
+  // An order in flight would slip; wait for it to land, which costs nothing.
+  if (s.equipmentArrivalMonth != null && s.equipmentArrivalMonth > s.turn) return false;
+  const threshold = P.cost_pc_penalty_threshold * (s.spendingRaised ? P.raise_spending_threshold_multiplier : 1);
+  const projected = s.ledger.cumulativeCost + s.ledger.monthlyCost * monthsLeft(s);
+  const asIs = P.cost_pc_penalty_per_step * Math.floor(projected / threshold);
+  const drawn =
+    (P.cost_pc_penalty_per_step + P.contingency_drawn_penalty_add)
+    * Math.floor(Math.max(0, projected - P.equipment_plan_contingency) / threshold);
+  return drawn < asIs;
+}
+
 /** Would one more address lift willingness back over the refusal threshold? */
 function addressClearsRefusals(s: GameState): boolean {
   const w = effectiveWillingness(s);
@@ -95,6 +118,9 @@ function addressClearsRefusals(s: GameState): boolean {
 function politicalUpkeep(s: GameState): Action[] {
   if (!boostActive(s) && s.addressCount < 2) return [{ id: 'address_nation' }];
   if (s.blameCount === 0) return [{ id: 'blame_predecessors' }];
+  // Free money before expensive money: the contingency clears Treasury pressure
+  // at no cost in capital, where raising spending costs six.
+  if (costPenaltySteps(s) > 0 && contingencyPaysOff(s)) return [{ id: 'draw_contingency' }];
   if (
     !s.spendingRaised
     && costPenaltySteps(s) > 0

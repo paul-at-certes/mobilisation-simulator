@@ -54,7 +54,8 @@ function defaultOpen(group: ActionGroup, state: GameState, liveCount: number): b
   }
 }
 
-const ORDER: ActionId[] = [
+/** Display order. Exported so a test can prove it covers every ActionId. */
+export const ORDER: ActionId[] = [
   'call_out_reserve',
   'recall_ex_regular',
   'trace_strategic_reserve',
@@ -68,6 +69,7 @@ const ORDER: ActionId[] = [
   'equipment_buy',
   'junior_entry',
   'address_nation',
+  'draw_contingency',
   'raise_spending',
   'blame_predecessors',
 ];

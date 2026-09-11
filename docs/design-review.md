@@ -75,7 +75,7 @@ which is self-harm under the current rules. Treat their numbers as a floor.
 
 ## Benchmarks
 
-Output of `npm run dist -- 40`, at commit `c6fdb8d`. **If a change moves these,
+Output of `npm run dist -- 40`, at commit `PENDING`. **If a change moves these,
 update this table in the same commit.** Median final ESE, percentage of the 40
 seeds that met the target, percentage that ended in resignation, and the median
 leadership factor at the end.
@@ -110,11 +110,11 @@ leadership factor at the end.
 |---|---|---|---|---|---|---|
 | do_nothing | 3,736 | 3,756 | 3,786 | 0 | **100** | 1.00 |
 | reserves_only | 20,259 | 21,325 | 22,531 | 0 | 38 | 1.00 |
-| **reserves_plus_light** | 22,277 | **22,367** | 22,553 | 0 | **40** | 0.66 |
+| **reserves_plus_light** | 22,277 | **22,367** | 22,553 | 0 | **23** | 0.66 |
 | conscription_max_capacity | 6,505 | 7,232 | 7,927 | 0 | 100 | 0.35 |
 | conscription_over_capacity | 4,312 | 4,911 | 5,799 | 0 | 100 | 1.00 |
-| capacity_heavy | 19,600 | 19,953 | 20,527 | 0 | 15 | 0.39 |
-| max_effort | 17,475 | 18,258 | 18,792 | 0 | 38 | 0.26 |
+| capacity_heavy | 19,600 | 19,953 | 20,527 | 0 | 3 | 0.39 |
+| max_effort | 17,459 | 18,274 | 18,982 | 0 | 25 | 0.26 |
 
 **The three numbers to watch.** If any of these drifts, something has broken:
 
@@ -374,6 +374,25 @@ Chancellor quoting the NAO's £16.9bn Equipment Plan deficit rather than
 asserting. `pac_hearing` was deliberately left political. The remaining
 fifteen follow the same pattern and the deck is at its 33-event cap, so they
 are rewrites, not additions.
+
+**And the spending side now has a resource to manage, not only bills to pay.**
+`draw_contingency` spends the £4.1bn the MoD holds inside the Equipment Plan
+"to help fund new equipment projects or absorb any unexpected cost increases"
+(NAO ¶1.9). It costs **no political capital**, which is the point, and carries
+two costs instead: every later step of Treasury pressure costs double, because
+there is no buffer left to absorb an overrun, and the emergency equipment order
+takes three months longer. Model in `docs/sim-spec.md` §8a.
+
+The decision it creates is real and it is visible in the bots, which were given
+only the arithmetic and not the answer: at Corps `reserves_plus_light` draws it
+on 40 of 40 seeds and `capacity_heavy` on 38, while **`max_effort` — the
+biggest programme — splits 18 draw against 21 raising spending instead**,
+because past about £9bn of cumulative cost the steeper slope costs more than
+the headroom saves. At Division nobody draws it, because nothing there ever
+spends enough to be charged (F13). Corps resignations: `reserves_plus_light`
+40% → **23%**, `capacity_heavy` 15% → **3%**, `max_effort` 38% → **25%**, with
+final ESE unchanged — the run survives to the deadline without getting closer
+to the target, which is exactly what F9 wanted.
 
 **A trap to know about.** Every scripted strategy takes choice 0, so
 `npm run dist` is blind to any change that lives in choice 1 — the benchmark
@@ -703,6 +722,50 @@ it — AFCAS has never recorded the Army outside 17–23, so everything above th
 band is extrapolation beyond the evidence. If a later pass adds more intention
 effects, check the ceiling is still unreachable by ordinary play; a run that
 pins at 40 is asserting something the survey does not support.
+
+---
+
+### F13 — The Treasury cost penalty almost never fires · *Open*
+
+Found while sizing the contingency draw (F6), and it is about the model that
+was already there rather than about that action.
+
+**Evidence.** Final cumulative cost across 40 seeds, `npm run dist`:
+
+| strategy | Division | Corps |
+|---|---|---|
+| do_nothing | £0.1bn | £0.1bn |
+| reserves_only | £2.0bn | £4.6bn |
+| **reserves_plus_light** | **£2.8bn** | **£6.8bn** |
+| capacity_heavy | £3.2bn | £8.6bn |
+| max_effort | £3.3bn | £9.7bn (max £11.1bn) |
+
+`cost_pc_penalty_threshold` is **£5bn**. So:
+
+- **At Brigade and Division the money mechanic is entirely dormant.** The most
+  expensive strategy at Division finishes at £3.7bn on its worst seed, which is
+  74% of one step. No run has ever paid a penny of Treasury pressure at the
+  headline difficulty.
+- **At Corps it fires once**, twice for the biggest spender. `raise_spending`
+  costs 6 political capital to halve a charge of 2 a month.
+
+**Why it matters.** Money is one of the three things the game says it is about,
+and the scoring screen reports cost as a share of the defence budget. But cost
+does not *do* anything to the player at two of three difficulties. That is the
+same shape as F3 — a mechanic that cannot fire because something upstream binds
+first — except here nothing binds it; the threshold is simply set above the
+range the game produces.
+
+**Not fixed here, deliberately.** `cost_pc_penalty_threshold` is an assumption
+with range [£2.5bn, £10bn], and £2.5bn would make it bite at Division. But
+lowering it is a difficulty increase across every rung, landing on top of three
+changes in one sitting (F1, F12, F6), and it should be measured on its own.
+**ASK.**
+
+**Watch for.** If it is lowered, re-derive the contingency crossover: the draw
+is worth `equipment_plan_contingency / threshold` steps of headroom, so the
+decision the action exists for moves with the threshold. The arithmetic is in
+`contingency_drawn_penalty_add`'s rationale.
 
 ---
 

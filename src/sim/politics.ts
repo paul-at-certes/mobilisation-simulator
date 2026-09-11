@@ -23,7 +23,26 @@ export function effectiveWillingness(s: GameState): number {
 
 export function costPenaltySteps(s: GameState): number {
   const threshold = P.cost_pc_penalty_threshold * (s.spendingRaised ? P.raise_spending_threshold_multiplier : 1);
-  return Math.floor(s.ledger.cumulativeCost / threshold);
+  return Math.floor(chargeableCost(s) / threshold);
+}
+
+/**
+ * Cumulative cost the Treasury actually counts. Spending the Equipment Plan's
+ * contingency on the mobilisation takes that much off the bill — which is the
+ * whole benefit, and it is a one-off (spec §8a).
+ */
+export function chargeableCost(s: GameState): number {
+  const absorbed = s.contingencyDrawn ? P.equipment_plan_contingency : 0;
+  return Math.max(0, s.ledger.cumulativeCost - absorbed);
+}
+
+/**
+ * Political capital charged per step of cumulative cost. Once the contingency
+ * is gone there is nothing left to absorb an overrun, so every step costs more:
+ * the draw buys headroom now and a steeper slope afterwards.
+ */
+export function costPenaltyPerStep(s: GameState): number {
+  return P.cost_pc_penalty_per_step + (s.contingencyDrawn ? P.contingency_drawn_penalty_add : 0);
 }
 
 export function gdpPenaltySteps(s: GameState): number {
@@ -57,7 +76,12 @@ export function monthlyPcChanges(s: GameState, delivered: number): PcReason[] {
   const reasons: PcReason[] = [];
   reasons.push({ label: 'The crisis grinds on', delta: -P.pc_baseline_drain });
   const costSteps = costPenaltySteps(s);
-  if (costSteps > 0) reasons.push({ label: 'Treasury pressure over cumulative cost', delta: -P.cost_pc_penalty_per_step * costSteps });
+  if (costSteps > 0) {
+    const label = s.contingencyDrawn
+      ? 'Treasury pressure over cumulative cost, with no contingency left to absorb it'
+      : 'Treasury pressure over cumulative cost';
+    reasons.push({ label, delta: -costPenaltyPerStep(s) * costSteps });
+  }
   const gdpSteps = gdpPenaltySteps(s);
   if (gdpSteps > 0) reasons.push({ label: 'Economic damage from lost output', delta: -P.gdp_pc_penalty_per_step * gdpSteps });
   const credit = deliveryCredit(delivered);

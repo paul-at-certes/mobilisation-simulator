@@ -48,6 +48,11 @@ export const ACTION_COPY: Record<ActionId, ActionCopy> = {
     title: 'Stop-loss',
     html: `Extend engagements compulsorily. Cuts the ${s('regular_voluntary_outflow_annual')} a year of trade-trained voluntary leavers to ${s('stop_loss_leak_fraction')} of itself — compulsion does not reach a medical or disciplinary discharge. It changes nobody's mind: ${s('regular_outflow_intent_pct')} of the Army already means to leave early, and a further ${n('stop_loss_intent_add_monthly')} percentage points join them for every month engagements are held open. Immediate, and it decays from the month you impose it.`,
   },
+  draw_contingency: {
+    group: 'political',
+    title: "Spend the Equipment Plan's contingency",
+    html: `The Plan holds ${s('equipment_plan_contingency')} set aside to fund new equipment projects and absorb unexpected cost increases. Spend it here and it stops counting against you at the Treasury — but it is the buffer, so every later step of cumulative cost costs ${n('contingency_drawn_penalty_add')} political capital more, and the emergency equipment order takes ${s('contingency_equipment_delay_months')} months longer whether it is already placed or bought afterwards. Costs no political capital now. That is the trap.`,
+  },
   introduce_bill: {
     group: 'conscription',
     title: 'Introduce a National Service Bill',

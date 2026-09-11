@@ -11,6 +11,9 @@ import type { BriefingFacts, GameEvent, GameState, Verdict } from '../src/types.
 import { briefingText, formatGbpBn, formatInt, formatPct } from '../src/ui/briefing.js';
 import { holdingOutlook } from '../src/ui/components/holding.js';
 import { courseMonths } from '../src/sim/pipeline.js';
+import { ACTION_IDS } from '../src/sim/actions.js';
+import { ACTION_COPY } from '../src/ui/action-copy.js';
+import { ORDER as MENU_ORDER } from '../src/ui/components/action-menu.js';
 import { P } from '../src/sim/params.js';
 
 const root = resolve(__dirname, '..');
@@ -246,6 +249,25 @@ describe('events.json', () => {
   });
 });
 
+describe('the action menu', () => {
+  it('renders every action there is', () => {
+    // ORDER is hand-maintained and an action missing from it does not error —
+    // it simply never appears on screen. draw_contingency shipped invisible
+    // for exactly this reason before the test existed.
+    expect([...MENU_ORDER].sort()).toEqual([...ACTION_IDS].sort());
+  });
+
+  it('gives every action copy and a group', () => {
+    for (const id of ACTION_IDS) {
+      const copy = ACTION_COPY[id];
+      expect(copy, `${id}: no copy`).toBeDefined();
+      expect(copy.title.length, `${id}: no title`).toBeGreaterThan(3);
+      expect(copy.html.length, `${id}: no description`).toBeGreaterThan(20);
+      expect(['reserves', 'conscription', 'pipeline', 'political']).toContain(copy.group);
+    }
+  });
+});
+
 describe('verdicts.json', () => {
   const MET = [true, false];
   const QUALITY = ['low', 'mid', 'high'] as const;
@@ -384,6 +406,7 @@ function fakeState(over: Partial<GameState> = {}): GameState {
     strategicTraceMonth: null,
     strategicTraceDone: false,
     stopLoss: false,
+    contingencyDrawn: false,
     outflowIntent: P.regular_outflow_intent_pct,
     billStatus: 'none',
     billPassesMonth: null,

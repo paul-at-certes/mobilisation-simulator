@@ -84,6 +84,7 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
     strategicTraceMonth: null,
     strategicTraceDone: false,
     stopLoss: false,
+    contingencyDrawn: false,
     outflowIntent: P.regular_outflow_intent_pct,
     billStatus: 'none',
     billPassesMonth: null,
@@ -348,7 +349,7 @@ function applyTurnActions(s: GameState, actions: readonly unknown[], pcReasons: 
 function isKnownAction(id: string): id is Parameters<typeof isActionAvailable>[1] {
   return (
     [
-      'call_out_reserve', 'recall_ex_regular', 'trace_strategic_reserve', 'stop_loss', 'introduce_bill', 'amend_bill',
+      'call_out_reserve', 'recall_ex_regular', 'trace_strategic_reserve', 'stop_loss', 'draw_contingency', 'introduce_bill', 'amend_bill',
       'set_callup', 'expand_capacity', 'compress_syllabus', 'contract_civilian_instructors', 'junior_entry',
       'equipment_buy', 'address_nation', 'raise_spending', 'blame_predecessors',
     ] as string[]

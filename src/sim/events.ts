@@ -47,6 +47,7 @@ export function conditionVars(s: GameState): Record<ConditionKey, number> {
     ex_regular_reported: s.pools.exRegularReported,
     strategic_traced: s.strategicTraceDone || s.strategicTraceMonth != null ? 1 : 0,
     stop_loss: s.stopLoss ? 1 : 0,
+    contingency_drawn: s.contingencyDrawn ? 1 : 0,
     outflow_intent: outflowIntent(s),
     bill_status: BILL_INDEX[s.billStatus],
     conscription_active: s.conscriptionEverActive ? 1 : 0,

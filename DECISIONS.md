@@ -917,3 +917,56 @@ contingency is down to £4.1bn from £5.9bn in 2021. That would be a new action
 and a new resource rather than an event rewrite, and it has not been done.
 **ASK.**
 
+## A pot to raid instead of a bill to pay (11 September 2026)
+
+F6's spending side was "most event choices are a flat political tax". The
+income side was fixed by the delivery credit; this is the first thing on the
+outgoing side that is a **resource to manage** rather than a charge to absorb.
+
+**What it is.** `draw_contingency` spends the £4.1bn the MoD holds inside the
+Equipment Plan "to help fund new equipment projects or absorb any unexpected
+cost increases" (NAO HC 315 ¶1.9 — down from £4.3bn the year before and £5.9bn
+in 2021). It is the only money in the published account a minister could
+plausibly reach for at short notice. It costs **no political capital**, and
+carries two costs instead: every later step of Treasury pressure costs double,
+because there is no buffer left to absorb an overrun, and the emergency
+equipment order takes three months longer whether it was already placed or is
+bought afterwards. Spec §8a.
+
+**The first sizing was wrong, and measuring the model caught it.** The penalty
+was set at +1 per step, which put the crossover at about £15bn of cumulative
+cost. Then the actual spend was measured: a full Corps run costs £4.6–11.1bn
+and a Division run £2.0–3.7bn. **The crossover was outside the range the game
+can produce, so the draw was better everywhere and the decision was no
+decision** — the free lever this whole sequence of work has been removing.
+At +2 the crossover falls to about £9bn, between what a restrained Corps
+programme spends (£6.8bn) and what `max_effort` spends (£9.7bn).
+
+**The bots were given the arithmetic, not the answer**, and the fork appeared
+on its own. `contingencyPaysOff` compares the two charges against projected
+spend and declines while an equipment order is in flight. At Corps:
+`reserves_plus_light` draws on 40 of 40 seeds, `capacity_heavy` on 38, and
+`max_effort` splits **18 drawing against 21 raising spending** — where at +1 it
+was 30 against 8. At Division nobody draws at all. Corps resignations:
+`reserves_plus_light` 40% → 23%, `capacity_heavy` 15% → 3%, `max_effort`
+38% → 25%, **with final ESE unchanged**: the run survives to the deadline
+without getting closer to the target, which is what F9 asked for.
+
+**A rendering bug the work exposed, now guarded.** `action-menu.ts` keeps a
+hand-maintained `ORDER` array, and an action missing from it does not error —
+it simply never appears on screen. `draw_contingency` shipped invisible until
+it was opened in the browser. There is now a test that `ORDER` covers every
+`ActionId` and that every action has copy, a title and a group. Five lists have
+to agree for an action to exist (`ActionId`, `ACTION_IDS`, `ACTION_LABELS`,
+`ACTION_COPY`, `ORDER`, plus `isKnownAction`); only two of them fail loudly.
+
+**And a finding about the model that was already there.** The Treasury cost
+penalty almost never fires: the threshold is £5bn and the most expensive
+Division strategy finishes at £3.7bn on its worst seed, so **no run has ever
+paid a penny of Treasury pressure at the headline difficulty**. At Corps it
+fires once, twice for the biggest spender. Recorded as F13 (*Open*) with the
+cost table. `cost_pc_penalty_threshold` is an assumption with range
+[£2.5bn, £10bn] and £2.5bn would make it bite at Division, but that is a
+difficulty increase on every rung landing on top of three other changes, and it
+should be measured on its own. **ASK.**
+

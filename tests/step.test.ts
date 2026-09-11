@@ -10,7 +10,7 @@ import type { GameEvent, GameState, TurnInput } from '../src/types.js';
 import { P, param } from '../src/sim/params.js';
 import { getEvents, setEvents } from '../src/sim/content.js';
 import { newGame, step, derive } from '../src/sim/step.js';
-import { availableActions } from '../src/sim/actions.js';
+import { availableActions, applyAction } from '../src/sim/actions.js';
 import { eligiblePoolSize } from '../src/sim/legislation.js';
 import { spareIntake, courseMonths } from '../src/sim/pipeline.js';
 import { leadershipFactor, ledPersonnel, leadersNeeded, leadersRecalled, leadersAvailable, leadersSpareable } from '../src/sim/effectiveness.js';
@@ -18,6 +18,7 @@ import { next, seedFromString, pickWeighted, uniform } from '../src/sim/rng.js';
 import { score } from '../src/sim/score.js';
 import { STRATEGIES } from '../src/sim/strategies.js';
 import { applyEffects, conditionVars, eligibleEvents, eventEligible } from '../src/sim/events.js';
+import { chargeableCost, costPenaltyPerStep, costPenaltySteps } from '../src/sim/politics.js';
 
 const NOTHING: TurnInput = { actions: [], eventChoice: null };
 
@@ -534,6 +535,69 @@ describe('scenarios without events', () => {
     expect(sc.verdictOneLiner).not.toMatch(/\{\w+\}/);
     expect(['low', 'mid', 'high']).toContain(sc.qualityBand);
     expect(['broken', 'strained', 'intact']).toContain(sc.leadershipBand);
+  });
+});
+
+describe("the Equipment Plan's contingency", () => {
+  const draw = (s: GameState): GameState => step(s, { actions: [{ id: 'draw_contingency' }], eventChoice: null });
+
+  it('costs no capital now and takes the contingency off the Treasury bill', () => {
+    let s = newGame(31, 'corps');
+    s.ledger.cumulativeCost = P.cost_pc_penalty_threshold * 1.5;
+    expect(costPenaltySteps(s)).toBe(1);
+    const pcBefore = s.politicalCapital;
+
+    const after = structuredClone(s);
+    applyAction(after, { id: 'draw_contingency' });
+    expect(after.contingencyDrawn).toBe(true);
+    expect(after.politicalCapital).toBe(pcBefore);
+    expect(chargeableCost(after)).toBe(s.ledger.cumulativeCost - P.equipment_plan_contingency);
+    expect(costPenaltySteps(after)).toBe(0);
+  });
+
+  it('makes every later step cost more, so it is only the better buy on a small programme', () => {
+    const base = newGame(31, 'corps');
+    const at = (cost: number, drawn: boolean): number => {
+      const s = structuredClone(base);
+      s.ledger.cumulativeCost = cost;
+      s.contingencyDrawn = drawn;
+      return costPenaltyPerStep(s) * costPenaltySteps(s);
+    };
+    expect(costPenaltyPerStep({ ...base, contingencyDrawn: true })).toBe(
+      P.cost_pc_penalty_per_step + P.contingency_drawn_penalty_add,
+    );
+    // One step of pressure: drawing clears it outright.
+    const oneStep = P.cost_pc_penalty_threshold + P.equipment_plan_contingency - 1e6;
+    expect(at(oneStep, true)).toBeLessThan(at(oneStep, false));
+    // Two steps and up: the steeper slope costs more than the headroom saves.
+    const threeSteps = P.cost_pc_penalty_threshold * 3;
+    expect(at(threeSteps, true)).toBeGreaterThan(at(threeSteps, false));
+  });
+
+  it('slips an equipment order already placed, and one bought afterwards', () => {
+    // Already placed: the order loses its place in the programme.
+    let placed = step(newGame(31, 'corps'), { actions: [{ id: 'equipment_buy' }], eventChoice: null });
+    const due = placed.equipmentArrivalMonth!;
+    placed = draw(placed);
+    expect(placed.equipmentArrivalMonth).toBe(due + P.contingency_equipment_delay_months);
+
+    // Bought afterwards: it is quoted the longer lead time.
+    let later = draw(newGame(31, 'corps'));
+    expect(later.equipmentArrivalMonth).toBeNull();
+    // Actions are applied before the month advances, so the order is quoted
+    // from the turn it was placed on, not the turn the step ends on.
+    const placedOn = later.turn;
+    later = step(later, { actions: [{ id: 'equipment_buy' }], eventChoice: null });
+    expect(later.equipmentArrivalMonth).toBe(placedOn + P.equipment_lead_months + P.contingency_equipment_delay_months);
+  });
+
+  it('can only be spent once', () => {
+    const s = draw(newGame(31, 'corps'));
+    const again = availableActions(s).find((a) => a.id === 'draw_contingency');
+    expect(again?.available).toBe(false);
+    expect(again?.exhausted).toBe(true);
+    const blocked = draw(s);
+    expect(blocked.briefing.notes.some((n) => n.startsWith('action_unavailable:draw_contingency'))).toBe(true);
   });
 });
 

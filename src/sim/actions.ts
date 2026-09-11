@@ -18,6 +18,7 @@ export const ACTION_LABELS: Record<ActionId, string> = {
   recall_ex_regular: 'Recalled the Ex-Regular Reserve',
   trace_strategic_reserve: 'Ordered a trace of the Strategic Reserve',
   stop_loss: 'Imposed stop-loss',
+  draw_contingency: "Spent the Equipment Plan's contingency",
   introduce_bill: 'Introduced the National Service Bill',
   amend_bill: 'Amended the National Service Bill',
   set_callup: 'Set the monthly call-up',
@@ -36,6 +37,7 @@ export const ACTION_IDS: readonly ActionId[] = [
   'recall_ex_regular',
   'trace_strategic_reserve',
   'stop_loss',
+  'draw_contingency',
   'introduce_bill',
   'amend_bill',
   'set_callup',
@@ -81,6 +83,10 @@ export function actionPcDelta(s: GameState, action: Action): number {
       return P.pc_cost_trace_strategic;
     case 'stop_loss':
       return P.pc_cost_stop_loss;
+    case 'draw_contingency':
+      // Deliberately free. The whole point is that it costs no capital now and
+      // makes every later Treasury step cost more (§8a).
+      return 0;
     case 'introduce_bill':
       return (action.procedure === 'emergency' ? P.pc_cost_bill_emergency : P.pc_cost_bill_normal) + clauseCosts(action.clauses);
     case 'amend_bill':
@@ -131,6 +137,17 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
       return s.stopLoss
         ? { id, available: false, reason: 'Stop-loss is already in force.', pcDelta: 0, exhausted: true }
         : { id, available: true, pcDelta: P.pc_cost_stop_loss };
+    case 'draw_contingency':
+      return s.contingencyDrawn
+        ? { id, available: false, reason: "The Equipment Plan's contingency has been spent.", pcDelta: 0, exhausted: true }
+        : {
+            id,
+            available: true,
+            reason: s.equipmentOrdered && s.equipmentArrivalMonth != null && s.equipmentArrivalMonth > s.turn
+              ? `The equipment order already placed would slip ${P.contingency_equipment_delay_months} months.`
+              : undefined,
+            pcDelta: 0,
+          };
     case 'introduce_bill':
       return s.billStatus !== 'none'
         ? { id, available: false, reason: 'A National Service Bill has already been introduced.', pcDelta: 0, exhausted: true }
@@ -243,6 +260,15 @@ export function applyAction(s: GameState, action: Action): ActionResult {
       s.stopLoss = true;
       s.politicalCapital += P.pc_cost_stop_loss;
       return { ok: true };
+    case 'draw_contingency':
+      s.contingencyDrawn = true;
+      // An order already placed loses its place in the programme it was
+      // competing with; one placed later is quoted the longer lead time when
+      // it is bought (see equipment_buy).
+      if (s.equipmentArrivalMonth != null && s.equipmentArrivalMonth > s.turn) {
+        s.equipmentArrivalMonth += P.contingency_equipment_delay_months;
+      }
+      return { ok: true };
     case 'introduce_bill': {
       if (action.procedure !== 'emergency' && action.procedure !== 'normal') return { ok: false, reason: 'Unknown procedure.' };
       if (!isClauses(action.clauses)) return { ok: false, reason: 'Malformed clauses.' };
@@ -291,7 +317,8 @@ export function applyAction(s: GameState, action: Action): ActionResult {
       return { ok: true };
     case 'equipment_buy':
       s.equipmentOrdered = true;
-      s.equipmentArrivalMonth = s.turn + P.equipment_lead_months;
+      s.equipmentArrivalMonth =
+        s.turn + P.equipment_lead_months + (s.contingencyDrawn ? P.contingency_equipment_delay_months : 0);
       s.politicalCapital += P.pc_cost_equipment_buy;
       return { ok: true };
     case 'address_nation':
