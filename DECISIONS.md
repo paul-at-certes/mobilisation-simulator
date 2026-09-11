@@ -279,6 +279,19 @@ plus the difficulty table (which the brief allows). Primary figures untouched.
 
 ## UI notes from the first playthrough
 
+- **The holding pool has its own indicator (11 September 2026).** It was only
+  in the collapsed ledger, so the game's central failure mode — a call-up rate
+  above the training estate's spare intake, producing paid and idle people who
+  count for nothing — was invisible unless the player went looking. It now sits
+  under the gauges whenever the pool is not empty, with the month's change and
+  how many months the current spare intake would need to clear it (against how
+  many months are left). It is deliberately not a fourth gauge: it has no
+  target and no good value, and an empty pool says nothing worth a tile.
+- **The monthly call-up says that it persists.** The checkbox is unticked every
+  month because the decisions menu is rebuilt each turn, which read as though
+  the call-up had lapsed; the figure is in fact in force until changed. The
+  copy now says so. (Re-entering the same figure is not a decision and does not
+  reset the idle-months counter, so ticking it out of habit does nothing.)
 - Every parameter-based number in briefings, action descriptions, the event
   cards, the ledger and the scoring screen goes through the sourced popover.
   Computed values (Force Ready, political capital, costs) are shown plain;

@@ -126,6 +126,10 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 .bar.bar-ok > span { background: var(--ok); }
 .bar.bar-warn > span { background: var(--warn); }
 .gauge-note { font-size: 0.75rem; color: var(--ink-3); margin-top: 0.25rem; }
+.holding { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.6rem; background: #fff; border: 1px solid var(--rule); border-left: 3px solid var(--warn); border-radius: var(--radius); padding: 0.5rem 0.7rem; margin: 0.9rem 0; }
+.holding-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.holding-value { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.holding-note { flex-basis: 100%; font-size: 0.75rem; color: var(--ink-3); }
 
 /* Briefing note */
 .note {
