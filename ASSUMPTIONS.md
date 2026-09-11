@@ -186,6 +186,8 @@ Every parameter tagged `assumption` in the game, with its plausible range and th
 | `pc_momentum_bonus` · Momentum bonus | 3 | 1 – 4 | Design brief. Tuned in the balance pass (see DECISIONS.md). |
 | `pc_momentum_threshold` · Momentum threshold | 0.05 | 0.03 – 0.1 | Design brief. |
 | `pc_low_willingness_penalty` · Refusal-cases penalty | 2 | 1 – 4 | Design brief. |
+| `pc_idle_grace_months` · Idle months tolerated | 2 | 1 – 4 | A minister may take a month to think and a second to consult. Beyond that, doing nothing visible reads as drift. |
+| `pc_idle_penalty` · Penalty for a government seen to be doing nothing | 3 | 1 – 5 | Three times the baseline drain: visible inaction costs a government more than the crisis itself does. |
 | `pc_cost_call_out_reserve` · Cost: call out the Army Reserve | -7 | -15 – -5 | Design brief. Tuned in the balance pass (see DECISIONS.md). |
 | `pc_cost_ninety_day_notice` · Cost: legislate 90-day notice | -4 | -8 – -3 | Design brief. Tuned in the balance pass (see DECISIONS.md). |
 | `pc_cost_recall_ex_regular` · Cost: recall the Ex-Regular Reserve | -6 | -12 – -4 | Design brief. Tuned in the balance pass (see DECISIONS.md). |
@@ -204,6 +206,7 @@ Every parameter tagged `assumption` in the game, with its plausible range and th
 | `pc_cost_equipment_buy` · Cost: emergency equipment buy | -2 | -5 – -1 | Design brief. Tuned in the balance pass (see DECISIONS.md). |
 | `pc_address_first` · Address the nation, first | 8 | 5 – 12 | Design brief. |
 | `pc_address_second` · Address the nation, second | 4 | 2 – 6 | Design brief. |
+| `pc_address_subsequent` · Cost: third and later address | -5 | -8 – -2 | Mirrors pc_blame_subsequent. Set below the idle penalty (3) on purpose: an address with nothing in it must cost more than saying nothing, or it becomes a free way to look busy. |
 | `address_willingness_boost_pct` · Address willingness boost | 5% | 3% – 8% | Design brief. |
 | `address_willingness_months` · Address boost duration | 3 | 2 – 4 | Design brief. |
 | `pc_cost_raise_spending` · Cost: raise defence spending | -6 | -9 – -3 | Design brief. |

@@ -165,6 +165,10 @@ export interface EventTrigger {
   conditions?: Condition[];
   /** If true the event can fire more than once. Default false. */
   repeatable?: boolean;
+  /** Repeatable events only: months that must pass before it can fire again. */
+  cooldownMonths?: number;
+  /** Repeatable events only: how many times it may fire in one game. */
+  maxFires?: number;
 }
 
 export type Effect =
@@ -391,6 +395,8 @@ export interface GameState {
   willingnessBoosts: { delta: number; until: number }[];
   addressCount: number;
   blameCount: number;
+  /** Consecutive months in which the minister took no action at all. */
+  idleMonths: number;
   spendingRaised: boolean;
   scoringPcIfMissed: number;
   flags: Record<string, boolean>;

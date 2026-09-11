@@ -167,6 +167,112 @@ plus the difficulty table (which the brief allows). Primary figures untouched.
   the income of a player who never addresses the nation. Addressing the
   nation every three months is now the intended counter.
 
+## Event cadence (11 September 2026)
+
+- **One event a month.** `EVENT_FIRE_PROBABILITY` went from 0.75 to 1: every
+  month that has an eligible event shows it. The fire roll is still drawn so
+  that turning the constant back down does not shift the sequence for a seed.
+  The final month never shows one — the game is already over when the draw
+  would happen.
+- **Five events became repeatable** with a `cooldownMonths` (3–6) and a
+  `maxFires` cap (2–3): the leaked briefing note, the Opposition day, notices
+  to quit, the NATO liaison visit and the PAC hearing. The test is whether the
+  event is a recurring process of government whose prose reads the same the
+  second time. Ten were marked repeatable at first; five were reverted to
+  one-shot on review because they are single incidents told with unique detail
+  — the fire-extinguisher resignation, the photographs from the barracks, the
+  three named NHS trusts, the employers' joint letter, and a poll bounce
+  attributed to a particular address. A truly random one-off should happen
+  once. `tests/content.test.ts` pins the repeatable list so that adding to it
+  is a deliberate act.
+- **What it costs.** Over 6 strategies × 60 seeds: events per game rise from
+  4.0 to 5.0 (Brigade), 8.0 to 10.7 (Division), 9.9 to 13.5 (Corps). Mean
+  final political capital falls about 4 points and the Division resignation
+  rate roughly doubles (9% → 19% for the scripted strategies, which never
+  manage PC well). The deck costs PC on average, so more events is a
+  difficulty increase as well as a texture one. **ASK:** if that is too harsh,
+  the dials are the `maxFires` caps or the monthly PC income, not the cadence.
+- **The deck still runs out in long games.** With 30 events, Brigade is now
+  covered every month and Division about 90%, but Corps only reaches ~76% of
+  months on active play and much less if the player does nothing, because most
+  triggers are conditioned on things a passive player never causes. Filling a
+  24-month game properly needs more content, and the content test deliberately
+  caps the deck at 30. **ASK:** whether to write a further tranche of events
+  (the honest filler would be number-free, so no new sourcing) and raise the
+  cap.
+
+## A government seen to be doing nothing (11 September 2026)
+
+- **The mechanic.** `idleMonths` counts consecutive months in which the
+  minister takes no action. Past `pc_idle_grace_months` (2) the month costs
+  `pc_idle_penalty` (3) political capital, and keeps costing it until a lever
+  is pulled. Two months of thinking are free; a third month of visible
+  nothing is not. Both values are assumptions in `parameters.json` with
+  ranges, so they are tunable like everything else.
+- **What counts as a lever.** Any action that lands. Answering an event card
+  does not: the deck is not the player's doing, and a minister who only reacts
+  to the newspapers is precisely the one the mechanic is about. A free action
+  counts only when it changes something — re-entering the same call-up figure
+  is not a month's work. (This is why `conscription_over_capacity`, which
+  re-sets the same call-up every month, is charged for 44% of its months.)
+- **The player is never trapped.** Across 5,649 bot turns there was no turn
+  with zero available actions; the minimum was six. The penalty is always
+  avoidable.
+- **What it costs.** Active play is barely touched — `mixed` and `max_effort`
+  are charged on 0–5% of months. Passive play is punished as intended:
+  `do_nothing` is charged on 83–88% of months and now resigns before the Corps
+  deadline rather than coasting to it. Across 6 strategies × 60 seeds the
+  Division resignation rate goes from 19% to 33% and Corps from 67% to 100%,
+  though most of the Corps figure was already there.
+- **The empty gesture now costs (Paul's decision).** `address_nation` paid +8,
+  then +4, then nothing, and stayed available for ever — so a player could
+  dodge the idle penalty by addressing the nation every month with nothing to
+  announce. Third and later addresses now cost `pc_address_subsequent` (−5),
+  mirroring `pc_blame_subsequent`. The value is deliberately larger than the
+  idle penalty (3): an address with nothing in it must cost more than saying
+  nothing, or the loophole survives in a cheaper form. The willingness boost
+  still applies every time, so a late address stays a real if expensive tool
+  rather than a dead button.
+- **The bots were fixed before reading the matrix (11 September 2026).** The
+  scripted strategies were written against the old PC rules and misplayed the
+  new ones, so the balance matrix was libelling them. Three changes in
+  `strategies.ts`: a shared `politicalUpkeep` ladder that takes the paying
+  levers first and only buys a costing address when it would clear the refusal
+  threshold; a `PC_SAFETY_FLOOR` so a strategy does not spend its last capital
+  on an optional lever (`max_effort` was raising defence spending at −6 while
+  holding 3, and resigning on it); and `set_callup` emitted only when the
+  figure changes. With the same rules, `max_effort` at Division goes from 45%
+  resignations to 13% and `reserves_only` at Corps from 100% to 93%. `mixed`
+  moved the other way (3% → 10%), which is within the noise of 40 seeds and
+  mostly its new willingness to raise spending. `do_nothing` and the two
+  conscription strategies were deliberately left naive: they are the controls
+  that show what never touching the political levers costs.
+- **Together they cost the passive player about four months.** Across 6
+  strategies × 60 seeds, mean game length at Corps falls from 18.3 months to
+  14.0 and every scripted strategy now resigns there; at Division the
+  resignation rate goes 9% → 36%. The bots are a poor proxy for a human —
+  `reserves_only` addresses the nation whenever PC < 30, which is now
+  self-harm, and no human would keep doing it — but the direction is real.
+  **ASK:** if Corps should end in a shortfall verdict rather than a
+  resignation, the dial is not the idle penalty. Tracing the PC ledger month by
+  month shows why: after about month 7 there is no renewable political capital
+  at all. The addresses are spent, blame is spent, and the momentum bonus
+  (5% of target in a month) is out of reach at Corps scale, so the best
+  possible month is −1 and every event is a net negative. The PC economy funds
+  roughly 12–15 months of play; Corps is 24 months long. Lowering
+  `pc_momentum_threshold` to 0.04 or 0.03 (both inside its range) was tried:
+  it helps Division (36% → 24% resignations) and does nothing for Corps,
+  because the bots are not delivering 1,350 effective soldiers a month that
+  late either. The real fix, if one is wanted, is renewable political capital
+  for *delivering* — crediting graduations or arrivals — which is what the
+  momentum bonus was meant to do. That is a design change, not a parameter
+  nudge, and it should wait for one human Corps playthrough.
+- **Resigning does not cost the player the lesson.** `resigned_generic` reports
+  Force Ready against target, headcount and the month, so the shortfall is
+  still on the screen; it is framed as a political failure rather than a
+  mobilisation one. A minister who runs out of political capital in month 15
+  is a coherent — arguably the truest — ending for this game.
+
 ## UI notes from the first playthrough
 
 - Every parameter-based number in briefings, action descriptions, the event

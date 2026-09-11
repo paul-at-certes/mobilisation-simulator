@@ -198,6 +198,21 @@ describe('events.json', () => {
     }
   });
 
+  it('only repeats events that are recurring processes, and caps them', () => {
+    // A one-off incident must not happen twice: the fire-extinguisher
+    // resignation, the photographs from the barracks, the bounce attributed to
+    // your address. What may repeat is parliamentary and administrative
+    // routine, whose prose reads the same the second time.
+    const RECURRING = ['pac_hearing', 'nato_liaison', 'briefing_leak', 'regular_retention_wobble', 'opposition_motion'];
+    const recurring = events.filter((e) => e.trigger.repeatable).map((e) => e.id);
+    expect(recurring.sort()).toEqual([...RECURRING].sort());
+    for (const e of events.filter((ev) => ev.trigger.repeatable)) {
+      expect(e.trigger.cooldownMonths, `${e.id}: repeatable without a cooldown`).toBeGreaterThanOrEqual(3);
+      expect(e.trigger.maxFires, `${e.id}: repeatable without a cap`).toBeGreaterThanOrEqual(2);
+      expect(e.trigger.maxFires, `${e.id}: would repeat too often to read as news`).toBeLessThanOrEqual(3);
+    }
+  });
+
   it('spreads triggers across the game', () => {
     const early = events.filter((e) => (e.trigger.minTurn ?? 0) <= 2 && (e.trigger.conditions ?? []).length <= 1);
     const late = events.filter((e) => e.trigger.turnsRemaining !== undefined);
@@ -324,6 +339,7 @@ function fakeState(over: Partial<GameState> = {}): GameState {
     willingness: 20,
     willingnessBoosts: [],
     addressCount: 0,
+    idleMonths: 0,
     blameCount: 0,
     spendingRaised: false,
     scoringPcIfMissed: 0,

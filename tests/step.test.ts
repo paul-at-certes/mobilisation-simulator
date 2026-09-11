@@ -4,7 +4,9 @@
  * are exact; the determinism test runs with whatever deck is on disk.
  */
 import { beforeAll, afterAll, describe, expect, it } from 'vitest';
-import type { GameState, TurnInput } from '../src/types.js';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import type { GameEvent, GameState, TurnInput } from '../src/types.js';
 import { P } from '../src/sim/params.js';
 import { getEvents, setEvents } from '../src/sim/content.js';
 import { newGame, step, derive } from '../src/sim/step.js';
@@ -15,8 +17,20 @@ import { leadershipFactor } from '../src/sim/effectiveness.js';
 import { next, seedFromString, pickWeighted, uniform } from '../src/sim/rng.js';
 import { score } from '../src/sim/score.js';
 import { STRATEGIES } from '../src/sim/strategies.js';
+import { eligibleEvents } from '../src/sim/events.js';
 
 const NOTHING: TurnInput = { actions: [], eventChoice: null };
+
+/**
+ * The deck on disk. Vitest does not run the `import.meta.glob` auto-load in
+ * content.ts, so tests that want the real events inject them the way the CLI
+ * runner does.
+ */
+const DECK = JSON.parse(readFileSync(resolve(__dirname, '../src/data/events.json'), 'utf8')) as GameEvent[];
+function useRealDeck(): void {
+  beforeAll(() => setEvents(DECK));
+  afterAll(() => setEvents([]));
+}
 
 function run(s: GameState, inputs: TurnInput[]): GameState {
   for (const i of inputs) s = step(s, i);
@@ -93,7 +107,11 @@ describe('scenarios without events', () => {
     expect(s.turn).toBe(12);
     expect(s.over).toBe(true);
     expect(s.overReason).toBe('deadline');
-    expect(s.politicalCapital).toBe(P.pc_start - 12 * P.pc_baseline_drain);
+    // Twelve months of drain, plus the idle penalty for every month after the
+    // grace: a minister who never pulls a lever is seen not to be governing.
+    const idlePenalised = 12 - P.pc_idle_grace_months;
+    expect(s.idleMonths).toBe(12);
+    expect(s.politicalCapital).toBe(P.pc_start - 12 * P.pc_baseline_drain - idlePenalised * P.pc_idle_penalty);
     expect(s.ledger.cumulativeCost).toBe(0);
     expect(s.ledger.cumulativeGdpLoss).toBe(0);
     expect(s.ledger.regularOutflowToDate).toBeCloseTo(P.regular_voluntary_outflow_annual, 6);
@@ -339,7 +357,11 @@ describe('scenarios without events', () => {
     expect(s.politicalCapital).toBe(P.pc_start + P.pc_address_first + P.pc_blame_first + P.pc_address_second + P.pc_blame_subsequent - 2 * P.pc_baseline_drain);
     const pc = s.politicalCapital;
     s = step(s, { actions: [{ id: 'address_nation' }], eventChoice: null });
-    expect(s.politicalCapital).toBe(pc - P.pc_baseline_drain);
+    // A third address costs: there is nothing left to announce. It must cost
+    // more than idling, or it is a free way to look busy.
+    expect(s.politicalCapital).toBe(pc + P.pc_address_subsequent - P.pc_baseline_drain);
+    expect(P.pc_address_subsequent).toBeLessThan(0);
+    expect(-P.pc_address_subsequent).toBeGreaterThan(P.pc_idle_penalty);
     // The third address (taken on turn 2) boosts willingness until turn 2 + address_willingness_months.
     const lastUntil = 2 + P.address_willingness_months;
     expect(s.willingnessBoosts.map((b) => b.until)).toContain(lastUntil);
@@ -409,7 +431,94 @@ describe('scenarios without events', () => {
   });
 });
 
+describe('a government seen to be doing nothing', () => {
+  it('tolerates two idle months, then charges for every one after', () => {
+    let s = newGame(5, 'division');
+    const idleLabel = /doing nothing/;
+    for (let i = 0; i < P.pc_idle_grace_months; i += 1) {
+      s = step(s, NOTHING);
+      expect(s.idleMonths).toBe(i + 1);
+      expect(s.briefing.pcReasons.some((r) => idleLabel.test(r.label)), 'charged inside the grace').toBe(false);
+    }
+    s = step(s, NOTHING);
+    const charge = s.briefing.pcReasons.find((r) => idleLabel.test(r.label));
+    expect(charge, 'no penalty after the grace ran out').toBeDefined();
+    expect(charge!.delta).toBe(-P.pc_idle_penalty);
+    expect(s.briefing.notes).toContain(`idle_months:${P.pc_idle_grace_months + 1}`);
+  });
+
+  it('resets the run when a lever is actually pulled', () => {
+    let s = newGame(5, 'division');
+    s = step(s, NOTHING);
+    s = step(s, NOTHING);
+    expect(s.idleMonths).toBe(2);
+    s = step(s, { actions: [{ id: 'stop_loss' }], eventChoice: null });
+    expect(s.idleMonths).toBe(0);
+    s = step(s, NOTHING);
+    expect(s.briefing.pcReasons.some((r) => /doing nothing/.test(r.label))).toBe(false);
+  });
+
+  it('does not count re-entering the same call-up as a lever', () => {
+    const clauses = { ageBand: '18-30', includeWomen: true, medical: 'relaxed', exemptions: 'broad' } as const;
+    let s = newGame(5, 'division');
+    s = step(s, { actions: [{ id: 'introduce_bill', procedure: 'emergency', clauses }], eventChoice: null });
+    while (s.billStatus !== 'passed' && !s.over) s = step(s, NOTHING);
+    s = step(s, { actions: [{ id: 'set_callup', perMonth: 5000 }], eventChoice: null });
+    expect(s.idleMonths).toBe(0);
+    // Re-entering the same figure changes nothing and does not reset the run.
+    s = step(s, { actions: [{ id: 'set_callup', perMonth: 5000 }], eventChoice: null });
+    expect(s.idleMonths).toBe(1);
+    // Changing it is a decision.
+    s = step(s, { actions: [{ id: 'set_callup', perMonth: 4000 }], eventChoice: null });
+    expect(s.idleMonths).toBe(0);
+  });
+});
+
+describe('event cadence', () => {
+  useRealDeck();
+
+  it('shows an event every month that has one, on every difficulty', () => {
+    for (const difficulty of ['brigade', 'division', 'corps'] as const) {
+      for (const seed of ['churchill', 'attlee', '7']) {
+        let s = newGame(seed, difficulty);
+        let months = 0;
+        let withEvent = 0;
+        while (!s.over) {
+          s = step(s, STRATEGIES.mixed(s));
+          months += 1;
+          if (s.pendingEvent) withEvent += 1;
+          // The deck never offers an event on the last month: the game is over.
+          if (!s.over) expect(eligibleEvents(s).length === 0 || s.pendingEvent != null).toBe(true);
+        }
+        expect(months).toBeGreaterThan(1);
+        expect(withEvent, `${difficulty}/${seed}: too quiet`).toBeGreaterThanOrEqual(Math.floor((months - 1) * 0.6));
+      }
+    }
+  });
+
+  it('keeps a repeatable event to its cooldown and its cap', () => {
+    const limits = new Map(DECK.filter((e) => e.trigger.repeatable).map((e) => [e.id, e.trigger]));
+    for (const difficulty of ['division', 'corps'] as const) {
+      for (const seed of ['churchill', '11', '12']) {
+        let s = newGame(seed, difficulty);
+        while (!s.over) s = step(s, STRATEGIES.mixed(s));
+        const turnsById = new Map<string, number[]>();
+        for (const e of s.eventLog) turnsById.set(e.eventId, [...(turnsById.get(e.eventId) ?? []), e.turn]);
+        for (const [id, turns] of turnsById) {
+          const t = limits.get(id);
+          expect(turns.length, `${id} fired ${turns.length} times`).toBeLessThanOrEqual(t?.maxFires ?? 1);
+          for (let i = 1; i < turns.length; i += 1) {
+            expect(turns[i] - turns[i - 1], `${id} repeated too soon`).toBeGreaterThanOrEqual(t!.cooldownMonths!);
+          }
+        }
+      }
+    }
+  });
+});
+
 describe('determinism', () => {
+  useRealDeck();
+
   it('same seed and same inputs give deep-equal states (with the event deck on disk)', () => {
     const play = () => {
       let s = newGame('churchill', 'corps');

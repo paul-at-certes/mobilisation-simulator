@@ -13,7 +13,7 @@ import { seedFromString, next, uniform } from './rng.js';
 import { emptyPools, syncDerivedPools } from './pools.js';
 import { computeForce } from './effectiveness.js';
 import { incrementalCost, monthlyCostBreakdown, monthlyGdpLoss } from './money.js';
-import { expireWillingnessBoosts, monthlyPcChanges, type PcReason } from './politics.js';
+import { expireWillingnessBoosts, idleMonths, monthlyPcChanges, type PcReason } from './politics.js';
 import { applyAction, isActionAvailable, ACTION_LABELS } from './actions.js';
 import { advanceBillClock } from './legislation.js';
 import { cohortAttrition, courseMonths, equipmentArrived, spareIntake } from './pipeline.js';
@@ -105,6 +105,7 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
     willingness: P.willingness_start_pct,
     willingnessBoosts: [],
     addressCount: 0,
+    idleMonths: 0,
     blameCount: 0,
     spendingRaised: false,
     scoringPcIfMissed: 0,
@@ -213,8 +214,11 @@ export function step(state: GameState, input: TurnInput): GameState {
     return s;
   }
 
-  // 2. Actions.
-  applyTurnActions(s, input?.actions ?? [], pcReasons, notes);
+  // 2. Actions. A month in which the minister pulls no lever at all is counted:
+  // a government seen to be doing nothing loses political capital for it (§9).
+  const applied = applyTurnActions(s, input?.actions ?? [], pcReasons, notes);
+  s.idleMonths = applied > 0 ? 0 : idleMonths(s) + 1;
+  if (s.idleMonths > P.pc_idle_grace_months) notes.push(`idle_months:${s.idleMonths}`);
 
   // 3. Advance one month.
   s.turn += 1;
@@ -295,8 +299,10 @@ function resolvePendingEvent(s: GameState, choice: number | null, pcReasons: PcR
   syncDerivedPools(s);
 }
 
-function applyTurnActions(s: GameState, actions: readonly unknown[], pcReasons: PcReason[], notes: string[]): void {
+/** Applies the turn's actions and returns how many of them actually landed. */
+function applyTurnActions(s: GameState, actions: readonly unknown[], pcReasons: PcReason[], notes: string[]): number {
   let slotsUsed = 0;
+  let applied = 0;
   for (const raw of actions) {
     const action = raw as { id?: string } & Record<string, unknown>;
     const id = action?.id;
@@ -314,16 +320,21 @@ function applyTurnActions(s: GameState, actions: readonly unknown[], pcReasons: 
       continue;
     }
     const pcBefore = s.politicalCapital;
+    const callupBefore = s.callupPerMonth;
     const result = applyAction(s, raw as Parameters<typeof applyAction>[1]);
     if (!result.ok) {
       notes.push(`action_rejected:${id}:${result.reason ?? ''}`);
       continue;
     }
     if (!free) slotsUsed += 1;
+    // A free action counts as pulling a lever only when it changes something:
+    // re-entering the same call-up figure is not a month's work.
+    if (!free || s.callupPerMonth !== callupBefore) applied += 1;
     const delta = s.politicalCapital - pcBefore;
     if (delta !== 0) pcReasons.push({ label: ACTION_LABELS[id] ?? `Action: ${id}`, delta });
     notes.push(`action:${id}`);
   }
+  return applied;
 }
 
 function isKnownAction(id: string): id is Parameters<typeof isActionAvailable>[1] {

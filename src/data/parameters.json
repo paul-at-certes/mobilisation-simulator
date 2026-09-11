@@ -1433,6 +1433,38 @@
       ],
       "rationale": "Design brief."
     },
+    "pc_idle_grace_months": {
+      "value": 2,
+      "unit": "months",
+      "label": "Idle months tolerated",
+      "description": "Consecutive months in which the minister takes no action before the public notices.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        4
+      ],
+      "rationale": "A minister may take a month to think and a second to consult. Beyond that, doing nothing visible reads as drift."
+    },
+    "pc_idle_penalty": {
+      "value": 3,
+      "unit": "pc",
+      "label": "Penalty for a government seen to be doing nothing",
+      "description": "Political capital lost each month once the minister has taken no action for longer than the tolerated run.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        5
+      ],
+      "rationale": "Three times the baseline drain: visible inaction costs a government more than the crisis itself does."
+    },
     "pc_cost_call_out_reserve": {
       "value": -7,
       "unit": "pc",
@@ -1720,6 +1752,22 @@
         6
       ],
       "rationale": "Design brief."
+    },
+    "pc_address_subsequent": {
+      "value": -5,
+      "unit": "pc",
+      "label": "Cost: third and later address",
+      "description": "Political capital lost each time the nation is addressed after the second, when there is nothing new to announce.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -8,
+        -2
+      ],
+      "rationale": "Mirrors pc_blame_subsequent. Set below the idle penalty (3) on purpose: an address with nothing in it must cost more than saying nothing, or it becomes a free way to look busy."
     },
     "address_willingness_boost_pct": {
       "value": 5,

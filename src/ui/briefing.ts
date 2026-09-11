@@ -216,6 +216,23 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     );
   }
 
+  const idle = Number.isFinite(state.idleMonths) ? state.idleMonths : 0;
+  if (idle > P.pc_idle_grace_months) {
+    urgent.push(
+      pick(state, 24, [
+        `${formatInt(idle)} months have now passed without a decision from this Department. The lobby has begun writing that the Government has no plan, and the polling follows the lobby: ${formatInt(P.pc_idle_penalty)} political capital a month for as long as it lasts.`,
+        `No lever has been pulled here for ${formatInt(idle)} months. The charge is not that the policy is wrong but that there is no policy, and it costs ${formatInt(P.pc_idle_penalty)} political capital a month until something is done.`,
+      ]),
+    );
+  } else if (idle === P.pc_idle_grace_months) {
+    urgent.push(
+      pick(state, 25, [
+        'Two months have passed without a decision from this Department. A third will be noticed outside it.',
+        'Nothing has been decided here for two months. The Lobby has started to ask what the Department is for.',
+      ]),
+    );
+  }
+
   if (facts.pcDelta <= -5) {
     const reasons = [...facts.pcReasons]
       .filter((r) => r.delta < 0)

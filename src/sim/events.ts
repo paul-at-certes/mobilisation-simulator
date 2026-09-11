@@ -22,11 +22,13 @@ import { equipmentArrived } from './pipeline.js';
 import { effectiveWillingness } from './politics.js';
 
 /**
- * Chance that an event fires on a turn when at least one is eligible. Not a
- * modelling parameter (it tunes pacing, not the world), so it lives here
- * rather than in parameters.json.
+ * Chance that an event fires on a turn when at least one is eligible. One a
+ * month: every turn that has something eligible shows it. Not a modelling
+ * parameter (it tunes pacing, not the world), so it lives here rather than in
+ * parameters.json. The fire roll is still drawn even at 1 so that lowering
+ * this constant does not shift the RNG sequence for a given seed.
  */
-export const EVENT_FIRE_PROBABILITY = 0.75;
+export const EVENT_FIRE_PROBABILITY = 1;
 
 const MEDICAL_INDEX = { peacetime: 0, relaxed: 1, wartime: 2 } as const;
 const EXEMPTION_INDEX = { strict: 0, broad: 1, minimal: 2 } as const;
@@ -89,12 +91,29 @@ export function eventEligible(ev: GameEvent, s: GameState, vars: Record<Conditio
   if (t.minTurn != null && s.turn < t.minTurn) return false;
   if (t.maxTurn != null && s.turn > t.maxTurn) return false;
   if (t.turnsRemaining != null && s.deadlineMonths - s.turn !== t.turnsRemaining) return false;
-  if (!t.repeatable && s.firedEvents.includes(ev.id)) return false;
+  if (!t.repeatable) {
+    if (s.firedEvents.includes(ev.id)) return false;
+  } else {
+    const fires = s.firedEvents.filter((id) => id === ev.id).length;
+    if (t.maxFires != null && fires >= t.maxFires) return false;
+    if (t.cooldownMonths != null && fires > 0 && s.turn - lastFiredTurn(s, ev.id) < t.cooldownMonths) return false;
+  }
   for (const c of t.conditions ?? []) {
     const v = vars[c.key];
     if (v === undefined || !compare(v, c.op, c.value)) return false;
   }
   return true;
+}
+
+/**
+ * The turn a repeatable event last appeared on. Events are logged when the
+ * player resolves them, on the turn they were shown, so the log is complete
+ * for everything except the draw now being made.
+ */
+function lastFiredTurn(s: GameState, id: string): number {
+  let last = -Infinity;
+  for (const e of s.eventLog) if (e.eventId === id && e.turn > last) last = e.turn;
+  return last;
 }
 
 export function eligibleEvents(s: GameState): GameEvent[] {

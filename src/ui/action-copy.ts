@@ -91,7 +91,7 @@ export const ACTION_COPY: Record<ActionId, ActionCopy> = {
   address_nation: {
     group: 'political',
     title: 'Address the nation',
-    html: `+${s('pc_address_first')} political capital the first time, +${s('pc_address_second')} the second, nothing thereafter. Willingness to serve rises ${n('address_willingness_boost_pct')} percentage points for ${s('address_willingness_months')} months. Willingness is currently polled at ${s('willingness_start_pct')}.`,
+    html: `+${s('pc_address_first')} political capital the first time, +${s('pc_address_second')} the second. −${s('pc_address_subsequent', '5')} every time after that: there is only so much to announce. Willingness to serve rises ${n('address_willingness_boost_pct')} percentage points for ${s('address_willingness_months')} months each time. Willingness is currently polled at ${s('willingness_start_pct')}.`,
   },
   raise_spending: {
     group: 'political',

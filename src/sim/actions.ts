@@ -62,7 +62,8 @@ export function clauseCosts(next: BillClauses, previous?: BillClauses): number {
 export function addressPc(count: number): number {
   if (count === 0) return P.pc_address_first;
   if (count === 1) return P.pc_address_second;
-  return 0;
+  // A third address with nothing new in it costs, as blaming them again does.
+  return P.pc_address_subsequent;
 }
 
 export function blamePc(count: number): number {
@@ -177,7 +178,7 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
       return {
         id,
         available: true,
-        reason: s.addressCount >= 2 ? 'The public has stopped listening; no further PC.' : undefined,
+        reason: s.addressCount >= 2 ? 'The public has stopped listening; going on television again will cost you.' : undefined,
         pcDelta: addressPc(s.addressCount),
       };
     case 'raise_spending':

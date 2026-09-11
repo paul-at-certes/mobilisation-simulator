@@ -224,6 +224,20 @@ Note on access: `hansard.parliament.uk`, `questions-statements.parliament.uk`, `
 
 ---
 
+## 21. Strategic Reserve recall to be exercised in 2027; CDS on tracking (added 11 September 2026)
+
+- **Figure/claim:** The UK will test recall of part of the ~95,000-strong Strategic Reserve during NATO's Steadfast Defender 2027; the Chief of the Defence Staff says Defence has no effective system for tracking and engaging its members.
+- **URLs:**
+  - ADS Advance, 8 September 2026, "UK to test mobilisation of 95,000 military veterans in 2027": https://www.adsadvance.co.uk/uk-military-mobilise-veterans-war-exercise/
+  - IBTimes UK coverage of the same announcement: https://www.ibtimes.co.uk/uk-test-strategic-reserve-recall-system-2027-exercise-1818605
+  - Armed Forces Bill 2026 collection (recall age to 65, "warlike preparations" threshold): https://www.gov.uk/government/collections/armed-forces-bill-2026
+- **Summary:** Reported figures — Strategic Reserve ~95,000; almost 32,000 active part-time reservists (tri-service); current maximum call-up age for non-officer reservists 55, proposed 65; more than one in five troops on Operation Interflex in 2024 were reservists. Air Chief Marshal Sir Richard Knighton is reported as saying tracking is the "biggest challenge" and that the Armed Forces have been directed to "exercise the call-up of elements of that strategic reserve" during Steadfast Defender 2027. Lord Robertson, who led the 2025 SDR, is reported as saying officials do not know the whereabouts of most reservists on the recall list; the MoD began gathering updated contact, location and skills data in October 2025.
+- **Bearing on the game:** re-confirms the 95,000 estimate eight months after the January 2026 citation already in `parameters.json` (`strategic_reserve_claimed`), and corroborates the premise of the `where_are_they` event and the `trace_strategic_reserve` action, which item 2 could only mark *partially verified*. The 2027 recall exercise is not in the deck.
+- **As of:** 8 September 2026.
+- **Confidence:** **partially verified** — trade and general press reporting a ministerial/CDS statement. The quotes are consistent across outlets but the primary (Hansard or a Defence Committee evidence session) was not located in this session. **ASK:** worth one pass to find the primary before any of it is quoted as fact in the game.
+
+---
+
 ## Summary table
 
 | # | Item | Status |
@@ -243,6 +257,7 @@ Note on access: `hansard.parliament.uk`, `questions-statements.parliament.uk`, `
 | 13 | £89k / £53k per worker | £89k derived-verified; £53k not reproduced (£51.1k) |
 | 14 | AFC Harrogate ~30% attrition, 2-yr | 34% partially verified; course is 49 weeks not 2 years |
 | 15 | Defence £62.3bn / GDP £3,033.9bn | partially verified / verified |
+| 21 | 2027 recall exercise; CDS on tracking | partially verified (primary not located) |
 | 16 | Kit £3.5–5k | unverified — both cited sources fail |
 | 17 | UK/E&W ×1.12 | verified (1.1206) |
 | 18 | SPS 1 Jul 2026 URL | verified (3,311 not checked) |

@@ -2,8 +2,9 @@
  * politics.ts — monthly political-capital arithmetic (spec §9).
  *
  * `monthlyPcChanges` returns the list of reasons with deltas for the month
- * (baseline drain, cost and GDP penalties, momentum, refusal cases). Action
- * and event deltas are applied when they happen and merely listed alongside.
+ * (baseline drain, cost and GDP penalties, momentum, refusal cases, and the
+ * penalty for a minister who has pulled no levers for months). Action and
+ * event deltas are applied when they happen and merely listed alongside.
  */
 import type { GameState } from '../types.js';
 import { P } from './params.js';
@@ -47,7 +48,19 @@ export function monthlyPcChanges(s: GameState, forceReady: number, previousForce
   if (s.conscriptionEverActive && effectiveWillingness(s) < P.willingness_low_threshold_pct) {
     reasons.push({ label: 'Refusal cases in the courts', delta: -P.pc_low_willingness_penalty });
   }
+  if (idleMonths(s) > P.pc_idle_grace_months) {
+    reasons.push({ label: `A government seen to be doing nothing (${idleMonths(s)} months)`, delta: -P.pc_idle_penalty });
+  }
   return reasons.filter((r) => r.delta !== 0);
+}
+
+/**
+ * Consecutive months in which no action was taken. Read through a helper so
+ * that a saved game from before the field existed counts as active rather
+ * than as NaN.
+ */
+export function idleMonths(s: GameState): number {
+  return Number.isFinite(s.idleMonths) ? s.idleMonths : 0;
 }
 
 /** Drop boosts that have expired at this turn. */

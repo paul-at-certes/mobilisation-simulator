@@ -74,7 +74,7 @@ availability and displayed PC delta. Rules:
 | `contract_civilian_instructors` | not contracted | `civilianInstructors = true; civilianInstructorsMonth = turn + civilian_instructor_delay_months` | `pc_cost_civilian_instructors` |
 | `junior_entry` | not taken | `juniorEntryTaken = true` (flavour only; briefing note explains why nothing happens) | `pc_cost_junior_entry` |
 | `equipment_buy` | not ordered | `equipmentOrdered = true; equipmentArrivalMonth = turn + equipment_lead_months` | `pc_cost_equipment_buy` |
-| `address_nation` | always | `addressCount += 1`; PC +`pc_address_first` (1st), +`pc_address_second` (2nd), 0 after; push willingness boost `{delta: address_willingness_boost_pct, until: turn + address_willingness_months}` | see effect |
+| `address_nation` | always | `addressCount += 1`; PC +`pc_address_first` (1st), +`pc_address_second` (2nd), `pc_address_subsequent` (negative) after; push willingness boost `{delta: address_willingness_boost_pct, until: turn + address_willingness_months}` | see effect |
 | `raise_spending` | not raised | `spendingRaised = true` (cost threshold × `raise_spending_threshold_multiplier`) | `pc_cost_raise_spending` |
 | `blame_predecessors` | always | `blameCount += 1`; PC +`pc_blame_first` first time, `pc_blame_subsequent` after | see effect |
 
@@ -228,9 +228,19 @@ pcDelta  = −pc_baseline_drain
          − gdp_pc_penalty_per_step × floor((cumulativeGdpLoss / uk_gdp_2025 × 100) / gdp_pc_penalty_step_pct)
          + (forceReady − previous forceReady ≥ pc_momentum_threshold × target ? pc_momentum_bonus : 0)
          − (conscriptionEverActive && effectiveWillingness < willingness_low_threshold_pct ? pc_low_willingness_penalty : 0)
+         − (idleMonths > pc_idle_grace_months ? pc_idle_penalty : 0)
 ```
 
 `effectiveWillingness = willingness + Σ active boosts`. Boosts with `until < turn` are dropped.
+
+`idleMonths` counts consecutive months in which the minister took no action:
+reset to 0 by any action that lands, incremented otherwise, before the month's
+politics are worked out. A free action counts only if it changes something
+(re-entering the same call-up figure does not). Answering an event card is not
+an action and does not reset the run: the penalty is for a government that is
+not seen to govern, and the deck is not the player's doing. The briefing warns
+on the last tolerated month and explains the charge thereafter.
+
 Record every non-zero contributor in `briefing.pcReasons`.
 
 PC < 0 after the month → `over = true, overReason = 'resigned'`.
@@ -241,12 +251,16 @@ PC < 0 after the month → `over = true, overReason = 'resigned'`.
 `drawEvent(state): { eventId | null, rngState }`. Eligible = events whose
 trigger passes (`minTurn ≤ nextTurn ≤ maxTurn`, `turnsRemaining` match, all
 conditions true against the *post-step* state) and which have not fired
-(unless `repeatable`). One weighted draw among eligible; a single extra RNG
-draw decides whether any event fires at all: `P(fire) = 0.75` if eligible is
-non-empty (constant `EVENT_FIRE_PROBABILITY` in events.ts, documented). Draw
-order is fixed: fire-roll first, then weighted pick. Use exactly two RNG
-draws whenever eligible is non-empty, one when it is empty (to keep the
-sequence stable).
+(unless `repeatable`). A `repeatable` event may also set `cooldownMonths`
+(months since it last appeared, counted from `eventLog`) and `maxFires` (times
+it may appear in one game). One weighted draw among eligible; a single extra
+RNG draw decides whether any event fires at all: `P(fire) = 1` if eligible is
+non-empty (constant `EVENT_FIRE_PROBABILITY` in events.ts, documented) — one
+event a month whenever the deck has something to say, and none on the final
+month, when the game is already over. The roll is still drawn at 1 so that
+lowering the constant does not shift the sequence for a seed. Draw order is
+fixed: fire-roll first, then weighted pick. Use exactly two RNG draws whenever
+eligible is non-empty, one when it is empty (to keep the sequence stable).
 
 `applyEffects(state, effects)` implements every `Effect` in `types.ts`.
 `random` effects consume one RNG draw. `end_game` sets `over` with reason
@@ -282,11 +296,23 @@ For 1,000 fuzz runs with random seeds, difficulties and random legal actions:
 Strategies live in `src/sim/strategies.ts` as pure functions
 `(state) → TurnInput` so tests can reuse them:
 
-- `do_nothing`
-- `reserves_only`: turn 0 call out reserve (90-day notice) + recall ex-regulars; turn 1 trace strategic + stop-loss; then address the nation when PC < 30.
-- `conscription_max_capacity`: turn 0 bill (emergency, 18–30, women on, relaxed, broad) + equipment buy; turns 1–3 expand capacity ×2/turn until 4 purchases, then civilian instructors; when passed, set callup = spare intake capacity; compress syllabus at turn 1.
+All but `do_nothing` and the two conscription controls share `politicalUpkeep`:
+at most one political lever a month, taken only when the arithmetic favours it
+— the first two addresses (which pay), the one paying use of
+`blame_predecessors`, `raise_spending` once the Treasury is actually charging
+and with `RAISE_SPENDING_PAYBACK_MONTHS` left to pay it back, and a third
+address (which costs) only when it would lift willingness back over the
+refusal threshold. Discretionary spending keeps `PC_SAFETY_FLOOR` in hand; the
+clearing address is exempt from the floor because it saves more than it costs.
+`set_callup` is only emitted when the figure changes, since re-entering it is
+not a decision and the simulation does not count it as one.
+
+- `do_nothing` (the control: it takes no action ever, and wears the idle penalty)
+- `reserves_only`: turn 0 call out reserve (90-day notice) + recall ex-regulars; turn 1 trace strategic + stop-loss; then political upkeep when PC < 30.
+- `conscription_max_capacity` (a control: it deliberately never uses the political levers, to show what that failure mode costs): turn 0 bill (emergency, 18–30, women on, relaxed, broad) + equipment buy; turns 1–3 expand capacity ×2/turn until 4 purchases, then civilian instructors; when passed, set callup = spare intake capacity; compress syllabus at turn 1.
 - `conscription_over_capacity`: as above but callup = 20,000/month and only one capacity purchase.
-- `mixed`: reserves_only levers in turns 0–1, then bill (emergency), equipment, 3 capacity purchases, callup at capacity, address nation twice.
+- `mixed`: reserves_only levers in turns 0–1, then bill (emergency), equipment, 3 capacity purchases, callup at capacity, political upkeep thereafter.
+- `max_effort`: everything, paced — the ceiling of what the levers deliver; political upkeep and further capacity purchases once the script runs out.
 
 Event choices: strategies pick choice 0 unless they define a policy.
 
