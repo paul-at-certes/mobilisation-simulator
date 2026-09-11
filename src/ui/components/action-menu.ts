@@ -156,7 +156,10 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
   function actionRow(id: ActionId, a: ActionAvailability): HTMLElement {
     const copy = ACTION_COPY[id];
     const isFree = FREE_ACTIONS.has(id);
-    const cb = h('input', { type: 'checkbox', id: `act-${id}`, 'data-action': id, disabled: !a.available }) as HTMLInputElement;
+    // The title is the disclosure control now, so it can no longer be the
+    // checkbox's `<label for>`. The checkbox carries its own name instead, or
+    // it would reach a screen reader unnamed.
+    const cb = h('input', { type: 'checkbox', id: `act-${id}`, 'data-action': id, disabled: !a.available, 'aria-label': copy.title }) as HTMLInputElement;
     const row = h('div', { class: `action${a.available ? '' : ' unavailable'}` });
     const options = optionsFor(id);
     cb.addEventListener('change', () => {
@@ -167,13 +170,34 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
       updateCounter();
     });
     const pcText = isFree ? 'free' : id === 'introduce_bill' ? `${pcOf('pc_cost_bill_emergency')} to ${pcOf('pc_cost_bill_normal')} PC` : a.pcDelta === 0 ? '0 PC' : `${signed(a.pcDelta)} PC`;
+    /**
+     * Title and cost first, the paragraph behind a tap (F7). The player scans
+     * fifteen titles and two-thirds of the height was the paragraphs under
+     * them; the sourced argument is opened for the one or two actions actually
+     * being weighed.
+     *
+     * Deliberately not remembered across months, unlike the groups. An open
+     * group means "I am working in this area", which is a stance worth
+     * keeping; an open paragraph means "I am reading this now", which is over
+     * when the month is. Within a month it stays open, because the menu is
+     * only rebuilt when the month ends.
+     */
+    const detail = h(
+      'details',
+      { class: 'action-detail' },
+      h('summary', {}, h('span', { class: 'action-title' }, copy.title, h('span', { class: 'action-pc' }, pcText))),
+      h('div', { class: 'action-desc', html: copy.html }),
+    );
     row.append(
-      cb,
+      // Wrapping the checkbox gives it a 44px tap target without the row
+      // growing: the label's padding reaches back over the row's own.
+      h('label', { class: 'action-tick' }, cb),
       h(
         'div',
         { class: 'action-body' },
-        h('label', { for: `act-${id}`, class: 'action-title' }, copy.title, h('span', { class: 'action-pc' }, pcText)),
-        h('div', { class: 'action-desc', html: copy.html }),
+        detail,
+        // The reason is a warning — a cost the title does not show, or why the
+        // action is closed. It stays on the face of the row.
         a.reason && !a.exhausted ? h('div', { class: 'action-reason' }, a.reason) : null,
         options,
       ),

@@ -173,10 +173,30 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 .action.selected { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .action.unavailable { opacity: 0.6; }
 .action input[type="checkbox"] { width: 22px; height: 22px; margin-top: 0.15rem; flex: none; accent-color: var(--accent); }
+/* The title became the disclosure control, so it is no longer the checkbox's
+   label. This gives the checkbox a 44px tap target of its own without the row
+   growing: the padding reaches back over the row's own padding, and the
+   negative margins keep it out of the layout. */
+.action .action-tick {
+  flex: none; display: flex; align-items: flex-start; cursor: pointer;
+  min-height: 44px; margin: -0.55rem 0 -0.55rem -0.7rem; padding: 0.55rem 0.35rem 0 0.7rem;
+}
+.action.unavailable .action-tick { cursor: default; }
 .action .action-body { flex: 1; min-width: 0; }
 .action .action-title { font-weight: 600; display: flex; justify-content: space-between; gap: 0.5rem; }
 .action .action-pc { font-variant-numeric: tabular-nums; color: var(--ink-3); font-weight: 400; white-space: nowrap; }
 .action .action-desc { font-size: 0.88rem; color: var(--ink-2); }
+/* Title and cost first, the paragraph behind a tap (F7). The summary line is
+   exactly the height the title line was, so the disclosure itself costs
+   nothing; the +/− marker follows the groups' and the ledger's idiom. */
+.action-detail { min-width: 0; }
+.action-detail > summary { cursor: pointer; list-style: none; display: block; }
+.action-detail > summary::-webkit-details-marker { display: none; }
+.action-detail > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.action-detail .action-pc::after { content: " +"; }
+.action-detail[open] .action-pc::after { content: " \2212"; }
+.action-detail > .action-desc { margin-top: 0.3rem; }
+.action.unavailable .action-detail > summary { cursor: default; }
 .action .action-reason { font-size: 0.8rem; color: var(--warn); }
 .action .action-options { margin-top: 0.4rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 0.88rem; }
 /* The options are revealed by ticking the action. `display: flex` above beats the

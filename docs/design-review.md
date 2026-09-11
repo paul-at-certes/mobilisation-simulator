@@ -393,17 +393,65 @@ Portrait re-measures byte-identical to the table above (643 words, 4.49
 screens, 1,750px), so the first pass's numbers still stand. CSS only; 61 tests
 and the typecheck pass.
 
-**What is still long.** 4.5 screens on Day 0 is better, not short — and the
-mid-game is now known to be no shorter. Day 0's remainder is the Permanent
-Secretary's opening note and the event card, which are the prose the game is
-for. The mid-game's remainder is the action list, and there the descriptions
-are two-thirds of the height: the pipeline group is 952px of which 633px is
-description, and *Expand training capacity* alone spends 253px on 79 words.
+---
 
-So the next cut is the same one either way — the action descriptions, title and
-cost first, the paragraph behind a tap. It trades away the sourced copy that
-carries the argument, and it is the only lever left. Do it only against a
-playtest that says the length is still losing people.
+**A third pass: the descriptions went behind a tap.** Taken on Paul's
+instruction, ahead of the playtest this was gated on. Recorded as such, because
+the gate was there for a reason and the reason has not gone away: the sourced
+paragraphs are the argument, and they are now one tap further from the reader.
+
+Each action row is a `<details>`. The summary is the line that was already
+there — title, cost, and a `+`/`−` in the groups' and the ledger's idiom — so
+the disclosure costs no height at all. The paragraph is what opens.
+
+| | before | after |
+|---|---|---|
+| Day 0 action list | 1,750px | **855px** |
+| Day 0 scroll | 4.5 screens | **3.4 screens** |
+| Day 0 words | 643 | **375** |
+| months 3–4 action list | 970px | **637px** |
+| months 5–9 action list | 2,054px | **973px** |
+| months 5–9 scroll | 4.5–4.7 screens | **3.2–3.4 screens** |
+| training pipeline group | 952px | **329px** |
+
+The shape is fixed as well as the size: the mid-game is now shorter than Day 0,
+which is what it always should have been. The whole game sits between 2.7 and
+3.4 screens.
+
+**Three things that had to be got right, and are worth not breaking.**
+
+1. **The title could no longer be the checkbox's `<label for>`** — it is the
+   disclosure control now, and one tap cannot both tick an action and open its
+   paragraph. The checkbox carries an `aria-label` instead, or it would reach a
+   screen reader unnamed. Verified: clicking the summary does not tick, and
+   ticking does not close the paragraph.
+2. **The checkbox lost its large tap target with the label.** It gets its own
+   back: a wrapping `<label class="action-tick">` whose padding reaches back
+   over the row's, and whose negative margins keep it out of the layout — 44×46
+   of tap target, no height added. Verified by dispatching a click 3px inside
+   the corner, well outside the 22px box.
+3. **The `action-reason` line stays on the face of the row.** It is a warning —
+   a cost the title does not show ("Legislating 90-day notice costs a further
+   −4 PC"), or why an action is closed. A warning behind a tap is not a
+   warning. This is why the Bill's row is 82px where the others are 46px.
+
+**Deliberately not remembered across months,** unlike the groups. An open group
+means *I am working in this area*, which is a stance worth keeping; an open
+paragraph means *I am reading this now*, which is over when the month is.
+Within a month it stays open, because the menu is only rebuilt when the month
+ends.
+
+**What is still long, and what to watch.** Day 0 is 3.4 screens and the
+remainder is the Permanent Secretary's opening note and the event card, which
+are the prose the game is for. There is no further cut that does not take
+those, and they should not be taken.
+
+The open question is the one the gate was protecting: **does anybody still read
+the sourced paragraphs?** The whole credibility of the thing is that every
+number carries its source, and a number nobody opens is not carrying anything.
+If a playtest says the arguments are going unread, the answer is not to reopen
+the paragraphs — it is that the titles and costs are now doing all the work and
+have to be good enough to make a reader want the detail. Watch for it.
 
 ---
 
