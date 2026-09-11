@@ -1,0 +1,23 @@
+"# Source: MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, accessible Excel tables. Transcribed 11 Sep 2026."
+id,description,value,as_of,table
+army_fttts,Army Full Time Trade Trained Strength,70951,1 Jul 2026,Table 3a
+army_ftts,Army Full Time Trained Strength (incl. those who have completed Phase 1 only),75204,1 Jul 2026,Table 3a
+army_untrained,Army Full-Time Untrained Personnel (UK Regulars and Gurkhas),3111,1 Jul 2026,Table 3e
+army_gtts_12m,"Army Gains to Trade Trained Strength, 12 months ending 30 Jun 2026",5933,30 Jun 2026,Table 5b
+army_completing_phase1_12m,"Army: number completing Phase 1 training, 12 months ending 30 Jun 2026",5883,30 Jun 2026,Table 5b
+army_completing_phase2_12m,"Army: number completing Phase 2 training, 12 months ending 30 Jun 2026",5513,30 Jun 2026,Table 5b
+army_intake_12m,"Army intake, 12 months ending 30 Jun 2026",8302,30 Jun 2026,Table 4
+army_outflow_12m,"Army outflow, 12 months ending 30 Jun 2026",8085,30 Jun 2026,Table 4
+army_tt_voluntary_outflow_12m,"Army Trade Trained Voluntary Outflow, 12 months ending 30 Jun 2026",3311,30 Jun 2026,Table 4 / 5d
+army_tt_outflow_12m,"Army Trade Trained Outflow (all reasons), 12 months ending 30 Jun 2026",5646,30 Jun 2026,Table 5d
+army_reserve_fr20_trained,Army Reserve Future Reserves 2020 trained strength,23517,1 Jul 2026,Table 6a
+army_reserve_fr20_mobilised,Army Reserve FR20 mobilised reservists (officers 134 + other ranks 481),615,1 Jul 2026,Table 6a
+army_reserve_fr20_ftrs,Army Reserve FR20 Full Time Reserve Service (officers 703 + other ranks 1017),1720,1 Jul 2026,Table 6a
+ex_regular_reserve_tri_service,Tri-Service UK Reserve Forces Ex-Regular Reserve (1 Jul 2026 figure marked [e] estimated/not yet available),34755,1 Apr 2026,Table 8a
+army_regular_reserve,Reserve Land Forces Regular Reserve (Army only; 1 Jul 2026 marked [e]),22221,1 Apr 2026,Table 8a
+army_or4,Army OR-4 (Corporal),10752,1 Apr 2026,Table 11a
+army_or6,Army OR-6 (Sergeant),7404,1 Apr 2026,Table 11a
+army_or7,Army OR-7 (Staff Sergeant),5099,1 Apr 2026,Table 11a
+army_of1,Army OF-1/OF(D) (2Lt/Lt),2047,1 Apr 2026,Table 11a
+army_of2,Army OF-2 (Captain),4261,1 Apr 2026,Table 11a
+army_junior_leaders_derived,Derived: Army OR-4 + OR-6 + OR-7 + OF-1 + OF-2,29563,1 Apr 2026,Table 11a (derived)

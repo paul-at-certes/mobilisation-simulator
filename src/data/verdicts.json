@@ -1,0 +1,100 @@
+[
+  {
+    "id": "resigned_broken",
+    "met": "any",
+    "quality": "any",
+    "leadership": "broken",
+    "resigned": true,
+    "text": "The Prime Minister accepted your resignation in month {months}. You had called up {conscripts} conscripts and found sergeants for a fraction of them; the rest were led by whoever was nearest. The Army you handed on is smaller than the one you were given, and its corporals are in the training schools. Your successor has been told to start with the leadership figures.",
+    "oneLiner": "Resigned in month {months}. The corporals ran out before the conscripts did."
+  },
+  {
+    "id": "resigned_generic",
+    "met": "any",
+    "quality": "any",
+    "leadership": "any",
+    "resigned": true,
+    "text": "The Prime Minister accepted your resignation in month {months}. Force Ready stood at {ese} against a target of {target}, from {headcount} personnel. The programme continues under your successor, who has been given your notes and has read them. The verdict on the mobilisation is deferred; the verdict on the minister is not.",
+    "oneLiner": "Resigned in month {months} with {ese} of {target} ready."
+  },
+  {
+    "id": "met_high_intact",
+    "met": true,
+    "quality": "high",
+    "leadership": "intact",
+    "text": "You delivered {headcount} personnel and {ese} soldiers' worth of them, against a target of {target}. The formation is led, equipped and largely regular or reservist, and its junior leaders are where they should be. It cost the Treasury about £{costBn}bn and the economy about £{gdpLossBn}bn in lost output, which nobody will remember. The general's note is one line: it will do.",
+    "oneLiner": "Target met with a force that is actually a force. It will do."
+  },
+  {
+    "id": "met_any_broken",
+    "met": true,
+    "quality": "any",
+    "leadership": "broken",
+    "text": "You delivered {headcount} bodies and {ese} soldiers. The division exists on paper and on the parade square. The conscript battalions have one experienced sergeant for every forty men, and the sergeants know it. The general has asked for the deployment to be phased, which is the polite word.",
+    "oneLiner": "{headcount} bodies, {ese} soldiers. One sergeant per forty men."
+  },
+  {
+    "id": "met_high_strained",
+    "met": true,
+    "quality": "high",
+    "leadership": "any",
+    "text": "Target met: {ese} against {target}, from {headcount} personnel. The quality is good and the leadership is stretched; the junior NCOs have been doing two jobs for {months} months and it shows in the sickness returns. The general's advice is to deploy now, before the corporals notice that they can leave. Cost to the Treasury: about £{costBn}bn.",
+    "oneLiner": "Target met. Good soldiers, tired corporals."
+  },
+  {
+    "id": "met_mid_any",
+    "met": true,
+    "quality": "mid",
+    "leadership": "any",
+    "text": "You delivered {headcount} personnel counting as {ese} soldiers, over a target of {target}. It is {regulars} regulars, {reservists} reservists of one kind or another and {conscripts} conscripts, and the three parts do not yet trust each other. The general calls it a division that will improve with contact and hopes the enemy allows the time. The bill was about £{costBn}bn.",
+    "oneLiner": "Target met, mid quality: a division that needs a quiet first month."
+  },
+  {
+    "id": "met_low_any",
+    "met": true,
+    "quality": "low",
+    "leadership": "any",
+    "text": "You delivered {headcount} bodies and {ese} soldiers. The target is met by counting a great many people at a fraction each, which is how the target was written. The general has declined to call it a division in writing. He will take it, because the alternative is nothing, and he has asked that the conscripts be kept behind the regulars for the first month.",
+    "oneLiner": "{headcount} bodies, {ese} soldiers. A division by arithmetic."
+  },
+  {
+    "id": "missed_high_intact",
+    "met": false,
+    "quality": "high",
+    "leadership": "intact",
+    "text": "You fielded {ese} soldiers against a target of {target}: {shortfall} short. What you fielded is good: regulars, reservists and a leadership cadre that is still intact. The general would rather have this than the number, and has said so to the ally, who would rather have the number. The Treasury cost was about £{costBn}bn.",
+    "oneLiner": "{shortfall} short, but what exists is real. The ally wanted the number."
+  },
+  {
+    "id": "missed_any_broken",
+    "met": false,
+    "quality": "any",
+    "leadership": "broken",
+    "text": "Target missed by {shortfall}, and the leadership figures are worse than the headline. You called up {conscripts} conscripts and diverted the corporals who should have led them into the schools that trained them. The regular Army you inherited has been hollowed to supply a force that did not arrive. The general's note runs to a page; the first sentence is the one that will be quoted.",
+    "oneLiner": "Missed by {shortfall}. The corporals went to the schools; no division came out."
+  },
+  {
+    "id": "missed_low_any",
+    "met": false,
+    "quality": "low",
+    "leadership": "any",
+    "text": "You fielded {headcount} people who count as {ese} soldiers, {shortfall} short of the target. The holding pools, the unequipped graduates and the untraced reservists all appear in the ledger and none of them appears in the line. The general observes that about £{costBn}bn has been converted into headcount without passing through capability. He does not say whose fault that is.",
+    "oneLiner": "{headcount} on the books, {ese} in the line. Missed by {shortfall}."
+  },
+  {
+    "id": "missed_any_any",
+    "met": false,
+    "quality": "any",
+    "leadership": "any",
+    "text": "Target missed: {ese} against {target}, a shortfall of {shortfall} after {months} months. The force that exists is respectable and would have been a division in another six months, which is the sentence every minister in this position has wanted to write. The ally has been told. The general has asked that the pipeline be kept running regardless.",
+    "oneLiner": "Missed by {shortfall}. A division in six more months; the deadline was not that far away."
+  },
+  {
+    "id": "fallback",
+    "met": "any",
+    "quality": "any",
+    "leadership": "any",
+    "text": "The deadline has passed. Force Ready stood at {ese} against a target of {target}, from {headcount} personnel, at a Treasury cost of about £{costBn}bn. The general has submitted his assessment through the proper channels. It is being considered.",
+    "oneLiner": "{ese} ready of {target}. The assessment is being considered."
+  }
+]

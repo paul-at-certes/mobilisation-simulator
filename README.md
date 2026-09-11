@@ -1,0 +1,109 @@
+# Mobilisation Minister
+
+A single-page, turn-based crisis game. You are the UK Secretary of State for
+Defence. A NATO ally has been attacked; the Prime Minister wants a deployable
+division in twelve months. You have the levers UK law actually gives you and
+the capacity the UK training system actually has.
+
+The game is a calculator wearing a costume. Every number on screen is drawn
+from `src/data/parameters.json`, where each entry carries a value, a source, a
+URL, an as-of date and a confidence tag (primary, derived, assumption). Tap any
+number in the game to see where it came from.
+
+The point it makes: the constraint on mobilisation is not people or money. It
+is the training pipeline and the junior leadership cadre.
+
+## Running it
+
+```bash
+npm install
+npm run dev          # http://localhost:5173
+npm test             # vitest: deterministic scenarios, invariants, content checks
+npm run sim -- --all # balance matrix: every scripted strategy × every difficulty
+npm run build        # validates parameters, regenerates ASSUMPTIONS.md, typechecks, builds to dist/
+```
+
+Replay any run from its share link: `?seed=42&difficulty=division`. Add
+`&auto=mixed` (or any strategy id from `src/sim/strategies.ts`) to have a
+scripted strategy play the run to the scoring screen.
+
+## Layout
+
+```
+index.html / methodology.html   two static pages, one bundle
+src/
+  main.ts                       screens and routing
+  methodology.ts                the methodology page
+  types.ts                      the contract between sim, content and UI
+  sim/                          pure simulation: step, actions, effectiveness, money, politics, events, score
+  data/parameters.json          every number, with source metadata
+  data/events.json              events with triggers, choices and effects
+  data/verdicts.json            the general's verdicts
+  ui/                           screens, components, briefing templates, share card
+scripts/
+  validate-parameters.mjs       fails the build if any parameter lacks source metadata
+  build-assumptions.mjs         regenerates ASSUMPTIONS.md from parameters.json
+  sim.ts                        CLI balance runner
+tests/                          step, invariants (1,000 fuzz runs), content
+docs/                           spec, source verification, transcribed source CSVs
+ASSUMPTIONS.md                  generated; every assumption with range and rationale
+DECISIONS.md                    decisions taken during the build, with reasoning
+```
+
+## Updating the numbers when the next SPS lands
+
+The MoD publishes *UK armed forces quarterly service personnel statistics*
+each quarter. The 1 October 2026 edition is due in December 2026. To update:
+
+1. Download the accessible Excel tables from gov.uk.
+2. In `src/data/parameters.json`, update `value`, `asOf` and the date in
+   `source` for each entry below. Do not change `confidence`.
+
+   | Parameter | SPS table | Row |
+   |---|---|---|
+   | `regular_trained_start` | 3a | Army (FTTTS), latest column |
+   | `regular_untrained_start` | 3e | Army Full-Time Untrained Personnel |
+   | `regular_gains_annual` | 5b | Army GTTS, 12 months ending |
+   | `regular_untrained_intake_annual` | 5a | Intake to Army Untrained |
+   | `regular_voluntary_outflow_annual` | 4 or 5d | Army Trade Trained Voluntary Outflow |
+   | `training_attrition` | 5c ÷ 5a | Outflow from Army Untrained ÷ Intake to Army Untrained (update `derivation`) |
+   | `reserve_volunteer_trained` | 6a | Army Reserve Future Reserves 2020 |
+   | `ex_regular_tracked` | 8a | Reserve Land Forces, Regular Reserve (Army; use the latest non-estimated column) |
+   | `ex_regular_tracked_tri_service` | 8a | Tri-Service UK Reserve Forces, Ex-Regular Reserve |
+   | `junior_leaders` | 11a | Army OR-4 + OR-6 + OR-7 + OF-1 + OF-2 (1 April figures; update `derivation`) |
+   | `strategic_reserve_untracked_tri_service` | derived | `strategic_reserve_claimed − ex_regular_tracked_tri_service` |
+   | `strategic_reserve_untracked` | derived | the above × `ex_regular_tracked ÷ ex_regular_tracked_tri_service` |
+   | `leaders_per_capacity_purchase` | derived | unchanged unless the ratio changes |
+
+3. Update the SPS `url` on those entries to the new release page.
+4. Regenerate `docs/sps_<date>_key_figures.csv` (the transcription script is
+   in `docs/`; or copy the pattern of the existing file).
+5. Run `npm run validate`, `npm test`, and `npm run sim -- --all`. If the
+   balance criteria in the brief no longer hold, adjust only assumption-tagged
+   parameters within their ranges, or change the difficulty table. Never
+   adjust a primary figure to make the game work.
+6. Bump `version` in `parameters.json` and note the change in `DECISIONS.md`.
+
+ONS mid-year population estimates follow the same pattern (`ew_pop_*`
+entries, dataset MYE2, England and Wales row) and `uk_population_scaling`
+(UK ÷ England and Wales).
+
+## Deploying
+
+`.github/workflows/deploy.yml` builds and deploys to GitHub Pages on every
+push to `main`. It sets `BASE_PATH` to `/<repo-name>/` so a project site
+works; for a custom domain, remove that env line. Enable Pages with source
+"GitHub Actions" in the repository settings before the first push.
+
+## Sourcing rules
+
+- Every parameter has `source`, `url`, `asOf`, `confidence`. The build fails otherwise.
+- Assumptions have a `range` and a one-line `rationale`, both shown in the UI.
+- Events that quote a number carry a `source` and the `paramIds` it uses.
+- Never invent a source. If a figure cannot be sourced, it becomes a labelled assumption.
+
+## Licence
+
+Content and code © 2026 Paul Warner. Source data © Crown copyright, Open
+Government Licence v3.0. Polling figures © YouGov, reproduced under fair
+dealing for the purpose of comment.

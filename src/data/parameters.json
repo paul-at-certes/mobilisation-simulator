@@ -1,0 +1,1978 @@
+{
+  "version": "0.2.0",
+  "generated": "2026-09-11",
+  "sections": {
+    "regular": "Regular Army (MoD Service Personnel Statistics, 1 July 2026)",
+    "leaders": "Junior leadership cadre",
+    "reserves": "Reserve forces",
+    "conscription": "Conscription pool (ONS mid-2025) and public opinion",
+    "pipeline": "Training pipeline",
+    "effectiveness": "Effectiveness multipliers (modelling assumptions)",
+    "money": "Money",
+    "gdp": "GDP output loss",
+    "politics": "Political capital",
+    "difficulty": "Difficulty settings"
+  },
+  "parameters": {
+    "regular_trained_start": {
+      "value": 70951,
+      "unit": "people",
+      "label": "Army trade-trained strength",
+      "description": "Army Full Time Trade Trained Strength (FTTTS): UK Regulars and Gurkhas who have completed Phase 2 training.",
+      "section": "regular",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Table 3a",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-07-01",
+      "confidence": "primary"
+    },
+    "regular_untrained_start": {
+      "value": 3111,
+      "unit": "people",
+      "label": "Army untrained strength",
+      "description": "Army Full-Time Untrained Personnel (UK Regulars and Gurkhas) in Phase 1 or Phase 2 training.",
+      "section": "regular",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Table 3e",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-07-01",
+      "confidence": "primary"
+    },
+    "regular_gains_annual": {
+      "value": 5933,
+      "unit": "per_year",
+      "label": "Baseline training output",
+      "description": "Army Gains to Trade Trained Strength in the 12 months to 30 June 2026. Used as the baseline annual throughput of the Army training pipeline.",
+      "section": "regular",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Table 5b",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-06-30",
+      "confidence": "primary"
+    },
+    "regular_untrained_intake_annual": {
+      "value": 7771,
+      "unit": "per_year",
+      "label": "Regular untrained intake",
+      "description": "Untrained intake to the Army in the 12 months to 30 June 2026. Regular recruiting continues during the game and occupies baseline training capacity.",
+      "section": "regular",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Table 5a",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-06-30",
+      "confidence": "primary"
+    },
+    "regular_voluntary_outflow_annual": {
+      "value": 3311,
+      "unit": "per_year",
+      "label": "Trade-trained voluntary outflow",
+      "description": "Army trade-trained voluntary outflow in the 12 months to 30 June 2026. Removed by stop-loss. Other outflow (time expiry, medical, death) is not modelled.",
+      "section": "regular",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Tables 4 and 5d",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-06-30",
+      "confidence": "primary"
+    },
+    "training_attrition": {
+      "value": 0.26,
+      "unit": "ratio",
+      "label": "Training attrition",
+      "description": "Share of untrained entrants who leave before completing Phase 2. Derived as Army untrained outflow (2,022) divided by Army untrained intake (7,771) in the 12 months to 30 June 2026.",
+      "section": "pipeline",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Tables 5a and 5c",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-06-30",
+      "confidence": "derived",
+      "derivation": "2022 / 7771 = 0.260"
+    },
+    "regular_deployable_fraction": {
+      "value": 0.05,
+      "unit": "ratio",
+      "label": "Deployable regular slice",
+      "description": "Share of the trade-trained regular Army that can be committed to the new formation without breaking existing commitments (Estonia, Cyprus, Falklands, UK resilience, the training estate, the readiness cycle and the medically non-deployable).",
+      "section": "regular",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.03,
+        0.2
+      ],
+      "rationale": "The premise is that the division must be raised on top of the standing Army's current tasks: overseas commitments, the readiness cycle, the training organisation and the medically non-deployable leave only a thin uncommitted slice. The whole regular Army counts in the ledger but only this slice counts toward Force Ready."
+    },
+    "junior_leaders": {
+      "value": 29563,
+      "unit": "people",
+      "label": "Junior leaders",
+      "description": "Army junior leadership cadre: Corporals (OR-4), Sergeants (OR-6), Staff Sergeants (OR-7), Second Lieutenants and Lieutenants (OF-1) and Captains (OF-2).",
+      "section": "leaders",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Table 11a (rank structure at 1 April 2026)",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-04-01",
+      "confidence": "derived",
+      "derivation": "10752 (OR-4) + 7404 (OR-6) + 5099 (OR-7) + 2047 (OF-1) + 4261 (OF-2) = 29563"
+    },
+    "junior_leader_ratio": {
+      "value": 8,
+      "unit": "ratio",
+      "label": "Recruits per junior leader",
+      "description": "Number of recruits or newly fielded conscripts one junior leader can instruct or lead. A section is eight; a Phase 1 platoon of ~30 has three or four instructors.",
+      "section": "leaders",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        6,
+        10
+      ],
+      "rationale": "Infantry section of eight soldiers under a corporal; training-platoon instructor ratios are similar."
+    },
+    "junior_leaders_spareable_fraction": {
+      "value": 0.3,
+      "unit": "ratio",
+      "label": "Spareable junior leaders",
+      "description": "Share of the junior leadership cadre that can be taken out of regular units to instruct or lead new formations before regular units stop functioning.",
+      "section": "leaders",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.2,
+        0.4
+      ],
+      "rationale": "Regular battalions need most of their own corporals and sergeants. Stripping more than roughly a third hollows out the units that are supposed to be the core of the force; Russia's 2022 mobilisation showed what happens when mobilised men arrive without leaders."
+    },
+    "leaders_per_capacity_purchase": {
+      "value": 625,
+      "unit": "people",
+      "label": "Instructors per capacity purchase",
+      "description": "Junior leaders diverted from the field force for each +5,000/yr block of training capacity.",
+      "section": "leaders",
+      "source": "Derived from junior_leader_ratio",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "derived",
+      "derivation": "5000 / 8 = 625"
+    },
+    "reserve_volunteer_trained": {
+      "value": 23517,
+      "unit": "people",
+      "label": "Army Reserve trained strength",
+      "description": "Army Reserve Future Reserves 2020 trained strength (completed Phase 1 or higher), including 615 already mobilised and 1,720 on Full Time Reserve Service.",
+      "section": "reserves",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Table 6a",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-07-01",
+      "confidence": "primary"
+    },
+    "reserve_volunteer_deployable_fraction": {
+      "value": 0.5,
+      "unit": "ratio",
+      "label": "Reservists who actually deploy",
+      "description": "Share of the trained Army Reserve that reports, passes medical and is available on call-out.",
+      "section": "reserves",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.4,
+        0.75
+      ],
+      "rationale": "Since October 2016 the Army Reserve 'trained' strength counts anyone who has completed Phase 1 (SPS note 32), so part of it is not trade-trained; 1,720 are already on full-time service and 615 already mobilised; medical downgrades and employer or family exemptions remove more."
+    },
+    "reserve_notice_days_default": {
+      "value": 180,
+      "unit": "days",
+      "label": "Army Reserve call-out notice",
+      "description": "Planning assumption for the notice period under which the Army Reserve is warned for call-out under Reserve Forces Act 1996 s.52.",
+      "section": "reserves",
+      "source": "Armed Forces Bill 2026, amendment papers (Select Committee, 14–15 Apr 2026): Army Reserve Group A standard notice is readiness category R9 (180 days)",
+      "url": "https://publications.parliament.uk/pa/bills/cbill/59-01/0367/amend/armedforces_day_sc_0414.pdf",
+      "asOf": "2026-04-14",
+      "confidence": "derived",
+      "derivation": "Readiness category R9 = 180 days, as stated in the amendment text; the Act itself sets no fixed period."
+    },
+    "reserve_notice_days_amended": {
+      "value": 90,
+      "unit": "days",
+      "label": "Amended call-out notice",
+      "description": "Notice period if the 90-day amendment is legislated.",
+      "section": "reserves",
+      "source": "Armed Forces Bill 2026, amendment 24 (Public Bill Committee, sixth sitting, 16 Apr 2026): proposed reduction to R8 (90 days)",
+      "url": "https://hansard.parliament.uk/Commons/2026-04-16/debates/3430fe85-c68e-4e24-b43c-e53fbcad227c/ArmedForcesBill(SixthSitting)",
+      "asOf": "2026-04-16",
+      "confidence": "derived",
+      "derivation": "Proposed amendment, not enacted; the Government's reply was that readiness levels are reviewed annually."
+    },
+    "reserve_arrival_months_default": {
+      "value": 6,
+      "unit": "months",
+      "label": "Reservist arrival, default notice",
+      "description": "Months from call-out to reservists counting toward Force Ready at 180 days' notice, including a short refresher.",
+      "section": "reserves",
+      "source": "Derived from reserve_notice_days_default",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "derived",
+      "derivation": "180 days ≈ 6 months; refresher assumed to overlap with the notice period."
+    },
+    "reserve_arrival_months_amended": {
+      "value": 3,
+      "unit": "months",
+      "label": "Reservist arrival, 90-day notice",
+      "description": "Months from call-out to reservists counting toward Force Ready at 90 days' notice.",
+      "section": "reserves",
+      "source": "Derived from reserve_notice_days_amended",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "derived",
+      "derivation": "90 days ≈ 3 months."
+    },
+    "ex_regular_tracked": {
+      "value": 22221,
+      "unit": "people",
+      "label": "Army Regular Reserve on record",
+      "description": "Army ex-regulars with a recall liability who appear on current records (Reserve Land Forces, Regular Reserve). The tri-service figure of 34,755 includes Royal Navy and RAF veterans who would not be soldiers in a division. The 1 July 2026 figure is marked estimated in the source; 1 April 2026 is used.",
+      "section": "reserves",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Table 8a",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-04-01",
+      "confidence": "primary"
+    },
+    "ex_regular_delay_months": {
+      "value": 3,
+      "unit": "months",
+      "label": "Ex-regular recall delay",
+      "description": "Months from recall order to the first ex-regulars reporting.",
+      "section": "reserves",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        2,
+        4
+      ],
+      "rationale": "Recall notices must be served at recorded addresses; the design brief gives 2–4 months."
+    },
+    "ex_regular_report_ceiling": {
+      "value": 0.5,
+      "unit": "ratio",
+      "label": "Ex-regulars who ever report",
+      "description": "Share of the tracked Ex-Regular Reserve who are located, fit and report over the course of the game.",
+      "section": "reserves",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.3,
+        0.7
+      ],
+      "rationale": "The MoD has acknowledged that address records for the Regular Reserve are incomplete; medical and age exemptions remove more."
+    },
+    "ex_regular_report_rate_monthly": {
+      "value": 0.2,
+      "unit": "ratio",
+      "label": "Ex-regular monthly reporting rate",
+      "description": "Share of the not-yet-reported (but reportable) ex-regulars who report each month after the delay.",
+      "section": "reserves",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.1,
+        0.35
+      ],
+      "rationale": "Geometric arrival; most of those who will report do so within six months."
+    },
+    "strategic_reserve_claimed": {
+      "value": 95000,
+      "unit": "people",
+      "label": "Strategic Reserve, as claimed",
+      "description": "Size of the ex-regular 'Strategic Reserve' as publicly stated by ministers in early 2026.",
+      "section": "reserves",
+      "source": "MoD press release, 15 Jan 2026 (recall age raised to 65) and Forces News, 15 Jan 2026: 'an estimated 95,000 people have a Strategic Reservist liability'",
+      "url": "https://www.forcesnews.com/services/tri-service/strategic-reserve-age-limit-raised-65-so-more-can-be-recalled-should-war-loom",
+      "asOf": "2026-01-15",
+      "confidence": "derived",
+      "derivation": "Ministerial estimate as reported; the MoD's own impact assessment (27 Feb 2026) says efforts to improve contact information are under way."
+    },
+    "strategic_reserve_untracked": {
+      "value": 38516,
+      "unit": "people",
+      "label": "Strategic Reserve not on record, Army share",
+      "description": "Claimed Strategic Reserve less the Ex-Regular Reserve on record, scaled to the Army's share of the Regular Reserve.",
+      "section": "reserves",
+      "source": "Derived from strategic_reserve_claimed, ex_regular_tracked_tri_service and ex_regular_tracked",
+      "url": "",
+      "asOf": "2026-04-01",
+      "confidence": "derived",
+      "derivation": "(95000 - 34755) × (22221 / 34755) = 38516"
+    },
+    "strategic_trace_delay_months": {
+      "value": 3,
+      "unit": "months",
+      "label": "Strategic Reserve trace time",
+      "description": "Months from ordering a trace of the untracked Strategic Reserve to the traced pool reporting.",
+      "section": "reserves",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        2,
+        6
+      ],
+      "rationale": "Matching against HMRC, DWP and electoral records takes months and has never been exercised at scale."
+    },
+    "strategic_trace_yield_min": {
+      "value": 0.2,
+      "unit": "ratio",
+      "label": "Trace yield, low",
+      "description": "Lower bound on the share of the untracked Strategic Reserve located by a trace.",
+      "section": "reserves",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.1,
+        0.3
+      ],
+      "rationale": "Design brief range 20–50%."
+    },
+    "strategic_trace_yield_max": {
+      "value": 0.5,
+      "unit": "ratio",
+      "label": "Trace yield, high",
+      "description": "Upper bound on the share of the untracked Strategic Reserve located by a trace.",
+      "section": "reserves",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.4,
+        0.6
+      ],
+      "rationale": "Design brief range 20–50%."
+    },
+    "strategic_report_fraction": {
+      "value": 0.5,
+      "unit": "ratio",
+      "label": "Traced ex-regulars who report",
+      "description": "Share of the traced Strategic Reserve who are fit, under the age limit and actually report.",
+      "section": "reserves",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.3,
+        0.7
+      ],
+      "rationale": "Many will be over recall age or medically unfit; none have trained for years."
+    },
+    "ew_pop_18_25": {
+      "value": 5938195,
+      "unit": "people",
+      "label": "England and Wales, aged 18–25",
+      "description": "Mid-2025 population estimate, persons aged 18 to 25 inclusive.",
+      "section": "conscription",
+      "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
+      "asOf": "2025-06-30",
+      "confidence": "primary"
+    },
+    "ew_pop_f_18_25": {
+      "value": 2898703,
+      "unit": "people",
+      "label": "England and Wales, women aged 18–25",
+      "description": "Mid-2025 population estimate, females aged 18 to 25 inclusive.",
+      "section": "conscription",
+      "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
+      "asOf": "2025-06-30",
+      "confidence": "primary"
+    },
+    "ew_pop_18_30": {
+      "value": 10039824,
+      "unit": "people",
+      "label": "England and Wales, aged 18–30",
+      "description": "Mid-2025 population estimate, persons aged 18 to 30 inclusive.",
+      "section": "conscription",
+      "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
+      "asOf": "2025-06-30",
+      "confidence": "primary"
+    },
+    "ew_pop_f_18_30": {
+      "value": 4968685,
+      "unit": "people",
+      "label": "England and Wales, women aged 18–30",
+      "description": "Mid-2025 population estimate, females aged 18 to 30 inclusive.",
+      "section": "conscription",
+      "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
+      "asOf": "2025-06-30",
+      "confidence": "primary"
+    },
+    "ew_pop_18_40": {
+      "value": 18665415,
+      "unit": "people",
+      "label": "England and Wales, aged 18–40",
+      "description": "Mid-2025 population estimate, persons aged 18 to 40 inclusive.",
+      "section": "conscription",
+      "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
+      "asOf": "2025-06-30",
+      "confidence": "primary"
+    },
+    "ew_pop_f_18_40": {
+      "value": 9419482,
+      "unit": "people",
+      "label": "England and Wales, women aged 18–40",
+      "description": "Mid-2025 population estimate, females aged 18 to 40 inclusive.",
+      "section": "conscription",
+      "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
+      "asOf": "2025-06-30",
+      "confidence": "primary"
+    },
+    "ew_pop_18_65": {
+      "value": 38201921,
+      "unit": "people",
+      "label": "England and Wales, aged 18–65",
+      "description": "Mid-2025 population estimate, persons aged 18 to 65 inclusive.",
+      "section": "conscription",
+      "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
+      "asOf": "2025-06-30",
+      "confidence": "primary"
+    },
+    "ew_pop_f_18_65": {
+      "value": 19399613,
+      "unit": "people",
+      "label": "England and Wales, women aged 18–65",
+      "description": "Mid-2025 population estimate, females aged 18 to 65 inclusive.",
+      "section": "conscription",
+      "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
+      "asOf": "2025-06-30",
+      "confidence": "primary"
+    },
+    "uk_population_scaling": {
+      "value": 1.1206,
+      "unit": "multiplier",
+      "label": "UK / England and Wales scaling",
+      "description": "Multiplier applied to England and Wales age bands to approximate the UK, assuming Scotland and Northern Ireland share the same age profile.",
+      "section": "conscription",
+      "source": "ONS: UK mid-2025 provisional (69,487,000) and England and Wales mid-2025 (62,010,000)",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/bulletins/provisionalpopulationestimatefortheuk/mid2025",
+      "asOf": "2025-06-30",
+      "confidence": "derived",
+      "derivation": "69,487,000 / 62,010,000 = 1.1206"
+    },
+    "women_included_support_pct": {
+      "value": 72,
+      "unit": "pct",
+      "label": "Public support for including women",
+      "description": "Share of the public who say women should be included in any conscription.",
+      "section": "conscription",
+      "source": "YouGov daily results, 26 Jan 2024: should women be conscripted on the same basis as men (42%) or with some restrictions (30%)",
+      "url": "https://yougov.com/en-gb/daily-results/20240126-2b544-3",
+      "asOf": "2024-01-26",
+      "confidence": "derived",
+      "derivation": "42 + 30 = 72 (n = 3,040 GB adults)."
+    },
+    "willingness_start_pct": {
+      "value": 20,
+      "unit": "pct",
+      "label": "Willingness to serve",
+      "description": "Share of adults who say they would be willing to serve if conscription were introduced.",
+      "section": "conscription",
+      "source": "YouGov, July 2026, as reported 23 Jul 2026: 6% would volunteer, 14% would serve if conscripted",
+      "url": "https://www.joe.co.uk/news/only-6-per-cent-of-brits-would-volunteer-to-fight-off-invasion-poll-reveals-539523",
+      "asOf": "2026-07-23",
+      "confidence": "derived",
+      "derivation": "6 + 14 = 20. YouGov's own results page could not be located; figures are from secondary reporting."
+    },
+    "self_declared_ineligible_pct": {
+      "value": 52,
+      "unit": "pct",
+      "label": "Self-declared ineligible",
+      "description": "Share of adults who say they would be ineligible to serve on health or other grounds.",
+      "section": "conscription",
+      "source": "YouGov, July 2026, as reported 23 Jul 2026: 52% say they would be ineligible on health or age grounds",
+      "url": "https://www.joe.co.uk/news/only-6-per-cent-of-brits-would-volunteer-to-fight-off-invasion-poll-reveals-539523",
+      "asOf": "2026-07-23",
+      "confidence": "derived",
+      "derivation": "Secondary reporting; used for flavour only."
+    },
+    "willingness_low_threshold_pct": {
+      "value": 25,
+      "unit": "pct",
+      "label": "Willingness threshold",
+      "description": "Below this willingness level, conscription draws refusal cases and costs political capital each month.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        25,
+        40
+      ],
+      "rationale": "Design brief gave 30. Lowered in the balance pass so that an address to the nation (+5 points on a base of 20) lifts willingness clear of the refusal-cases penalty for its duration; otherwise the penalty is a flat tax with no counter."
+    },
+    "medical_pass_peacetime": {
+      "value": 0.4,
+      "unit": "ratio",
+      "label": "Medical pass rate, peacetime standard",
+      "description": "Share of the called-up cohort passing the peacetime entry medical.",
+      "section": "conscription",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.35,
+        0.45
+      ],
+      "rationale": "Medical rejection is the single largest reason Army applicants fail; about half of adults say they would be ineligible."
+    },
+    "medical_pass_relaxed": {
+      "value": 0.6,
+      "unit": "ratio",
+      "label": "Medical pass rate, relaxed standard",
+      "description": "Share of the called-up cohort passing a relaxed entry medical.",
+      "section": "conscription",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.55,
+        0.65
+      ],
+      "rationale": "Design brief."
+    },
+    "medical_pass_wartime": {
+      "value": 0.75,
+      "unit": "ratio",
+      "label": "Medical pass rate, wartime standard",
+      "description": "Share of the called-up cohort passing a wartime entry medical.",
+      "section": "conscription",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.7,
+        0.8
+      ],
+      "rationale": "Design brief."
+    },
+    "exemption_strict": {
+      "value": 0.15,
+      "unit": "ratio",
+      "label": "Exempted share, strict regime",
+      "description": "Share of the age band exempted under a reserved-occupations-only regime.",
+      "section": "conscription",
+      "source": "Modelling assumption (1939 Schedule of Reserved Occupations as comparator)",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.1,
+        0.2
+      ],
+      "rationale": "Design brief."
+    },
+    "exemption_broad": {
+      "value": 0.35,
+      "unit": "ratio",
+      "label": "Exempted share, broad regime",
+      "description": "Share of the age band exempted when students, carers and key workers are added.",
+      "section": "conscription",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.3,
+        0.45
+      ],
+      "rationale": "Design brief."
+    },
+    "exemption_minimal": {
+      "value": 0.05,
+      "unit": "ratio",
+      "label": "Exempted share, minimal regime",
+      "description": "Share of the age band exempted under a minimal regime.",
+      "section": "conscription",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.03,
+        0.1
+      ],
+      "rationale": "Design brief."
+    },
+    "bill_months_emergency": {
+      "value": 3,
+      "unit": "months",
+      "label": "National Service Bill, emergency procedure",
+      "description": "Months for a National Service Bill to pass under an emergency timetable.",
+      "section": "politics",
+      "source": "Modelling assumption (Armed Forces Bill timetable as comparator)",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        4
+      ],
+      "rationale": "Design brief."
+    },
+    "bill_months_normal": {
+      "value": 6,
+      "unit": "months",
+      "label": "National Service Bill, normal procedure",
+      "description": "Months for a National Service Bill to pass under the normal timetable.",
+      "section": "politics",
+      "source": "Modelling assumption (Armed Forces Bill timetable as comparator)",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        4,
+        9
+      ],
+      "rationale": "Design brief."
+    },
+    "phase1_weeks": {
+      "value": 14,
+      "unit": "weeks",
+      "label": "Phase 1 training length",
+      "description": "Length of Phase 1 (basic) training for Army other ranks.",
+      "section": "pipeline",
+      "source": "House of Lords written question HL1629, answered 26 Feb 2020: Phase 1 at ATC Pirbright is 14 weeks",
+      "url": "https://questions-statements.parliament.uk/written-questions/detail/2020-02-13/hl1629",
+      "asOf": "2020-02-26",
+      "confidence": "derived",
+      "derivation": "Common Military Syllabus length as stated in the answer."
+    },
+    "phase2_weeks": {
+      "value": 20,
+      "unit": "weeks",
+      "label": "Phase 2 training length, average",
+      "description": "Average length of Phase 2 (trade) training across Army trades.",
+      "section": "pipeline",
+      "source": "Modelling assumption; Army recruiting material gives Phase 2 as 15–27 weeks depending on trade (infantry 10)",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        15,
+        27
+      ],
+      "rationale": "Mid-point of the published 15–27 week range. HL1629 gives no average; Phase 2 length varies by trade."
+    },
+    "phase1_weeks_compressed": {
+      "value": 10,
+      "unit": "weeks",
+      "label": "Phase 1, compressed",
+      "description": "Phase 1 length under a compressed wartime syllabus.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        8,
+        12
+      ],
+      "rationale": "Design brief."
+    },
+    "phase2_weeks_compressed": {
+      "value": 12,
+      "unit": "weeks",
+      "label": "Phase 2, compressed",
+      "description": "Average Phase 2 length under a compressed wartime syllabus.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        8,
+        16
+      ],
+      "rationale": "Design brief."
+    },
+    "syllabus_throughput_multiplier": {
+      "value": 1.5,
+      "unit": "multiplier",
+      "label": "Compressed syllabus throughput",
+      "description": "Multiplier on training capacity when the syllabus is compressed (same instructors, shorter courses).",
+      "section": "pipeline",
+      "source": "Derived from course lengths",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "derived",
+      "derivation": "(14 + 20) / (10 + 12) = 1.55, rounded down to 1.5."
+    },
+    "compressed_effectiveness_penalty": {
+      "value": 0.15,
+      "unit": "ratio",
+      "label": "Compressed syllabus effectiveness penalty",
+      "description": "Reduction in graduate effectiveness under the compressed syllabus.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.1,
+        0.25
+      ],
+      "rationale": "Design brief."
+    },
+    "attrition_compressed_add": {
+      "value": 0.05,
+      "unit": "ratio",
+      "label": "Extra attrition, compressed syllabus",
+      "description": "Percentage points added to training attrition under the compressed syllabus.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.03,
+        0.1
+      ],
+      "rationale": "Design brief."
+    },
+    "attrition_wartime_medical_add": {
+      "value": 0.1,
+      "unit": "ratio",
+      "label": "Extra attrition, wartime medical standard",
+      "description": "Percentage points added to training attrition when the wartime medical standard admits less fit recruits.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.05,
+        0.15
+      ],
+      "rationale": "Design brief."
+    },
+    "attrition_relaxed_medical_add": {
+      "value": 0.04,
+      "unit": "ratio",
+      "label": "Extra attrition, relaxed medical standard",
+      "description": "Percentage points added to training attrition under the relaxed medical standard.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.02,
+        0.08
+      ],
+      "rationale": "Interpolated between peacetime (+0) and wartime (+10pp)."
+    },
+    "capacity_purchase_annual": {
+      "value": 5000,
+      "unit": "per_year",
+      "label": "Capacity per purchase",
+      "description": "Additional annual trained output per training-capacity purchase.",
+      "section": "pipeline",
+      "source": "Design brief",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        3000,
+        8000
+      ],
+      "rationale": "Roughly one additional Phase 1 training centre."
+    },
+    "capacity_standup_months": {
+      "value": 2,
+      "unit": "months",
+      "label": "Capacity stand-up time",
+      "description": "Months from purchasing training capacity to it accepting recruits.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        4
+      ],
+      "rationale": "Design brief."
+    },
+    "capacity_purchase_cost": {
+      "value": 50000000,
+      "unit": "gbp",
+      "label": "Capacity purchase cost",
+      "description": "One-off cost of each +5,000/yr block of training capacity (estate, ranges, accommodation).",
+      "section": "money",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        25000000,
+        150000000
+      ],
+      "rationale": "Design brief; excludes the instructors, who are diverted rather than hired."
+    },
+    "civilian_instructor_capacity_annual": {
+      "value": 2000,
+      "unit": "per_year",
+      "label": "Civilian instructor capacity",
+      "description": "Additional annual trained output from contracted civilian instructors, non-combat trades only, without drawing on junior leaders.",
+      "section": "pipeline",
+      "source": "Modelling assumption (Capita recruiting-partnering precedent)",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1000,
+        4000
+      ],
+      "rationale": "Design brief."
+    },
+    "civilian_instructor_delay_months": {
+      "value": 3,
+      "unit": "months",
+      "label": "Civilian instructor lead time",
+      "description": "Months to contract and stand up civilian instructors.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        2,
+        6
+      ],
+      "rationale": "Design brief."
+    },
+    "civilian_instructor_cost_annual": {
+      "value": 15000000,
+      "unit": "gbp",
+      "label": "Civilian instructor contract cost",
+      "description": "Annual cost of the civilian instructor contract.",
+      "section": "money",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        8000000,
+        30000000
+      ],
+      "rationale": "About 250 instructors at a fully loaded £60k each."
+    },
+    "equipment_cost_per_head": {
+      "value": 4000,
+      "unit": "gbp",
+      "label": "Personal equipment per conscript",
+      "description": "One-off cost of personal kit (clothing, body armour, helmet, rifle, load-carrying equipment) per conscript.",
+      "section": "money",
+      "source": "Modelling assumption. The brief's citations (Absolute Military, Mar 2026; Defence Investment Plan, 30 Jun 2026) could not be verified; Phase 1 clothing alone was £2,000 per recruit in FY2023-24",
+      "url": "",
+      "asOf": "2026-06-30",
+      "confidence": "assumption",
+      "range": [
+        2500,
+        6000
+      ],
+      "rationale": "£2,000 of clothing plus body armour, helmet, rifle and load-carrying equipment; the brief's £3.5–5k range is retained as plausible."
+    },
+    "equipment_lead_months": {
+      "value": 4,
+      "unit": "months",
+      "label": "Equipment lead time",
+      "description": "Months from placing an emergency equipment order to kit being issued.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        3,
+        8
+      ],
+      "rationale": "Design brief."
+    },
+    "junior_entry_attrition": {
+      "value": 0.34,
+      "unit": "ratio",
+      "label": "Junior entry attrition",
+      "description": "Share of Army Foundation College (Harrogate) junior entrants who do not complete.",
+      "section": "pipeline",
+      "source": "Forces News, 13 Nov 2025: AFC Harrogate non-completion averaged 34% over 2018–2023, the highest of any Army training establishment",
+      "url": "https://www.forcesnews.com/services/gurkhas/gurkha-recruits-record-perfect-pass-rate-wider-army-dropout-figures-revealed",
+      "asOf": "2025-11-13",
+      "confidence": "derived",
+      "derivation": "2018–2023 average as reported. The course itself is 49 weeks (long) or 23 weeks (short); the two-year lead is set by the minimum deployment age."
+    },
+    "junior_entry_lead_months": {
+      "value": 24,
+      "unit": "months",
+      "label": "Junior entry lead time",
+      "description": "Months from enrolling a 16-year-old junior entrant to a deployable 18-year-old soldier.",
+      "section": "pipeline",
+      "source": "Derived from the minimum deployment age of 18",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "derived",
+      "derivation": "UK policy: under-18s are not deployed on operations. Entry at 16 implies a two-year lead."
+    },
+    "eff_regular": {
+      "value": 1.0,
+      "unit": "ratio",
+      "label": "Effectiveness: regular, trade-trained",
+      "description": "Reference effectiveness of a trade-trained regular soldier in a formed unit.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        1
+      ],
+      "rationale": "Definitional reference point."
+    },
+    "eff_reserve_volunteer": {
+      "value": 0.8,
+      "unit": "ratio",
+      "label": "Effectiveness: volunteer reservist",
+      "description": "Effectiveness of a trained Army Reservist after a refresher period.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.7,
+        0.9
+      ],
+      "rationale": "Trained, but with fewer collective-training days per year than regulars."
+    },
+    "eff_ex_regular": {
+      "value": 0.6,
+      "unit": "ratio",
+      "label": "Effectiveness: ex-regular, recalled",
+      "description": "Effectiveness of a recalled ex-regular on the tracked Regular Reserve.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.5,
+        0.7
+      ],
+      "rationale": "Formerly fully trained; skills fade and fitness declines over the years since leaving."
+    },
+    "eff_strategic": {
+      "value": 0.5,
+      "unit": "ratio",
+      "label": "Effectiveness: Strategic Reserve, traced",
+      "description": "Effectiveness of a traced member of the untracked Strategic Reserve.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.4,
+        0.6
+      ],
+      "rationale": "Longer out of service than the tracked reserve, on average."
+    },
+    "eff_conscript_normal_start": {
+      "value": 0.5,
+      "unit": "ratio",
+      "label": "Effectiveness: conscript at graduation, normal syllabus",
+      "description": "Effectiveness of an equipped conscript on completing the full 34-week syllabus.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.4,
+        0.6
+      ],
+      "rationale": "Trade-trained but with no collective training and no experience."
+    },
+    "eff_conscript_normal_cap": {
+      "value": 0.7,
+      "unit": "ratio",
+      "label": "Effectiveness cap: conscript, normal syllabus",
+      "description": "Maximum effectiveness a normal-syllabus conscript reaches through collective training.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.6,
+        0.8
+      ],
+      "rationale": "Design brief."
+    },
+    "eff_conscript_compressed_start": {
+      "value": 0.35,
+      "unit": "ratio",
+      "label": "Effectiveness: conscript at graduation, compressed syllabus",
+      "description": "Effectiveness of an equipped conscript on completing the compressed 22-week syllabus.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.25,
+        0.45
+      ],
+      "rationale": "Normal-syllabus start less the compressed-syllabus penalty."
+    },
+    "eff_conscript_compressed_cap": {
+      "value": 0.6,
+      "unit": "ratio",
+      "label": "Effectiveness cap: conscript, compressed syllabus",
+      "description": "Maximum effectiveness a compressed-syllabus conscript reaches through collective training.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.5,
+        0.7
+      ],
+      "rationale": "Design brief."
+    },
+    "eff_conscript_growth_monthly": {
+      "value": 0.05,
+      "unit": "ratio",
+      "label": "Conscript effectiveness growth",
+      "description": "Effectiveness gained per month of collective training after graduation.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.03,
+        0.08
+      ],
+      "rationale": "Design brief."
+    },
+    "eff_conscript_unequipped": {
+      "value": 0.25,
+      "unit": "ratio",
+      "label": "Effectiveness: conscript, trained, unequipped",
+      "description": "Effectiveness of a trained conscript without personal equipment.",
+      "section": "effectiveness",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.15,
+        0.35
+      ],
+      "rationale": "Design brief."
+    },
+    "regular_pay_annual": {
+      "value": 27282,
+      "unit": "gbp",
+      "label": "Regular soldier pay, entry rate",
+      "description": "Annual pay of an Other Rank at the initial pay point (OR2-01), including X-Factor, from 1 April 2026.",
+      "section": "money",
+      "source": "Armed Forces' Pay Review Body, Fifty-Fifth Report 2026, Appendix 1 Table 1.1",
+      "url": "https://www.gov.uk/government/publications/armed-forces-pay-review-body-fifty-fifth-report-2026",
+      "asOf": "2026-04-01",
+      "confidence": "primary"
+    },
+    "pension_employer_multiplier": {
+      "value": 1.735,
+      "unit": "multiplier",
+      "label": "Pay to employer-cost multiplier",
+      "description": "Multiplier converting pay into employer cost, using the Armed Forces Pension Scheme employer contribution rate of 73.5%.",
+      "section": "money",
+      "source": "Armed Forces Pension Scheme annual accounts 2024–25: employer contributions paid at 73.5% of pensionable pay",
+      "url": "https://www.gov.uk/government/publications/armed-forces-pension-scheme-annual-accounts-2024-to-2025",
+      "asOf": "2025-03-31",
+      "confidence": "derived",
+      "derivation": "1 + 0.735. The 2024 valuation reduces the rate to 52.3% from 1 April 2027."
+    },
+    "conscript_pay_annual": {
+      "value": 24800,
+      "unit": "gbp",
+      "label": "Conscript pay",
+      "description": "Annual pay of a conscript in training, set at the National Living Wage for a 37.5-hour week.",
+      "section": "money",
+      "source": "National Living Wage, April 2026 (£12.71/hour)",
+      "url": "https://www.gov.uk/national-minimum-wage-rates",
+      "asOf": "2026-04-01",
+      "confidence": "derived",
+      "derivation": "12.71 × 37.5 × 52 = 24,784, rounded."
+    },
+    "training_cost_per_recruit": {
+      "value": 47800,
+      "unit": "gbp",
+      "label": "Phase 1 training cost per recruit",
+      "description": "Cost of Phase 1 training per recruit at ATC Pirbright, FY2023-24. Phase 2 costs vary by trade and are not included, so this understates the true cost.",
+      "section": "money",
+      "source": "Written answer (Luke Pollard MP to James Cartlidge MP), FY2023-24, as reported by UK Defence Journal, 22 Oct 2024",
+      "url": "https://ukdefencejournal.org.uk/how-much-does-it-cost-to-train-a-british-army-recruit/",
+      "asOf": "2024-03-31",
+      "confidence": "derived",
+      "derivation": "Figure as reported; the parliamentary question reference could not be located. HL1629 gave £38,000 in 2020."
+    },
+    "reservist_award_annual": {
+      "value": 8000,
+      "unit": "gbp",
+      "label": "Reservist Award top-up",
+      "description": "Average annual Reservist Award paid to mobilised reservists to make up civilian salary.",
+      "section": "money",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        4000,
+        15000
+      ],
+      "rationale": "The award covers the gap between civilian and military pay; the average is not published."
+    },
+    "employer_assistance_daily": {
+      "value": 110,
+      "unit": "gbp",
+      "label": "Employer financial assistance",
+      "description": "Daily payment to a mobilised reservist's employer under the Reserve Forces (Call-out and Recall) (Financial Assistance) Regulations 2005.",
+      "section": "money",
+      "source": "Reserve Forces (Call-out and Recall) (Financial Assistance) Regulations 2005, SI 2005/859, regulation 6(3)",
+      "url": "https://www.legislation.gov.uk/uksi/2005/859/regulation/6/made",
+      "asOf": "2005-04-01",
+      "confidence": "derived",
+      "derivation": "Cap on the employer's award as made; later amendments not checked."
+    },
+    "cost_pc_penalty_threshold": {
+      "value": 5000000000,
+      "unit": "gbp",
+      "label": "Cost penalty threshold",
+      "description": "Every £5bn of cumulative Treasury cost costs 2 political capital per turn thereafter.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        2500000000,
+        10000000000
+      ],
+      "rationale": "Design brief."
+    },
+    "cost_pc_penalty_per_step": {
+      "value": 2,
+      "unit": "pc",
+      "label": "Cost penalty per £5bn",
+      "description": "Political capital lost per turn for each £5bn of cumulative cost.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        4
+      ],
+      "rationale": "Design brief."
+    },
+    "defence_budget_2025": {
+      "value": 62300000000,
+      "unit": "gbp",
+      "label": "Defence budget 2025/26",
+      "description": "Ministry of Defence total departmental expenditure limit, 2025/26, used as the denominator for cost percentages.",
+      "section": "money",
+      "source": "MoD Supplementary Estimate memorandum 2025-26: RDEL £47,388.7m + CDEL £23,067.1m",
+      "url": "https://committees.parliament.uk/publications/51542/documents/286297/default/",
+      "asOf": "2026-02-28",
+      "confidence": "derived",
+      "derivation": "47,388.7 + 23,067.1 = £62,455.8m, reported as £62.3bn in the Commons Library briefing CBP-8175; the rounded figure is used."
+    },
+    "uk_gdp_2025": {
+      "value": 3033900000000,
+      "unit": "gbp",
+      "label": "UK GDP 2025",
+      "description": "UK nominal GDP for calendar 2025, used as the denominator for GDP-loss percentages.",
+      "section": "gdp",
+      "source": "ONS, GDP at current market prices, 2025 (series YBHA)",
+      "url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ybha/pn2",
+      "asOf": "2025-12-31",
+      "confidence": "primary"
+    },
+    "output_per_worker_labour_share": {
+      "value": 51100,
+      "unit": "gbp",
+      "label": "Output per worker, labour share",
+      "description": "Annual GDP lost per person removed from the civilian workforce, counting only the labour share of output.",
+      "section": "gdp",
+      "source": "ONS: compensation of employees 2025 (DTWM, £1,511.5bn) divided by employees (MGRN, 29.59m)",
+      "url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/dtwm",
+      "asOf": "2025-12-31",
+      "confidence": "derived",
+      "derivation": "1,511,529 / 29,590 ≈ £51,100 per employee. The brief's £53k could not be reproduced."
+    },
+    "output_per_worker_gross": {
+      "value": 88800,
+      "unit": "gbp",
+      "label": "Output per worker, gross",
+      "description": "Annual GDP per worker, gross. Shown as the alternative to the labour-share figure.",
+      "section": "gdp",
+      "source": "ONS: GDP 2025 (YBHA, £3,033.9bn) divided by employment (MGRZ, 34.165m)",
+      "url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ybha/pn2",
+      "asOf": "2025-12-31",
+      "confidence": "derived",
+      "derivation": "3,033,866 / 34,165 ≈ £88,800 per worker."
+    },
+    "gdp_age_multiplier_18_25": {
+      "value": 0.6,
+      "unit": "multiplier",
+      "label": "Output multiplier, 18–25",
+      "description": "Output per worker in the 18–25 band relative to the all-age average.",
+      "section": "gdp",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.5,
+        0.7
+      ],
+      "rationale": "Lower employment rates and earnings among the youngest workers."
+    },
+    "gdp_age_multiplier_18_30": {
+      "value": 0.75,
+      "unit": "multiplier",
+      "label": "Output multiplier, 18–30",
+      "description": "Output per worker in the 18–30 band relative to the all-age average.",
+      "section": "gdp",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.65,
+        0.85
+      ],
+      "rationale": "Design brief."
+    },
+    "gdp_age_multiplier_18_40": {
+      "value": 0.9,
+      "unit": "multiplier",
+      "label": "Output multiplier, 18–40",
+      "description": "Output per worker in the 18–40 band relative to the all-age average.",
+      "section": "gdp",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.8,
+        1.0
+      ],
+      "rationale": "Design brief."
+    },
+    "gdp_age_multiplier_18_65": {
+      "value": 1.0,
+      "unit": "multiplier",
+      "label": "Output multiplier, 18–65",
+      "description": "Output per worker in the 18–65 band relative to the all-age average.",
+      "section": "gdp",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1.0,
+        1.0
+      ],
+      "rationale": "Design brief."
+    },
+    "gdp_pc_penalty_step_pct": {
+      "value": 0.25,
+      "unit": "pct",
+      "label": "GDP penalty step",
+      "description": "Every 0.25% of annual GDP in cumulative output loss costs political capital each turn.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.1,
+        0.5
+      ],
+      "rationale": "Design brief."
+    },
+    "gdp_pc_penalty_per_step": {
+      "value": 3,
+      "unit": "pc",
+      "label": "GDP penalty per step",
+      "description": "Political capital lost per turn for each 0.25% of GDP in cumulative output loss.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        5
+      ],
+      "rationale": "Design brief."
+    },
+    "pc_start": {
+      "value": 70,
+      "unit": "pc",
+      "label": "Starting political capital",
+      "description": "Political capital at Day 0.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        50,
+        70
+      ],
+      "rationale": "Design brief gave 60. Raised to the top of the range in the balance pass so that a full mixed strategy is feasible but tight (see DECISIONS.md)."
+    },
+    "pc_baseline_drain": {
+      "value": 1,
+      "unit": "pc",
+      "label": "Monthly drain",
+      "description": "Political capital lost every month as the crisis grinds on.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0,
+        2
+      ],
+      "rationale": "Design brief."
+    },
+    "pc_momentum_bonus": {
+      "value": 3,
+      "unit": "pc",
+      "label": "Momentum bonus",
+      "description": "Political capital gained in a month when Force Ready rises by at least 5% of target.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        4
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_momentum_threshold": {
+      "value": 0.05,
+      "unit": "ratio",
+      "label": "Momentum threshold",
+      "description": "Share of target by which Force Ready must rise in a month to earn the momentum bonus.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.03,
+        0.1
+      ],
+      "rationale": "Design brief."
+    },
+    "pc_low_willingness_penalty": {
+      "value": 2,
+      "unit": "pc",
+      "label": "Refusal-cases penalty",
+      "description": "Political capital lost per month while conscription is active and willingness is below the threshold.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        4
+      ],
+      "rationale": "Design brief."
+    },
+    "pc_cost_call_out_reserve": {
+      "value": -7,
+      "unit": "pc",
+      "label": "Cost: call out the Army Reserve",
+      "description": "Political capital cost of calling out the Army Reserve.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -15,
+        -5
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_ninety_day_notice": {
+      "value": -4,
+      "unit": "pc",
+      "label": "Cost: legislate 90-day notice",
+      "description": "Additional political capital cost of legislating a 90-day notice period.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -8,
+        -3
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_recall_ex_regular": {
+      "value": -6,
+      "unit": "pc",
+      "label": "Cost: recall the Ex-Regular Reserve",
+      "description": "Political capital cost of recalling the Ex-Regular Reserve.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -12,
+        -4
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_trace_strategic": {
+      "value": -2,
+      "unit": "pc",
+      "label": "Cost: trace the Strategic Reserve",
+      "description": "Political capital cost of tracing the untracked Strategic Reserve.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -5,
+        -1
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_stop_loss": {
+      "value": -9,
+      "unit": "pc",
+      "label": "Cost: stop-loss",
+      "description": "Political capital cost of suspending voluntary outflow.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -16,
+        -8
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_bill_emergency": {
+      "value": -12,
+      "unit": "pc",
+      "label": "Cost: National Service Bill, emergency",
+      "description": "Political capital cost of introducing a National Service Bill under emergency procedure.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -20,
+        -10
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_bill_normal": {
+      "value": -6,
+      "unit": "pc",
+      "label": "Cost: National Service Bill, normal",
+      "description": "Political capital cost of introducing a National Service Bill under the normal timetable.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -12,
+        -5
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_exclude_women": {
+      "value": -5,
+      "unit": "pc",
+      "label": "Cost: exclude women",
+      "description": "Political capital cost of excluding women from conscription, against 72% public support for inclusion.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -8,
+        -3
+      ],
+      "rationale": "Design brief."
+    },
+    "pc_cost_medical_relaxed": {
+      "value": -2,
+      "unit": "pc",
+      "label": "Cost: relaxed medical standard",
+      "description": "Political capital cost of a relaxed medical standard.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -5,
+        -1
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_medical_wartime": {
+      "value": -6,
+      "unit": "pc",
+      "label": "Cost: wartime medical standard",
+      "description": "Political capital cost of a wartime medical standard.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -12,
+        -5
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_exemptions_minimal": {
+      "value": -8,
+      "unit": "pc",
+      "label": "Cost: minimal exemptions",
+      "description": "Political capital cost of a minimal exemptions regime.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -14,
+        -6
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_expand_capacity": {
+      "value": -3,
+      "unit": "pc",
+      "label": "Cost: expand training capacity",
+      "description": "Political capital cost per training-capacity purchase.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -6,
+        -2
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_compress_syllabus": {
+      "value": -5,
+      "unit": "pc",
+      "label": "Cost: compress the syllabus",
+      "description": "Political capital cost of compressing the training syllabus.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -9,
+        -3
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_civilian_instructors": {
+      "value": -2,
+      "unit": "pc",
+      "label": "Cost: contract civilian instructors",
+      "description": "Political capital cost of contracting civilian instructors.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -4,
+        -1
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_junior_entry": {
+      "value": -1,
+      "unit": "pc",
+      "label": "Cost: reinstate junior entry",
+      "description": "Political capital cost of reinstating Harrogate-style junior entry.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -2,
+        0
+      ],
+      "rationale": "Design brief."
+    },
+    "pc_cost_equipment_buy": {
+      "value": -2,
+      "unit": "pc",
+      "label": "Cost: emergency equipment buy",
+      "description": "Political capital cost of an emergency personal-equipment purchase.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -5,
+        -1
+      ],
+      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_address_first": {
+      "value": 8,
+      "unit": "pc",
+      "label": "Address the nation, first",
+      "description": "Political capital gained from the first address to the nation.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        5,
+        12
+      ],
+      "rationale": "Design brief."
+    },
+    "pc_address_second": {
+      "value": 4,
+      "unit": "pc",
+      "label": "Address the nation, second",
+      "description": "Political capital gained from the second address; nothing thereafter.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        2,
+        6
+      ],
+      "rationale": "Design brief."
+    },
+    "address_willingness_boost_pct": {
+      "value": 5,
+      "unit": "pct",
+      "label": "Address willingness boost",
+      "description": "Percentage points added to willingness to serve for three months after an address.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        3,
+        8
+      ],
+      "rationale": "Design brief."
+    },
+    "address_willingness_months": {
+      "value": 3,
+      "unit": "months",
+      "label": "Address boost duration",
+      "description": "Months the address boost to willingness lasts.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        2,
+        4
+      ],
+      "rationale": "Design brief."
+    },
+    "pc_cost_raise_spending": {
+      "value": -6,
+      "unit": "pc",
+      "label": "Cost: raise defence spending",
+      "description": "Political capital cost of raising defence spending; doubles the cost penalty threshold.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -9,
+        -3
+      ],
+      "rationale": "Design brief."
+    },
+    "raise_spending_threshold_multiplier": {
+      "value": 2,
+      "unit": "multiplier",
+      "label": "Raise-spending effect",
+      "description": "Multiplier applied to the cost-penalty threshold after raising defence spending.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1.5,
+        3
+      ],
+      "rationale": "Interpretation of the brief's 'unlocks bigger £ budget'."
+    },
+    "pc_blame_first": {
+      "value": 3,
+      "unit": "pc",
+      "label": "Blame the previous government, first",
+      "description": "Political capital gained the first time.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        2,
+        5
+      ],
+      "rationale": "Design brief."
+    },
+    "pc_blame_subsequent": {
+      "value": -5,
+      "unit": "pc",
+      "label": "Blame the previous government, again",
+      "description": "Political capital lost each subsequent time.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        -8,
+        -3
+      ],
+      "rationale": "Design brief."
+    },
+    "actions_per_turn": {
+      "value": 2,
+      "unit": "count",
+      "label": "Actions per month",
+      "description": "Maximum decisions the Secretary of State can take in a month.",
+      "section": "politics",
+      "source": "Design brief",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        1,
+        3
+      ],
+      "rationale": "Game pacing."
+    },
+    "target_brigade": {
+      "value": 8000,
+      "unit": "people",
+      "label": "Brigade target",
+      "description": "Effective-soldier equivalents required at Brigade difficulty.",
+      "section": "difficulty",
+      "source": "Design brief",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        5000,
+        10000
+      ],
+      "rationale": "A brigade group with enablers. The regulars' uncommitted slice covers under half of it."
+    },
+    "deadline_brigade": {
+      "value": 5,
+      "unit": "months",
+      "label": "Brigade deadline",
+      "description": "Months to the deadline at Brigade difficulty.",
+      "section": "difficulty",
+      "source": "Design brief",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        4,
+        12
+      ],
+      "rationale": "Changed from the brief's 12 months in the balance pass: with 12 months the reserves alone make a brigade several times over. Five months means the Army Reserve's 180-day notice arrives too late; the puzzle is the 90-day amendment and the ex-regular recall."
+    },
+    "target_division": {
+      "value": 25000,
+      "unit": "people",
+      "label": "Division target",
+      "description": "Effective-soldier equivalents required at Division difficulty.",
+      "section": "difficulty",
+      "source": "Design brief",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        20000,
+        30000
+      ],
+      "rationale": "A deployable division with enablers."
+    },
+    "deadline_division": {
+      "value": 12,
+      "unit": "months",
+      "label": "Division deadline",
+      "description": "Months to the deadline at Division difficulty.",
+      "section": "difficulty",
+      "source": "Design brief",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        9,
+        18
+      ],
+      "rationale": "Design brief."
+    },
+    "target_corps": {
+      "value": 45000,
+      "unit": "people",
+      "label": "Corps target",
+      "description": "Effective-soldier equivalents required at Corps difficulty. The brief's 60,000 was not reachable by any strategy in the balance pass; 45,000 in 24 months is the hardest setting that a near-perfect run can make.",
+      "section": "difficulty",
+      "source": "Design brief",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        40000,
+        80000
+      ],
+      "rationale": "Changed from the brief's 60,000 in the balance pass: the best scripted run reached about 32,000 effective soldiers by month 15 before political capital ran out (see DECISIONS.md)."
+    },
+    "deadline_corps": {
+      "value": 24,
+      "unit": "months",
+      "label": "Corps deadline",
+      "description": "Months to the deadline at Corps difficulty.",
+      "section": "difficulty",
+      "source": "Design brief",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        12,
+        24
+      ],
+      "rationale": "Changed from the brief's 18 months in the balance pass: 18 months does not allow enough conscript cohorts to graduate and mature for 60,000 to be reachable by any strategy (see DECISIONS.md)."
+    },
+    "army_medical_rejections_jul24_jan26": {
+      "value": 45680,
+      "unit": "count",
+      "label": "Army applications rejected on medical grounds",
+      "description": "Army applications rejected on medical grounds between 5 July 2024 and 31 January 2026 (applications, not individuals). Used to justify the medical pass-rate assumptions.",
+      "section": "conscription",
+      "source": "Written question 116544 (James Cartlidge MP), answered 9 Mar 2026",
+      "url": "https://questions-statements.parliament.uk/written-questions/detail/2026-02-27/116544/",
+      "asOf": "2026-01-31",
+      "confidence": "primary"
+    },
+    "strategic_reserve_recall_age": {
+      "value": 65,
+      "unit": "years",
+      "label": "Strategic Reserve recall age limit",
+      "description": "Upper age limit for recall of ex-regulars, raised from 55 to 65 in January 2026.",
+      "section": "reserves",
+      "source": "MoD press release, 15 Jan 2026",
+      "url": "https://www.gov.uk/government/news/major-boost-to-pool-of-skilled-former-military-personnel-called-upon-in-crises-as-uk-strengthen-preparedness",
+      "asOf": "2026-01-15",
+      "confidence": "primary"
+    },
+    "ex_regular_tracked_tri_service": {
+      "value": 34755,
+      "unit": "people",
+      "label": "Ex-Regular Reserve on record, all three Services",
+      "description": "Tri-Service Ex-Regular Reserve with a recall liability who appear on current records (Royal Navy, Army and RAF). Quoted in public statements; the Army-only figure is used for the recall pool. The 1 July 2026 figure is marked estimated in the source; 1 April 2026 is used.",
+      "section": "reserves",
+      "source": "MoD, UK armed forces quarterly service personnel statistics: 1 July 2026, Table 8a",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-04-01",
+      "confidence": "primary"
+    },
+    "strategic_reserve_untracked_tri_service": {
+      "value": 60245,
+      "unit": "people",
+      "label": "Strategic Reserve not on record, all three Services",
+      "description": "Claimed Strategic Reserve less the Ex-Regular Reserve actually on record.",
+      "section": "reserves",
+      "source": "Derived from strategic_reserve_claimed and ex_regular_tracked",
+      "url": "",
+      "asOf": "2026-04-01",
+      "confidence": "derived",
+      "derivation": "95000 - 34755 = 60245"
+    }
+  }
+}
