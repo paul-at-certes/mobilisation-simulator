@@ -44,16 +44,22 @@ to balance against: at Division the spread between the 10th and 90th
 percentile is around 2,000 effective soldiers, which is most of the margin the
 difficulty is tuned to. Use `npm run dist` for anything that changes a number.
 
-Two things the automated instruments cannot tell you, and which the review
+Three things the automated instruments cannot tell you, and which the review
 found by hand:
 
 1. **Play it passively.** Take the two obvious actions on Day 0 and then press
    *End month* until the deadline. If that scores close to the best scripted
    strategy, the middle of the game is a timer and no amount of balance work
    will fix it. This is how F1 was found, and no test would have caught it.
-2. **Play it on a phone-sized viewport.** The audience arrives from LinkedIn's
-   in-app browser. Screen-height and word-count problems (F7) are invisible on
-   a desktop.
+2. **Play it on a phone-sized viewport — and turn the phone sideways.** The
+   audience arrives from LinkedIn's in-app browser. Screen-height and
+   word-count problems (F7) are invisible on a desktop, and the sticky head and
+   fixed footer cost a fixed 138px, which is 17% of a portrait screen and 38%
+   of a landscape one. Check 375×812 *and* 667×375.
+3. **Play the levers, not just the clock.** Measuring the mid-game by pressing
+   *End month* through it measures the months with nothing in them. The turn
+   screen is longest once the Bill passes and the pipeline group opens — the
+   second pass on F7 corrected a benchmark that had been taken the passive way.
 
 The scripted strategies are a poor proxy for a human — they never re-plan, and
 `reserves_only` addresses the nation whenever political capital drops below 30,
@@ -322,18 +328,75 @@ while making them:
 | Day 0 words | 899 | **643** |
 | Day 0 scroll | 5.8 screens | **4.5 screens** |
 | Day 0 action list | 3,500px | **1,750px** |
-| mid-game turn (month 8) | — | **2.6 screens** |
 | *End month* | 5.5 screens down | **always on screen** |
 | political capital | off screen from screen 2 | **always on screen** |
 
 No simulation code was touched and no parameter moved, so the benchmark table
 above is unchanged.
 
-**What is still long.** 4.5 screens on Day 0 is better, not short. The rest is
-the Permanent Secretary's opening note and the event card, which are the prose
-the game is for. If it has to come down further, the next cut is the action
-descriptions — title and cost first, the paragraph behind a tap — and that
-trades away the sourced copy that carries the argument. Do it only against a
+---
+
+**A second pass, and it corrected one of the numbers above.** Re-measured by
+hand at `?seed=1&difficulty=division`, playing the levers rather than pressing
+through.
+
+**The mid-game figure was wrong.** This table used to carry a row reading
+*"mid-game turn (month 8) — 2.6 screens"*. It does not reproduce for a player
+who does the thing the game is about. Measured down a played run:
+
+| month | state | action list | scroll |
+|---|---|---|---|
+| Day 0 | everything to decide | 1,750px | 4.5 screens |
+| 3–4 | reserves pulled, Bill in the House | **970px** | **3.1 screens** |
+| 5–9 | Bill passed, pipeline live | **2,054px** | **4.5–4.7 screens** |
+
+Progressive disclosure works exactly as designed — the reserves group shuts
+itself once every lever is pulled, 854px → 45px — but the training pipeline
+group opens when the Bill passes and brings 952px with it. So disclosure
+*moved* the bulk rather than removing it. The 2.6-screen reading was taken in
+the window at months 3–4, before the Bill lands, and read as the mid-game.
+
+The honest statement is: **the screen is shortest in the months when there is
+least to decide.** Months 5 onward carry ten live decisions across three
+groups, the action list is *longer* than Day 0's, and no grouping rule can fix
+that, because every one of those actions is genuinely available. Do not reach
+for the disclosure defaults again; the lever left is per-action, below.
+
+**A defect the first pass introduced: a phone turned sideways.** The sticky
+head and the fixed footer are a fixed 138px, which is 17% of a 812px portrait
+screen and **38% of a 360px landscape one** — the fix for the phone problem
+becoming the phone problem. At 667×375 the reading band was 237px and the
+gauges filled all of it: no prose on screen at all.
+
+Both affordances matter *more* on a short screen, so they were flattened, not
+dropped. Under `@media (max-height: 480px)`: the head goes to one line — a
+landscape phone is ≥667px wide, so the month, the three readings and Restart
+fit across — and the footer's counter sits beside its hint rather than above
+it. The one-line head is additionally gated on `min-width: 600px`, because at
+375×400 it overflowed and scrolled Capital off the strip, which is the one
+number the strip exists to hold.
+
+| viewport | before | after |
+|---|---|---|
+| 667×375 (SE landscape) | 138px chrome, 36.8%, 237px band | **101px, 27.0%, 274px** |
+| 844×390 (14 landscape) | 138px chrome, 35.4%, 252px band | **101px, 25.9%, 289px** |
+| 375×812 (portrait) | — | **unchanged: 77 + 61px** |
+| 375×400 (narrow, short) | — | two-line head kept, footer 61 → **56px** |
+
+Portrait re-measures byte-identical to the table above (643 words, 4.49
+screens, 1,750px), so the first pass's numbers still stand. CSS only; 61 tests
+and the typecheck pass.
+
+**What is still long.** 4.5 screens on Day 0 is better, not short — and the
+mid-game is now known to be no shorter. Day 0's remainder is the Permanent
+Secretary's opening note and the event card, which are the prose the game is
+for. The mid-game's remainder is the action list, and there the descriptions
+are two-thirds of the height: the pipeline group is 952px of which 633px is
+description, and *Expand training capacity* alone spends 253px on 79 words.
+
+So the next cut is the same one either way — the action descriptions, title and
+cost first, the paragraph behind a tap. It trades away the sourced copy that
+carries the argument, and it is the only lever left. Do it only against a
 playtest that says the length is still losing people.
 
 ---

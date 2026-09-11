@@ -228,6 +228,35 @@ details.ledger .ledger-body { padding: 0 0.8rem 0.8rem; }
 .turnfoot .btn { margin-left: auto; flex: none; }
 body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)); }
 
+/*
+ * A phone turned sideways is 360–390px tall. The sticky head and the fixed
+ * footer are a fixed 138px, so on that screen they were 38% of the viewport
+ * and left a 240px reading band — the fix for the phone problem (F7) becoming
+ * the phone problem. Both affordances matter *more* on a short screen, so
+ * flatten them rather than drop them: the head goes to one line (a landscape
+ * phone is >=667px wide, so the month, the three readings and Restart fit
+ * across), and the footer's counter sits beside its hint instead of above it.
+ */
+@media (max-height: 480px) and (min-width: 600px) {
+  .turnhead { display: flex; align-items: center; gap: 0.75rem; padding: 0.25rem 0; }
+  /* `contents` so the bar's three children become children of the head and can
+     be ordered around the strip; the bar's own padding goes with it. */
+  .turnbar { display: contents; }
+  .turnbar .turn { order: 1; }
+  /* "9 months to the deadline" is already in "Month 3 of 12". */
+  .turnbar .small { display: none; }
+  .turnbar .btn { order: 3; }
+  .statusstrip { order: 2; flex: 1 1 auto; min-width: 0; padding: 0; }
+}
+
+/* The footer shrinks on any short screen; the head's one-line form above needs
+   the width, this does not. */
+@media (max-height: 480px) {
+  .turnfoot { padding: 0.35rem 1rem calc(0.35rem + env(safe-area-inset-bottom, 0px)); }
+  .turnfoot .turnfoot-status { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 0.6rem; }
+  body.has-turnfoot .page { padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px)); }
+}
+
 /* Opening */
 .premise { font-family: var(--serif); font-size: 1.08rem; }
 .difficulty { display: grid; gap: 0.5rem; margin: 1rem 0; }
