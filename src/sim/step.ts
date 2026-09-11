@@ -15,7 +15,7 @@ import { computeForce } from './effectiveness.js';
 import { incrementalCost, monthlyCostBreakdown, monthlyGdpLoss } from './money.js';
 import { expireWillingnessBoosts, idleMonths, monthlyPcChanges, type PcReason } from './politics.js';
 import { applyAction, isActionAvailable, ACTION_LABELS } from './actions.js';
-import { advanceBillClock } from './legislation.js';
+import { advanceBillClock, refusalRate } from './legislation.js';
 import { cohortAttrition, courseMonths, equipmentArrived, spareIntake } from './pipeline.js';
 import { addOutflowIntent, monthlyOutflow } from './outflow.js';
 import { applyEffects, drawEvent, findEvent } from './events.js';
@@ -97,6 +97,7 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
     vettingRelaxedMonth: null,
     conscriptionEverActive: false,
     conscriptsCalledTotal: 0,
+    conscriptsRefusedTotal: 0,
     eligiblePoolMultiplier: 1,
     capacityPurchases: 0,
     capacityPurchaseMonths: [],
@@ -429,7 +430,14 @@ export function advanceMonth(
       s.pools.conscriptEligible -= called;
       s.conscriptsCalledTotal += called;
       s.conscriptionEverActive = true;
-      s.pools.conscriptCalled += called;
+      // Not everyone called reports (§10a). The refusers are out of the pool —
+      // they have been called and are in the courts, not available again.
+      const refused = called * refusalRate(s);
+      if (refused > 0) {
+        s.conscriptsRefusedTotal += refused;
+        notes.push(`refused:${Math.round(refused)}`);
+      }
+      s.pools.conscriptCalled += called - refused;
     }
   }
   const candidates = s.pools.holdingPool + s.pools.conscriptCalled;

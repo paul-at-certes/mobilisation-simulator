@@ -419,6 +419,7 @@ function fakeState(over: Partial<GameState> = {}): GameState {
     vettingRelaxedMonth: null,
     conscriptionEverActive: false,
     conscriptsCalledTotal: 0,
+    conscriptsRefusedTotal: 0,
     eligiblePoolMultiplier: 1,
     capacityPurchases: 0,
     capacityPurchaseMonths: [],

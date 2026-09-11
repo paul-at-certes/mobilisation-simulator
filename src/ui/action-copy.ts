@@ -56,7 +56,7 @@ export const ACTION_COPY: Record<ActionId, ActionCopy> = {
   introduce_bill: {
     group: 'conscription',
     title: 'Introduce a National Service Bill',
-    html: `Starts the legislative clock: ${s('bill_months_emergency')} months under emergency procedure or ${s('bill_months_normal')} under the normal timetable. The Bill's clauses set the age band, whether women are included (${s('women_included_support_pct')} of the public say yes), the medical standard and the exemptions regime. Nothing else in this section is available until it passes.`,
+    html: `Starts the legislative clock: ${s('bill_months_emergency')} months under emergency procedure or ${s('bill_months_normal')} under the normal timetable. The Bill's clauses set the age band, whether women are included (${s('women_included_support_pct')} of the public say yes), the medical standard and the exemptions regime. <strong>The age band decides more than the size of the pool:</strong> the people you conscript are the people who object, and support runs from 27% among 18–24s to 63% among the over-65s, so a wider band is a more willing one and fewer of those called refuse to report. Nothing else in this section is available until it passes.`,
   },
   amend_bill: {
     group: 'conscription',

@@ -140,10 +140,15 @@ describe('fuzz invariants', () => {
           const regulars = s.pools.regularTrained + s.pools.regularUntrained + s.ledger.regularOutflowToDate + s.ledger.juniorLeadersDiverted;
           const expected = P.regular_trained_start + P.regular_untrained_start + (P.regular_untrained_intake_annual / 12) * months;
           check(Math.abs(regulars - expected) < 1e-3, `${c}: regulars ${regulars} ≠ ${expected}`);
-          // Conscripts: called total = called + holding + training + trained + attrition lost.
+          // Conscripts: called total = called + holding + training + trained
+          // + attrition lost + those who refused to report (§10a). Refusers
+          // leave the eligible pool and never enter the pipeline, so they have
+          // to be counted here or the conservation law loses them.
           const serving =
             s.pools.conscriptCalled + s.pools.holdingPool + s.pools.conscriptInTraining + s.pools.conscriptTrainedUnequipped + s.pools.conscriptTrainedEquipped;
-          check(Math.abs(serving + attritionLost - s.conscriptsCalledTotal) < 1e-3, `${c}: conscripts ${serving + attritionLost} ≠ ${s.conscriptsCalledTotal}`);
+          const accounted = serving + attritionLost + s.conscriptsRefusedTotal;
+          check(Math.abs(accounted - s.conscriptsCalledTotal) < 1e-3, `${c}: conscripts ${accounted} ≠ ${s.conscriptsCalledTotal}`);
+          check(s.conscriptsRefusedTotal >= 0 && s.conscriptsRefusedTotal <= s.conscriptsCalledTotal, `${c}: refused ${s.conscriptsRefusedTotal}`);
           // Reservists are conserved.
           const reserve = s.pools.reserveVolunteerAvailable + s.pools.reserveVolunteerPending + s.pools.reserveVolunteerMobilised;
           check(Math.abs(reserve - P.reserve_volunteer_trained) < 1e-3, `${c}: reserve ${reserve}`);

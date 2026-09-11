@@ -423,6 +423,41 @@ eligible is non-empty, one when it is empty (to keep the sequence stable).
 `'event'`. `scoring_pc_if_missed` accumulates into `scoringPcIfMissed`, applied
 by `score()` if the target is missed (it lowers PC in the score output only).
 
+### 10a. Willingness, the age band and refusal
+
+```
+effectiveWillingness = willingness
+                     + conscription_willingness_adj_<ageBand>
+                     + Σ active boosts
+strongOpposition     = clamp(0, 100, refusal_strong_opposition_intercept
+                                     + refusal_strong_opposition_slope × effectiveWillingness)
+refusalRate          = strongOpposition / 100 × conscription_refusal_conversion
+```
+
+At call-up (3e), `called × refusalRate` do not report. They leave
+`conscriptEligible` — they have been called and are in the courts, not
+available again — and are counted in `conscriptsRefusedTotal`, which the
+conservation law in `tests/invariants.test.ts` includes.
+
+**Why this exists.** Before it, the only thing willingness did anywhere in the
+model was trigger `pc_low_willingness_penalty` below a threshold: it was
+political capital with extra steps, which is why the design review counts
+`willingness` effects as routing back to PC (F6). Refusal puts it **upstream of
+the training pipeline** instead, so the age band, the addresses and every event
+that moves willingness now decide how many soldiers arrive.
+
+**Two properties worth preserving.**
+
+- **Calling over capacity is insurance against refusal.** A minister calling up
+  exactly the spare training intake loses the refusers outright; one calling
+  over capacity loses them out of a surplus that was going to sit in the
+  holding pool anyway. That is a real strategy, not an oversight.
+- **Refusal raises the leadership factor while lowering headcount.** Fewer
+  conscripts is fewer people for the cadre to lead (§7), so a refused call-up
+  is bad for the score and good for the quality of what remains. It also cuts
+  graduations, and so the delivery credit (§9) — refusal costs political
+  capital a second time, through the income rather than the penalty.
+
 ## 11. Scoring
 
 `score(state): Score` in `src/sim/score.ts`:

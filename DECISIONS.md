@@ -970,3 +970,69 @@ cost table. `cost_pc_penalty_threshold` is an assumption with range
 difficulty increase on every rung landing on top of three other changes, and it
 should be measured on its own. **ASK.**
 
+## Willingness stops being political capital with extra steps (11 September 2026)
+
+Paul supplied the YouGov table on compulsory service — 4,205 GB adults,
+28 May 2024, broken by age. It is the last of the five sources, and it closes
+the pair the design review said were the same problem: F4's dead Bill clauses
+and F6's typed effects that route back to political capital.
+
+**The diagnosis it acts on.** `willingness` had exactly one consequence
+anywhere in the model: below `willingness_low_threshold_pct` it charged
+`pc_low_willingness_penalty`. So an event that moved public willingness moved
+political capital with extra steps, and the age-band clause — which could have
+moved willingness — only moved the size of a pool that never binds.
+
+**What the data supports, and what it does not.** The question offers military
+service *or* community volunteering, so its levels overstate support for
+military-only conscription and **the absolute level is not used**:
+`willingness_start_pct` stays at 20. What is used is the **age gradient**,
+which is what the poll measures well — support 27% among 18–24s rising to 63%
+among the over-65s, with strong opposition falling 45% → 18%.
+
+**Two derivations.** The band adjustments weight the poll by the England and
+Wales population of each single year of age inside each band (both figures
+already in the file): 18–25 gives 28.6% support, 18–30 32.8%, 18–40 35.7%,
+18–65 42.2% — so −4, 0, +3, +9 points against the default. And strong
+opposition is fitted against support across YouGov's four age groups,
+`strongly_oppose = 66.206 − 0.7738 × support`, R² = 0.994.
+
+**The chain, and where it is weakest.** Age band → willingness → strong
+opposition → refusal rate → conscripts who actually report. The weak link is
+named in its own parameter note: the game's willingness runs 16–34 where the
+poll observed 27–63, so the fit is used below the range it was measured on and
+produces strong opposition of 40–54%, at and beyond the most hostile group
+YouGov saw. `conscription_refusal_conversion` (0.25) is the one frank
+assumption, anchored against HC 57's 25.5% non-reporting rate for *volunteer*
+reservists served a compulsory notice.
+
+**What it buys, mechanically.** Refusal puts willingness **upstream of the
+training pipeline** instead of downstream of nothing. Two properties came out
+of the arithmetic rather than being designed in, and both are worth keeping:
+calling up over capacity is now **insurance against refusal**, because the
+refusers come out of a surplus that was going to sit in the holding pool; and
+refusal *raises* the leadership factor while lowering headcount, because fewer
+conscripts is fewer people for the cadre to lead — so a refused call-up is bad
+for the score and good for the quality of what remains. It also cuts
+graduations and so the delivery credit, which means refusal costs political
+capital a second time, through the income rather than the penalty.
+
+**Balance** (`npm run dist -- 40`). Division `reserves_plus_light` 40% → 43%
+met and leadership 0.93 → 0.98; Corps median 22,367 → 22,657 with resignations
+23% → 38%, the rise coming through the delivery credit rather than directly.
+`do_nothing` does not move at any rung. Brigade unchanged.
+
+**A UI bug this exposed.** The briefing had a line reading
+`state.willingness` while the new one read `effectiveWillingness`, so the same
+screen quoted 20% and 16% for the same quantity. Both now read the effective
+figure. Any future readout of willingness must do the same — the raw field is
+not a number anyone should see.
+
+**And a finding the data produced rather than answered: F14.** The poll has a
+36-point spread, and the player sees 13 of it, because **every band the Bill
+offers starts at 18** and therefore contains the most hostile group; widening
+only dilutes it. A band of 25–40 would be far more popular and the game cannot
+express one. The fix is a clause shape — a movable lower bound — not a bigger
+`conscription_refusal_conversion`, which would scale every band equally and
+change nothing about the decision. **ASK.**
+

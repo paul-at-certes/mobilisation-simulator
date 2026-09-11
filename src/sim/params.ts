@@ -55,6 +55,11 @@ export function ewPopulationFemale(band: AgeBand): number {
   return lookup(`ew_pop_f_${BAND_SUFFIX[band]}`);
 }
 
+/** Points added to public willingness by conscripting this band (spec §10a). */
+export function conscriptionWillingnessAdj(band: AgeBand): number {
+  return lookup(`conscription_willingness_adj_${BAND_SUFFIX[band]}`);
+}
+
 /** GDP output multiplier for the conscript age band. */
 export function gdpAgeMultiplier(band: AgeBand): number {
   return lookup(`gdp_age_multiplier_${BAND_SUFFIX[band]}`);

@@ -7,16 +7,23 @@
  * and event deltas are applied when they happen and merely listed alongside.
  */
 import type { GameState } from '../types.js';
-import { P } from './params.js';
+import { P, conscriptionWillingnessAdj } from './params.js';
 
 export interface PcReason {
   label: string;
   delta: number;
 }
 
-/** Willingness including any active boosts (boosts with until < turn are ignored). */
+/**
+ * Willingness including the Bill's age band and any active boosts.
+ *
+ * The band matters because the people a Bill conscripts are the people who
+ * object to it: YouGov puts support at 27% among 18-24s and 63% among the
+ * over-65s, so widening the band dilutes the opposition (spec §10a). Boosts
+ * with `until < turn` have expired and are ignored.
+ */
 export function effectiveWillingness(s: GameState): number {
-  let w = s.willingness;
+  let w = s.willingness + conscriptionWillingnessAdj(s.clauses.ageBand);
   for (const b of s.willingnessBoosts) if (b.until >= s.turn) w += b.delta;
   return w;
 }

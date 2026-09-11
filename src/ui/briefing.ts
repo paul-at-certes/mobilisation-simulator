@@ -11,6 +11,7 @@ import type { BriefingFacts, GameState } from '../types.js';
 import { type ParamId, P } from '../sim/params.js';
 import { deliveryCredit } from '../sim/politics.js';
 import { outflowIntent } from '../sim/outflow.js';
+import { effectiveWillingness } from '../sim/politics.js';
 
 // Sourced helpers: every parameter-based number in a briefing carries its popover.
 import { sourcedHtml } from './components/sourced';
@@ -264,6 +265,17 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     changes.push('The vetting backlog has cleared; the call-up is no longer held to what the security teams can process.');
   }
 
+  // Refusal is the only thing in the game that takes people out between the
+  // call-up and the gate, so it has to be said or the numbers look wrong.
+  const refused = facts.notes
+    .filter((n) => n.startsWith('refused:'))
+    .reduce((a, n) => a + (Number(n.split(':')[1]) || 0), 0);
+  if (refused > 0) {
+    urgent.push(
+      `${formatInt(refused)} of those called did not report. A wider age band or an address to the nation would lift willingness and bring more of them in.`,
+    );
+  }
+
   if (facts.holdingPoolDelta > 0 && state.pools.holdingPool > 0) {
     urgent.push(
       pick(state, 23, [
@@ -385,9 +397,12 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     );
   }
 
-  if (state.conscriptionEverActive && state.willingness < P.willingness_low_threshold_pct) {
+  // Read the effective figure, not the raw one: the Bill's age band moves it
+  // (§10a) and two lines quoting different numbers for the same thing is worse
+  // than not quoting it at all.
+  if (state.conscriptionEverActive && effectiveWillingness(state) < P.willingness_low_threshold_pct) {
     colour.push(
-      `Willingness to serve stands at ${formatPct(state.willingness)}; below ${svPct('willingness_low_threshold_pct')} the refusal cases keep coming.`,
+      `Willingness to serve stands at ${formatPct(effectiveWillingness(state))}; below ${svPct('willingness_low_threshold_pct')} the refusal cases keep coming.`,
     );
   }
 

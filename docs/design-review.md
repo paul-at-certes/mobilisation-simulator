@@ -75,7 +75,7 @@ which is self-harm under the current rules. Treat their numbers as a floor.
 
 ## Benchmarks
 
-Output of `npm run dist -- 40`, at commit `d00d261`. **If a change moves these,
+Output of `npm run dist -- 40`, at commit `PENDING`. **If a change moves these,
 update this table in the same commit.** Median final ESE, percentage of the 40
 seeds that met the target, percentage that ended in resignation, and the median
 leadership factor at the end.
@@ -98,11 +98,11 @@ leadership factor at the end.
 |---|---|---|---|---|---|---|
 | do_nothing | 3,693 | 3,696 | 3,696 | 0 | 0 | 1.00 |
 | reserves_only | 19,352 | 20,417 | 21,653 | **3** | 0 | 1.00 |
-| **reserves_plus_light** | 20,770 | **21,782** | 22,836 | **40** | 0 | 0.93 |
-| conscription_max_capacity | 4,949 | 5,398 | 5,832 | 0 | 10 | 0.60 |
-| conscription_over_capacity | 4,301 | 4,908 | 5,257 | 0 | 80 | 1.00 |
-| capacity_heavy | 18,234 | 19,320 | 20,649 | 0 | 0 | 0.63 |
-| max_effort | 15,902 | 17,109 | 18,809 | 0 | 0 | 0.44 |
+| **reserves_plus_light** | 20,805 | **21,858** | 23,115 | **43** | 0 | 0.98 |
+| conscription_max_capacity | 5,019 | 5,435 | 5,844 | 0 | 15 | 0.68 |
+| conscription_over_capacity | 4,301 | 4,908 | 5,257 | 0 | 90 | 1.00 |
+| capacity_heavy | 18,560 | 19,592 | 20,760 | 0 | 0 | 0.67 |
+| max_effort | 16,099 | 17,363 | 18,750 | 0 | 0 | 0.47 |
 
 ### Corps — target 45,000 in 24 months
 
@@ -110,19 +110,19 @@ leadership factor at the end.
 |---|---|---|---|---|---|---|
 | do_nothing | 3,736 | 3,756 | 3,786 | 0 | **100** | 1.00 |
 | reserves_only | 20,259 | 21,325 | 22,531 | 0 | 38 | 1.00 |
-| **reserves_plus_light** | 22,277 | **22,367** | 22,553 | 0 | **23** | 0.66 |
-| conscription_max_capacity | 6,505 | 7,232 | 7,927 | 0 | 100 | 0.35 |
-| conscription_over_capacity | 4,312 | 4,911 | 5,799 | 0 | 100 | 1.00 |
-| capacity_heavy | 19,600 | 19,953 | 20,527 | 0 | 3 | 0.39 |
-| max_effort | 17,459 | 18,274 | 18,982 | 0 | 25 | 0.26 |
+| **reserves_plus_light** | 22,498 | **22,657** | 22,753 | 0 | **38** | 0.71 |
+| conscription_max_capacity | 6,584 | 7,270 | 7,970 | 0 | 100 | 0.39 |
+| conscription_over_capacity | 4,312 | 4,911 | 5,792 | 0 | 100 | 1.00 |
+| capacity_heavy | 19,754 | 20,085 | 20,945 | 0 | 5 | 0.43 |
+| max_effort | 17,460 | 18,148 | 19,133 | 0 | 20 | 0.28 |
 
 **The three numbers to watch.** If any of these drifts, something has broken:
 
-- `reserves_plus_light` at Division meets the target on **40%** of seeds. Below
+- `reserves_plus_light` at Division meets the target on **43%** of seeds. Below
   ~25% the headline difficulty is a coin flip again (F2); above ~65% it is a
   walkover.
-- The median leadership factor for `capacity_heavy` and `max_effort` is **0.63
-  and 0.44**. If either returns to 1.00, the mechanic has stopped firing (F3).
+- The median leadership factor for `capacity_heavy` and `max_effort` is **0.67
+  and 0.47**. If either returns to 1.00, the mechanic has stopped firing (F3).
 - `do_nothing` is **17%** of Division and **36%** of Brigade, and still resigns
   on **100%** of Corps seeds. If it climbs past ~60% of any rung, that rung is
   free; if it stops resigning at Corps, the delivery credit has become an idle
@@ -273,10 +273,20 @@ to training attrition and the political capital each clause costs. That is a
 lot of interface, and a lot of the game's most interesting subject matter, for
 very little consequence.
 
-**Options, none yet taken.** Either give the clauses a consequence that is not
-pool size — willingness, refusal rates, the shape of the event deck, the
-quality of the intake — or reduce them to a single "how hard do you push"
-control and let the prose carry the subject matter.
+**One of the four has since been taken.** The option named first —
+*"willingness, refusal rates"* — is now what the **age band** does. Support for
+compulsory service runs from 27% among 18–24s to 63% among the over-65s
+(YouGov, 4,205 GB adults, 28 May 2024), so the band decides how willing the
+people you are conscripting are, and willingness now decides how many of those
+called actually report. Model in `docs/sim-spec.md` §10a. The band is no longer
+a pool-size control.
+
+**The other three are unchanged**, and the honest reading is that the age band
+was the one this data could reach. Women, medical standard and exemptions still
+resolve into pool size and attrition, and the pool still never binds. For
+those, the options are as they were.
+
+**And the band's own effect is smaller than it should be — see F14.**
 
 ---
 
@@ -361,12 +371,20 @@ choices:
 | a PC delta, or nothing at all | 15 | 26% |
 
 More choices carry typed effects than the entry credited — but **28% of them
-are typed effects that are secretly PC again**. The worst case is
-`willingness`: its only consequence anywhere in the model is the
-refusal-cases PC penalty, so an event that moves public willingness is an
-event that moves political capital with extra steps. That makes this finding
-and F4's residue the same problem, and means **the data that fixes one fixes
-the other**.
+were typed effects that were secretly PC again**. The worst case was
+`willingness`: its only consequence anywhere in the model was the refusal-cases
+PC penalty, so an event that moved public willingness moved political capital
+with extra steps. That made this finding and F4's residue the same problem, and
+meant the data that fixed one would fix the other.
+
+**Willingness has since been given a second consequence, and it is the right
+one.** It now sets the share of a call-up who refuse to report (§10a), which
+puts it *upstream of the training pipeline* rather than downstream of nothing.
+Four `willingness` effects in the deck, the addresses, and the Bill's age band
+all now decide how many soldiers arrive. That moves 7 choices out of the
+"routes back to PC" row and is the single largest correction to this finding —
+though note it lands on `willingness` only, and `cost` (5 choices) still routes
+back to PC through the Treasury penalty, which F13 shows barely fires anyway.
 
 **Two of the seventeen have since been fixed** — `treasury_letter`'s arms are
 now a cut to training capacity against a two-month equipment slip, with the
@@ -766,6 +784,55 @@ changes in one sitting (F1, F12, F6), and it should be measured on its own.
 is worth `equipment_plan_contingency / threshold` steps of headroom, so the
 decision the action exists for moves with the threshold. The arithmetic is in
 `contingency_drawn_penalty_add`'s rationale.
+
+---
+
+### F14 — Every age band starts at 18, so the band cannot do much · *Open*
+
+Found while wiring the YouGov polling into the age-band clause (F4), and it is
+about how the clause is *defined* rather than how it is modelled.
+
+**The data.** Support for compulsory service by age (YouGov, 4,205 GB adults,
+28 May 2024 — the question offers military service *or* community volunteering,
+so the levels are generous, but the gradient is the point):
+
+| | 18–24 | 25–49 | 50–64 | 65+ |
+|---|---|---|---|---|
+| support | 27% | 39% | 53% | 63% |
+| **strongly oppose** | **45%** | 37% | 24% | 18% |
+
+A 36-point spread, and the people who would be conscripted are the ones who
+object. That is exactly the material the clause needs.
+
+**Why almost none of it reaches the player.** The four bands the Bill offers
+are 18–25, 18–30, 18–40 and 18–65. **All of them start at 18.** Weighting the
+poll by the England and Wales population of each single year of age inside each
+band:
+
+| band | population | weighted support | vs 18–30 |
+|---|---|---|---|
+| 18–25 | 5.9m | 28.6% | −4 |
+| 18–30 | 10.0m | 32.8% | — |
+| 18–40 | 18.7m | 35.7% | +3 |
+| 18–65 | 38.2m | 42.2% | +9 |
+
+**The whole range is 13 points**, because every band contains the most hostile
+group and widening only dilutes it. A band of 25–40 would be far more popular
+than 18–25 and the game cannot express one. So the clause moves refusal by
+about three percentage points across its entire range — real, sourced, and
+thin.
+
+**The fix is a clause shape, not a number.** Give the age band a *lower* bound
+the player can move, or offer bands that do not start at 18. That is a change
+to `AgeBand`, the four `ew_pop_*` parameter families, the four
+`conscription_willingness_adj_*` derivations and the Bill UI — cheap
+arithmetic, but it widens the clause's span from 13 points to about 36, and it
+is the difference between the clause mattering and the clause being sourced.
+**ASK.**
+
+**Do not reach for a bigger `conscription_refusal_conversion` instead.** That
+would scale refusal across every band equally and change nothing about the
+decision; the problem is the span, not the level.
 
 ---
 

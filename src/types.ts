@@ -406,6 +406,8 @@ export interface GameState {
   vettingRelaxedMonth: number | null;
   conscriptionEverActive: boolean;
   conscriptsCalledTotal: number;
+  /** Called up and did not report (spec §10a). */
+  conscriptsRefusedTotal: number;
   eligiblePoolMultiplier: number; // event-driven adjustments to the eligible pool
 
   // Pipeline levers

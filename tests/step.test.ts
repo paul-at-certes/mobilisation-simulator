@@ -11,13 +11,14 @@ import { P, param } from '../src/sim/params.js';
 import { getEvents, setEvents } from '../src/sim/content.js';
 import { newGame, step, derive } from '../src/sim/step.js';
 import { availableActions, applyAction } from '../src/sim/actions.js';
-import { eligiblePoolSize } from '../src/sim/legislation.js';
+import { eligiblePoolSize, refusalRate, strongOpposition } from '../src/sim/legislation.js';
 import { spareIntake, courseMonths } from '../src/sim/pipeline.js';
 import { leadershipFactor, ledPersonnel, leadersNeeded, leadersRecalled, leadersAvailable, leadersSpareable } from '../src/sim/effectiveness.js';
 import { next, seedFromString, pickWeighted, uniform } from '../src/sim/rng.js';
 import { score } from '../src/sim/score.js';
 import { STRATEGIES } from '../src/sim/strategies.js';
 import { applyEffects, conditionVars, eligibleEvents, eventEligible } from '../src/sim/events.js';
+import { effectiveWillingness } from '../src/sim/politics.js';
 import { chargeableCost, costPenaltyPerStep, costPenaltySteps } from '../src/sim/politics.js';
 
 const NOTHING: TurnInput = { actions: [], eventChoice: null };
@@ -212,13 +213,19 @@ describe('scenarios without events', () => {
     expect(s.conscriptionEverActive).toBe(true);
     expect(s.pools.conscriptEligible).toBeCloseTo(eligibleBefore - callup, 6);
     expect(s.pools.conscriptCalled).toBe(0);
+    // Calling over capacity is insurance against refusal (§10a): the refusers
+    // come out of the surplus that was going to sit in the holding pool, so
+    // the training places still fill completely.
+    const reporting = callup * (1 - refusalRate(s));
+    expect(s.conscriptsRefusedTotal).toBeCloseTo(callup - reporting, 6);
     expect(s.pools.conscriptInTraining).toBeCloseTo(spare, 6);
-    expect(s.pools.holdingPool).toBeCloseTo(callup - spare, 6);
+    expect(s.pools.holdingPool).toBeCloseTo(reporting - spare, 6);
     expect(s.trainingCohorts).toHaveLength(1);
-    expect(s.briefing.holdingPoolDelta).toBeCloseTo(callup - spare, 6);
-    // Holding pool costs money and GDP but produces nothing.
+    expect(s.briefing.holdingPoolDelta).toBeCloseTo(reporting - spare, 6);
+    // Holding pool costs money and GDP but produces nothing. Refusers cost
+    // neither: they never turned up.
     expect(s.ledger.costBreakdown.conscriptPay).toBeGreaterThan(0);
-    expect(s.ledger.monthlyGdpLoss).toBeCloseTo((callup * P.output_per_worker_labour_share * P.gdp_age_multiplier_18_30) / 12, 3);
+    expect(s.ledger.monthlyGdpLoss).toBeCloseTo((reporting * P.output_per_worker_labour_share * P.gdp_age_multiplier_18_30) / 12, 3);
     expect(s.composition.conscripts.headcount).toBe(0);
     // Next month the holding pool has priority over new call-ups.
     const holding = s.pools.holdingPool;
@@ -241,7 +248,11 @@ describe('scenarios without events', () => {
     expect(s.trainingCohorts).toHaveLength(1);
     expect(s.pools.holdingPool).toBe(0);
     const cohort = s.trainingCohorts[0];
-    expect(cohort.size).toBe(callup);
+    // Not everyone called reports (§10a): the cohort is what turned up.
+    const reporting = callup * (1 - refusalRate(s));
+    expect(cohort.size).toBeCloseTo(reporting, 6);
+    expect(s.conscriptsRefusedTotal).toBeCloseTo(callup - reporting, 6);
+    expect(cohort.size).toBeLessThan(callup);
     const months = courseMonths('normal');
     expect(months).toBe(Math.round(((P.phase1_weeks + P.phase2_weeks) * 12) / 52));
     expect(cohort.graduationMonth).toBe(cohort.startMonth + months);
@@ -535,6 +546,63 @@ describe('scenarios without events', () => {
     expect(sc.verdictOneLiner).not.toMatch(/\{\w+\}/);
     expect(['low', 'mid', 'high']).toContain(sc.qualityBand);
     expect(['broken', 'strained', 'intact']).toContain(sc.leadershipBand);
+  });
+});
+
+describe('the age band and refusal', () => {
+  const BANDS = ['18-25', '18-30', '18-40', '18-65'] as const;
+  const clausesFor = (ageBand: (typeof BANDS)[number]) =>
+    ({ ageBand, includeWomen: true, medical: 'relaxed', exemptions: 'broad' }) as const;
+
+  it('makes a wider band more popular, because every band starts at 18', () => {
+    const w = BANDS.map((b) => {
+      const s = newGame(3, 'division');
+      s.clauses = { ...clausesFor(b) };
+      return effectiveWillingness(s);
+    });
+    // Monotonically increasing: widening dilutes the most hostile group.
+    expect(w).toEqual([...w].sort((a, b) => a - b));
+    expect(w[0]).toBeLessThan(w[3]);
+    // ...but only by the whole span of the gradient, which is small (F14).
+    expect(w[3] - w[0]).toBe(
+      P.conscription_willingness_adj_18_65 - P.conscription_willingness_adj_18_25,
+    );
+  });
+
+  it('turns willingness into people who do not report, not only into capital', () => {
+    for (const b of BANDS) {
+      const s = newGame(3, 'division');
+      s.clauses = { ...clausesFor(b) };
+      const opp = P.refusal_strong_opposition_intercept
+        + P.refusal_strong_opposition_slope * effectiveWillingness(s);
+      expect(strongOpposition(s)).toBeCloseTo(opp, 6);
+      expect(refusalRate(s)).toBeCloseTo((opp / 100) * P.conscription_refusal_conversion, 9);
+      expect(refusalRate(s)).toBeGreaterThan(0);
+      expect(refusalRate(s)).toBeLessThan(1);
+    }
+    // The widest band refuses least.
+    const narrow = newGame(3, 'division'); narrow.clauses = { ...clausesFor('18-25') };
+    const wide = newGame(3, 'division'); wide.clauses = { ...clausesFor('18-65') };
+    expect(refusalRate(wide)).toBeLessThan(refusalRate(narrow));
+  });
+
+  it('lets an address to the nation reduce refusals', () => {
+    // Addresses moved willingness before this change too, but willingness only
+    // led to a political charge. Now it leads to soldiers.
+    const before = newGame(3, 'division');
+    const after = step(before, { actions: [{ id: 'address_nation' }], eventChoice: null });
+    expect(effectiveWillingness(after)).toBeGreaterThan(effectiveWillingness(before));
+    expect(refusalRate(after)).toBeLessThan(refusalRate(before));
+  });
+
+  it('never lets refusal escape [0, 1] however far willingness is pushed', () => {
+    const s = newGame(3, 'division');
+    s.willingness = -500;
+    expect(strongOpposition(s)).toBe(100);
+    expect(refusalRate(s)).toBeCloseTo(P.conscription_refusal_conversion, 9);
+    s.willingness = 500;
+    expect(strongOpposition(s)).toBe(0);
+    expect(refusalRate(s)).toBe(0);
   });
 });
 
