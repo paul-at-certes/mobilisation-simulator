@@ -791,3 +791,77 @@ without a source behind it is the thing F8 was warning about.
   not an expiry. Checking which section a figure was produced under mattered
   more than the figure.
 
+## Outflow becomes something a minister can move (11 September 2026)
+
+Paul supplied AFCAS 2026 — *UK Regular Armed Forces Continuous Attitude Survey
+Results 2026*, MoD Analysis Directorate, published 28 May 2026. It closes the
+gap named in the design review: nothing in the event deck could touch the
+bathtub, because outflow was the constant `regular_voluntary_outflow_annual / 12`.
+
+**Two measured quantities instead of one constant** (`src/sim/outflow.ts`,
+spec §7a):
+
+- **Intention.** Table B12.1 (A173), Army, n = 2,446: 10% plan to leave before
+  the end of their engagement, 6% as soon as they can, 3% have put their notice
+  in. **19%**, and the same total has run 17–23 every year since 2019, so it is
+  a settled level rather than a reading of any particular year.
+- **Conversion.** Realised outflow is 3,311 / 70,951 = 4.67% a year against
+  that 19% intention, so **0.2456** of the intention is realised.
+
+`outflow = regularTrained × (intent/100) × 0.2456 / 12`. **It reconstructs the
+old constant rather than replacing it**: 70,951 × 19% × 0.2456 = 3,310.9
+against the published 3,311. Carried to four places precisely so that it does.
+The split is not a new number; it is a lever on an old one.
+
+**Which half moves is the modelling claim.** Conversion is held fixed — a
+minister cannot make somebody who wants to leave stay. Intention moves, because
+what a minister does to Service life moves how many want to. A new
+`outflow_intent_add` effect type lets the deck move it, clamped to
+`outflow_intent_max_pct`.
+
+**Stop-loss stops being free.** It cost −9 PC once and then set outflow to
+exactly zero for the rest of the run, with no action to lift it: the same
+pay-once-benefit-for-ever shape F1 complained about in the reserve levers, and
+the only lever in the game with no downside. It now cuts outflow to
+`stop_loss_leak_fraction` (0.25) rather than to zero — compulsion does not
+reach a medical discharge, a disciplinary discharge, or a commission the Crown
+declines to extend — and adds `stop_loss_intent_add_monthly` (0.5 points) for
+every month engagements are held open. **Being held past the end of an
+engagement is the impact of Service life on family and personal life, which
+50% of those who have put their notice in cite as a reason — the top factor in
+AFCAS Table FP.1 by some way.** So the leak grows while the compulsion holds.
+Traced at Corps with stop-loss from month 5: outflow 65 in month 5, 81 by
+month 12, 107 by month 21, and the junior-leader cadre keeps eroding where it
+used to freeze — so stop-loss now feeds the leadership factor rather than
+insulating the player from it. The forecast projects the decay, because
+`forecast.ts` runs the same `advanceMonth`.
+
+**Event magnitudes are sized against the AFCAS ranking, not invented.** Table
+FP.1 gives the reasons cited by those who have put their notice in: family and
+personal life 50%, job satisfaction 42%, outside opportunities 33%, morale 33%,
+pay 28%. `regular_retention_wobble` moves intention both ways on the pay
+factor (±2/3); `junior_leader_exhaustion` and `instructor_revolt` move it on
+job satisfaction; `briefing_leak` on morale. Four events, where none could
+touch outflow at all.
+
+**Cost to the balance, which is small** (`npm run dist -- 40`). Division
+`reserves_plus_light` 45% → 40% met, Corps resignations 35% → 40%. Brigade is
+unchanged. `do_nothing` does not move at any rung and still resigns on 100% of
+Corps seeds; leadership medians are 0.63 and 0.44; F4's monotonic penalty for
+over-buying capacity is intact. The strategies that lose are the ones that pull
+stop-loss, which is every one of them, and that is the point.
+
+**Three hand-calculated tests had to be rewritten**, and they were the right
+ones to break: they asserted the flat rate. They now assert the reconstruction
+against the published annual figure, the leak and its growth, and the fact that
+the drain is taken on the strength held *after* the month's regular intake. 67
+tests pass.
+
+**What AFCAS does not give, and what stays an assumption.** An elasticity.
+AFCAS has levels and a ranking, not "if X worsens by a point, outflow rises by
+Y". `stop_loss_leak_fraction`, `stop_loss_intent_add_monthly` and
+`outflow_intent_max_pct` are assumptions with ranges — but assumptions anchored
+between two published endpoints rather than free-floating, which is the
+difference between this and the constant it replaced. Recorded as F12 in the
+design review.
+

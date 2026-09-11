@@ -17,6 +17,7 @@ import { expireWillingnessBoosts, idleMonths, monthlyPcChanges, type PcReason } 
 import { applyAction, isActionAvailable, ACTION_LABELS } from './actions.js';
 import { advanceBillClock } from './legislation.js';
 import { cohortAttrition, courseMonths, equipmentArrived, spareIntake } from './pipeline.js';
+import { addOutflowIntent, monthlyOutflow } from './outflow.js';
 import { applyEffects, drawEvent, findEvent } from './events.js';
 
 const DIFFICULTIES: readonly Difficulty[] = ['brigade', 'division', 'corps'];
@@ -83,6 +84,7 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
     strategicTraceMonth: null,
     strategicTraceDone: false,
     stopLoss: false,
+    outflowIntent: P.regular_outflow_intent_pct,
     billStatus: 'none',
     billPassesMonth: null,
     clauses: { ageBand: '18-30', includeWomen: true, medical: 'peacetime', exemptions: 'broad' },
@@ -505,10 +507,12 @@ export function advanceMonth(
     notes.push(`strategic_trace_yield:${yield_}`);
   }
 
-  // h. Outflow.
-  let outflow = 0;
-  if (!s.stopLoss) {
-    outflow = Math.min(s.pools.regularTrained, P.regular_voluntary_outflow_annual / 12);
+  // h. Outflow (§6a). Stop-loss reduces it rather than ending it, and adds to
+  // the intention to leave for every month engagements are held open — so what
+  // leaks past the compulsion grows while the compulsion is in force.
+  if (s.stopLoss) addOutflowIntent(s, P.stop_loss_intent_add_monthly);
+  const outflow = monthlyOutflow(s);
+  if (outflow > 0) {
     s.pools.regularTrained -= outflow;
     s.ledger.regularOutflowToDate += outflow;
     s.ledger.juniorLeadersLostToOutflow += outflow * (P.junior_leaders / P.regular_trained_start);

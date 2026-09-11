@@ -20,6 +20,7 @@ import { recomputeEligible } from './legislation.js';
 import { COHORT_BACKED_POOLS, conscriptsTrained, syncDerivedPools } from './pools.js';
 import { equipmentArrived } from './pipeline.js';
 import { effectiveWillingness } from './politics.js';
+import { addOutflowIntent, outflowIntent } from './outflow.js';
 
 /**
  * Chance that an event fires on a turn when at least one is eligible. One a
@@ -46,6 +47,7 @@ export function conditionVars(s: GameState): Record<ConditionKey, number> {
     ex_regular_reported: s.pools.exRegularReported,
     strategic_traced: s.strategicTraceDone || s.strategicTraceMonth != null ? 1 : 0,
     stop_loss: s.stopLoss ? 1 : 0,
+    outflow_intent: outflowIntent(s),
     bill_status: BILL_INDEX[s.billStatus],
     conscription_active: s.conscriptionEverActive ? 1 : 0,
     medical_standard: MEDICAL_INDEX[s.clauses.medical],
@@ -267,6 +269,9 @@ function applyEffect(s: GameState, e: Effect, out: EffectOutcome): void {
     case 'leaders_spareable_add':
       s.leadersSpareableAdjust += e.delta;
       out.notes.push(`leaders_spareable_add:${e.delta}`);
+      break;
+    case 'outflow_intent_add':
+      out.notes.push(`outflow_intent:${addOutflowIntent(s, e.delta)}`);
       break;
     case 'medical_standard':
       s.clauses.medical = e.standard;

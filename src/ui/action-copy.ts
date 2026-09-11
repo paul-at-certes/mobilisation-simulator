@@ -46,7 +46,7 @@ export const ACTION_COPY: Record<ActionId, ActionCopy> = {
   stop_loss: {
     group: 'reserves',
     title: 'Stop-loss',
-    html: `Extend engagements and suspend voluntary outflow. Removes the ${s('regular_voluntary_outflow_annual')} a year of trade-trained voluntary leavers, and the junior leaders among them. Immediate.`,
+    html: `Extend engagements compulsorily. Cuts the ${s('regular_voluntary_outflow_annual')} a year of trade-trained voluntary leavers to ${s('stop_loss_leak_fraction')} of itself — compulsion does not reach a medical or disciplinary discharge. It changes nobody's mind: ${s('regular_outflow_intent_pct')} of the Army already means to leave early, and a further ${n('stop_loss_intent_add_monthly')} percentage points join them for every month engagements are held open. Immediate, and it decays from the month you impose it.`,
   },
   introduce_bill: {
     group: 'conscription',

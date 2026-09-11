@@ -45,7 +45,7 @@ step(state, input):
      e. conscription: call-up, medical/exemption filter, allocation to training or holding pool
      f. training cohorts graduate
      g. reserve arrivals; ex-regular reporting; strategic trace completes
-     h. outflow (unless stop-loss)
+     h. outflow (reduced, not stopped, by stop-loss — §7a)
      i. money (this month) and cumulative
      j. GDP loss (this month) and cumulative
   4. politics: PC changes for the month, willingness boosts expire, refusal penalty
@@ -188,10 +188,45 @@ fixed number of months later, through the `vetting_priority_months` and
 
 ## 7. Outflow, effectiveness, ESE, leadership
 
-Outflow (unless `stopLoss`): `regularTrained −= regular_voluntary_outflow_annual / 12`;
-`ledger.regularOutflowToDate` accumulates; junior leaders lost =
-outflow × (`junior_leaders` / `regular_trained_start`), accumulated in
-`ledger.juniorLeadersLostToOutflow`.
+### 7a. Outflow
+
+Outflow is the product of two quantities that are measured separately, rather
+than the constant it used to be (`src/sim/outflow.ts`):
+
+```
+annualRate = (outflowIntent / 100) × regular_outflow_intent_conversion
+gross      = regularTrained × annualRate / 12
+outflow    = stopLoss ? gross × stop_loss_leak_fraction : gross
+```
+
+`outflowIntent` starts at `regular_outflow_intent_pct` (19: the share of the
+Army telling AFCAS it means to leave early) and is clamped to
+[0, `outflow_intent_max_pct`]. `regular_outflow_intent_conversion` (0.2456) is
+how much of that intention is realised within the year, and is **held
+constant**: a minister cannot make somebody who wants to leave stay. What a
+minister moves is the intention, through the `outflow_intent_add` effect and
+through stop-loss.
+
+Three properties are deliberate:
+
+- **It reconstructs the published figure rather than replacing it.**
+  70,951 × 19% × 0.2456 = 3,310.9 against the 3,311 a year the Army reports.
+  The split buys a lever, not a new number.
+- **It is proportional to the strength held**, not a flat draw, so the bathtub
+  drains faster when it is fuller. The month's regular intake (3d) lands before
+  the drain (3h), so the first month's outflow is a shade above the published
+  monthly figure.
+- **Stop-loss reduces outflow, it does not end it**, and adds
+  `stop_loss_intent_add_monthly` to the intention for every month engagements
+  are held open — from the month it is imposed. So what leaks past the
+  compulsion grows while the compulsion is in force. That is its delayed cost,
+  and it lands inside the run: there is no action to lift stop-loss.
+
+Junior leaders lost = outflow × (`junior_leaders` / `regular_trained_start`),
+accumulated in `ledger.juniorLeadersLostToOutflow`; `ledger.regularOutflowToDate`
+accumulates the outflow itself.
+
+### 7b. Effectiveness and leadership
 
 ```
 leadersTotal     = junior_leaders − juniorLeadersLostToOutflow

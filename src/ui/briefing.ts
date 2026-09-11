@@ -10,6 +10,7 @@
 import type { BriefingFacts, GameState } from '../types.js';
 import { type ParamId, P } from '../sim/params.js';
 import { deliveryCredit } from '../sim/politics.js';
+import { outflowIntent } from '../sim/outflow.js';
 
 // Sourced helpers: every parameter-based number in a briefing carries its popover.
 import { sourcedHtml } from './components/sourced';
@@ -360,6 +361,27 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
         `Voluntary outflow took ${formatInt(facts.outflow)} trained regulars this month, as it does every month.`,
         `The bathtub continues to drain: ${formatInt(facts.outflow)} trained regulars left of their own accord.`,
       ]),
+    );
+  } else if (facts.outflow > 0 && state.stopLoss) {
+    // Stop-loss is a deferral, not a cure, and the leak is the only place the
+    // player can see that (§6a). It has to be said out loud or the decay is
+    // invisible until the cadre has gone.
+    colour.push(
+      `${formatInt(facts.outflow)} trained regulars left this month despite stop-loss: compulsion does not reach a medical discharge.`,
+    );
+  }
+
+  // The intention to leave is the lever events and stop-loss actually move.
+  // Report it only once it has moved, and say which way.
+  const intent = outflowIntent(state);
+  const baseline = P.regular_outflow_intent_pct;
+  if (intent >= baseline + 3) {
+    colour.push(
+      `${formatPct(intent)} of the Army now says it means to leave early, against ${formatPct(baseline)} before the crisis.`,
+    );
+  } else if (intent <= baseline - 2) {
+    colour.push(
+      `The intention to leave has fallen to ${formatPct(intent)}, from ${formatPct(baseline)} before the crisis.`,
     );
   }
 

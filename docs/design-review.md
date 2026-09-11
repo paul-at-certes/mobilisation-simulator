@@ -84,11 +84,11 @@ leadership factor at the end.
 
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
-| do_nothing | 3,591 | 3,611 | 3,611 | 0 | 0 | 1.00 |
-| reserves_only | 16,978 | 18,828 | 19,999 | 100 | 0 | 1.00 |
-| reserves_plus_light | 17,722 | 19,199 | 20,198 | 100 | 0 | 1.00 |
-| conscription_max_capacity | 3,466 | 3,466 | 3,486 | 0 | 0 | 1.00 |
-| conscription_over_capacity | 3,560 | 3,560 | 3,580 | 0 | 0 | 1.00 |
+| do_nothing | 3,589 | 3,612 | 3,612 | 0 | 0 | 1.00 |
+| reserves_only | 16,967 | 18,817 | 19,988 | 100 | 0 | 1.00 |
+| reserves_plus_light | 17,721 | 19,199 | 20,196 | 100 | 0 | 1.00 |
+| conscription_max_capacity | 3,465 | 3,467 | 3,488 | 0 | 0 | 1.00 |
+| conscription_over_capacity | 3,558 | 3,560 | 3,581 | 0 | 0 | 1.00 |
 | capacity_heavy | 13,367 | 14,402 | 14,402 | 100 | 0 | 1.00 |
 | max_effort | 11,901 | 12,936 | 12,936 | 100 | 0 | 1.00 |
 
@@ -96,33 +96,33 @@ leadership factor at the end.
 
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
-| do_nothing | 3,699 | 3,699 | 3,699 | 0 | 0 | 1.00 |
-| reserves_only | 19,401 | 20,466 | 21,702 | **3** | 0 | 1.00 |
-| **reserves_plus_light** | 20,803 | **21,910** | 22,934 | **45** | 0 | 0.94 |
-| conscription_max_capacity | 4,974 | 5,418 | 5,866 | 0 | 10 | 0.60 |
-| conscription_over_capacity | 4,307 | 4,915 | 5,256 | 0 | 80 | 1.00 |
-| capacity_heavy | 18,322 | 19,427 | 20,764 | 0 | 0 | 0.64 |
-| max_effort | 15,958 | 17,336 | 18,897 | 0 | 0 | 0.45 |
+| do_nothing | 3,693 | 3,696 | 3,696 | 0 | 0 | 1.00 |
+| reserves_only | 19,352 | 20,417 | 21,653 | **3** | 0 | 1.00 |
+| **reserves_plus_light** | 20,770 | **21,782** | 22,836 | **40** | 0 | 0.93 |
+| conscription_max_capacity | 4,949 | 5,398 | 5,832 | 0 | 10 | 0.60 |
+| conscription_over_capacity | 4,301 | 4,908 | 5,257 | 0 | 80 | 1.00 |
+| capacity_heavy | 18,234 | 19,320 | 20,649 | 0 | 0 | 0.63 |
+| max_effort | 15,902 | 17,109 | 18,809 | 0 | 0 | 0.44 |
 
 ### Corps — target 45,000 in 24 months
 
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
-| do_nothing | 3,742 | 3,764 | 3,797 | 0 | **100** | 1.00 |
-| reserves_only | 20,365 | 21,446 | 22,717 | 0 | 38 | 1.00 |
-| **reserves_plus_light** | 22,575 | **22,737** | 22,898 | 0 | **35** | 0.68 |
-| conscription_max_capacity | 6,568 | 7,251 | 7,968 | 0 | 100 | 0.35 |
-| conscription_over_capacity | 4,307 | 4,915 | 5,805 | 0 | 100 | 1.00 |
-| capacity_heavy | 19,956 | 20,288 | 20,875 | 0 | 15 | 0.40 |
-| max_effort | 17,762 | 18,536 | 19,076 | 0 | 38 | 0.27 |
+| do_nothing | 3,736 | 3,756 | 3,786 | 0 | **100** | 1.00 |
+| reserves_only | 20,259 | 21,325 | 22,531 | 0 | 38 | 1.00 |
+| **reserves_plus_light** | 22,277 | **22,367** | 22,553 | 0 | **40** | 0.66 |
+| conscription_max_capacity | 6,505 | 7,232 | 7,927 | 0 | 100 | 0.35 |
+| conscription_over_capacity | 4,312 | 4,911 | 5,799 | 0 | 100 | 1.00 |
+| capacity_heavy | 19,600 | 19,953 | 20,527 | 0 | 15 | 0.39 |
+| max_effort | 17,475 | 18,258 | 18,792 | 0 | 38 | 0.26 |
 
 **The three numbers to watch.** If any of these drifts, something has broken:
 
-- `reserves_plus_light` at Division meets the target on **45%** of seeds. Below
+- `reserves_plus_light` at Division meets the target on **40%** of seeds. Below
   ~25% the headline difficulty is a coin flip again (F2); above ~65% it is a
   walkover.
-- The median leadership factor for `capacity_heavy` and `max_effort` is **0.64
-  and 0.45**. If either returns to 1.00, the mechanic has stopped firing (F3).
+- The median leadership factor for `capacity_heavy` and `max_effort` is **0.63
+  and 0.44**. If either returns to 1.00, the mechanic has stopped firing (F3).
 - `do_nothing` is **17%** of Division and **36%** of Brigade, and still resigns
   on **100%** of Corps seeds. If it climbs past ~60% of any rung, that rung is
   free; if it stops resigning at Corps, the delivery credit has become an idle
@@ -170,14 +170,14 @@ than from reservists (HC 57 ¶113); 0.247 × 0.455 = 0.112.
 
 | at Division | before | after |
 |---|---|---|
-| `reserves_only` median | 21,592 | **20,466** |
-| `reserves_plus_light` median | 21,951 | **21,910** |
-| marginal value of active play | +359 (1.7%) | **+1,444 (7.1%)** |
+| `reserves_only` median | 21,592 | **20,417** |
+| `reserves_plus_light` median | 21,951 | **21,782** |
+| marginal value of active play | +359 (1.7%) | **+1,365 (6.7%)** |
 | `reserves_only` met% | 33 | **3** |
-| `reserves_plus_light` met% | 43 | **45** |
+| `reserves_plus_light` met% | 43 | **40** |
 
 Reserves alone no longer make a division; reserves plus a restrained pipeline
-still do, on 45% of seeds. The one-shot shape is gone — the event fires its
+still do, on 40% of seeds. The one-shot shape is gone — the event fires its
 full three times in 38 of 40 Corps runs, spread through the middle game, and
 each firing is a real choice between soldiers and political capital.
 
@@ -574,6 +574,70 @@ The mitigation already in place is that `reserves_plus_light` is *also* active
 play, just restrained, and it is the best performer. So the lesson is "choose
 well", not "do nothing". Watch for the reading going wrong in playtests. If it
 does, the answer is a supply-side lever (below), not a softer factor.
+
+---
+
+### F12 — Stop-loss was a one-way switch with no cost after the first month · *Addressed*
+
+**Evidence as found.** `stop_loss` cost −9 PC once and then set voluntary
+outflow to exactly zero for the rest of the run, with no action to lift it and
+nothing that could erode it. The same shape F1 complained about in the reserve
+levers: pay once, benefit for ever. It was also the only lever in the game with
+no downside at all, which is why every scripted strategy pulls it.
+
+**And nothing in the deck could touch the bathtub.** Outflow was
+`regular_voluntary_outflow_annual / 12` — a constant. Of 58 event choices,
+none moved it, because there was nothing to move.
+
+**Fix: outflow is now intention × conversion** (`src/sim/outflow.ts`, spec
+§7a), both measured separately:
+
+- **intention** — 19% of the Army tells AFCAS it means to leave early (10%
+  before the end of the engagement, 6% as soon as they can, 3% notice already
+  in; n = 2,446). The series has run 17–23 every year since 2019.
+- **conversion** — 0.2456 of that intention is realised within the year, which
+  is the published outflow divided by the published intention.
+
+It **reconstructs the old constant rather than replacing it**: 70,951 × 19% ×
+0.2456 = 3,310.9 against the 3,311 the Army reports. What the split buys is the
+lever. Conversion is held fixed — a minister cannot make somebody who wants to
+leave stay — and intention moves.
+
+**What stop-loss does now.** It cuts outflow to a quarter rather than to zero
+(compulsion does not reach a medical or disciplinary discharge) and adds 0.5
+points of intention for every month engagements are held open, because being
+held past the end of an engagement is *impact of Service life on family and
+personal life* — the reason cited by 50% of those who have put their notice in,
+the top factor in AFCAS by some way. So the leak grows while the compulsion
+holds. Traced down a Corps run with stop-loss imposed in month 5:
+
+| month | intention | outflow | junior leaders lost to date |
+|---|---|---|---|
+| 4 (before) | 17.0 | 250 | 453 |
+| 5 | 17.5 | **65** | 479 |
+| 12 | 21.0 | 81 | 694 |
+| 21 | 26.5 | **107** | 1,047 |
+
+The leak is 64% larger by month 21 than the month it was imposed, and the
+junior-leader cadre keeps eroding where it used to freeze — so stop-loss now
+feeds F3's leadership factor instead of insulating the player from it. The
+forecast line (F5) projects the decay, so the player can see it coming.
+
+**Four events now move intention**, sized against the AFCAS ranking rather than
+invented: `regular_retention_wobble` (pay, 28%, both directions),
+`junior_leader_exhaustion` and `instructor_revolt` (job satisfaction, 42%),
+`briefing_leak` (morale, 33%).
+
+**Cost to the balance, which is small.** Division `reserves_plus_light` 45% →
+40% met and Corps resignations 35% → 40%; `do_nothing` does not move at any
+rung and still resigns on 100% of Corps seeds; the leadership medians are 0.63
+and 0.44 and F4's monotonic penalty is intact.
+
+**Watch for.** `outflow_intent_max_pct` is 40 and nothing in the deck reaches
+it — AFCAS has never recorded the Army outside 17–23, so everything above that
+band is extrapolation beyond the evidence. If a later pass adds more intention
+effects, check the ceiling is still unreachable by ordinary play; a run that
+pins at 40 is asserting something the survey does not support.
 
 ---
 

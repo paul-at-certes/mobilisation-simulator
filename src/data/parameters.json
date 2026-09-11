@@ -69,6 +69,79 @@
       "asOf": "2026-06-30",
       "confidence": "primary"
     },
+    "regular_outflow_intent_pct": {
+      "value": 19,
+      "unit": "pct",
+      "label": "Army intending to leave early",
+      "description": "Share of the Army answering that they plan to leave before the end of their engagement, to leave as soon as they can, or that they have already put in their notice.",
+      "section": "regular",
+      "source": "MoD, UK Regular Armed Forces Continuous Attitude Survey Results 2026, published 28 May 2026, Annex B Table B12.1 (question A173), Army",
+      "url": "https://www.gov.uk/government/collections/armed-forces-continuous-attitude-survey-index",
+      "asOf": "2026-05-28",
+      "confidence": "primary",
+      "note": "10% leave before the end of the current engagement + 6% as soon as I can + 3% notice already in, against 42% staying as long as they can and 22% to the end of the engagement (n = 2,446). The same total has run 17-23 every year since 2019, so 19 is a settled level rather than a reading of the crisis."
+    },
+    "regular_outflow_intent_conversion": {
+      "value": 0.2456,
+      "unit": "ratio",
+      "label": "Intention converted to departure each year",
+      "description": "Share of those intending to leave early who actually leave within the year. The gap between what people say and what they do.",
+      "section": "regular",
+      "source": "Derived from MoD, UK Regular Armed Forces Continuous Attitude Survey Results 2026, published 28 May 2026, Annex B Table B12.1 (question A173), Army; MoD Service Personnel Statistics, 1 July 2026, Tables 4 and 5d",
+      "url": "https://www.gov.uk/government/collections/armed-forces-continuous-attitude-survey-index",
+      "asOf": "2026-05-28",
+      "confidence": "derived",
+      "derivation": "Realised outflow regular_voluntary_outflow_annual / regular_trained_start = 3311 / 70951 = 4.6666% a year. Intention regular_outflow_intent_pct = 19%. 4.6666 / 19 = 0.2456. Carried to four places because the split has to reconstruct the published annual figure: 70,951 x 19% x 0.2456 = 3,310.9 against the 3,311 the Army reports.",
+      "note": "Holding this constant and letting intention move is the model's claim about what a minister can change: they cannot make people who want to leave stay, but what they do to Service life moves how many want to."
+    },
+    "outflow_intent_max_pct": {
+      "value": 40,
+      "unit": "pct",
+      "label": "Ceiling on intention to leave",
+      "description": "Highest the intention-to-leave figure may be driven by events and by stop-loss.",
+      "section": "regular",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        30,
+        60
+      ],
+      "rationale": "AFCAS has never recorded the Army outside 17-23 in twenty years of the series, so any figure here is an extrapolation beyond the evidence. 40 is a little over twice the baseline: bad enough to be a crisis, short of claiming the Army would dissolve. Nothing in the deck can reach it on its own; it is a guard against compounding."
+    },
+    "stop_loss_leak_fraction": {
+      "value": 0.25,
+      "unit": "ratio",
+      "label": "Outflow that stop-loss cannot stop",
+      "description": "Share of voluntary outflow that continues even with engagements compulsorily extended.",
+      "section": "regular",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0.1,
+        0.5
+      ],
+      "rationale": "Compulsion does not reach medical discharge, discharge on disciplinary grounds, or a commission the Crown declines to extend, and AFCAS puts intention at 19% against 4.67% realised, so what stop-loss dams does not go away. A quarter is an assumption; the direction is not."
+    },
+    "stop_loss_intent_add_monthly": {
+      "value": 0.5,
+      "unit": "pct",
+      "label": "Intention added each month under stop-loss",
+      "description": "Points added to the intention-to-leave figure for every month engagements are held open compulsorily.",
+      "section": "regular",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-11",
+      "confidence": "assumption",
+      "range": [
+        0,
+        1.5
+      ],
+      "rationale": "Of those who have put their notice in, 50% cite the impact of Service life on family and personal life, the most cited reason by some way (AFCAS 2026, Table FP.1). Being held past the end of an engagement is that factor exactly. Half a point a month is +6 over a division and +10 over a corps: enough to be felt late, not enough to decide the game."
+    },
     "training_attrition": {
       "value": 0.26,
       "unit": "ratio",

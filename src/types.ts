@@ -124,6 +124,7 @@ export type ConditionKey =
   | 'ex_regular_reported' // headcount
   | 'strategic_traced' // 0/1 (trace attempted)
   | 'stop_loss' // 0/1
+  | 'outflow_intent'
   | 'bill_status' // 0 none, 1 in progress, 2 passed
   | 'conscription_active' // 0/1 (bill passed and callup > 0 at least once)
   | 'medical_standard' // 0 peacetime, 1 relaxed, 2 wartime
@@ -186,6 +187,7 @@ export type Effect =
   | { type: 'capacity_purchases'; delta: number }
   | { type: 'capacity_multiplier'; factor: number; durationMonths?: number }
   | { type: 'leaders_spareable_add'; delta: number }
+  | { type: 'outflow_intent_add'; delta: number }
   | { type: 'medical_standard'; standard: MedicalStandard }
   | { type: 'exemptions'; regime: ExemptionRegime }
   | { type: 'eligible_pool_pct'; pct: number }
@@ -379,6 +381,8 @@ export interface GameState {
   strategicTraceMonth: number | null; // month the trace completes
   strategicTraceDone: boolean;
   stopLoss: boolean;
+  /** Intention to leave, in points; starts at `regular_outflow_intent_pct` (spec §6a). */
+  outflowIntent: number;
 
   // Legislation and conscription settings
   billStatus: 'none' | 'in_progress' | 'passed';

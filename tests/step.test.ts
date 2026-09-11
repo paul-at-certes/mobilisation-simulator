@@ -114,8 +114,15 @@ describe('scenarios without events', () => {
     expect(s.politicalCapital).toBe(P.pc_start - 12 * P.pc_baseline_drain - idlePenalised * P.pc_idle_penalty);
     expect(s.ledger.cumulativeCost).toBe(0);
     expect(s.ledger.cumulativeGdpLoss).toBe(0);
-    expect(s.ledger.regularOutflowToDate).toBeCloseTo(P.regular_voluntary_outflow_annual, 6);
-    const expectedTrained = P.regular_trained_start + P.regular_gains_annual - P.regular_voluntary_outflow_annual;
+    // Outflow is proportional to the strength held, not a flat draw (§6a), so a
+    // year of it is no longer exactly regular_voluntary_outflow_annual: the
+    // regular pipeline puts in more than voluntary outflow takes out, the
+    // strength rises, and the drain rises with it. It should land just above
+    // the published annual figure, and nowhere near a tenth away from it.
+    const publishedYear = P.regular_voluntary_outflow_annual;
+    expect(s.ledger.regularOutflowToDate).toBeGreaterThan(publishedYear);
+    expect(s.ledger.regularOutflowToDate).toBeLessThan(publishedYear * 1.1);
+    const expectedTrained = P.regular_trained_start + P.regular_gains_annual - s.ledger.regularOutflowToDate;
     expect(s.pools.regularTrained).toBeCloseTo(expectedTrained, 6);
     expect(s.history).toHaveLength(13);
     // Stepping an over game is a no-op.
@@ -291,18 +298,60 @@ describe('scenarios without events', () => {
     expect(availableActions(s).find((a) => a.id === 'equipment_buy')?.exhausted).toBe(true);
   });
 
-  it('stop-loss halts outflow', () => {
+  it('reconstructs the published annual outflow from intention x conversion', () => {
+    // The AFCAS split is meant to rebuild the number the flat rate used to
+    // carry, not to replace it: 70,951 x 19% x 0.2456 = the 3,311 a year the
+    // Army reports. Assert that against the published figure directly.
+    const rebuilt = P.regular_trained_start * (P.regular_outflow_intent_pct / 100) * P.regular_outflow_intent_conversion;
+    expect(rebuilt).toBeCloseTo(P.regular_voluntary_outflow_annual, 0);
+
+    // The month's actual draw is a shade higher, and correctly so: the regular
+    // pipeline adds its intake (3d) before the drain is taken (3h), and the
+    // drain is proportional to the strength then held.
+    const s = step(newGame(17, 'division'), NOTHING);
+    const gains = Math.min(P.regular_untrained_start + P.regular_untrained_intake_annual / 12, P.regular_gains_annual / 12);
+    const rate = (P.regular_outflow_intent_pct / 100) * P.regular_outflow_intent_conversion;
+    expect(s.briefing.outflow).toBeCloseTo(((P.regular_trained_start + gains) * rate) / 12, 6);
+    expect(s.briefing.outflow).toBeGreaterThan(P.regular_voluntary_outflow_annual / 12);
+    expect(s.outflowIntent).toBe(P.regular_outflow_intent_pct);
+  });
+
+  it('stop-loss reduces outflow rather than ending it, and the leak grows', () => {
     const base = newGame(17, 'division');
     const drained = step(base, NOTHING);
     const held = step(base, { actions: [{ id: 'stop_loss' }], eventChoice: null });
     const gains = Math.min(P.regular_untrained_start + P.regular_untrained_intake_annual / 12, P.regular_gains_annual / 12);
-    expect(drained.pools.regularTrained).toBeCloseTo(P.regular_trained_start + gains - P.regular_voluntary_outflow_annual / 12, 6);
-    expect(held.pools.regularTrained).toBeCloseTo(P.regular_trained_start + gains, 6);
-    expect(held.ledger.regularOutflowToDate).toBe(0);
-    expect(held.ledger.juniorLeadersLostToOutflow).toBe(0);
-    expect(drained.ledger.juniorLeadersLostToOutflow).toBeCloseTo((P.regular_voluntary_outflow_annual / 12) * (P.junior_leaders / P.regular_trained_start), 6);
-    expect(held.briefing.outflow).toBe(0);
-    expect(drained.briefing.outflow).toBeCloseTo(P.regular_voluntary_outflow_annual / 12, 6);
+    const rate = (P.regular_outflow_intent_pct / 100) * P.regular_outflow_intent_conversion;
+    const gross = ((P.regular_trained_start + gains) * rate) / 12;
+    expect(drained.pools.regularTrained).toBeCloseTo(P.regular_trained_start + gains - gross, 6);
+
+    // Held: a quarter still goes, and the junior leaders go with them. The
+    // month stop-loss is imposed already carries its intention bump — the
+    // compulsion is felt from the day it is announced — so the leak is taken
+    // at the raised rate, not the baseline one.
+    const heldRate = ((P.regular_outflow_intent_pct + P.stop_loss_intent_add_monthly) / 100) * P.regular_outflow_intent_conversion;
+    const leak = (((P.regular_trained_start + gains) * heldRate) / 12) * P.stop_loss_leak_fraction;
+    expect(held.briefing.outflow).toBeCloseTo(leak, 6);
+    expect(held.pools.regularTrained).toBeCloseTo(P.regular_trained_start + gains - leak, 6);
+    expect(held.ledger.juniorLeadersLostToOutflow).toBeCloseTo(leak * (P.junior_leaders / P.regular_trained_start), 6);
+    expect(held.briefing.outflow).toBeLessThan(drained.briefing.outflow);
+    expect(held.briefing.outflow).toBeGreaterThan(0);
+
+    // And it is a deferral, not a cure: every month under compulsion adds to
+    // the intention to leave, so what leaks grows while the compulsion holds.
+    expect(held.outflowIntent).toBeCloseTo(P.regular_outflow_intent_pct + P.stop_loss_intent_add_monthly, 6);
+    let later = held;
+    for (let i = 0; i < 6; i++) later = step(later, NOTHING);
+    expect(later.outflowIntent).toBeCloseTo(P.regular_outflow_intent_pct + 7 * P.stop_loss_intent_add_monthly, 6);
+    expect(later.briefing.outflow).toBeGreaterThan(held.briefing.outflow);
+  });
+
+  it('never drives the intention to leave past its ceiling', () => {
+    let s = newGame(17, 'corps');
+    s = step(s, { actions: [{ id: 'stop_loss' }], eventChoice: null });
+    while (!s.over) s = step(s, NOTHING);
+    expect(s.outflowIntent).toBeLessThanOrEqual(P.outflow_intent_max_pct);
+    expect(s.outflowIntent).toBeGreaterThan(P.regular_outflow_intent_pct);
   });
 
   it('leadership factor drops when capacity purchases exceed the spareable cadre', () => {
@@ -326,7 +375,13 @@ describe('scenarios without events', () => {
     expect(s.gauges.leadershipFactor).toBeLessThan(before);
     // The purchase pulled 625 each out of the trained regulars.
     const gains = Math.min(P.regular_untrained_start + P.regular_untrained_intake_annual / 12, P.regular_gains_annual / 12);
-    expect(s.pools.regularTrained).toBeCloseTo(trainedBefore - 2 * P.leaders_per_capacity_purchase + gains - P.regular_voluntary_outflow_annual / 12, 6);
+    // Outflow is now proportional to the strength held (§6a), and the two
+    // purchases took 1,250 out of it before the drain was taken, so the month's
+    // outflow is computed on the reduced figure rather than on the published
+    // flat rate.
+    const afterDiversion = trainedBefore - 2 * P.leaders_per_capacity_purchase + gains;
+    const drain = (afterDiversion * (P.regular_outflow_intent_pct / 100) * P.regular_outflow_intent_conversion) / 12;
+    expect(s.pools.regularTrained).toBeCloseTo(afterDiversion - drain, 6);
     // Purchases come online after the stand-up delay.
     expect(spareIntake(s)).toBeCloseTo(spareIntake(newGame(19, 'corps')), 6);
     s = idle(s, P.capacity_standup_months);

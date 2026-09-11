@@ -122,6 +122,10 @@
           {
             "type": "leaders_spareable_add",
             "delta": -500
+          },
+          {
+            "type": "outflow_intent_add",
+            "delta": 2
           }
         ]
       },
@@ -719,6 +723,10 @@
             "type": "capacity_multiplier",
             "factor": 0.85,
             "durationMonths": 2
+          },
+          {
+            "type": "outflow_intent_add",
+            "delta": -1
           }
         ]
       },
@@ -733,6 +741,10 @@
           {
             "type": "pc",
             "delta": -2
+          },
+          {
+            "type": "outflow_intent_add",
+            "delta": 3
           }
         ]
       }
@@ -1052,6 +1064,10 @@
           {
             "type": "pc",
             "delta": -4
+          },
+          {
+            "type": "outflow_intent_add",
+            "delta": 2
           }
         ]
       },
@@ -1126,7 +1142,7 @@
   {
     "id": "regular_retention_wobble",
     "title": "Notices to quit",
-    "text": "Before the crisis the Army was losing 3,311 trained soldiers a year to voluntary outflow. The regimental sergeant-majors report that applications to leave rose sharply this month, mostly from experienced corporals and sergeants who can see what is coming. Nobody is obliged to stay.",
+    "text": "Before the crisis the Army was losing 3,311 trained soldiers a year to voluntary outflow, against a 19% who tell the attitude survey they mean to go early. The regimental sergeant-majors report that applications to leave rose sharply this month, mostly from experienced corporals and sergeants who can see what is coming. Nobody is obliged to stay.",
     "trigger": {
       "minTurn": 3,
       "conditions": [
@@ -1141,7 +1157,7 @@
     "choices": [
       {
         "label": "Offer a retention payment",
-        "summary": "Costs money; a few hundred withdraw their notice.",
+        "summary": "Costs money; a few hundred withdraw their notice, and fewer of the rest are minded to follow them.",
         "effects": [
           {
             "type": "cost",
@@ -1151,12 +1167,16 @@
             "type": "pool",
             "pool": "regularTrained",
             "delta": 400
+          },
+          {
+            "type": "outflow_intent_add",
+            "delta": -2
           }
         ]
       },
       {
         "label": "Let them go",
-        "summary": "The field army loses a few hundred experienced soldiers, and some junior leaders with them.",
+        "summary": "The field army loses a few hundred experienced soldiers, some junior leaders with them, and the rest draw their conclusions.",
         "effects": [
           {
             "type": "pool",
@@ -1166,15 +1186,20 @@
           {
             "type": "leaders_spareable_add",
             "delta": -150
+          },
+          {
+            "type": "outflow_intent_add",
+            "delta": 3
           }
         ]
       }
     ],
     "source": {
-      "name": "MoD Service Personnel Statistics, 1 July 2026, Tables 4 and 5d (Army trade-trained voluntary outflow, 12 months to 30 June 2026)",
-      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "name": "MoD Service Personnel Statistics, 1 July 2026, Tables 4 and 5d; MoD, UK Regular Armed Forces Continuous Attitude Survey Results 2026, Table FP.1 (top five reasons for leaving, all personnel) and Table B12.1, Army",
+      "url": "https://www.gov.uk/government/collections/armed-forces-continuous-attitude-survey-index",
       "paramIds": [
-        "regular_voluntary_outflow_annual"
+        "regular_voluntary_outflow_annual",
+        "regular_outflow_intent_pct"
       ]
     }
   },

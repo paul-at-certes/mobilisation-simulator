@@ -11,6 +11,7 @@ import type { BriefingFacts, GameEvent, GameState, Verdict } from '../src/types.
 import { briefingText, formatGbpBn, formatInt, formatPct } from '../src/ui/briefing.js';
 import { holdingOutlook } from '../src/ui/components/holding.js';
 import { courseMonths } from '../src/sim/pipeline.js';
+import { P } from '../src/sim/params.js';
 
 const root = resolve(__dirname, '..');
 const read = (p: string) => JSON.parse(readFileSync(resolve(root, p), 'utf8'));
@@ -33,7 +34,7 @@ const CONDITION_OPS = ['>=', '<=', '==', '>', '<', '!='];
 const EFFECT_TYPES = [
   'pc', 'willingness', 'pool', 'pool_pct', 'reserve_arrival_shift', 'reserve_deployable_fraction_add',
   'ex_regular_ceiling_add', 'trace_strategic', 'capacity_purchases', 'capacity_multiplier',
-  'leaders_spareable_add', 'medical_standard', 'exemptions', 'eligible_pool_pct', 'callup_cap',
+  'leaders_spareable_add', 'outflow_intent_add', 'medical_standard', 'exemptions', 'eligible_pool_pct', 'callup_cap',
   'vetting_priority', 'vetting_relax', 'equipment_delay',
   'cost', 'flag', 'scoring_pc_if_missed', 'end_game', 'random',
 ];
@@ -78,6 +79,7 @@ function checkEffect(e: AnyEffect, where: string): void {
     case 'capacity_purchases':
     case 'leaders_spareable_add':
     case 'scoring_pc_if_missed':
+    case 'outflow_intent_add':
       expect(typeof e.delta).toBe('number');
       break;
     case 'capacity_multiplier':
@@ -382,6 +384,7 @@ function fakeState(over: Partial<GameState> = {}): GameState {
     strategicTraceMonth: null,
     strategicTraceDone: false,
     stopLoss: false,
+    outflowIntent: P.regular_outflow_intent_pct,
     billStatus: 'none',
     billPassesMonth: null,
     clauses: { ageBand: '18-30', includeWomen: true, medical: 'peacetime', exemptions: 'broad' },
