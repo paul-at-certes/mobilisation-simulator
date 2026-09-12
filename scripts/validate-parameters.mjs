@@ -47,6 +47,34 @@ for (const [id, p] of Object.entries(data.parameters)) {
   if (p.confidence === 'derived' && !p.url && !p.derivation) warnings.push(`${id}: derived figure has neither url nor derivation`);
 }
 
+// `generated` means the date the parameter set was last revised, and it is what
+// ASSUMPTIONS.md stamps. Two things must hold, and the first is a logical
+// invariant rather than a convention: the set cannot have been revised before
+// the most recent figure in it was published, so `generated` is never older
+// than the newest `asOf`. That catches the common way this field rots — someone
+// goes and finds newer data, adds it, and forgets to bump the header.
+//
+// What it does NOT catch: adding a parameter whose `asOf` is older than the
+// current `generated` (a historical figure, a re-derivation of something long
+// published). Bumping the field is still a human step in those cases.
+if (/^\d{4}-\d{2}-\d{2}$/.test(data.generated ?? '')) {
+  let newest = '';
+  let newestId = '';
+  for (const [id, p] of Object.entries(data.parameters)) {
+    if (typeof p.asOf === 'string' && p.asOf > newest) {
+      newest = p.asOf;
+      newestId = id;
+    }
+  }
+  if (newest && newest > data.generated) {
+    errors.push(
+      `file: generated ${data.generated} is older than the newest asOf (${newest}, ${newestId}) — bump "generated" when you add or revise a parameter`,
+    );
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  if (data.generated > today) errors.push(`file: generated ${data.generated} is in the future`);
+}
+
 if (warnings.length) {
   console.warn(`parameters.json: ${warnings.length} warning(s)`);
   for (const w of warnings) console.warn('  - ' + w);
