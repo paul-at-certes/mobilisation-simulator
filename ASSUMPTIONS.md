@@ -1,6 +1,6 @@
 # Assumptions
 
-*Generated from `src/data/parameters.json` (v0.3.0) by `npm run assumptions` on 2026-09-11. Edit the JSON or `scripts/assumptions-preamble.md`, not this file.*
+*Generated from `src/data/parameters.json` (v0.3.0, revised 2026-09-11) by `npm run assumptions`. Edit the JSON or `scripts/assumptions-preamble.md`, not this file.*
 
 ## Structural assumptions
 

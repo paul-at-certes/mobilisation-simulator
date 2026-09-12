@@ -20,6 +20,11 @@ const file = join(here, '..', 'src', 'data', 'parameters.json');
 const data = JSON.parse(readFileSync(file, 'utf8'));
 
 const errors = [];
+
+// The file's own header fields. `generated` is stamped into ASSUMPTIONS.md, so a
+// missing or malformed one would print there rather than fail here.
+if (typeof data.version !== 'string' || !data.version) errors.push('file: missing version');
+if (!/^\d{4}-\d{2}-\d{2}$/.test(data.generated ?? '')) errors.push('file: generated must be YYYY-MM-DD');
 const warnings = [];
 const confidences = new Set(['primary', 'derived', 'assumption']);
 const required = ['value', 'unit', 'label', 'description', 'section', 'source', 'asOf', 'confidence'];

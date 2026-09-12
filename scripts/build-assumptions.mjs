@@ -28,7 +28,11 @@ for (const [id, p] of Object.entries(data.parameters)) {
 }
 
 let out = `# Assumptions\n\n`;
-out += `*Generated from \`src/data/parameters.json\` (v${data.version}) by \`npm run assumptions\` on ${new Date().toISOString().slice(0, 10)}. Edit the JSON or \`scripts/assumptions-preamble.md\`, not this file.*\n\n`;
+// Stamped from the parameter file's own `generated` date, not from today: this
+// file is generated on every build, and a wall-clock date made it show as
+// modified the first time anyone built on a new day, whether or not a
+// parameter had changed. The output is now a pure function of the input.
+out += `*Generated from \`src/data/parameters.json\` (v${data.version}, revised ${data.generated}) by \`npm run assumptions\`. Edit the JSON or \`scripts/assumptions-preamble.md\`, not this file.*\n\n`;
 out += preamble.trim() + '\n\n';
 
 out += `## Numerical assumptions\n\nEvery parameter tagged \`assumption\` in the game, with its plausible range and the one-line rationale shown in the source popover. Values were tuned only within these ranges during the balance pass.\n\n`;
