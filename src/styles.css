@@ -340,8 +340,14 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
 .headline.missed { color: var(--bad); }
 .stacked { margin: 1rem 0; }
 .stacked .row { display: grid; grid-template-columns: 6.5rem 1fr 5rem; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.9rem; }
-.stacked .track { height: 22px; background: var(--paper-2); border-radius: 3px; overflow: hidden; display: flex; }
+.stacked .track { position: relative; height: 22px; background: var(--paper-2); border-radius: 3px; overflow: hidden; display: flex; }
 .stacked .seg { height: 100%; }
+/* The target, in the share card's idiom: the card has always drawn this line
+   and the screen it is made from had not. Its `left` is a calc() ending in
+   `- 1px`, so on a run that missed — where the track is scaled to the target
+   and the line lands at 100% — it stays inside `overflow: hidden` instead of
+   being clipped against the end of the track. */
+.stacked .target-mark { position: absolute; top: 0; bottom: 0; border-left: 1px dashed var(--ink); pointer-events: none; }
 .seg-regulars { background: #2f3e5c; }
 .seg-reservists { background: #4f6a8f; }
 .seg-exregulars { background: #8a9bb5; }

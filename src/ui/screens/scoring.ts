@@ -24,8 +24,18 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
       h('span', {}, label),
       h(
         'div',
-        { class: 'track', role: 'img', 'aria-label': `${label}: ${formatInt(total)} (${segs.map((s) => `${s[0]} ${formatInt(s[idx])}`).join(', ')})` },
+        {
+          class: 'track',
+          role: 'img',
+          'aria-label': `${label}: ${formatInt(total)} against a target of ${formatInt(score.target)} (${segs.map((s) => `${s[0]} ${formatInt(s[idx])}`).join(', ')})`,
+        },
         ...segs.map((s) => h('span', { class: `seg ${s[1]}`, style: `width:${(s[idx] / maxV) * 100}%`, title: `${s[0]}: ${formatInt(s[idx])}` })),
+        // The target, where the share card has always drawn it. The bars are
+        // scaled to whichever is larger of headcount and target, so without
+        // this the reader cannot see which scale they are looking at: a bar
+        // that fills the track means "hit the target" on one run and "twice
+        // the target, and the target is back there somewhere" on another.
+        h('span', { class: 'target-mark', style: `left:calc(${Math.min(100, (score.target / maxV) * 100)}% - 1px)`, 'aria-hidden': 'true' }),
       ),
       h('span', { class: 'num', style: 'text-align:right;font-variant-numeric:tabular-nums' }, formatInt(total)),
     );
@@ -53,7 +63,7 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
     h('p', { class: `headline ${score.met && !score.resigned ? 'met' : 'missed'}` }, headline),
     score.resigned ? h('p', { class: 'muted' }, 'Scored as things stood on the day you left.') : null,
     h('h2', {}, 'What you actually fielded'),
-    h('p', { class: 'small muted' }, 'Bodies on the top bar. Effective soldiers on the bottom. The gap is the point.'),
+    h('p', { class: 'small muted' }, `Bodies on the top bar. Effective soldiers on the bottom. The gap is the point. The dashed line is the target of ${formatInt(score.target)}.`),
     h(
       'div',
       { class: 'stacked' },

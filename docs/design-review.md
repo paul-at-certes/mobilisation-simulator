@@ -1962,6 +1962,47 @@ the caret.
 
 ---
 
+### F25 — The scoring bars were drawn against a scale the reader could not see · *Addressed*
+
+**Checked on Paul's instruction** after F24, the scoring screen being the last
+place markers live.
+
+**On the disclosure marker, nothing to do.** The scoring screen has no
+`<details>`, no `::before`/`::after` content on any element, and its one marker
+convention — a dotted underline meaning *tap for a source* — is used correctly:
+two triggers, both dotted, and nothing dotted that is not a trigger.
+
+**What the check found instead.** The two bars are scaled to
+`max(headcount, target)`, and **nothing on screen said where the target was.**
+So a bar that fills its track means *"hit the target"* on one run and *"twice
+the target, and the target is back there somewhere"* on another, and the reader
+cannot tell which. The figure was in the headline and nowhere on the chart.
+
+The share card generated *from this screen* has always drawn it: a dashed line
+at the target with a `target 22,000` label. The screen now draws the same line,
+in the same idiom, plus *"The dashed line is the target of 10,000."* in the
+caption that was already under the bars, and the target in each track's
+`aria-label` — which read *"Bodies: 21,614 (Regulars 3,666, …)"* and now reads
+*"Bodies: 21,614 against a target of 22,000 (…)"*.
+
+Checked on both cases, because they look completely different:
+
+| run | track scaled to | the line lands |
+|---|---|---|
+| Division, 16,092 against 22,000 | the target | at the end of the track |
+| Brigade, 24,535 against 10,000 | the headcount | 41% across, with the overshoot beyond it |
+
+Its `left` is a `calc()` ending in `- 1px` so the 100% case stays inside the
+track's `overflow: hidden` rather than being clipped against the end. It is
+`aria-hidden`, because the track's own label now says the same thing in words.
+
+**The general lesson, and it is the third time this session:** the share card
+is a second rendering of a screen, and twice now it has been the better one —
+it named the office the player holds (F20) and it drew the target. When the two
+disagree, the card is worth reading as a review of the screen.
+
+---
+
 ## The next mechanic, if one is wanted
 
 The leadership wall now has a counter-lever (F17), so the obvious gap is
