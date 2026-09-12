@@ -603,9 +603,16 @@ rather than as a threshold the band either crosses or does not. See `docs/design
   every Division win by ≤9.2% (design review F18).
 - `costPctDefenceBudget = cumulativeCost / defence_budget_2025 × 100`;
   `gdpLossPctGdp = cumulativeGdpLoss / uk_gdp_2025 × 100`.
-- Verdict: pick from `verdicts.json` the first entry whose `met`/`quality`/`leadership`/`resigned`/`margin` match (`'any'`, or an omitted `resigned`/`margin`, are wildcards), fill `{placeholders}` from `VerdictVars` with formatted integers.
+- Cadre band (`cadreBand`), which says **why** a broken factor broke: hand every
+  `juniorLeadersDiverted` back and recompute `leadersAvailable / leadersNeeded`.
+  Still under 0.6 → `swamped` (the cadre was outnumbered by what was raised);
+  otherwise → `diverted` (the training estate took the corporals). Only
+  meaningful where leadership is `broken`, and a verdict using it must pair it
+  with `leadership: 'broken'` (there is a test).
+- Verdict: pick from `verdicts.json` the first entry whose `met`/`quality`/`leadership`/`resigned`/`margin`/`cadre` match (`'any'`, or an omitted `resigned`/`margin`/`cadre`, are wildcards), fill `{placeholders}` from `VerdictVars` with formatted integers.
 - **Selection is first-match, so order is meaning.** An entry placed after a
-  wider one that subsumes it can never be chosen. Two states the model cannot
+  wider one that subsumes it can never be chosen. `verdicts.json` is capped at
+  14 entries by test — a content budget, not a technical limit. Two states the model cannot
   produce have no verdict written for them and fall to the generic fallback by
   design: meeting the target with a broken cadre, and meeting it at low
   quality. Both are measured in `docs/design-review.md` F18, and

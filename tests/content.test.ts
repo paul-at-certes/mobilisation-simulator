@@ -291,6 +291,7 @@ describe('verdicts.json', () => {
   const QUALITY = ['low', 'mid', 'high'] as const;
   const LEADERSHIP = ['broken', 'strained', 'intact'] as const;
   const MARGIN = ['near', 'clear'] as const;
+  const CADRE = ['diverted', 'swamped'] as const;
 
   /**
    * The two ending states the model cannot produce, measured in design review
@@ -303,15 +304,29 @@ describe('verdicts.json', () => {
    */
   const UNREACHABLE = (met: boolean, q: string, l: string) => met && (l === 'broken' || q === 'low');
 
-  it('has 10–12 verdicts with unique ids and valid bands', () => {
+  /**
+   * The upper bound is a content budget, not a technical limit, in the same
+   * spirit as the 33-event cap on the deck. It exists so that each verdict has
+   * to earn its place: the instrument for judging that is the reachability
+   * sweep in design review F18, which reports every verdict's share of
+   * endings. Raise it deliberately and say why in DECISIONS.md — it went from
+   * 12 to 14 when `missed_any_broken` was split on the cause of the break.
+   */
+  it('has 10–14 verdicts with unique ids and valid bands', () => {
     expect(verdicts.length).toBeGreaterThanOrEqual(10);
-    expect(verdicts.length).toBeLessThanOrEqual(12);
+    expect(verdicts.length).toBeLessThanOrEqual(14);
     const ids = verdicts.map((v) => v.id);
     expect(new Set(ids).size).toBe(ids.length);
     for (const v of verdicts) {
       expect([true, false, 'any']).toContain(v.met);
       expect(['low', 'mid', 'high', 'any']).toContain(v.quality);
       expect(['broken', 'strained', 'intact', 'any']).toContain(v.leadership);
+      if (v.margin != null) expect(MARGIN).toContain(v.margin);
+      // The cadre band only means anything for a broken cadre (see CadreBand).
+      if (v.cadre != null) {
+        expect(CADRE).toContain(v.cadre);
+        expect(v.leadership, `${v.id}: cadre band needs leadership 'broken'`).toBe('broken');
+      }
       expect(v.text.split(/[.!?](\s|$)/).filter((s) => s && s.trim().length > 1).length).toBeGreaterThanOrEqual(3);
     }
   });
@@ -333,17 +348,18 @@ describe('verdicts.json', () => {
     for (const met of MET) {
       for (const q of QUALITY) {
         for (const l of LEADERSHIP) {
-          for (const mg of MARGIN) {
+          for (const mg of MARGIN) for (const cd of CADRE) {
             const hit = specific.find(
               (v) => (v.met === 'any' || v.met === met)
                 && (v.quality === 'any' || v.quality === q)
                 && (v.leadership === 'any' || v.leadership === l)
-                && (v.margin == null || v.margin === mg),
+                && (v.margin == null || v.margin === mg)
+                && (v.cadre == null || v.cadre === cd),
             );
             // Combinations the model cannot produce are not required to have
             // copy; that they do not is asserted separately below.
             if (UNREACHABLE(met, q, l)) continue;
-            expect(hit, `no verdict for met=${met} quality=${q} leadership=${l} margin=${mg}`).toBeDefined();
+            expect(hit, `no verdict for met=${met} quality=${q} leadership=${l} margin=${mg} cadre=${cd}`).toBeDefined();
           }
         }
       }
@@ -369,25 +385,26 @@ describe('verdicts.json', () => {
    * can read is not copy.
    */
   it('can reach every verdict: none is shadowed by an earlier entry', () => {
-    const firstMatch = (met: boolean, q: string, l: string, resigned: boolean, mg: string) =>
+    const firstMatch = (met: boolean, q: string, l: string, resigned: boolean, mg: string, cd: string) =>
       verdicts.find(
         (v) => (v.met === 'any' || v.met === met)
           && (v.quality === 'any' || v.quality === q)
           && (v.leadership === 'any' || v.leadership === l)
           && (v.resigned == null || v.resigned === resigned)
-          && (v.margin == null || v.margin === mg),
+          && (v.margin == null || v.margin === mg)
+          && (v.cadre == null || v.cadre === cd),
       );
     const reachable = new Set<string>();
     for (const met of MET) {
       for (const q of QUALITY) {
         for (const l of LEADERSHIP) {
           for (const resigned of [true, false]) {
-            for (const mg of MARGIN) {
+            for (const mg of MARGIN) for (const cd of CADRE) {
               // Margin runs in both directions: `clear` is a comfortable win
               // as well as a plain shortfall, so the only cells to skip are
               // the two the model cannot produce at all.
               if (UNREACHABLE(met, q, l)) continue;
-              const hit = firstMatch(met, q, l, resigned, mg);
+              const hit = firstMatch(met, q, l, resigned, mg, cd);
               if (hit) reachable.add(hit.id);
             }
           }

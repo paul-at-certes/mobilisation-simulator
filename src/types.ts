@@ -248,6 +248,17 @@ export type LeadershipBand = 'broken' | 'strained' | 'intact'; // <0.6, 0.6–0.
  * verdict — see design review F18.
  */
 export type MarginBand = 'near' | 'clear';
+/**
+ * Why the leadership factor broke: `diverted` if returning the junior leaders
+ * sent to run the training estate would lift it out of the broken band,
+ * `swamped` if it would not — the cadre was outnumbered by what was raised and
+ * no amount of recalling instructors would have helped (§7b).
+ *
+ * **Only meaningful where leadership is `broken`,** which is what both verdicts
+ * selecting on it require. A healthy run reports `diverted` and means nothing
+ * by it. See design review F18.
+ */
+export type CadreBand = 'diverted' | 'swamped';
 
 export interface Verdict {
   id: string;
@@ -257,6 +268,8 @@ export interface Verdict {
   resigned?: boolean;
   /** Omitted means either band; see MarginBand. */
   margin?: MarginBand;
+  /** Omitted means either band; see CadreBand. Pair it with `leadership: 'broken'`. */
+  cadre?: CadreBand;
   /** Template with {placeholders}: see VerdictVars. */
   text: string;
   /** One line for the share card, same placeholders. */
@@ -508,6 +521,7 @@ export interface Score {
   leadership: number;
   leadershipBand: LeadershipBand;
   marginBand: MarginBand;
+  cadreBand: CadreBand;
   composition: Composition;
   cost: number;
   costPctDefenceBudget: number;

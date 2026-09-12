@@ -5,8 +5,8 @@
     "quality": "any",
     "leadership": "broken",
     "resigned": true,
-    "text": "The Prime Minister accepted your resignation in month {months}. You had called up {conscripts} conscripts and found sergeants for a fraction of them; the rest were led by whoever was nearest. The Army you handed on is smaller than the one you were given, and its corporals are in the training schools. Your successor has been told to start with the leadership figures.",
-    "oneLiner": "Resigned in month {months}. The corporals ran out before the conscripts did."
+    "text": "The Prime Minister accepted your resignation in month {months}. The Army you handed on is smaller than the one you were given, and the junior leaders who should have been holding it together are not where they should be: what was raised was led by whoever was nearest. Your successor has been told to start with the leadership figures.",
+    "oneLiner": "Resigned in month {months}. The corporals ran out before the soldiers did."
   },
   {
     "id": "resigned_generic",
@@ -48,7 +48,7 @@
     "met": true,
     "quality": "mid",
     "leadership": "any",
-    "text": "You delivered {headcount} personnel counting as {ese} soldiers, over a target of {target}. It is {regulars} regulars, {reservists} reservists of one kind or another and {conscripts} conscripts, and the three parts do not yet trust each other. The general calls it a division that will improve with contact and hopes the enemy allows the time. The bill was about £{costBn}bn.",
+    "text": "You delivered {headcount} personnel counting as {ese} soldiers, over a target of {target}. The return reads {regulars} regulars, {reservists} reservists of one kind or another and {conscripts} conscripts, and the parts of it have not yet learned to trust each other. The general calls it a division that will improve with contact and hopes the enemy allows the time. The bill was about £{costBn}bn.",
     "oneLiner": "Target met, mid quality: a division that needs a quiet first month."
   },
   {
@@ -70,12 +70,22 @@
     "oneLiner": "{shortfall} short, and good order was never the thing in question."
   },
   {
-    "id": "missed_any_broken",
+    "id": "missed_broken_diverted",
     "met": false,
     "quality": "any",
     "leadership": "broken",
-    "text": "Target missed by {shortfall}, and the leadership figures are worse than the headline. You called up {conscripts} conscripts and diverted the corporals who should have led them into the schools that trained them. The regular Army you inherited has been hollowed to supply a force that did not arrive. The general's note runs to a page; the first sentence is the one that will be quoted.",
+    "cadre": "diverted",
+    "text": "Target missed by {shortfall}, and the leadership figures are worse than the headline. The corporals who should have been leading sections are running the training estate instead: the schools built to raise the force took the people the force needed to be led by. Hand them back and the cadre holds, which is the part that will be difficult to explain. The regular Army you inherited has been hollowed to supply a force that did not arrive.",
     "oneLiner": "Missed by {shortfall}. The corporals went to the schools; no division came out."
+  },
+  {
+    "id": "missed_broken_swamped",
+    "met": false,
+    "quality": "any",
+    "leadership": "broken",
+    "cadre": "swamped",
+    "text": "Target missed by {shortfall}, and the leadership figures are worse than the headline. You called up {conscripts} conscripts, which is more than the Army has corporals and sergeants to put in front of them: recalling every instructor from every training school would not have closed the gap. What arrived was a crowd with a chain of command drawn on it. The general's note runs to a page; the first sentence is the one that will be quoted.",
+    "oneLiner": "Missed by {shortfall}. You raised more soldiers than the Army had corporals."
   },
   {
     "id": "missed_low_any",

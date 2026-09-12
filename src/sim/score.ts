@@ -4,10 +4,10 @@
  * Verdict templates come from src/data/verdicts.json through the content
  * registry; if none match (or the file is absent) a generic verdict is used.
  */
-import type { GameState, LeadershipBand, MarginBand, QualityBand, Score, Verdict, VerdictVars } from '../types.js';
+import type { CadreBand, GameState, LeadershipBand, MarginBand, QualityBand, Score, Verdict, VerdictVars } from '../types.js';
 import { P } from './params.js';
 import { getVerdicts } from './content.js';
-import { computeForce } from './effectiveness.js';
+import { computeForce, leadersAvailable, leadersNeeded } from './effectiveness.js';
 
 export function qualityBand(q: number): QualityBand {
   if (q < 0.45) return 'low';
@@ -42,6 +42,27 @@ export const MARGIN_NEAR_FRACTION = 0.1;
 export function marginBand(ese: number, target: number): MarginBand {
   if (target <= 0) return 'near';
   return Math.abs(ese - target) <= target * MARGIN_NEAR_FRACTION ? 'near' : 'clear';
+}
+
+/**
+ * Why a broken cadre broke: the counterfactual, not the correlation.
+ *
+ * `leadershipFactor` is `leadersAvailable / leadersNeeded` (§7b), so it can
+ * fall for two quite different reasons — the numerator taken away, or the
+ * denominator raised past it. Hand every diverted junior leader back from the
+ * training estate and recompute: if that clears the broken band the diversion
+ * was the cause, and if it does not, the cadre was simply outnumbered by what
+ * the minister raised.
+ *
+ * Both are common and they are not the same mistake, which is why they no
+ * longer share a verdict (design review F18). Only meaningful where leadership
+ * is `broken`.
+ */
+export function cadreBand(s: GameState): CadreBand {
+  const needed = leadersNeeded(s);
+  if (needed <= 0) return 'diverted';
+  const ifReturned = (leadersAvailable(s) + s.ledger.juniorLeadersDiverted) / needed;
+  return ifReturned < 0.6 ? 'swamped' : 'diverted';
 }
 
 /** Thousands separators without relying on the runtime locale. */
@@ -80,6 +101,7 @@ export function pickVerdict(
   leadership: LeadershipBand,
   resigned: boolean,
   margin: MarginBand = 'near',
+  cadre: CadreBand = 'diverted',
 ): Verdict {
   for (const v of getVerdicts()) {
     if (v.met !== 'any' && v.met !== met) continue;
@@ -87,6 +109,7 @@ export function pickVerdict(
     if (v.leadership !== 'any' && v.leadership !== leadership) continue;
     if (v.resigned != null && v.resigned !== resigned) continue;
     if (v.margin != null && v.margin !== margin) continue;
+    if (v.cadre != null && v.cadre !== cadre) continue;
     return v;
   }
   return GENERIC_VERDICT;
@@ -105,6 +128,7 @@ export function score(state: GameState): Score {
   const gdpLoss = state.ledger.cumulativeGdpLoss;
   const shortfall = Math.max(0, state.target - f.forceReady);
   const mBand = marginBand(f.forceReady, state.target);
+  const cBand = cadreBand(state);
   const vars: VerdictVars = {
     target: state.target,
     ese: f.forceReady,
@@ -120,7 +144,7 @@ export function score(state: GameState): Score {
     shortfall,
     surplus: Math.max(0, f.forceReady - state.target),
   };
-  const verdict = pickVerdict(met, qBand, lBand, resigned, mBand);
+  const verdict = pickVerdict(met, qBand, lBand, resigned, mBand, cBand);
   return {
     met,
     resigned,
@@ -134,6 +158,7 @@ export function score(state: GameState): Score {
     leadership: f.leadershipFactor,
     leadershipBand: lBand,
     marginBand: mBand,
+    cadreBand: cBand,
     composition: f.composition,
     cost,
     costPctDefenceBudget: (cost / P.defence_budget_2025) * 100,

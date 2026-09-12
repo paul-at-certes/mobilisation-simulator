@@ -1278,6 +1278,11 @@ difficulty and per bucket rather than as one number.
    run-to-run noise.
 4. **Split both of the big verdicts on it** — `missed_high_intact` (31.3%) and
    `met_high_intact` (20.6%), which between them were half of all endings.
+5. **Split `missed_any_broken` (17.0%) on the cause of the break,** which needed
+   a second new dimension (`cadre: diverted | swamped`, spec §11) because the
+   margin band is no use here — 142 of its 143 endings are `clear` misses.
+6. **Fixed two verdicts that were telling players things that were not true**,
+   found by sweeping every count placeholder for values that render as zero.
 
 **The missed split is better motivated than the concentration made it look.**
 `missed_high_intact` was read as the game's thesis — *you did everything right
@@ -1318,32 +1323,89 @@ text, whose closing line — *the general's note is one line: it will do* — is
 restrained ending the close-run Division result has earned and the Brigade
 walkover has not.
 
+**The broken verdict was two mistakes wearing one coat.** `leadershipFactor`
+is `leadersAvailable / leadersNeeded` (§7b), so it falls for two quite
+different reasons: the numerator taken away, or the denominator raised past it.
+The band computes the counterfactual rather than guessing from a correlation —
+hand every diverted junior leader back from the training estate and recompute:
+
+| | scripted (840) | random play (25,000) |
+|---|---|---|
+| `swamped` — returning every instructor would **not** clear the broken band | 121 (70%) | 19 (25%) |
+| `diverted` — it **would**; the schools were the cause | 53 (30%) | 56 (75%) |
+
+Both bands are well populated in both populations, and the ratio inverting
+between them is itself the point: the bots over-build capacity and the random
+player over-calls. In scripted play the split is almost exactly the difficulty
+split — Division is 98% `diverted` and Corps is 100% `swamped` — but that is a
+fact about the seven strategies, not about the model, and random play shows it
+is not a rule. Cutting on the counterfactual rather than on difficulty is the
+same choice made for the margin band, for the same reason.
+
+The old copy was written for the `diverted` case alone: *you called up
+conscripts and diverted the corporals who should have led them into the schools
+that trained them*. For the 70% of scripted endings where that was not what
+went wrong, it was naming the wrong cause. The `swamped` text now says the
+thing the counterfactual proves — *recalling every instructor from every
+training school would not have closed the gap* — and `diverted` says the
+opposite, *hand them back and the cadre holds*, because for those endings it is
+literally true.
+
+**Two verdicts were telling players things that were not true, and a sweep
+found them.** The instrument is worth keeping: render every verdict across
+840 scripted and 40,000 random endings, and flag any count placeholder that
+comes out as zero.
+
+- **`resigned_broken`** said *"You had called up {conscripts} conscripts and
+  found sergeants for a fraction of them"*. Ten broken endings in 25,000 have
+  **no conscripts at all** — the play that buys training capacity, diverting
+  the corporals, and then calls nobody up. Those players were told they had
+  called up **0 conscripts and found sergeants for a fraction of them**. The
+  text no longer names a cause or a count, because this verdict spans both
+  cadre bands.
+- **`met_mid_any`** listed *"{regulars} regulars, {reservists} reservists of one
+  kind or another and {conscripts} conscripts, and the three parts do not yet
+  trust each other"*. Under random play the conscript column reads zero in
+  **35 of its 35 endings** — it fires at Brigade, where nothing can graduate in
+  four months. "The three parts" was false every time. It now reads as a return,
+  which may legitimately list a zero.
+
+**The lesson is narrower than the F18 headline and worth having on its own.**
+*A verdict that names a cause is making a claim about the run, and a
+placeholder is not the same as a claim.* Both defects are the copy asserting
+something the selector never guaranteed — and in both cases the bots hid it,
+because the bots never produce the state that exposes it.
+
 **Reachability after the change**, same 840 endings:
 
 | Verdict | before | after |
 |---|---|---|
 | `missed_high_intact_clear` | — | 221 (26.3%) |
 | `met_high_intact_clear` | — | 160 (19.0%) |
-| `missed_any_broken` | 143 | 143 (17.0%) |
 | `resigned_generic` | 124 | 124 (14.8%) |
 | `missed_any_any` | 101 | 101 (12.0%) |
+| `missed_broken_swamped` | — | 90 (10.7%) |
+| `missed_broken_diverted` | — | 53 (6.3%) |
 | `missed_high_intact` | 263 | **42 (5.0%)** |
 | `resigned_broken` | 31 | 31 (3.7%) |
 | `met_high_intact` | 173 | **13 (1.5%)** |
 | `met_mid_any` | 5 | 5 (0.6%) |
 | `met_high_strained` | 0 | 0 in bot play; **reachable**, witness above |
 | `missed_low_any` | 0 | 0 in bot play; **reachable**, 18 in 90,000 |
+| `missed_any_broken` | 143 | *split into the two above* |
 | `met_any_broken`, `met_low_any` | 0 | *retired* |
 | `fallback` | 0 | 0 |
 
-Twelve verdicts, all reachable, none shadowed. The largest share falls from
-**31.3% to 26.3%**, and the two biggest verdicts from **51.9% of all endings to
-45.3%** spread over four. `fallback` still fires on nothing, which is correct.
+Thirteen verdicts, all reachable, none shadowed. The largest share falls from
+**31.3% to 26.3%**; the three verdicts that once carried **69% of all endings
+now carry 41%**, spread over six. `fallback` still fires on nothing, which is
+correct.
 
-**The file is now at its cap.** `tests/content.test.ts` holds `verdicts.json` to
-10–12 entries and there are twelve. That is a content budget rather than a
-technical limit, but the next split has to retire something or raise the cap on
-purpose, which is the right place for that decision to be taken.
+**The cap was raised from 12 to 14, on purpose.** `tests/content.test.ts`
+bounds `verdicts.json` — a content budget in the same spirit as the 33-event cap
+on the deck, not a technical limit. It exists so each verdict has to earn its
+place, and the reachability sweep is the instrument for judging that. Thirteen
+of fourteen are used.
 
 **The benchmark is byte-identical** — all 21 rows across the three difficulties.
 Nothing in `src/sim/` changed but `score.ts`, and the change there adds a band
@@ -1380,6 +1442,22 @@ arithmetic rather than the bots.** Two of the four cuts would have been wrong.
   or the difficulty targets move, re-check that 10% still lands in the gap
   between the Brigade and Division win distributions; today it has 9.8
   percentage points of room on either side.
+- `met_mid_any` is down to **five** scripted endings and `met_high_intact` to
+  thirteen. Neither is at risk of being unreachable — both have witnesses — but
+  they are the thinnest copy in the file and the first to check if a balance
+  change moves the quality bands.
+
+**One defect of this class is known and not fixed here.** On a missed run whose
+ESE rounds up to the target, `missed_high_intact` renders *"You fielded 22,000
+soldiers against a target of 22,000: 0 short"* — the displayed shortfall and the
+displayed ESE are rounded independently, so a genuine miss of 0.4 soldiers reads
+as a contradiction. It is rare (once in about 65,000 endings) and it is **not
+only a verdict problem**: `src/ui/share-card.ts` and `src/ui/screens/scoring.ts`
+print *"Target missed by {shortfall} effective soldiers"* from the same number.
+The fix is a shared formatter that rounds a missed run's achievement down and
+its gap up — never flattering a miss into a draw — applied at all three call
+sites. That is a display change across the UI rather than a verdict change,
+which is why it is recorded here rather than folded into this pass.
 
 ---
 
