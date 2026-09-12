@@ -91,8 +91,17 @@ export function displayShortfall(shortfall: number): number {
 export function displaySurplus(surplus: number): number {
   return Math.floor(surplus);
 }
+/**
+ * The same rule for the percentage: 21,963 of 22,000 is 99.8%, and rounding
+ * it to "100%" told the player the target was met when it was not. Floored,
+ * so it reads 100% only when the target is actually reached.
+ */
+export function displayReadyPct(pct: number): number {
+  return Math.floor(pct);
+}
 
-function formatVar(key: keyof VerdictVars, value: number): string {
+function formatVar(key: keyof VerdictVars, value: number | string): string {
+  if (typeof value === 'string') return value;
   if (key === 'quality' || key === 'leadership') return value.toFixed(2);
   if (key === 'costBn' || key === 'gdpLossBn') return value.toFixed(1);
   if (key === 'ese') return formatInt(displayEse(value));
@@ -153,6 +162,7 @@ export function score(state: GameState): Score {
   const mBand = marginBand(f.forceReady, state.target);
   const cBand = cadreBand(state);
   const vars: VerdictVars = {
+    formation: state.difficulty,
     target: state.target,
     ese: f.forceReady,
     headcount: f.headcountCounted,

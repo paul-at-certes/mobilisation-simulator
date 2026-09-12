@@ -1,143 +1,20 @@
-# Next tasks: two briefs, in this order
+# Next task: one brief
 
 **Written:** 12 September 2026, at the end of the session that did F13, F14, F15
 and F17.
-**What this is:** two prompts to paste into fresh chat sessions. They are here
-rather than in a chat log because the measurements in them took a while to make
-and are annoying to re-derive, and because in both cases the obvious approach is
-the wrong one.
+**What this is:** a prompt to paste into a fresh chat session, kept here rather
+than in a chat log because the measurements in it took a while to make and the
+obvious approach is the wrong one. Brief 1 (the verdict screen) was done as F18
+and has been removed.
 
-**Do brief 1 first.** It is smaller, it carries no balance risk, and it is worth
-more: it is the screen every player reads last and the one the share card
-carries. Brief 2 is the older and harder job.
+**Delete the brief when its work is done.**
 
-**Each brief is self-contained.** Delete a brief when its work is done, and the
-file when both are.
-
-**Before either: the state of things.** Of the review's 17 findings, 12 are
-addressed or by design. The model is in good shape; what is left is refinement.
-The single most valuable thing nobody can do in a chat session is **play it** —
-four mechanical changes have landed and no one has played it fresh, and the
-review's own method section is emphatic that hand-play found F1 and F7 where no
-test would have. That needs someone who does not already know where the levers
-are.
-
----
-
-## Brief 1 — the verdict screen: four verdicts that can never fire
-
-```
-Work on the Mobilisation Minister repo at /Users/paul/Claude/Mobilisation.
-
-TASK: four of the twelve entries in src/data/verdicts.json can never be
-selected. The verdict is the payoff — the last thing a player reads, and what
-the share card carries — and three verdicts currently cover 69% of endings.
-
-START BY READING, in this order:
-  - docs/design-review.md — "How to read this", then F3 (which moved this once
-    before: "Several verdicts in verdicts.json were unreachable and now fire"),
-    F9 and F10 for what the endings are meant to teach.
-  - docs/sim-spec.md section 11 (scoring, bands, verdict selection).
-  - src/sim/score.ts and src/data/verdicts.json.
-
-WHAT IS ALREADY MEASURED — do not re-derive. Every ending of 3 difficulties x 7
-scripted strategies x 40 seeds, 840 in all.
-
-  Verdict                 fires   share
-  missed_high_intact        263   31.3%
-  met_high_intact           173   20.6%
-  missed_any_broken         143   17.0%
-  resigned_generic          124   14.8%
-  missed_any_any            101   12.0%
-  resigned_broken            31    3.7%
-  met_mid_any                 5    0.6%
-  met_any_broken              0    NEVER
-  met_high_strained           0    NEVER
-  met_low_any                 0    NEVER
-  missed_low_any              0    NEVER
-  fallback                    0    (correct — it is the safety net)
-
-  The combinations that actually occur:
-    263  missed / high / intact / served
-    173  met    / high / intact / served
-    113  missed / high / intact / resigned
-     93  missed / mid  / strained / served
-     91  missed / low  / broken / served
-     52  missed / mid  / broken / served
-     31  missed / low  / broken / resigned
-     11  missed / mid  / strained / resigned
-      8  missed / mid  / intact / served
-      3  met    / mid  / intact / served
-      2  met    / mid  / strained / served
-
-THE BANDS ARE NOT THE PROBLEM, AND THIS IS THE POINT. Quality across the 840
-endings runs 0.243 to 1.000 (median 0.697) and leadership 0.264 to 1.000; 122
-endings are in the "low" quality band and 280 are not "intact". Both bands are
-well populated. This is NOT the F13 shape where a threshold sat outside the
-range the game produces. There are two different causes and they need different
-answers:
-
-  1. ORDERING SHADOW. `missed_low_any` is unreachable because
-     `missed_any_broken` sits earlier in the list and selection is first-match
-     (spec 11). Every low-quality ending in the data is also broken-leadership,
-     so the earlier entry always wins. The copy exists and can never be chosen.
-     Either reorder, or decide the two are the same case and retire one.
-
-  2. GENUINELY IMPOSSIBLE STATES. `met_any_broken`, `met_high_strained` and
-     `met_low_any` describe meeting the target with a cadre that is not intact.
-     That combination does not occur and probably cannot: the leadership factor
-     multiplies everything raised, so meeting the target essentially requires
-     intact leadership. These three are writing for states the model cannot
-     produce.
-
-DECISIONS THAT ARE PAUL'S, NOT YOURS — put them to him before building.
-  1. Retire the three impossible verdicts, or make those states reachable? The
-     second is a simulation change and a much bigger question — it would mean
-     the target can be met with a broken cadre, which contradicts what F3
-     established. Retiring them is almost certainly right; say so and let him
-     confirm.
-  2. For the ordering shadow: reorder so `missed_low_any` can fire, or accept
-     that low quality and broken leadership are the same story and keep one?
-     Look at the two texts before advising — if they say the same thing in
-     different words, one of them should go.
-  3. Whether the 69%-in-three-verdicts concentration is worth splitting. The
-     most common ending by far is "missed / high / intact / served" at 31%:
-     you did everything right and still could not do it, which IS the game's
-     thesis. It may deserve more than one way of being said, given how many
-     players will see it.
-
-VERIFY BEFORE RETIRING ANYTHING. The scripted strategies are a floor, not a
-ceiling — they never re-plan. Before concluding met+broken is impossible, check
-the arithmetic rather than the bots: meeting 22,000 effective at a quality below
-0.45 needs roughly 49,000 bodies, against a maximum of about 32,000 seen in any
-run. Show the working in the finding.
-
-CONSTRAINTS THAT MUST HOLD.
-  - This should need NO simulation change. If you find yourself editing
-    src/sim/*.ts other than score.ts, stop and re-read the task — the benchmark
-    tables in docs/design-review.md should come back byte-identical, and if
-    they do not, something has gone wrong.
-  - Check `verdictOneLiner` as well as `text`. The one-liner is what goes on
-    the share card, which is how this reaches a second player.
-  - Verdict text is filled from VerdictVars with {placeholders}. Any verdict you
-    rewrite must still resolve every placeholder it uses — there is a test in
-    tests/content.test.ts; make sure it still covers whatever you change.
-
-HOUSE RULES, which are not optional here:
-  - Record the reasoning in DECISIONS.md (newest last). Items needing Paul's
-    confirmation are marked ASK.
-  - Add the finding to docs/design-review.md with the reachability table above
-    as its evidence, and number it F18.
-  - Run "npm test", "npm run validate" and "npm run assumptions".
-  - The prose and the register are the project's other credibility, alongside
-    the sourcing: the Permanent Secretary's notes, the event text and the
-    general's verdicts are good and the dry civil-service tone is consistent.
-    Hold any new copy to that standard and read the neighbouring verdicts first.
-
-Finish with: which verdicts were retired or rewritten and why, the reachability
-table re-run to prove it, confirmation the benchmark is unchanged, and anything
-worth a new finding.
-```
+**The state of things.** Of the review's 19 findings, 14 are addressed or by
+design. The model is in good shape; what is left is refinement. F19 was found by
+playing a fresh Division run at 375px on 12 September, and the benchmark table
+was re-baselined that day (see the Benchmarks section of the design review for
+why). One **ASK** is open in `DECISIONS.md`: whether the Division floor and
+ceiling of 53% and 63% stand.
 
 ---
 
@@ -216,12 +93,13 @@ DECISIONS THAT ARE PAUL'S, NOT YOURS — put them to him before building.
      rewrites rather than additions.
 
 CONSTRAINTS THAT MUST HOLD. Re-run "npm run dist -- 40" after any number moves.
-  - reserves_plus_light at Division meets the target on 43% of seeds. Below
+  - reserves_plus_light at Division meets the target on 53% of seeds. Below
     ~25% F2 reopens; above ~65% it is a walkover. This is the floor, and the
     ceiling is known: a player who uses accelerate_promotion at every
-    opportunity reaches 55%, which was put to Paul and stands (F17).
-  - Median leadership factor for capacity_heavy and max_effort: 0.68 and 0.49
-    at Division, 0.46 and 0.32 at Corps. If either returns to 1.00, F3's
+    opportunity reaches 63% (F17, re-baselined under F19; an ASK on whether
+    that pair stands is open in DECISIONS.md).
+  - Median leadership factor for capacity_heavy and max_effort: 0.66 and 0.48
+    at Division, 0.52 and 0.34 at Corps. If either returns to 1.00, F3's
     mechanic has stopped firing.
   - do_nothing must not improve, and must still resign on 100% of Corps seeds.
 
@@ -287,3 +165,31 @@ shifted and whether that was deliberate, and anything worth a new finding.
   F7 has not regressed.
 - **Playtesting the 55% ceiling (F17).** Real, and Paul's rather than a fresh
   session's: it needs a human who does not already know where the lever is.
+
+## Latent bugs from the 12 September audit, not taken
+
+A read of `src/sim/` against `docs/sim-spec.md` confirmed four defects a player
+cannot reach today and some documentation drift. Recorded so they are not
+re-found. None moves the benchmark.
+
+- **`?auto=` accepts prototype keys.** `auto in STRATEGIES` is true for
+  `__proto__` and `toString`; the first crashes boot, the second silently plays
+  `do_nothing`. `Object.hasOwn` in `main.ts`.
+- **A share link overwrites an in-progress run without asking.** `main.ts`
+  boot: a saved run with a different seed or difficulty is replaced by the URL's
+  game and saved over. `restart()` asks; this path does not. Also `?seed=42`
+  with no `difficulty` neither resumes nor starts.
+- **`?seed=churchill` is documented and ignored.** `rng.ts` hashes string seeds
+  and the tests use them, but `main.ts` does `Number(seed)`, so a word becomes a
+  random seed.
+- **`callup_cap`: an indefinite ceiling acquires an expiry** from a later
+  temporary one (`events.ts`, the merge rule); latent because every content use
+  carries a duration.
+- **`flag` effects are write-only.** `opposition_motion`'s
+  `review_conceded` is set and read by nothing. Either a hook or dead.
+- **Spec drift.** `politics.ts` comment quotes the old allowance figures; spec
+  §7c quotes a spareable cadre of 10,700 (it is 8,869); §11 undersells
+  `scoring_pc_if_missed`, which can resign a minister at the score; §8's
+  `removed` formula names the wrong total. The version-2 compatibility guards
+  are all dead since `version: 3` and could go.
+

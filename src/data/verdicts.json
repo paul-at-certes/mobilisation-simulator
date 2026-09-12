@@ -48,8 +48,8 @@
     "met": true,
     "quality": "mid",
     "leadership": "any",
-    "text": "You delivered {headcount} personnel counting as {ese} soldiers, over a target of {target}. The return reads {regulars} regulars, {reservists} reservists of one kind or another and {conscripts} conscripts, and the parts of it have not yet learned to trust each other. The general calls it a division that will improve with contact and hopes the enemy allows the time. The bill was about £{costBn}bn.",
-    "oneLiner": "Target met, mid quality: a division that needs a quiet first month."
+    "text": "You delivered {headcount} personnel counting as {ese} soldiers, over a target of {target}. The return reads {regulars} regulars, {reservists} reservists of one kind or another and {conscripts} conscripts, and the parts of it have not yet learned to trust each other. The general calls it a {formation} that will improve with contact and hopes the enemy allows the time. The bill was about £{costBn}bn.",
+    "oneLiner": "Target met, mid quality: a {formation} that needs a quiet first month."
   },
   {
     "id": "missed_high_intact",
@@ -76,7 +76,7 @@
     "leadership": "broken",
     "cadre": "diverted",
     "text": "Target missed by {shortfall}, and the leadership figures are worse than the headline. The corporals who should have been leading sections are running the training estate instead: the schools built to raise the force took the people the force needed to be led by. Hand them back and the cadre holds, which is the part that will be difficult to explain. The regular Army you inherited has been hollowed to supply a force that did not arrive.",
-    "oneLiner": "Missed by {shortfall}. The corporals went to the schools; no division came out."
+    "oneLiner": "Missed by {shortfall}. The corporals went to the schools; no {formation} came out."
   },
   {
     "id": "missed_broken_swamped",
@@ -100,8 +100,8 @@
     "met": false,
     "quality": "any",
     "leadership": "any",
-    "text": "Target missed: {ese} against {target}, a shortfall of {shortfall} after {months} months. The force that exists is respectable. In another six months it would have been a division. Every minister in this position has wanted to write that sentence. The ally has been told. The general has asked that the pipeline be kept running regardless.",
-    "oneLiner": "Missed by {shortfall}. Six more months and it would have been a division."
+    "text": "Target missed: {ese} against {target}, a shortfall of {shortfall} after {months} months. The force that exists is respectable. In another six months it would have been a {formation}. Every minister in this position has wanted to write that sentence. The ally has been told. The general has asked that the pipeline be kept running regardless.",
+    "oneLiner": "Missed by {shortfall}. Six more months and it would have been a {formation}."
   },
   {
     "id": "fallback",

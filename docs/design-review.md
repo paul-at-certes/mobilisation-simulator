@@ -75,7 +75,7 @@ which is self-harm under the current rules. Treat their numbers as a floor.
 
 ## Benchmarks
 
-Output of `npm run dist -- 40`, at commit `84fdc3c`. **If a change moves these,
+Output of `npm run dist -- 40`, at commit `HEAD`. **If a change moves these,
 update this table in the same commit.** Median final ESE, percentage of the 40
 seeds that met the target, percentage that ended in resignation, and the median
 leadership factor at the end.
@@ -85,59 +85,84 @@ leadership factor at the end.
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
 | do_nothing | 3,589 | 3,612 | 3,612 | 0 | 0 | 1.00 |
-| reserves_only | 16,967 | 18,817 | 19,988 | 100 | 0 | 1.00 |
-| reserves_plus_light | 17,721 | 19,199 | 20,196 | 100 | 0 | 1.00 |
+| reserves_only | 17,375 | 18,592 | 19,772 | 100 | 0 | 1.00 |
+| reserves_plus_light | 17,721 | 18,877 | 20,188 | 100 | 0 | 1.00 |
 | conscription_max_capacity | 3,465 | 3,467 | 3,488 | 0 | 0 | 1.00 |
 | conscription_over_capacity | 3,558 | 3,560 | 3,581 | 0 | 0 | 1.00 |
-| capacity_heavy | 13,367 | 14,402 | 14,402 | 100 | 0 | 1.00 |
-| max_effort | 11,901 | 12,936 | 12,936 | 100 | 0 | 1.00 |
+| capacity_heavy | 13,367 | 14,402 | 14,423 | 100 | 0 | 1.00 |
+| max_effort | 11,901 | 12,936 | 12,957 | 100 | 0 | 1.00 |
 
 ### Division — target 22,000 in 12 months
 
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
 | do_nothing | 3,693 | 3,696 | 3,696 | 0 | 0 | 1.00 |
-| reserves_only | 19,352 | 20,417 | 21,653 | **3** | 0 | 1.00 |
-| **reserves_plus_light** | 20,979 | **21,878** | 23,115 | **43** | 0 | 0.98 |
-| conscription_max_capacity | 5,037 | 5,435 | 5,844 | 0 | 0 | 0.68 |
-| conscription_over_capacity | 4,761 | 5,162 | 5,259 | 0 | 45 | 1.00 |
-| capacity_heavy | 18,671 | 19,701 | 21,054 | 0 | 0 | 0.68 |
-| max_effort | 16,229 | 17,727 | 19,092 | 0 | 0 | 0.49 |
+| reserves_only | 19,148 | 20,291 | 21,599 | **5** | 0 | 1.00 |
+| **reserves_plus_light** | 21,343 | **22,102** | 23,217 | **53** | 0 | 1.00 |
+| conscription_max_capacity | 5,033 | 5,419 | 5,870 | 0 | 0 | 0.69 |
+| conscription_over_capacity | 4,750 | 5,161 | 5,263 | 0 | 55 | 1.00 |
+| capacity_heavy | 18,691 | 19,788 | 21,000 | 0 | 0 | 0.66 |
+| max_effort | 16,481 | 17,614 | 19,032 | 0 | 0 | 0.48 |
 
 ### Corps — target 45,000 in 24 months
 
 | strategy | p10 | median | p90 | met% | resign% | lead |
 |---|---|---|---|---|---|---|
 | do_nothing | 3,736 | 3,756 | 3,786 | 0 | **100** | 1.00 |
-| reserves_only | 20,259 | 21,325 | 22,531 | 0 | 38 | 1.00 |
-| **reserves_plus_light** | 22,433 | **22,970** | 23,221 | 0 | **28** | 0.73 |
-| conscription_max_capacity | 7,234 | 7,551 | 8,079 | 0 | 48 | 0.28 |
-| conscription_over_capacity | 5,152 | 5,596 | 7,016 | 0 | 100 | 1.00 |
-| capacity_heavy | 20,605 | 21,113 | 22,074 | 0 | 3 | 0.46 |
-| max_effort | 18,194 | 18,965 | 20,029 | 0 | 28 | 0.32 |
+| reserves_only | 20,066 | 21,138 | 22,356 | 0 | 45 | 1.00 |
+| **reserves_plus_light** | 24,103 | **24,610** | 25,181 | 0 | **23** | 0.83 |
+| conscription_max_capacity | 7,252 | 8,107 | 8,902 | 0 | 33 | 0.31 |
+| conscription_over_capacity | 5,034 | 5,798 | 6,952 | 0 | 100 | 1.00 |
+| capacity_heavy | 22,082 | 22,385 | 23,207 | 0 | 0 | 0.52 |
+| max_effort | 19,018 | 20,074 | 21,416 | 0 | 20 | 0.34 |
+
+**The table was re-baselined on 12 September 2026 (F19)**, and the movement is
+the deck rather than the model: no line of `src/sim/` that decides an outcome
+changed. Two trigger changes reshuffled the event sequence for every seed —
+`junior_entry_useless` no longer fires on turn 1 of nearly every run, and
+`devolved_objection` waits for Royal Assent — and `treasury_letter` came down
+from a threshold nothing reached (£10bn) to £4bn, so it now fires on 39 of 40
+Corps runs of the benchmark strategy, whose bots take choice 0 and cancel a
+capacity tranche, which returns 625 junior leaders to the field force. That is
+the whole of the Corps movement (`reserves_plus_light` 22,970 → 24,610,
+leadership 0.73 → 0.83). At Division the letter cannot fire — the benchmark
+strategy finishes under £3bn — and the movement there is the reshuffle alone:
+the median moved by 224 effective soldiers, 1%, and because the target sits
+inside the p10–p90 spread that is worth ten points of met%. Before and after,
+with the same code and only the deck swapped:
+
+| Division, `reserves_plus_light` | old deck | new deck |
+|---|---|---|
+| mean ESE | 21,962 | 22,173 |
+| met | 17 / 40 | 21 / 40 |
+| `reservist_employers` fires | 63 | 51 |
+| `junior_entry_useless` fires | 40 | 0 |
 
 **The three numbers to watch.** If any of these drifts, something has broken:
 
-- `reserves_plus_light` at Division meets the target on **43%** of seeds. Below
+- `reserves_plus_light` at Division meets the target on **53%** of seeds. Below
   ~25% the headline difficulty is a coin flip again (F2); above ~65% it is a
-  walkover. **This is a floor, and since F17 the ceiling is known too:** a
-  player who runs a cadre course at every opportunity reaches **55%**, which was
-  put to Paul and stands. The bots never do, because their guard fires below a
-  leadership factor of 0.85 and at Division the sensible strategy sits at 0.98,
-  so 43% is what `npm run dist` reports and 43% is what a regression would move.
-- The median leadership factor for `capacity_heavy` and `max_effort` is **0.68
-  and 0.49** at Division (0.46 and 0.32 at Corps). If either returns to 1.00, the mechanic has stopped firing (F3).
+  walkover. **This is a floor, and the ceiling is known:** a player who runs a
+  cadre course at every opportunity reaches **63%** (`PROMOTION_TRIGGER_FACTOR`
+  set to 1.01, a measurement and not a change to commit). Before F19 the pair
+  was 43% and 55%. The ceiling now sits two points under the walkover line,
+  which is recorded as an **ASK** in `DECISIONS.md`: the target is an assumption
+  with a range, and if a playtest finds Division no longer close-run the answer
+  is a nudge to `target_division` against a `npm run dist` run, not a softer
+  event.
+- The median leadership factor for `capacity_heavy` and `max_effort` is **0.66
+  and 0.48** at Division (0.52 and 0.34 at Corps). If either returns to 1.00, the mechanic has stopped firing (F3).
 - `do_nothing` is **17%** of Division and **36%** of Brigade, and still resigns
   on **100%** of Corps seeds. If it climbs past ~60% of any rung, that rung is
   free; if it stops resigning at Corps, the delivery credit has become an idle
   income (F6).
 
 **And one number that is not in the table**, because it is what F13 fixed:
-`reserves_plus_light` at Division is now charged Treasury pressure on **32 of
-40 seeds** and draws the Equipment Plan's contingency on **14**. If either
-returns to zero, the money mechanic has gone dormant again. Read it with
-`npm run dist` alongside a check of `briefing.pcReasons`; there is a test for
-the shape of it (`tests/step.test.ts`, "the Treasury allowance").
+`reserves_plus_light` at Division is charged Treasury pressure on most seeds and
+draws the Equipment Plan's contingency on some. If either returns to zero, the
+money mechanic has gone dormant again. Read it with `npm run dist` alongside a
+check of `briefing.pcReasons`; there is a test for the shape of it
+(`tests/step.test.ts`, "the Treasury allowance").
 
 ---
 
@@ -1544,6 +1569,104 @@ else.**
 
 ---
 
+### F19 — The game knew when a lever was too late, and did not say · *Addressed*
+
+**Found by playing it**, on 12 September 2026, at 375px, as the review's own
+method section said someone had to: a full Division run by a player who did not
+already know where the levers were.
+
+**Symptom.** Every lever lands months after it is pulled, and the model has
+always known the month. The holding pool said so for people already called
+(*"the shortest course is 5 months and there are 3 months left"*); the scripted
+strategies guard on it (`strategies.ts` will not start a cadre course without
+months left for the graduates to lead anybody). The action rows said nothing.
+In the hand-played run:
+
+- The Bill went in during month 1, passed in month 4, and the call-up was set
+  in month 4. On the 8-month course nothing called then graduates before month
+  13. **On the normal syllabus there is no month at Division in which a
+  conscript called after a month-1 Bill can graduate in time**, and only one
+  (month 3, after a Day 0 Bill) in which one can. The player found this out
+  from the holding pool card in month 5, after 741 people were already in it.
+- The call-up field asked for a number against an eligible pool of 2.9 million
+  and did not say that the estate had room for **21 a month**. The number
+  existed (`spareIntake`, which `holding.ts` already reads) and was shown only
+  once a holding pool had formed.
+- A cadre course was started in month 11 of 12. It finishes in month 13; its
+  instructors were out of the line on the day. The row said *−1 PC*.
+- The employer-adjudication event sent 1,294 mobilised reservists home in month
+  9 and the next note said nothing about it. Force Ready fell by a thousand
+  with no stated cause, which reads as a bug. Event pool effects left a machine
+  note (`event:<id>:pool:<pool>:<n>`) that the briefing never rendered.
+
+**Fix, in the UI and the content, with no change to what any lever does.**
+
+1. **Every timed lever states its month, and "after the deadline" when it is.**
+   `availability()` in `actions.ts` now carries it on the reason line, which is
+   the one line F7 kept on the face of the row: the Bill row gives Royal Assent
+   and first-graduation months for both procedures and both syllabi; the
+   call-up row gives the estate's room now and after pending stand-ups, and the
+   graduation month of anyone called this month; capacity, civilian instructors,
+   the compressed syllabus, the cadre course, the equipment order, junior entry,
+   and the three reserve levers each say when they land. Booleans are untouched
+   — a test walks a whole run and checks — so the bots and the benchmark do not
+   see it.
+2. **Event consequences are said in the next note.** *"The adjudication
+   officer's return: 1,293 mobilised reservists went home to their employers."*
+   `briefing.ts` renders the pool notes for the six pools the deck touches, and
+   nothing else, ahead of the rotated changes.
+3. **The arrivals sentence.** Labels were participles (*"Ex-regulars
+   reported"*) and the sentence added *"arrived"*, giving *"1,955 Ex-regulars
+   reported and 6,312 Strategic Reserve traced and reporting arrived"* on every
+   month-3 screen. The labels are nouns now and the verb is supplied once.
+4. **Rounding never flatters, on the percentage too.** 21,963 of 22,000 printed
+   as *100%* in the note (`pctProse` rounds). `displayReadyPct` floors it, in the
+   note, the gauge and the strip; and the strip and the note now both floor the
+   ESE, where the strip rounded and the note floored (21,054 against 21,053 on
+   one screen).
+5. **The refusal line is said in full once.** It repeated verbatim for seven
+   months with advice (*an address to the nation*) that was stale once the
+   third address cost capital. Later months say *"71 more of those called did
+   not report"*, and the advice drops the address once two have been given.
+6. **Copy.** *"cases still unheard when you left"* at a deadline ending is now
+   *"at the deadline"*. The Bill row's *−12 to −6 PC* printed ASCII hyphens.
+   `methodology.ts` said GDP loss penalises political capital, which F13
+   deleted; it now describes the allowance, the court list, the idle charge and
+   the delivery credit.
+7. **The deck.** Every game opened with the same two events, the second a
+   choiceless footnote (`junior_entry_useless`, 90% of runs on turn 1). It now
+   fires only after the minister has reinstated junior entry, which is what its
+   text was always answering, on a new `junior_entry_taken` condition key.
+   `devolved_objection` complained the Act was passed while it was a Bill
+   (`bill_status == 2` now). `opposition_motion` scolded *"those who voted for
+   the Bill"* in runs with no Bill. `briefing_leak` headlined a holding pool the
+   player had never created. `treasury_letter`, one of the best-written events,
+   needed £10bn of cumulative cost and the biggest scripted run reached £8.7bn;
+   it is £4bn now, which reaches Corps and not Division. The ally events and
+   three verdicts said *"division"* at Brigade and Corps; `VerdictVars` has a
+   `{formation}` placeholder and the events were reworded.
+8. **The share path.** No `og:image`, no `og:url`, no favicon, so a pasted link
+   got a text-only card on LinkedIn. A 1200×630 `public/og-image.png` in the
+   share card's own idiom, an SVG favicon, and a `%SITE_URL%` the build fills
+   from `SITE_URL` (the deploy workflow sets it to the Pages address). A
+   **Share** button goes first on the scoring screen where `navigator.share`
+   takes files, because the clipboard image API is absent from most in-app
+   browsers and that is where the audience arrives from; cancelling the sheet
+   is not a failure and does not trigger the download fallback.
+
+**What it cost.** Nothing at the model. The benchmark moved, and the movement
+is explained under *Benchmarks* above: a deck reshuffle worth 1% of median ESE
+at Division, and the Treasury letter now reaching Corps.
+
+**Watch for.** The reasons are strings computed from parameters. If
+`courseMonths`, the stand-up delays or the deadlines change, the tests in
+`tests/step.test.ts` ("late levers are said to be late") pin the exact months
+and will say so. And the general lesson, for the next lever anyone adds: **if
+the model knows when a thing lands, the row has to say so.** The holding pool
+learned it first; the rows learned it here.
+
+---
+
 ## The next mechanic, if one is wanted
 
 The leadership wall now has a counter-lever (F17), so the obvious gap is
@@ -1583,10 +1706,10 @@ resolve into a pool that never binds (F4's residue).
 - `docs/sim-spec.md` — the model. §7 is effectiveness and leadership, §7.1 the
   projection, §13 the scripted strategies.
 - `ASSUMPTIONS.md` — generated; every assumption with its range and rationale.
-- `docs/next-task.md` — two ready-to-paste prompts, the verdict screen first and
-  F4's residue second, carrying the measurements and the three traps this repo
-  has already sprung. Delete a brief when its work is done, and the file when
-  both are.
+- `docs/next-task.md` — one ready-to-paste prompt for F4's residue, carrying
+  the measurements and the three traps this repo has already sprung, plus the
+  latent bugs the 12 September audit found and did not take. Delete the brief
+  when its work is done.
 - `mobilisation-minister-design-brief.md` — the original brief. Its §10.3
   balance criteria are the ones the benchmark table above tests, with one
   change: criterion (d), "a sensible mixed strategy can make Division", is now

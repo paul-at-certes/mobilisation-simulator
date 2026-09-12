@@ -158,6 +158,33 @@ export async function copyImage(c: HTMLCanvasElement): Promise<boolean> {
   }
 }
 
+/** Whether the browser offers a share sheet that takes a file: mobile Safari and Chrome do, desktop mostly does not. */
+export function canShareImages(): boolean {
+  try {
+    const nav = navigator as Navigator & { canShare?: (data: ShareData) => boolean };
+    if (!nav.share || !nav.canShare || typeof File === 'undefined') return false;
+    return nav.canShare({ files: [new File([new Blob(['x'], { type: 'image/png' })], 'x.png', { type: 'image/png' })] });
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Hand the card to the system share sheet with the one-liner and the replay
+ * link. `cancelled` is the user closing the sheet, which is not a failure and
+ * should not trigger the download fallback.
+ */
+export async function shareImage(c: HTMLCanvasElement, data: { title: string; text: string; url: string }): Promise<'shared' | 'cancelled' | 'failed'> {
+  try {
+    const blob = await canvasToBlob(c);
+    const file = new File([blob], 'mobilisation-minister.png', { type: 'image/png' });
+    await navigator.share({ files: [file], title: data.title, text: `${data.text} ${data.url}` });
+    return 'shared';
+  } catch (e) {
+    return e instanceof DOMException && e.name === 'AbortError' ? 'cancelled' : 'failed';
+  }
+}
+
 export function downloadImage(c: HTMLCanvasElement, filename = 'mobilisation-minister.png'): void {
   const a = document.createElement('a');
   a.href = c.toDataURL('image/png');

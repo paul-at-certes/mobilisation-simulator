@@ -156,7 +156,8 @@ export type ConditionKey =
   | 'spending_raised' // 0/1
   | 'callup_cap' // the monthly ceiling on the call-up, or -1 when there is none
   | 'vetting_priority_months' // months since military applicants were given priority; -1 if never
-  | 'vetting_relaxed_months'; // months since the vetting standard was relaxed; -1 if never
+  | 'vetting_relaxed_months' // months since the vetting standard was relaxed; -1 if never
+  | 'junior_entry_taken'; // 0/1 (the minister has reinstated junior entry)
 
 export type ConditionOp = '>=' | '<=' | '==' | '>' | '<' | '!=';
 
@@ -277,6 +278,8 @@ export interface Verdict {
 }
 
 export interface VerdictVars {
+  /** "brigade" | "division" | "corps": what the run was raising, so a verdict never calls a corps a division. */
+  formation: string;
   target: number;
   ese: number;
   headcount: number;

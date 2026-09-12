@@ -101,8 +101,12 @@ entries, dataset MYE2, England and Wales row) and `uk_population_scaling`
 
 `.github/workflows/deploy.yml` builds and deploys to GitHub Pages on every
 push to `main`. It sets `BASE_PATH` to `/<repo-name>/` so a project site
-works; for a custom domain, remove that env line. Enable Pages with source
-"GitHub Actions" in the repository settings before the first push.
+works, and `SITE_URL` to the absolute Pages address, which the build writes
+into the `og:url` and `og:image` tags that give a pasted link its preview
+card; for a custom domain, remove the first and change the second. Enable
+Pages with source "GitHub Actions" in the repository settings before the
+first push. The preview image is `public/og-image.png` and the favicon
+`public/favicon.svg`.
 
 ## Sourcing rules
 

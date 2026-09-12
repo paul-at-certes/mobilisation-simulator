@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="6" fill="#f6f4ee"/>
+  <rect x="0" y="0" width="64" height="7" fill="#7a1f1f"/>
+  <text x="32" y="50" text-anchor="middle" font-family="Iowan Old Style, Palatino, Georgia, serif" font-weight="600" font-size="40" fill="#1c1b18">M</text>
+</svg>

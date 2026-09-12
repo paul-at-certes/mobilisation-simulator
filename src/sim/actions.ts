@@ -11,6 +11,75 @@ import type { Action, ActionAvailability, ActionId, ActionResult, BillClauses, G
 import { P, ageBandClauseCost } from './params.js';
 import { billMonths, recomputeEligible } from './legislation.js';
 import { leadersSpareable, promotionCoursesRunning } from './effectiveness.js';
+import { courseMonths, spareIntake } from './pipeline.js';
+import { formatInt, signedInt } from '../format.js';
+import type { Syllabus } from '../types.js';
+
+// ---------------------------------------------------------------------------
+// When a lever pays off
+// ---------------------------------------------------------------------------
+
+/**
+ * Every lever in this game lands months after it is pulled, and the model has
+ * always known when that month falls after the deadline: the holding pool
+ * says so for the people already called, and the scripted strategies guard on
+ * it. The action rows said nothing, so a player could run a cadre course in
+ * month 11 of 12 and learn from the verdict that its instructors were out of
+ * the line on the day (design review F19). These put the month on the face of
+ * the row, and say "after the deadline" when it is.
+ */
+export function monthWord(s: GameState, month: number): string {
+  return month > s.deadlineMonths ? `month ${month}, after the deadline` : `month ${month}`;
+}
+
+/**
+ * The month a conscript called at the end of this turn graduates. The cohort
+ * forms next month and runs the course in force then (§5), so this is the
+ * figure the call-up row shows, and the Bill row shows it for the month the
+ * Bill passes.
+ */
+export function graduationMonth(s: GameState, callupTurn: number, syllabus: Syllabus = s.syllabus): number {
+  return callupTurn + 1 + courseMonths(syllabus);
+}
+
+/**
+ * Whether a training place opening in `month` can graduate anybody before the
+ * deadline: `'yes'` on the syllabus in force, `'compressed'` only on a
+ * compressed one, `'no'` on either.
+ */
+export function placesOpeningIn(s: GameState, month: number): 'yes' | 'compressed' | 'no' {
+  if (month + courseMonths(s.syllabus) <= s.deadlineMonths) return 'yes';
+  if (month + courseMonths('compressed') <= s.deadlineMonths) return 'compressed';
+  return 'no';
+}
+
+function placesNote(s: GameState, standsUp: number, what: string): string | undefined {
+  switch (placesOpeningIn(s, standsUp)) {
+    case 'yes':
+      return undefined;
+    case 'compressed':
+      return `${what} in month ${standsUp}; on the ${courseMonths(s.syllabus)}-month course nobody it trains graduates before the deadline. A compressed syllabus would.`;
+    case 'no':
+      return `${what} in month ${standsUp}: too late for anybody it trains to graduate before the deadline.`;
+  }
+}
+
+/**
+ * The estate's spare intake once every purchase and contract already made has
+ * stood up, and the month that happens. `null` when nothing is pending.
+ */
+export function spareIntakeWhenStoodUp(s: GameState): { month: number; spare: number } | null {
+  const pending = s.capacityPurchaseMonths.filter((m) => m > s.turn);
+  if (s.civilianInstructors && s.civilianInstructorsMonth != null && s.civilianInstructorsMonth > s.turn) pending.push(s.civilianInstructorsMonth);
+  if (!pending.length) return null;
+  const month = Math.max(...pending);
+  return { month, spare: spareIntake({ ...s, turn: month }) };
+}
+
+function joinNotes(...notes: (string | undefined)[]): string | undefined {
+  const out = notes.filter((n): n is string => !!n);
+  return out.length ? out.join(' ') : undefined;
+}
 
 /** Plain-English labels for briefing notes and the CLI. */
 export const ACTION_LABELS: Record<ActionId, string> = {
@@ -132,19 +201,38 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
         : {
             id,
             available: true,
-            reason: `Legislating 90-day notice costs a further ${P.pc_cost_ninety_day_notice} PC.`,
+            reason:
+              s.turn + P.reserve_arrival_months_default > s.deadlineMonths
+                ? `At ${P.reserve_notice_days_default} days' notice they arrive in ${monthWord(s, s.turn + P.reserve_arrival_months_default)}; at ${P.reserve_notice_days_amended} days, ${monthWord(s, s.turn + P.reserve_arrival_months_amended)} (${signedInt(P.pc_cost_ninety_day_notice)} PC more).`
+                : `Legislating ${P.reserve_notice_days_amended}-day notice costs a further ${signedInt(P.pc_cost_ninety_day_notice)} PC.`,
             pcDelta: P.pc_cost_call_out_reserve,
           };
     case 'recall_ex_regular':
       return s.exRegularRecallActive
         ? { id, available: false, reason: 'Recall of the Ex-Regular Reserve is already under way.', pcDelta: 0, exhausted: true }
-        : { id, available: true, pcDelta: P.pc_cost_recall_ex_regular };
+        : {
+            id,
+            available: true,
+            reason:
+              s.turn + P.ex_regular_delay_months > s.deadlineMonths
+                ? `The first reports arrive in ${monthWord(s, s.turn + P.ex_regular_delay_months)}.`
+                : undefined,
+            pcDelta: P.pc_cost_recall_ex_regular,
+          };
     case 'trace_strategic_reserve':
       if (s.strategicTraceDone)
         return { id, available: false, reason: 'The Strategic Reserve trace has been completed.', pcDelta: 0, exhausted: true };
       if (s.strategicTraceMonth != null)
         return { id, available: false, reason: `A trace is in progress and reports in month ${s.strategicTraceMonth}.`, pcDelta: 0, exhausted: true };
-      return { id, available: true, pcDelta: P.pc_cost_trace_strategic };
+      return {
+        id,
+        available: true,
+        reason:
+          s.turn + P.strategic_trace_delay_months > s.deadlineMonths
+            ? `The trace reports in ${monthWord(s, s.turn + P.strategic_trace_delay_months)}.`
+            : undefined,
+        pcDelta: P.pc_cost_trace_strategic,
+      };
     case 'stop_loss':
       return s.stopLoss
         ? { id, available: false, reason: 'Stop-loss is already in force.', pcDelta: 0, exhausted: true }
@@ -166,7 +254,9 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
         : {
             id,
             available: true,
-            reason: `Normal procedure ${P.pc_cost_bill_normal} PC (${P.bill_months_normal} months); emergency ${P.pc_cost_bill_emergency} PC (${P.bill_months_emergency} months). Clause costs extra.`,
+            // The arithmetic the whole branch turns on: Bill plus course
+            // against the deadline. It was nowhere on screen (F19).
+            reason: billTimingNote(s),
             pcDelta: P.pc_cost_bill_normal,
           };
     case 'amend_bill':
@@ -176,7 +266,7 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
     case 'set_callup':
       return s.billStatus !== 'passed'
         ? { id, available: false, reason: 'The National Service Bill has not passed.', pcDelta: 0 }
-        : { id, available: true, pcDelta: 0 };
+        : { id, available: true, reason: callupNote(s), pcDelta: 0 };
     case 'expand_capacity': {
       const spare = leadersSpareable(s);
       const note =
@@ -185,7 +275,12 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
           : s.pools.regularTrained < P.leaders_per_capacity_purchase
             ? `Regular strength cannot spare ${P.leaders_per_capacity_purchase} instructors.`
             : undefined;
-      return { id, available: true, reason: note, pcDelta: P.pc_cost_expand_capacity };
+      return {
+        id,
+        available: true,
+        reason: joinNotes(note, placesNote(s, s.turn + P.capacity_standup_months, 'Stands up')),
+        pcDelta: P.pc_cost_expand_capacity,
+      };
     }
     case 'accelerate_promotion': {
       // One course at a time: the battle school has one set of training areas
@@ -210,24 +305,52 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
         leadersSpareable(s) - instructors < 0
           ? `The spareable junior-leader cadre cannot cover another ${Math.round(instructors)} instructors; the leadership factor will fall further before it rises.`
           : undefined;
-      return { id, available: true, reason: note, pcDelta: P.pc_cost_accelerate_promotion };
+      const finishes = s.turn + P.promotion_course_months;
+      const late =
+        finishes > s.deadlineMonths
+          ? `Finishes in ${monthWord(s, finishes)}: its instructors would still be out of the line on the day.`
+          : undefined;
+      return { id, available: true, reason: joinNotes(note, late), pcDelta: P.pc_cost_accelerate_promotion };
     }
     case 'compress_syllabus':
       return s.syllabus === 'compressed'
         ? { id, available: false, reason: 'The syllabus is already compressed.', pcDelta: 0, exhausted: true }
-        : { id, available: true, pcDelta: P.pc_cost_compress_syllabus };
+        : {
+            id,
+            available: true,
+            reason:
+              graduationMonth(s, s.turn, 'compressed') > s.deadlineMonths
+                ? `A course starting next month finishes in ${monthWord(s, graduationMonth(s, s.turn, 'compressed'))}.`
+                : undefined,
+            pcDelta: P.pc_cost_compress_syllabus,
+          };
     case 'contract_civilian_instructors':
       return s.civilianInstructors
         ? { id, available: false, reason: 'Civilian instructors are already contracted.', pcDelta: 0, exhausted: true }
-        : { id, available: true, pcDelta: P.pc_cost_civilian_instructors };
+        : {
+            id,
+            available: true,
+            reason: placesNote(s, s.turn + P.civilian_instructor_delay_months, 'Starts teaching'),
+            pcDelta: P.pc_cost_civilian_instructors,
+          };
     case 'junior_entry':
       return s.juniorEntryTaken
         ? { id, available: false, reason: 'Junior entry has already been reinstated.', pcDelta: 0, exhausted: true }
-        : { id, available: true, pcDelta: P.pc_cost_junior_entry };
+        : {
+            id,
+            available: true,
+            reason: `Its first recruits reach deployable age in month ${s.turn + P.junior_entry_lead_months}; nothing from it counts before the deadline.`,
+            pcDelta: P.pc_cost_junior_entry,
+          };
     case 'equipment_buy':
       return s.equipmentOrdered
         ? { id, available: false, reason: 'The emergency equipment buy has been placed.', pcDelta: 0, exhausted: true }
-        : { id, available: true, pcDelta: P.pc_cost_equipment_buy };
+        : {
+            id,
+            available: true,
+            reason: equipmentNote(s),
+            pcDelta: P.pc_cost_equipment_buy,
+          };
     case 'address_nation':
       return {
         id,
@@ -247,6 +370,45 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
         pcDelta: blamePc(s.blameCount),
       };
   }
+}
+
+function billTimingNote(s: GameState): string {
+  const line = (procedure: 'emergency' | 'normal') => {
+    const passes = s.turn + billMonths(procedure);
+    const normal = graduationMonth(s, passes, 'normal');
+    const compressed = graduationMonth(s, passes, 'compressed');
+    const late = (m: number) => (m > s.deadlineMonths ? `${m}, after the deadline` : String(m));
+    return `${procedure === 'emergency' ? 'Emergency' : 'Normal'}: Royal Assent month ${passes}; first conscripts graduate month ${late(normal)} (${late(compressed)} compressed).`;
+  };
+  return `${line('emergency')} ${line('normal')} Clause costs extra.`;
+}
+
+function callupNote(s: GameState): string {
+  const now = Math.floor(spareIntake(s));
+  const later = spareIntakeWhenStoodUp(s);
+  const room =
+    later && Math.floor(later.spare) !== now
+      ? `The estate has room for ${formatInt(now)} a month now and ${formatInt(Math.floor(later.spare))} from month ${later.month}.`
+      : `The estate has room for ${formatInt(now)} a month.`;
+  const grad = graduationMonth(s, s.turn);
+  const compressed = graduationMonth(s, s.turn, 'compressed');
+  let when: string;
+  if (compressed > s.deadlineMonths) {
+    // Late on either course: say so once, not twice.
+    when = `Called now, nobody graduates before the deadline: month ${compressed} at the earliest.`;
+  } else if (s.syllabus === 'compressed' || compressed === grad) {
+    when = `Called now, they graduate in ${monthWord(s, grad)}.`;
+  } else {
+    when = `Called now, they graduate in ${monthWord(s, grad)} (${monthWord(s, compressed)} compressed).`;
+  }
+  return `${room} ${when}`;
+}
+
+function equipmentNote(s: GameState): string | undefined {
+  const arrives = s.turn + P.equipment_lead_months + (s.contingencyDrawn ? P.contingency_equipment_delay_months : 0);
+  if (arrives > s.deadlineMonths) return `Arrives in ${monthWord(s, arrives)}.`;
+  if (s.contingencyDrawn) return `Arrives in month ${arrives}, ${P.contingency_equipment_delay_months} months later than it would have: the contingency has been spent.`;
+  return undefined;
 }
 
 export function availableActions(s: GameState): ActionAvailability[] {

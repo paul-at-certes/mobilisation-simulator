@@ -10,7 +10,7 @@ import { ACTION_COPY, GROUP_TITLES, type ActionGroup } from '../action-copy';
 import { getParam, sourced } from './sourced';
 import { formatInt, signedInt } from '../../format';
 
-const pcOf = (id: string): string => { const v = getParam(id)?.value ?? 0; return v > 0 ? `+${v}` : String(v); };
+const pcOf = (id: string): string => signedInt(getParam(id)?.value ?? 0);
 const mOf = (id: string): number => getParam(id)?.value ?? 0;
 
 export interface ActionMenuController {

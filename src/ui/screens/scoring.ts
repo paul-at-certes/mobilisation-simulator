@@ -1,7 +1,7 @@
 /** Scoring screen: headline, the two bars, cost, the general's verdict, share card. */
 import type { GameState, Score } from '../../types';
 import { h } from '../dom';
-import { renderShareCard, copyImage, downloadImage } from '../share-card';
+import { renderShareCard, copyImage, downloadImage, shareImage, canShareImages } from '../share-card';
 import { sourced } from '../components/sourced';
 import { displayEse, displayShortfall } from '../../sim/score';
 import { formatInt, gbpTabular, pctTabular } from '../../format';
@@ -69,7 +69,7 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
             'Refused to report',
             formatInt(score.refused),
             score.refusalBacklog >= 1
-              ? [formatInt(score.refusalBacklog), ' cases still unheard when you left'].join('')
+              ? [formatInt(score.refusalBacklog), score.resigned ? ' cases still unheard when you left' : ' cases still unheard at the deadline'].join('')
               : 'all heard',
           )
         : null,
@@ -80,7 +80,14 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
     h(
       'div',
       { class: 'btn-row' },
-      h('button', { class: 'btn', onclick: async () => { status.textContent = (await copyImage(canvas)) ? 'Image copied.' : 'Clipboard not available here; downloading instead.'; if (!status.textContent.startsWith('Image')) downloadImage(canvas); } }, 'Copy image'),
+      // The share sheet first, where there is one: on a phone it is the one
+      // tap that reaches LinkedIn with the card attached. The clipboard image
+      // API is missing from most in-app browsers, which is where the audience
+      // arrives from.
+      canShareImages()
+        ? h('button', { class: 'btn', onclick: async () => { const r = await shareImage(canvas, { title: 'Mobilisation Minister', text: score.verdictOneLiner, url: link }); status.textContent = r === 'shared' ? 'Shared.' : r === 'cancelled' ? '' : 'Sharing not available here; downloading instead.'; if (r === 'failed') downloadImage(canvas); } }, 'Share')
+        : null,
+      h('button', { class: canShareImages() ? 'btn btn-secondary' : 'btn', onclick: async () => { status.textContent = (await copyImage(canvas)) ? 'Image copied.' : 'Clipboard not available here; downloading instead.'; if (!status.textContent.startsWith('Image')) downloadImage(canvas); } }, 'Copy image'),
       h('button', { class: 'btn btn-secondary', onclick: () => downloadImage(canvas) }, 'Download image'),
       h('button', { class: 'btn btn-secondary', onclick: async () => { try { await navigator.clipboard.writeText(link); status.textContent = 'Link copied.'; } catch { status.textContent = link; } } }, 'Copy link'),
       status,

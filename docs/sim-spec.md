@@ -609,7 +609,7 @@ rather than as a threshold the band either crosses or does not. See `docs/design
   otherwise → `diverted` (the training estate took the corporals). Only
   meaningful where leadership is `broken`, and a verdict using it must pair it
   with `leadership: 'broken'` (there is a test).
-- Verdict: pick from `verdicts.json` the first entry whose `met`/`quality`/`leadership`/`resigned`/`margin`/`cadre` match (`'any'`, or an omitted `resigned`/`margin`/`cadre`, are wildcards), fill `{placeholders}` from `VerdictVars` with formatted integers.
+- Verdict: pick from `verdicts.json` the first entry whose `met`/`quality`/`leadership`/`resigned`/`margin`/`cadre` match (`'any'`, or an omitted `resigned`/`margin`/`cadre`, are wildcards), fill `{placeholders}` from `VerdictVars` with formatted integers (`{formation}` is the difficulty's formation name — brigade, division, corps — so a verdict never calls a corps a division).
 - **Selection is first-match, so order is meaning.** An entry placed after a
   wider one that subsumes it can never be chosen. `verdicts.json` is capped at
   14 entries by test — a content budget, not a technical limit. Two states the model cannot

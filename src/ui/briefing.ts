@@ -7,12 +7,13 @@
  * use of the global random generator. Every number quoted from the parameter table comes through
  * `P`, never inlined.
  */
-import type { BriefingFacts, GameState } from '../types.js';
+import type { BriefingFacts, GameState, PoolKey } from '../types.js';
 import { type ParamId, P } from '../sim/params.js';
 import { deliveryCredit } from '../sim/politics.js';
 import { outflowIntent } from '../sim/outflow.js';
 import { effectiveWillingness } from '../sim/politics.js';
-import { displayEse } from '../sim/score.js';
+import { displayEse, displayReadyPct } from '../sim/score.js';
+import { findEvent } from '../sim/events.js';
 import { formatInt, gbpProse, pctProse, signedInt } from '../format.js';
 
 // Sourced helpers: every parameter-based number in a briefing carries its popover.
@@ -87,6 +88,32 @@ function formationLabel(state: GameState): string {
   }
 }
 
+/**
+ * One clause for a pool an event moved, in the direction it moved. Only the
+ * pools the deck touches have a phrasing; anything else is left unsaid rather
+ * than said badly.
+ */
+function poolChangeLine(pool: PoolKey, delta: number): string | null {
+  const n = formatInt(Math.abs(delta));
+  if (Math.abs(delta) < 0.5) return null;
+  switch (pool) {
+    case 'reserveVolunteerMobilised':
+      return delta < 0 ? `${n} mobilised reservists went home to their employers` : `${n} more reservists were mobilised`;
+    case 'holdingPool':
+      return delta < 0 ? `${n} were sent home from the holding pool` : `${n} were added to the holding pool`;
+    case 'regularTrained':
+      return delta < 0 ? `the field army lost ${n} trained regulars` : `${n} trained regulars withdrew their notice`;
+    case 'regularUntrained':
+      return delta < 0 ? `${n} fewer recruits entered the regular pipeline` : `${n} more recruits entered the regular pipeline`;
+    case 'exRegularReported':
+      return delta < 0 ? `${n} recalled ex-regulars were released` : `${n} more ex-regulars reported`;
+    case 'strategicTraced':
+      return delta < 0 ? `${n} traced Strategic Reservists were released` : `${n} more Strategic Reservists were traced`;
+    default:
+      return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // The note
 // ---------------------------------------------------------------------------
@@ -147,7 +174,7 @@ function finalNote(state: GameState): string[] {
   }
 
   out.push(
-    `Force Ready stands at ${formatInt(displayEse(g.forceReady))} against a target of ${formatInt(state.target)} (${pctProse(g.forceReadyPct)}), at quality ${g.forceQuality.toFixed(2)} from ${formatInt(g.headcountCounted)} personnel counted.`,
+    `Force Ready stands at ${formatInt(displayEse(g.forceReady))} against a target of ${formatInt(state.target)} (${pctProse(displayReadyPct(g.forceReadyPct))}), at quality ${g.forceQuality.toFixed(2)} from ${formatInt(g.headcountCounted)} personnel counted.`,
   );
 
   out.push(
@@ -167,7 +194,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
   const remaining = state.deadlineMonths - turn;
   const ese = formatInt(displayEse(g.forceReady));
   const target = formatInt(state.target);
-  const pct = pctProse(g.forceReadyPct);
+  const pct = pctProse(displayReadyPct(g.forceReadyPct));
   const quality = g.forceQuality.toFixed(2);
   const pc = formatInt(g.politicalCapital);
 
@@ -257,8 +284,16 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     .filter((n) => n.startsWith('refused:'))
     .reduce((a, n) => a + (Number(n.split(':')[1]) || 0), 0);
   if (refused > 0) {
+    // In full the first month it happens, and the advice only while an address
+    // is still worth giving; after that a line, or it reads as a stuck record.
+    const firstTime = state.conscriptsRefusedTotal - refused < 0.5;
+    const advice = state.addressCount < 2
+      ? ' An older age band or an address to the nation would lift willingness and bring more of them in.'
+      : ' An older age band would lift willingness and bring more of them in.';
     urgent.push(
-      `${formatInt(refused)} of those called did not report, and the prosecutions are charged to you. An older age band or an address to the nation would lift willingness and bring more of them in.`,
+      firstTime
+        ? `${formatInt(refused)} of those called did not report, and the prosecutions are charged to you.${advice}`
+        : `${formatInt(refused)} more of those called did not report.`,
     );
   }
 
@@ -271,15 +306,33 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     );
   }
 
+  // --- What last month's event did to the numbers ---------------------------
+  // An event that moves a pool moves Force Ready by a thousand or more, and it
+  // did so silently: the note said nothing and the gauge fell (F19). Said here,
+  // ahead of everything else, because it is usually the largest change of the
+  // month.
+  const eventLines: string[] = [];
+  for (const n of facts.notes) {
+    const m = /^event:([^:]+):pool:([^:]+):(-?[\d.]+)$/.exec(n);
+    if (!m) continue;
+    const title = findEvent(m[1])?.title ?? 'The event';
+    const line = poolChangeLine(m[2] as PoolKey, Number(m[3]));
+    if (line) eventLines.push(`${title}: ${line}.`);
+  }
+
   // --- Changes ------------------------------------------------------------
   const arrivals = facts.arrivals.filter((a) => a.count > 0);
   const grads = facts.graduations;
   if (arrivals.length || grads > 0) {
-    const parts = arrivals.map((a) => `${formatInt(a.count)} ${lowerFirst(a.label)}`);
+    // The labels are nouns and the verb is supplied here, once: "11,759 Army
+    // Reserve volunteers and 2,444 ex-regulars arrived". They used to carry
+    // their own participles, which read as "ex-regulars reported arrived".
+    const who = arrivals.map((a) => `${formatInt(a.count)} ${lowerFirst(a.label)}`);
+    const parts: string[] = [];
+    if (who.length) parts.push(`${who.length > 1 ? `${who.slice(0, -1).join(', ')} and ${who[who.length - 1]}` : who[0]} arrived`);
     if (grads > 0) parts.push(`${formatInt(grads)} conscripts completed training`);
-    const joined = parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}` : parts[0];
-    const verb = arrivals.length ? (grads > 0 ? '' : ' arrived') : '';
-    changes.push(pick(state, 24, [`This month ${joined}${verb}.`, `Arrivals this month: ${joined}${verb}.`]));
+    const joined = parts.join(', and ');
+    changes.push(pick(state, 24, [`This month ${joined}.`, `${joined[0].toUpperCase()}${joined.slice(1)} this month.`]));
   }
 
   // The delivery credit is the only renewable political income in the game, so
@@ -404,7 +457,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     );
   }
 
-  const body = [...urgent.slice(0, 2), ...rotate(state, 26, changes), ...rotate(state, 27, colour)];
+  const body = [...urgent.slice(0, 2), ...eventLines, ...rotate(state, 26, changes), ...rotate(state, 27, colour)];
   const out = [status, ...body].slice(0, 4);
   if (out.length < 2) {
     out.push(

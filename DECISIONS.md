@@ -1895,3 +1895,47 @@ there. The test was wrong, not the code. **The distinction is narrower than it
 looks — it only shows below £10bn — which happens to be exactly where a run's
 Treasury cost lands**, so the test now uses £2.345bn, a figure the game actually
 produces.
+
+## The row says when a lever lands (12 September 2026)
+
+Paul asked for a fresh review with one criterion: is it fun, and will it travel
+on LinkedIn. The review played a Division run at 375px, the way the design
+review's method section says someone has to, and ran two audits underneath it.
+The model came back clean and the benchmark reproduced byte-identical; the
+findings were all legibility, and the six that were taken are recorded in the
+design review as **F19**. Two of them need a reason here.
+
+**The Bill-plus-course arithmetic went onto the rows rather than into a
+tutorial.** Nothing on screen said that an emergency Bill introduced in month 1
+passes in month 4 and its first conscripts graduate in month 13 of 12. The
+options were a tutorial screen, a note in the Permanent Secretary's opening, or
+the row. The row won because the arithmetic changes every month — the month a
+cadre course finishes is `turn + 2`, and it is only worth saying in the month it
+crosses the deadline — and because F7 had already established that the reason
+line is the one thing that stays on the face of the row. The availability
+booleans do not change; a test walks a full run and checks. **The bots never
+read the reasons, so the benchmark cannot see this.** That is deliberate: the
+change is to what the player is told, not to what the game does.
+
+**The deck changes moved the benchmark, and the table was re-baselined rather
+than the changes trimmed.** Any trigger change reshuffles the event sequence for
+every seed, and the review had already recorded (F2, F16) that the Division
+watch number is sensitive to a 1% move in the median. The choice was between
+leaving `junior_entry_useless` on turn 1 of every game and `treasury_letter`
+unreachable, or accepting a re-baseline and explaining it. The second. The
+Division floor is 53% (was 43%) and the ceiling, with a cadre course at every
+opportunity, 63% (was 55%): both from the reshuffle alone, since the letter
+cannot fire under £3bn. Corps moved for a different reason — the letter fires
+on 39 of 40 benchmark runs and the bots take choice 0, cancelling a tranche and
+getting 625 junior leaders back — and Corps is still met on 0% of seeds, so the
+rung's argument stands.
+
+**ASK.** The Division ceiling is now two points under the ~65% walkover line.
+`target_division` is an assumption with range [20,000, 30,000]. If a playtest
+finds Division no longer close-run, nudge the target against `npm run dist`;
+do not soften the events. Paul to say whether 53/63 is acceptable as it stands.
+
+**Not taken, on Paul's instruction to keep to the six.** The sim audit found
+four latent bugs and some spec drift; they are listed in `docs/next-task.md` so
+the next session does not re-find them.
+

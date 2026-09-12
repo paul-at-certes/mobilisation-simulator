@@ -76,6 +76,7 @@ export function conditionVars(s: GameState): Record<ConditionKey, number> {
     callup_cap: s.callupCapPerMonth ?? -1,
     vetting_priority_months: s.vettingPriorityMonth == null ? -1 : s.turn - s.vettingPriorityMonth,
     vetting_relaxed_months: s.vettingRelaxedMonth == null ? -1 : s.turn - s.vettingRelaxedMonth,
+    junior_entry_taken: s.juniorEntryTaken ? 1 : 0,
   };
 }
 

@@ -260,7 +260,7 @@
         {
           "key": "cumulative_cost",
           "op": ">",
-          "value": 10000000000
+          "value": 4000000000
         },
         {
           "key": "capacity_purchases",
@@ -309,7 +309,7 @@
   {
     "id": "ally_asks",
     "title": "The ally asks",
-    "text": "The ally's defence minister has telephoned. He asks, politely and for the second time, whether the division will be on the ground on the date agreed. His chief of staff is on the line taking notes. A holding answer is not available.",
+    "text": "The ally's defence minister has telephoned. He asks, politely and for the second time, whether the force he was promised will be on the ground on the date agreed. His chief of staff is on the line taking notes. A holding answer is not available.",
     "trigger": {
       "turnsRemaining": 3,
       "conditions": [
@@ -999,8 +999,8 @@
       "conditions": [
         {
           "key": "bill_status",
-          "op": ">=",
-          "value": 1
+          "op": "==",
+          "value": 2
         }
       ]
     },
@@ -1065,7 +1065,7 @@
   {
     "id": "briefing_leak",
     "title": "This note has leaked",
-    "text": "Last month's briefing note is on the front page. The holding-pool figure is in the headline and the leadership paragraph is in the second paragraph. The Cabinet Office has begun a leak inquiry. It will find nothing.",
+    "text": "Last month's briefing note is on the front page. The Force Ready figure is in the headline and the leadership paragraph is the second paragraph. The Cabinet Office has begun a leak inquiry. It will find nothing.",
     "trigger": {
       "minTurn": 3
     },
@@ -1073,7 +1073,7 @@
     "choices": [
       {
         "label": "Say nothing",
-        "summary": "The story runs its course; political cost.",
+        "summary": "The story runs its course: political cost, and more of the Army thinks about leaving.",
         "effects": [
           {
             "type": "pc",
@@ -1087,7 +1087,7 @@
       },
       {
         "label": "Publish the whole series",
-        "summary": "Candour is expensive, but willingness to serve edges up for a time.",
+        "summary": "A smaller political cost, and willingness to serve edges up for a time.",
         "effects": [
           {
             "type": "pc",
@@ -1220,7 +1220,7 @@
   {
     "id": "opposition_motion",
     "title": "An Opposition day",
-    "text": "The Opposition has tabled a motion of no confidence in the mobilisation programme rather than in the Government, so a backbencher can vote for it without bringing anything down. Those who voted for the Bill are asking what it would cost them to abstain. The Chief Whip asks what you can offer them.",
+    "text": "The Opposition has tabled a motion of no confidence in the mobilisation programme rather than in the Government, so a backbencher can vote for it without bringing anything down. Your own backbenchers are asking what it would cost them to abstain. The Chief Whip asks what you can offer them.",
     "trigger": {
       "minTurn": 3,
       "repeatable": true,
@@ -1301,11 +1301,17 @@
   },
   {
     "id": "junior_entry_useless",
-    "title": "Junior entry, considered",
-    "text": "The Army has circulated a proposal to expand junior entry at the Foundation College. The note observes that non-completion there averaged 34% over the last published period, the worst of any training establishment. It also observes that a recruit taken at sixteen cannot be deployed until eighteen. That is a lead time of 24 months, against a deadline shorter than that. The proposal has been filed.",
+    "title": "Junior entry, reconsidered",
+    "text": "The Foundation College has acknowledged the instruction to expand junior entry. Its reply observes that non-completion there averaged 34% over the last published period, the worst of any training establishment, and that a recruit taken at sixteen cannot be deployed until eighteen. That is a lead time of 24 months, and the deadline will have passed. The instruction has been filed, with the reply.",
     "trigger": {
       "minTurn": 1,
-      "maxTurn": 6
+      "conditions": [
+        {
+          "key": "junior_entry_taken",
+          "op": "==",
+          "value": 1
+        }
+      ]
     },
     "weight": 2,
     "choices": [],
@@ -1494,7 +1500,7 @@
       },
       {
         "label": "Hold the priority",
-        "summary": "The Army keeps the queue. The letter is published, the Home Office briefs against the Department, and the police numbers will be remembered if the division is not raised.",
+        "summary": "The Army keeps the queue. The letter is published, the Home Office briefs against the Department, and the police numbers will be remembered if the target is missed.",
         "effects": [
           {
             "type": "pc",

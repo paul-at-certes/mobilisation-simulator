@@ -1253,3 +1253,96 @@ describe('determinism', () => {
     expect(s).toEqual(frozen);
   });
 });
+
+// ---------------------------------------------------------------------------
+// F19: the row says when a lever pays off, and whether that is after the deadline
+// ---------------------------------------------------------------------------
+
+describe('late levers are said to be late (F19)', () => {
+  const reasonOf = (s: GameState, id: string) => availableActions(s).find((a) => a.id === id)?.reason ?? '';
+
+  it('warns at Brigade that the standard reserve notice arrives after the four-month deadline', () => {
+    const s = newGame(1, 'brigade');
+    expect(reasonOf(s, 'call_out_reserve')).toMatch(/month 6, after the deadline/);
+    expect(reasonOf(s, 'call_out_reserve')).toMatch(/at 90 days, month 3/);
+    // At Division the same lever is in time, and the row keeps its cost note.
+    expect(reasonOf(newGame(1, 'division'), 'call_out_reserve')).toMatch(/costs a further −4 PC/);
+  });
+
+  it('puts the Bill-plus-course arithmetic on the Bill row', () => {
+    const s = newGame(1, 'division');
+    const r = reasonOf(s, 'introduce_bill');
+    // Emergency: Assent month 3, cohort forms month 4, 8-month course graduates month 12: in time by a month.
+    expect(r).toMatch(/Emergency: Royal Assent month 3; first conscripts graduate month 12 \(9 compressed\)\./);
+    // Normal: Assent month 6, graduates month 15, after a 12-month deadline.
+    expect(r).toMatch(/Normal: Royal Assent month 6; first conscripts graduate month 15, after the deadline \(12 compressed\)\./);
+  });
+
+  it('tells the call-up row how much room the estate has and when the called graduate', () => {
+    let s = newGame(1, 'division');
+    s = run(s, [
+      { actions: [{ id: 'introduce_bill', procedure: 'emergency', clauses: { ageBand: '18-30', includeWomen: true, medical: 'relaxed', exemptions: 'broad' } }, { id: 'expand_capacity' }], eventChoice: null },
+    ]);
+    // Turn 1: the Bill is in the House, so the call-up row is not yet live.
+    expect(reasonOf(s, 'set_callup')).toMatch(/has not passed/);
+    s = run(s, [NOTHING, NOTHING]);
+    // Turn 3: Royal Assent. The purchase stood up in month 2, so the room is
+    // what it is and the row says so; called now, the cohort forms in month 4
+    // and graduates in month 12 on the normal course, month 9 compressed.
+    const r = reasonOf(s, 'set_callup');
+    expect(r).toMatch(/^The estate has room for \d+ a month\./);
+    expect(r).toMatch(/Called now, they graduate in month 12 \(month 9 compressed\)\./);
+    // Buy another tranche: the row now quotes the room after it stands up.
+    s = step(s, { actions: [{ id: 'expand_capacity' }], eventChoice: s.pendingEvent ? 0 : null });
+    expect(reasonOf(s, 'set_callup')).toMatch(/^The estate has room for [\d,]+ a month now and [\d,]+ from month 5\./);
+    s = run(s, Array(7).fill(NOTHING));
+    // Turn 11 of 12: nothing called now can graduate on either syllabus.
+    expect(reasonOf(s, 'set_callup')).toMatch(/Called now, nobody graduates before the deadline: month 17 at the earliest\./);
+  });
+
+  it('says a cadre course started in the last month finishes after the deadline', () => {
+    let s = newGame(1, 'division');
+    s = run(s, Array(11).fill(NOTHING));
+    expect(s.turn).toBe(11);
+    expect(reasonOf(s, 'accelerate_promotion')).toMatch(/Finishes in month 13, after the deadline: its instructors would still be out of the line on the day/);
+    expect(reasonOf(s, 'equipment_buy')).toMatch(/Arrives in month 15, after the deadline/);
+    expect(reasonOf(s, 'expand_capacity')).toMatch(/Stands up in month 13: too late/);
+    expect(reasonOf(s, 'compress_syllabus')).toMatch(/finishes in month 17, after the deadline/);
+    // In month 1 none of those is late, and none of the rows carries the warning.
+    const early = run(newGame(1, 'division'), [NOTHING]);
+    for (const id of ['accelerate_promotion', 'equipment_buy', 'expand_capacity', 'compress_syllabus']) {
+      expect(reasonOf(early, id), id).not.toMatch(/after the deadline|too late/);
+    }
+  });
+
+  it('distinguishes places that only a compressed syllabus can use in time', () => {
+    // Division, turn 3: a purchase stands up in month 5; 5 + 8 = 13 is late on
+    // the normal course, 5 + 5 = 10 is fine compressed.
+    const s = run(newGame(1, 'division'), Array(3).fill(NOTHING));
+    expect(reasonOf(s, 'expand_capacity')).toMatch(/Stands up in month 5; on the 8-month course nobody it trains graduates before the deadline\. A compressed syllabus would\./);
+  });
+
+  it('never changes what is available, only what the row says', () => {
+    // The reasons are text; the booleans the bots and the tests key off are untouched.
+    for (const d of ['brigade', 'division', 'corps'] as const) {
+      let s = newGame(3, d);
+      while (!s.over) {
+        for (const a of availableActions(s)) expect(typeof a.available).toBe('boolean');
+        s = step(s, STRATEGIES.reserves_plus_light(s));
+      }
+    }
+  });
+});
+
+describe('the junior-entry footnote (F19)', () => {
+  it('fires only after the minister has reinstated junior entry', () => {
+    useRealDeck();
+    const s = run(newGame(1, 'division'), [NOTHING, NOTHING]);
+    expect(conditionVars(s).junior_entry_taken).toBe(0);
+    const ev = DECK.find((e) => e.id === 'junior_entry_useless')!;
+    expect(eventEligible(ev, s, conditionVars(s))).toBe(false);
+    const taken = step(s, { actions: [{ id: 'junior_entry' }], eventChoice: s.pendingEvent ? 0 : null });
+    expect(conditionVars(taken).junior_entry_taken).toBe(1);
+    expect(eventEligible(ev, taken, conditionVars(taken))).toBe(true);
+  });
+});

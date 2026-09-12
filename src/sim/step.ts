@@ -506,7 +506,7 @@ export function advanceMonth(
   s.reserveArrivals = stillPending;
   if (arrivedNow > 0) {
     s.pools.reserveVolunteerMobilised += arrivedNow;
-    arrivals.push({ label: 'Army Reserve volunteers mobilised', count: arrivedNow });
+    arrivals.push({ label: 'Army Reserve volunteers', count: arrivedNow });
   }
   if (s.exRegularRecallActive && s.turn >= s.exRegularRecallMonth + P.ex_regular_delay_months) {
     const reportable = P.ex_regular_tracked * s.exRegularCeiling - s.pools.exRegularReported;
@@ -514,7 +514,7 @@ export function advanceMonth(
     if (reporting > 0) {
       s.pools.exRegularTracked -= reporting;
       s.pools.exRegularReported += reporting;
-      arrivals.push({ label: 'Ex-regulars reported', count: reporting });
+      arrivals.push({ label: 'ex-regulars', count: reporting });
     }
   }
   if (!s.strategicTraceDone && s.strategicTraceMonth != null && s.strategicTraceMonth <= s.turn) {
@@ -533,7 +533,7 @@ export function advanceMonth(
     s.pools.strategicUntracked -= located;
     s.pools.strategicTraced += traced;
     s.strategicTraceDone = true;
-    arrivals.push({ label: 'Strategic Reserve traced and reporting', count: traced });
+    arrivals.push({ label: 'traced Strategic Reservists', count: traced });
     notes.push(`strategic_trace_yield:${yield_}`);
   }
 

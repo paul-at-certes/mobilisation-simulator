@@ -34,7 +34,7 @@ const CONDITION_KEYS = [
   'equipment_arrived', 'holding_pool', 'conscripts_in_training', 'conscripts_trained', 'cumulative_cost',
   'cumulative_gdp_loss', 'political_capital', 'force_ready', 'force_ready_pct', 'force_quality',
   'leadership_factor', 'address_count', 'blame_count', 'spending_raised', 'callup_cap',
-  'vetting_priority_months', 'vetting_relaxed_months',
+  'vetting_priority_months', 'vetting_relaxed_months', 'junior_entry_taken',
 ];
 const CONDITION_OPS = ['>=', '<=', '==', '>', '<', '!='];
 const EFFECT_TYPES = [
@@ -51,7 +51,7 @@ const POOL_KEYS = [
   'conscriptTrainedUnequipped', 'conscriptTrainedEquipped',
 ];
 const VERDICT_VARS = [
-  'target', 'ese', 'headcount', 'months', 'quality', 'leadership', 'costBn', 'gdpLossBn',
+  'formation', 'target', 'ese', 'headcount', 'months', 'quality', 'leadership', 'costBn', 'gdpLossBn',
   'conscripts', 'reservists', 'regulars', 'shortfall', 'surplus',
 ];
 
@@ -513,7 +513,7 @@ describe('verdicts.json', () => {
     const target = 22_000;
     const ese = 21_999.6; // a genuine miss of 0.4 of a soldier
     const rendered = fillTemplate('{ese} of {target}: {shortfall} short.', {
-      target, ese, headcount: 33_000, months: 12, quality: 0.66, leadership: 0.95,
+      formation: 'division', target, ese, headcount: 33_000, months: 12, quality: 0.66, leadership: 0.95,
       costBn: 2.4, gdpLossBn: 1.1, conscripts: 0, reservists: 0, regulars: 0,
       shortfall: target - ese, surplus: 0,
     });
@@ -537,7 +537,7 @@ describe('verdicts.json', () => {
     const sample: Record<string, string> = {
       target: '25,000', ese: '11,400', headcount: '27,000', months: '12', quality: '0.42', leadership: '0.55',
       costBn: '14', gdpLossBn: '9', conscripts: '18,000', reservists: '6,500', regulars: '7,100',
-      shortfall: '13,600', surplus: '13,600',
+      shortfall: '13,600', surplus: '13,600', formation: 'division',
     };
     for (const v of verdicts) {
       for (const field of [v.text, v.oneLiner]) {
