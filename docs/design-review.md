@@ -621,6 +621,14 @@ If a playtest says the arguments are going unread, the answer is not to reopen
 the paragraphs — it is that the titles and costs are now doing all the work and
 have to be good enough to make a reader want the detail. Watch for it.
 
+**A first step against that risk: the menu now says the rows open.** One line
+under the *Decisions* heading — "Tap a title for what the decision does, and
+where its numbers come from." The `+` beside the cost was the entire
+affordance, and it is the same glyph the groups and the ledger use for a
+section header, not for a row inside one. The line wraps to two at 375px and
+costs 45px there — once, not per row — which is the cheapest thing to try
+before anything that gives the paragraphs their height back.
+
 ---
 
 ### F8 — Brigade is won by anyone who calls out the reserves · *By design*

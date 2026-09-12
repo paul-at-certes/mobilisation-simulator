@@ -125,7 +125,15 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
   const root = h(
     'section',
     { class: 'actions', 'aria-label': 'Decisions' },
-    h('div', { class: 'actions-head' }, h('h2', {}, 'Decisions')),
+    h(
+      'div',
+      { class: 'actions-head' },
+      h('h2', {}, 'Decisions'),
+      // The paragraph behind each title (F7) is only found if you know it is
+      // there: the "+" beside the cost is the whole affordance, and on a phone
+      // nothing else says the row is a control. One line, once, at the top.
+      h('p', { class: 'actions-hint small muted' }, 'Tap a title for what the decision does, and where its numbers come from.'),
+    ),
     ...GROUP_ORDER.map((g) => groupEl(g, rows[g], liveCount[g])),
   );
   updateCounter();

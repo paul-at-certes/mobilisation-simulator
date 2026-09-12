@@ -155,8 +155,12 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 
 /* Action menu */
 .actions { margin: 1rem 0; }
-.actions-head { display: flex; justify-content: space-between; align-items: baseline; }
+.actions-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 0.75rem; }
 .actions-head h2 { margin-bottom: 0.25rem; }
+/* Its own line under the heading at every width: it is a subtitle to
+   "Decisions", not a right-hand scrap, and the head keeps space-between for
+   anything that does belong beside the heading. */
+.actions-hint { flex: 0 0 100%; margin-bottom: 0.25rem; }
 /* Groups are <details>: the list is too long for a phone with everything open (F7). */
 .action-group { margin-top: 0.5rem; border-top: 1px solid var(--rule); }
 .action-group > summary {
