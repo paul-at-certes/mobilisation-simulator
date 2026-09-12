@@ -120,10 +120,11 @@ leadership factor at the end.
 
 - `reserves_plus_light` at Division meets the target on **43%** of seeds. Below
   ~25% the headline difficulty is a coin flip again (F2); above ~65% it is a
-  walkover. **This is a floor, and since F17 the ceiling is worth watching too:**
-  a player who runs a cadre course at every opportunity reaches **55%**. The
-  bots never do, because their guard fires below a leadership factor of 0.85
-  and at Division the sensible strategy sits at 0.98.
+  walkover. **This is a floor, and since F17 the ceiling is known too:** a
+  player who runs a cadre course at every opportunity reaches **55%**, which was
+  put to Paul and stands. The bots never do, because their guard fires below a
+  leadership factor of 0.85 and at Division the sensible strategy sits at 0.98,
+  so 43% is what `npm run dist` reports and 43% is what a regression would move.
 - The median leadership factor for `capacity_heavy` and `max_effort` is **0.68
   and 0.49** at Division (0.46 and 0.32 at Corps). If either returns to 1.00, the mechanic has stopped firing (F3).
 - `do_nothing` is **17%** of Division and **36%** of Brigade, and still resigns
@@ -1108,10 +1109,24 @@ resignations unchanged at 28%. `do_nothing` still resigns on every Corps seed.
 who runs a cadre course at every opportunity takes `reserves_plus_light` at
 Division from 43% to **55%** of seeds meeting the target, with leadership
 reaching 1.00. That is inside the stated band — a walkover starts around 65% —
-and a lever that rewards being used well is the point of adding one. But it is a
-twelve-point swing from a single action, the benchmark cannot see it because the
-bots never trigger at Division, and it is the thing to look at first in
-playtests.
+and a lever that rewards being used well is the point of adding one.
+
+**This was put to Paul and it stands** (`DECISIONS.md`, 12 September 2026). The
+reasoning is worth carrying: 43% and 55% are a **floor and a ceiling**, not a
+drift. This document has always said to treat scripted-strategy numbers as a
+floor because the bots never re-plan; this is the first change that puts a
+number on how much room a thinking player has above that floor at the headline
+difficulty. A game in which the floor and the ceiling are the same number is a
+game in which understanding the mechanics does not pay.
+
+So: **43% remains the watch number**, and if it moves something has broken. The
+55% is a second, softer figure the benchmark cannot produce on its own —
+reproducing it means setting `PROMOTION_TRIGGER_FACTOR` to 1.01 so the bots take
+a course whenever one is available, which is a measurement and not a change to
+commit. If playtests show a new player finding the course by accident and
+Division ceasing to feel close-run, the answer is a smaller course or a bound on
+how many a run may hold — not a higher target, which would punish the player who
+never found the lever.
 
 **An escalating price was tried and abandoned**, the shape `pc_address_subsequent`
 uses. It made things worse in both directions, and the reason generalises:

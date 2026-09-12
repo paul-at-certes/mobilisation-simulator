@@ -1371,7 +1371,7 @@ with leadership reaching 1.00. That is inside the band a walkover starts around
 it is a twelve-point swing from one action, and the benchmark cannot see it
 because the bots never trigger at Division. It is the first thing to look at in
 playtests. **ASK**, if 55% is further than Paul wants the headline difficulty's
-ceiling to move.
+ceiling to move. *Answered the same day: it stands. See the entry below.*
 
 **And a bug that nearly passed for a result.** The action was asked for by the
 bots on every turn of its first run and silently dropped: `isKnownAction` in
@@ -1382,3 +1382,47 @@ byte-identical and looked like evidence the lever did nothing. It is derived fro
 `ACTION_IDS` now and there is a test that fails if anyone turns it back into a
 literal. Two hand-maintained lists of the same thing is one too many, and a
 byte-identical benchmark is a claim to check rather than a result to report.
+
+## The informed-player ceiling at Division stands at 55% (12 September 2026)
+
+Answers the ASK left by the promotion lever, and records the reasoning so that
+the number is not quietly "corrected" by a later session that reads it as drift.
+
+**The decision.** 55% stays. No retune of `target_division`, no smaller cadre
+course, no cap on the number of courses a run may hold.
+
+**What the number is.** `reserves_plus_light` at Division meets the target on
+**43%** of seeds when the strategy ignores `accelerate_promotion`, and on
+**55%** when it runs a cadre course at every opportunity. Both are the same
+strategy on the same forty seeds; the only difference is whether the player
+uses the lever.
+
+**Why it is not a problem.** Three reasons, and the third is the one that
+matters most.
+
+1. It is inside the band this document has used since F2: below about 25% the
+   headline difficulty is a coin flip, above about 65% it is a walkover. 55% is
+   neither.
+2. A lever that rewards being used well is the entire point of adding one. If
+   using `accelerate_promotion` competently changed nothing, it would be
+   decoration - which is what F4 found the Bill's clauses had become, and what
+   this pass has spent its time undoing.
+3. **43% and 55% are a floor and a ceiling, not a drift.** The review has always
+   said to treat scripted-strategy numbers as a floor, because the bots never
+   re-plan. This is the first change that puts a number on how much room a
+   thinking player has above that floor at the headline difficulty, and twelve
+   points is a reasonable size for it. A game in which the floor and the ceiling
+   are the same number is a game in which understanding the mechanics does not
+   pay.
+
+**What this does not license.** The 43% watch number is unchanged and stays the
+one to check against `npm run dist`. If *that* moves, something has broken. The
+55% is a second, softer figure that the benchmark cannot produce on its own -
+reproducing it means setting `PROMOTION_TRIGGER_FACTOR` to 1.01 so the bots take
+a course whenever one is available, which is a measurement and not a change to
+commit.
+
+**What would reopen it.** Playtests. If a new player finds the cadre course by
+accident and Division stops feeling like a close-run thing, the answer is a
+smaller course or a bound on how many a run may hold, not a higher target -
+moving `target_division` would punish the player who never found the lever.
