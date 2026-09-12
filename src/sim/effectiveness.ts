@@ -30,9 +30,51 @@ export function leadersTotal(s: GameState): number {
  * Junior leaders that can be taken out of regular units, after diversions and
  * events. This is the supply the training estate draws instructors from, and
  * `actions.ts` tests a capacity purchase against it.
+ *
+ * A cadre course running at the battle school is drawing on the same supply,
+ * so it competes with a capacity purchase for the same corporals — which is
+ * the honest arithmetic and not a penalty invented for the mechanic.
  */
 export function leadersSpareable(s: GameState): number {
-  return leadersTotal(s) * P.junior_leaders_spareable_fraction - s.ledger.juniorLeadersDiverted + s.leadersSpareableAdjust;
+  return (
+    leadersTotal(s) * P.junior_leaders_spareable_fraction
+    - s.ledger.juniorLeadersDiverted
+    + s.leadersSpareableAdjust
+    - promotionInstructors(s)
+  );
+}
+
+/** Cadre courses whose graduates are now leading. */
+export function promotionCoursesCompleted(s: GameState): number {
+  return (s.promotionCourseMonths ?? []).filter((m) => m <= s.turn).length;
+}
+
+/** Cadre courses still running, whose instructors are out of the line. */
+export function promotionCoursesRunning(s: GameState): number {
+  return (s.promotionCourseMonths ?? []).filter((m) => m > s.turn).length;
+}
+
+/**
+ * Junior leaders made by accelerated promotion, discounted for the years in
+ * rank they have not served.
+ *
+ * They are counted the way recalled ex-regulars are — a class of leader the
+ * model already discounts — rather than added to the substantive cadre, so a
+ * minister who promotes their way to a full establishment still commands a
+ * worse one. Historically this is war-substantive and acting rank.
+ */
+export function leadersPromoted(s: GameState): number {
+  return promotionCoursesCompleted(s) * P.promotion_cadre_size * P.eff_promoted_leader;
+}
+
+/**
+ * Junior leaders held at the battle school to run the courses, at the same
+ * ratio the training estate uses. You cannot make section commanders without
+ * taking your best section commanders out of the line to teach them, so the
+ * lever costs leadership before it pays it.
+ */
+export function promotionInstructors(s: GameState): number {
+  return promotionCoursesRunning(s) * (P.promotion_cadre_size / P.instructor_ratio);
 }
 
 /**
@@ -67,9 +109,12 @@ export function leadersRecalled(s: GameState): number {
   return (s.pools.exRegularReported / P.junior_leader_ratio) * P.eff_ex_regular;
 }
 
-/** Leaders available to lead the raised force: the spareable cadre plus what the recall returned. */
+/**
+ * Leaders available to lead the raised force: the spareable cadre, what the
+ * recall returned, and what accelerated promotion has made.
+ */
 export function leadersAvailable(s: GameState): number {
-  return leadersSpareable(s) + leadersRecalled(s);
+  return leadersSpareable(s) + leadersRecalled(s) + leadersPromoted(s);
 }
 
 export function leadershipFactor(s: GameState): number {

@@ -10,7 +10,7 @@
 import type { Action, ActionAvailability, ActionId, ActionResult, BillClauses, GameState } from '../types.js';
 import { P, ageBandClauseCost } from './params.js';
 import { billMonths, recomputeEligible } from './legislation.js';
-import { leadersSpareable } from './effectiveness.js';
+import { leadersSpareable, promotionCoursesRunning } from './effectiveness.js';
 
 /** Plain-English labels for briefing notes and the CLI. */
 export const ACTION_LABELS: Record<ActionId, string> = {
@@ -23,6 +23,7 @@ export const ACTION_LABELS: Record<ActionId, string> = {
   amend_bill: 'Amended the National Service Bill',
   set_callup: 'Set the monthly call-up',
   expand_capacity: 'Expanded training capacity',
+  accelerate_promotion: 'Ran an accelerated cadre course',
   compress_syllabus: 'Compressed the syllabus',
   contract_civilian_instructors: 'Contracted civilian instructors',
   junior_entry: 'Reinstated junior entry',
@@ -42,6 +43,7 @@ export const ACTION_IDS: readonly ActionId[] = [
   'amend_bill',
   'set_callup',
   'expand_capacity',
+  'accelerate_promotion',
   'compress_syllabus',
   'contract_civilian_instructors',
   'junior_entry',
@@ -103,6 +105,8 @@ export function actionPcDelta(s: GameState, action: Action): number {
       return 0;
     case 'expand_capacity':
       return P.pc_cost_expand_capacity;
+    case 'accelerate_promotion':
+      return P.pc_cost_accelerate_promotion;
     case 'compress_syllabus':
       return P.pc_cost_compress_syllabus;
     case 'contract_civilian_instructors':
@@ -182,6 +186,31 @@ function availability(s: GameState, id: ActionId): ActionAvailability {
             ? `Regular strength cannot spare ${P.leaders_per_capacity_purchase} instructors.`
             : undefined;
       return { id, available: true, reason: note, pcDelta: P.pc_cost_expand_capacity };
+    }
+    case 'accelerate_promotion': {
+      // One course at a time: the battle school has one set of training areas
+      // and one directing staff. This is the only thing bounding the rate, so
+      // it is a rule of the model rather than a rule of thumb — without it a
+      // minister can run a course a month and buy a cadre outright.
+      const running = promotionCoursesRunning(s);
+      if (running > 0) {
+        const due = Math.min(...s.promotionCourseMonths.filter((m) => m > s.turn));
+        return {
+          id,
+          available: false,
+          reason: `A cadre course is already running; it finishes in month ${due}.`,
+          pcDelta: 0,
+        };
+      }
+      // The course needs instructors, and they come from the same cadre a
+      // capacity purchase draws on. Warn when it cannot cover them: the course
+      // still runs, and the leadership factor pays for it first.
+      const instructors = P.promotion_cadre_size / P.instructor_ratio;
+      const note =
+        leadersSpareable(s) - instructors < 0
+          ? `The spareable junior-leader cadre cannot cover another ${Math.round(instructors)} instructors; the leadership factor will fall further before it rises.`
+          : undefined;
+      return { id, available: true, reason: note, pcDelta: P.pc_cost_accelerate_promotion };
     }
     case 'compress_syllabus':
       return s.syllabus === 'compressed'
@@ -310,6 +339,10 @@ export function applyAction(s: GameState, action: Action): ActionResult {
       s.politicalCapital += P.pc_cost_expand_capacity;
       return { ok: true };
     }
+    case 'accelerate_promotion':
+      s.promotionCourseMonths.push(s.turn + P.promotion_course_months);
+      s.politicalCapital += P.pc_cost_accelerate_promotion;
+      return { ok: true };
     case 'compress_syllabus':
       s.syllabus = 'compressed';
       s.politicalCapital += P.pc_cost_compress_syllabus;

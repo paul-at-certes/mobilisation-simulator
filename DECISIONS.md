@@ -1292,3 +1292,93 @@ resignations, `capacity_heavy` 3% to 0%, `conscription_max_capacity` 100% to
 **One thing to watch.** The charge now runs on after a call-up stops, while the
 backlog clears. That is deliberate, and the briefing names it ("N still on the
 list"), because a charge with no visible cause reads as a bug.
+
+## You cannot lead what you raise — unless you make more leaders (12 September 2026)
+
+The mechanic the design review had been proposing since it was written, built
+after Paul chose it over the alternatives on the grounds that it adds realism
+without adding weeds: one action, three numbers, no new screen.
+
+**Why this one.** After F3 the model says *you cannot lead what you raise* and
+said nothing else, which is a wall rather than a puzzle, and it carried F10's
+risk that the two "do everything" strategies being the two worst reads as the
+game punishing engagement. Every real mobilisation answered the same problem the
+same way: war-substantive rank, accelerated promotion, short commissioning
+courses. For a player it is one sentence — promote corporals early and you get
+sergeants now who are worse at it.
+
+**The course length is sourced and the near-miss matters.** Eight weeks, from a
+peer-reviewed study whose subjects were soldiers on the Section Commanders' and
+Platoon Sergeants' Battle Courses (Maroni et al. 2025, Ergonomics 69(2),
+206-220), so the duration is a fact about the study's own method rather than a
+claim repeated at second hand. The first search offered 16 weeks from a
+newspaper - that is the Platoon *Commanders'* Battle Course, an officer course -
+and 7 weeks from a military academy in Jamaica. Taking the first plausible
+number would have been wrong by a factor of two. The MoD's own page gives no
+duration and 403s to automated fetching.
+
+**Only one number is an assumption, which is one fewer than expected.**
+`promotion_course_months` is derived from the paper. `promotion_cadre_size` (206)
+is derived from three figures already in the file: junior leaders are 41.67% of
+the trained strength, so in a steady state the flow into the cadre is 41.67% of
+regular_gains_annual, or 206 a month - one course pulls forward about a month of
+the Army's own promotion output. There is no published count of promotions to
+Corporal to read directly; the quarterly statistics give strength, intake and
+outflow by rank and not promotion flows. `eff_promoted_leader` (0.6) is the
+frank assumption, and what it discounts is narrow, which argues for a high value:
+the soldier has passed the same eight-week course as anyone else and lacks the
+years in rank behind it, not the training.
+
+**The measurement changed what the lever is for, and improved it.** It was
+scoped Corps-first, because F9 wanted a way to buy past the wall at the long
+difficulty. The arithmetic says otherwise. A course is worth about 124 effective
+leaders; at Division the sensible strategy finishes 326 leaders short, so three
+courses finish the job, while `max_effort` at Corps finishes 19,751 short, which
+is 160 courses. A fixed-size lever helps most where the gap is smallest. **You
+can complete a division's cadre and you cannot build a corps's** - which is the
+game's own thesis arrived at from the other end, and a better lesson than the
+one the scope set out to build.
+
+**An escalating price was tried and abandoned**, the shape `pc_address_subsequent`
+uses, because a repeatable lever whose price does not rise looked like a free
+lever. It made both rungs worse: the Division ceiling went 55% to 58% and
+`max_effort` at Corps went from 28% resignations to 65%. The reason generalises
+and is worth keeping: **political capital is abundant at Division and scarce at
+Corps**, so pricing a lever in capital charges the rung that does not need it and
+misses the one that does. What bounds this lever is the two-month course and the
+one-course-at-a-time rule - which is a rule of the model, not a rule of thumb,
+because the battle school has one set of training areas and one directing staff.
+
+**The instructor diversion is honest and does not bound anything**, and the
+parameter notes say so rather than implying otherwise: a course holds 26
+corporals back to teach, against a spareable cadre of about 10,700 at Division.
+It is the right detail and the wrong brake.
+
+**Balance** (`npm run dist -- 40`). Brigade byte-identical: a course takes two
+months and the bots need months left for the leaders to lead anybody, so there is
+never time. Division `reserves_plus_light` 43% met, unchanged, because the bots'
+guard fires below a leadership factor of 0.85 and the sensible strategy sits at
+0.98. The leadership watch numbers moved deliberately - 0.67/0.48 to 0.68/0.49 at
+Division, 0.43/0.29 to 0.46/0.32 at Corps - which is the mechanic firing. At Corps
+`reserves_plus_light` 22,633 to 22,970 with resignations 35% to 28%,
+`capacity_heavy` 20,162 to 21,113, `max_effort` 18,208 to 18,965 with resignations
+unchanged at 28%. `do_nothing` still resigns on every Corps seed.
+
+**The number to watch is a ceiling, not a floor.** A player who runs a course at
+every opportunity takes `reserves_plus_light` at Division from 43% to **55%**,
+with leadership reaching 1.00. That is inside the band a walkover starts around
+65% - and a lever that rewards being used well is the point of adding one - but
+it is a twelve-point swing from one action, and the benchmark cannot see it
+because the bots never trigger at Division. It is the first thing to look at in
+playtests. **ASK**, if 55% is further than Paul wants the headline difficulty's
+ceiling to move.
+
+**And a bug that nearly passed for a result.** The action was asked for by the
+bots on every turn of its first run and silently dropped: `isKnownAction` in
+step.ts was a second hand-maintained list of action ids, alongside `ORDER` in the
+action menu, and an action missing from it was rejected before reaching
+`applyAction` with nothing in the notes to say so. The benchmark came back
+byte-identical and looked like evidence the lever did nothing. It is derived from
+`ACTION_IDS` now and there is a test that fails if anyone turns it back into a
+literal. Two hand-maintained lists of the same thing is one too many, and a
+byte-identical benchmark is a claim to check rather than a result to report.

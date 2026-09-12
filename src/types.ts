@@ -67,6 +67,7 @@ export type ActionId =
   | 'amend_bill'
   | 'set_callup'
   | 'expand_capacity'
+  | 'accelerate_promotion'
   | 'compress_syllabus'
   | 'contract_civilian_instructors'
   | 'junior_entry'
@@ -86,6 +87,7 @@ export type Action =
   /** Free control: does not consume an action slot. */
   | { id: 'set_callup'; perMonth: number }
   | { id: 'expand_capacity' }
+  | { id: 'accelerate_promotion' }
   | { id: 'compress_syllabus' }
   | { id: 'contract_civilian_instructors' }
   | { id: 'junior_entry' }
@@ -367,7 +369,7 @@ export interface BriefingFacts {
 }
 
 export interface GameState {
-  version: 2;
+  version: 3;
   seed: number;
   rngState: number;
   difficulty: Difficulty;
@@ -427,6 +429,12 @@ export interface GameState {
   // Pipeline levers
   capacityPurchases: number;
   capacityPurchaseMonths: number[]; // months each purchase becomes active
+  /**
+   * Month each accelerated cadre course finishes. While a course runs its
+   * instructors are out of the line; when it finishes its graduates lead, at
+   * `eff_promoted_leader` of a substantive junior leader (§7c).
+   */
+  promotionCourseMonths: number[];
   capacityMultiplier: number;
   capacityMultiplierUntil: number | null;
   civilianInstructors: boolean;

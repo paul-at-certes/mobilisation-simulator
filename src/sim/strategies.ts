@@ -64,6 +64,15 @@ function boostActive(s: GameState): boolean {
 export const RAISE_SPENDING_PAYBACK_MONTHS = 4;
 
 /**
+ * The leadership factor below which a bot will run an accelerated cadre course.
+ *
+ * The same figure `max_effort` uses to stop buying training capacity, and
+ * deliberately so: below 0.85 the cadre is the binding constraint, so the bot
+ * stops making the problem worse and starts making leaders instead.
+ */
+export const PROMOTION_TRIGGER_FACTOR = 0.85;
+
+/**
  * Political capital a strategy keeps in hand for discretionary levers.
  * Resignation is at zero and an event can take six in a month, so a minister
  * who can count does not spend the last of it on something optional.
@@ -183,6 +192,22 @@ function politicalUpkeep(s: GameState): Action[] {
   return [];
 }
 
+/**
+ * Is a cadre course worth running this month?
+ *
+ * The bot is given the arithmetic and not the answer, as with the contingency
+ * draw. Three tests, and the middle one is what makes this a Corps lever in
+ * practice rather than by rule: a course takes `promotion_course_months` to
+ * run, so it has to finish with months left in which the leaders it makes can
+ * lead somebody. At Brigade there is never time.
+ */
+function cadreCourse(s: GameState): Action[] {
+  if (s.gauges.leadershipFactor >= PROMOTION_TRIGGER_FACTOR) return [];
+  if (monthsLeft(s) <= P.promotion_course_months) return [];
+  if (!affordable(s, P.pc_cost_accelerate_promotion)) return [];
+  return [{ id: 'accelerate_promotion' }];
+}
+
 export const doNothing: Strategy = (s) => input(s, []);
 
 export const reservesOnly: Strategy = (s) => {
@@ -217,7 +242,7 @@ export const reservesPlusLight: Strategy = (s) => {
   else if (s.turn === 2) actions.push({ id: 'compress_syllabus' }, { id: 'contract_civilian_instructors' });
   else if (s.turn === 3) actions.push({ id: 'expand_capacity' }, { id: 'equipment_buy' });
   else if (s.turn === 4) actions.push({ id: 'stop_loss' });
-  else actions.push(...politicalUpkeep(s));
+  else actions.push(...cadreCourse(s), ...politicalUpkeep(s));
   actions.push(...callupAtCapacity(s));
   return input(s, actions);
 };
@@ -277,7 +302,7 @@ export const capacityHeavy: Strategy = (s) => {
   else if (s.turn === 3) actions.push({ id: 'equipment_buy' }, { id: 'address_nation' });
   else if (s.turn === 4) actions.push({ id: 'stop_loss' }, { id: 'expand_capacity' });
   else if (s.turn === 5) actions.push({ id: 'trace_strategic_reserve' }, { id: 'blame_predecessors' });
-  else actions.push(...politicalUpkeep(s));
+  else actions.push(...cadreCourse(s), ...politicalUpkeep(s));
   actions.push(...callupAtCapacity(s));
   return input(s, actions);
 };
@@ -296,7 +321,7 @@ export const maxEffort: Strategy = (s) => {
   else if (s.turn === 6) actions.push({ id: 'contract_civilian_instructors' }, { id: 'address_nation' });
   else if (s.turn === 7) actions.push({ id: 'trace_strategic_reserve' }, { id: 'expand_capacity' });
   else {
-    actions.push(...politicalUpkeep(s));
+    actions.push(...cadreCourse(s), ...politicalUpkeep(s));
     if (s.capacityPurchases < MAX_EFFORT_PURCHASES && s.gauges.leadershipFactor > 0.85 && pc > 20 && s.turn % 3 === 0) actions.push({ id: 'expand_capacity' });
   }
   actions.push(...callupAtCapacity(s));

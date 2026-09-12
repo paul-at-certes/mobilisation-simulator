@@ -265,6 +265,15 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     changes.push('The vetting backlog has cleared; the call-up is no longer held to what the security teams can process.');
   }
 
+  const cadre = facts.notes.find((n) => n.startsWith('promotion_course_done:'));
+  if (cadre) {
+    const courses = Math.max(1, Number(cadre.split(':')[1]) || 1);
+    changes.push(
+      `${formatInt(courses * P.promotion_cadre_size)} soldiers have come off the cadre course and taken junior rank. `
+      + `They lead at ${formatPct(P.eff_promoted_leader * 100)} of a corporal who earned it, and their instructors are back in the line.`,
+    );
+  }
+
   // Refusal is the only thing in the game that takes people out between the
   // call-up and the gate, so it has to be said or the numbers look wrong.
   const refused = facts.notes

@@ -13,7 +13,7 @@ import { newGame, step, derive } from '../src/sim/step.js';
 import { availableActions, applyAction } from '../src/sim/actions.js';
 import { eligiblePoolSize, refusalRate, strongOpposition } from '../src/sim/legislation.js';
 import { spareIntake, courseMonths, cohortAttrition } from '../src/sim/pipeline.js';
-import { leadershipFactor, ledPersonnel, leadersNeeded, leadersRecalled, leadersAvailable, leadersSpareable } from '../src/sim/effectiveness.js';
+import { leadershipFactor, ledPersonnel, leadersNeeded, leadersRecalled, leadersAvailable, leadersSpareable, leadersPromoted, promotionCoursesRunning, promotionCoursesCompleted } from '../src/sim/effectiveness.js';
 import { next, seedFromString, pickWeighted, uniform } from '../src/sim/rng.js';
 import { score } from '../src/sim/score.js';
 import { STRATEGIES } from '../src/sim/strategies.js';
@@ -722,6 +722,66 @@ describe('cumulative output loss', () => {
     expect(after.politicalCapital).toBe(base.politicalCapital);
     expect(after.briefing.pcReasons.map((r) => r.label)).toEqual(base.briefing.pcReasons.map((r) => r.label));
     expect(score(after).gdpLossPctGdp).toBeCloseTo(100, 6);
+  });
+});
+
+describe('accelerated promotion', () => {
+  const course = (s: GameState): GameState => step(s, { actions: [{ id: 'accelerate_promotion' }], eventChoice: null });
+
+  it('costs leadership before it pays it, and pays at a discount', () => {
+    // Measured against a control run rather than against the month before:
+    // the cadre shrinks every month to outflow (§7a), so a before-and-after
+    // comparison would be reading the bathtub, not the course.
+    const base = newGame(29, 'corps');
+    const instructors = P.promotion_cadre_size / P.instructor_ratio;
+
+    let s = course(base);
+    let control = step(base, NOTHING);
+    expect(promotionCoursesRunning(s)).toBe(1);
+    expect(promotionCoursesCompleted(s)).toBe(0);
+    // While it runs, its instructors are out of the line.
+    expect(leadersSpareable(s)).toBeCloseTo(leadersSpareable(control) - instructors, 6);
+    expect(leadersAvailable(s)).toBeLessThan(leadersAvailable(control));
+
+    // When it finishes, the instructors return and the graduates lead — at a
+    // discount, because they have the course and not the years.
+    while (promotionCoursesRunning(s) > 0) {
+      s = step(s, NOTHING);
+      control = step(control, NOTHING);
+    }
+    expect(promotionCoursesCompleted(s)).toBe(1);
+    expect(leadersPromoted(s)).toBeCloseTo(P.promotion_cadre_size * P.eff_promoted_leader, 6);
+    expect(leadersPromoted(s)).toBeLessThan(P.promotion_cadre_size);
+    expect(leadersSpareable(s)).toBeCloseTo(leadersSpareable(control), 6);
+    expect(leadersAvailable(s)).toBeGreaterThan(leadersAvailable(control));
+  });
+
+  it('takes the course length the battle school actually runs', () => {
+    const s = course(newGame(29, 'corps'));
+    expect(s.promotionCourseMonths).toEqual([s.turn - 1 + P.promotion_course_months]);
+    // 8 weeks (Maroni et al. 2025), converted the way the conscript course is.
+    expect(P.promotion_course_months).toBe(Math.round((8 * 12) / 52));
+  });
+
+  it('runs one course at a time', () => {
+    const s = course(newGame(29, 'corps'));
+    const again = availableActions(s).find((a) => a.id === 'accelerate_promotion');
+    expect(again?.available).toBe(false);
+    expect(again?.reason).toMatch(/already running/);
+    const blocked = course(s);
+    expect(blocked.promotionCourseMonths.length).toBe(1);
+    expect(blocked.briefing.notes.some((n) => n.startsWith('action_unavailable:accelerate_promotion'))).toBe(true);
+  });
+
+  it('raises the leadership factor of a force that is short of leaders', () => {
+    // Build a run with a real cadre gap, then prove a course closes part of it.
+    let s = newGame(29, 'corps');
+    s.pools.conscriptInTraining = 40_000;
+    const before = leadershipFactor(s);
+    expect(before).toBeLessThan(1);
+    let after = course(s);
+    while (promotionCoursesRunning(after) > 0) after = step(after, NOTHING);
+    expect(leadershipFactor(after)).toBeGreaterThan(before);
   });
 });
 

@@ -70,6 +70,7 @@ availability and displayed PC delta. Rules:
 | `amend_bill` {clauses} | `billStatus != 'none'` | merge clauses; recompute eligible pool if passed | clause costs for changed clauses only |
 | `set_callup` {perMonth} | `billStatus == 'passed'` | `callupPerMonth = max(0, perMonth)` | 0 (free; no slot) |
 | `expand_capacity` | always; note if `regularTrained` cannot spare `leaders_per_capacity_purchase` | `capacityPurchases += 1; capacityPurchaseMonths.push(turn + capacity_standup_months)`; `regularTrained -= leaders_per_capacity_purchase`; `ledger.juniorLeadersDiverted += 625`; cost `capacity_purchase_cost` | `pc_cost_expand_capacity` |
+| `accelerate_promotion` | no course already running | `promotionCourseMonths.push(turn + promotion_course_months)` | `pc_cost_accelerate_promotion` |
 | `compress_syllabus` | syllabus normal | `syllabus = 'compressed'` (affects cohorts starting from next month) | `pc_cost_compress_syllabus` |
 | `contract_civilian_instructors` | not contracted | `civilianInstructors = true; civilianInstructorsMonth = turn + civilian_instructor_delay_months` | `pc_cost_civilian_instructors` |
 | `junior_entry` | not taken | `juniorEntryTaken = true` (flavour only; briefing note explains why nothing happens) | `pc_cost_junior_entry` |
@@ -251,7 +252,8 @@ ledPersonnel     = exRegularReported + strategicTraced
                  + conscriptInTraining + conscriptTrainedUnequipped + conscriptTrainedEquipped
 leadersNeeded    = ledPersonnel / junior_leader_ratio
 leadersRecalled  = (exRegularReported / junior_leader_ratio) × eff_ex_regular
-leadersAvailable = leadersSpareable + leadersRecalled
+leadersPromoted  = coursesCompleted × promotion_cadre_size × eff_promoted_leader   [§7c]
+leadersAvailable = leadersSpareable + leadersRecalled + leadersPromoted
 leadershipFactor = leadersNeeded == 0 ? 1 : clamp(leadersAvailable / leadersNeeded, 0, 1)
 ```
 
@@ -261,6 +263,42 @@ junior_leaders` = 70,951 / 29,563 = 2.4, the rate at which the Army mans itself
 `instructor_ratio` (8, assumption), and sets `leaders_per_capacity_purchase`
 only. Two ratios doing two jobs: one leads soldiers in the field, one teaches
 recruits in the training estate.
+
+### 7c. Making junior leaders
+
+```
+promotionInstructors = coursesRunning × (promotion_cadre_size / instructor_ratio)
+leadersPromoted      = coursesCompleted × promotion_cadre_size × eff_promoted_leader
+leadersSpareable    −= promotionInstructors
+leadersAvailable    += leadersPromoted
+```
+
+The `accelerate_promotion` action runs a cadre course: after
+`promotion_course_months`, `promotion_cadre_size` trade-trained soldiers hold
+junior rank. Historically this is war-substantive and acting rank, which is how
+every mass mobilisation has answered the same problem, and it is the counter to
+the constraint §7b imposes — without it the leadership factor is a wall rather
+than a puzzle.
+
+It is not a way out of it. Three things bound it:
+
+- **They lead at `eff_promoted_leader`,** counted the way recalled ex-regulars
+  are rather than added to the substantive cadre. A minister who promotes their
+  way to a full establishment still commands a worse one.
+- **The course borrows its instructors from the same cadre**, at the ratio the
+  training estate uses, so the factor falls before it rises and a running course
+  competes with `expand_capacity` for the same corporals. This is honest and
+  small: 26 corporals against a spareable cadre of about 10,700.
+- **One course at a time.** The battle school has one set of training areas and
+  one directing staff. This is what actually bounds the rate, which is why it is
+  a rule of the model and not a rule of thumb.
+
+**The arithmetic favours the small gap, and that is the lesson rather than a
+flaw.** A course is worth about 124 effective leaders. At Division the sensible
+strategy finishes 326 short, so three courses finish the job; at Corps
+`max_effort` finishes 19,751 short, which is 160 courses. You can complete a
+division's cadre and you cannot build a corps's. See `docs/design-review.md`
+F17.
 
 `ledPersonnel` is everyone raised on top of the standing Army who does not
 arrive in formed units. Mobilised volunteer reservists are excluded: the Army

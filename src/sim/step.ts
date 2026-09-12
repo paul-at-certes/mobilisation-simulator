@@ -14,7 +14,7 @@ import { emptyPools, syncDerivedPools } from './pools.js';
 import { computeForce } from './effectiveness.js';
 import { incrementalCost, monthlyCostBreakdown, monthlyGdpLoss } from './money.js';
 import { expireWillingnessBoosts, idleMonths, monthlyPcChanges, settleRefusalCases, type PcReason } from './politics.js';
-import { applyAction, isActionAvailable, ACTION_LABELS } from './actions.js';
+import { applyAction, isActionAvailable, ACTION_IDS, ACTION_LABELS } from './actions.js';
 import { advanceBillClock, refusalRate } from './legislation.js';
 import { cohortAttrition, courseMonths, equipmentArrived, spareIntake } from './pipeline.js';
 import { addOutflowIntent, monthlyOutflow } from './outflow.js';
@@ -63,7 +63,7 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
   pools.strategicUntracked = P.strategic_reserve_untracked;
 
   const s: GameState = {
-    version: 2,
+    version: 3,
     seed: seedValue,
     rngState: seedValue,
     difficulty,
@@ -102,6 +102,7 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
     eligiblePoolMultiplier: 1,
     capacityPurchases: 0,
     capacityPurchaseMonths: [],
+    promotionCourseMonths: [],
     capacityMultiplier: 1,
     capacityMultiplierUntil: null,
     civilianInstructors: false,
@@ -350,14 +351,19 @@ function applyTurnActions(s: GameState, actions: readonly unknown[], pcReasons: 
   return applied;
 }
 
+/**
+ * Derived from `ACTION_IDS` rather than hand-maintained.
+ *
+ * It used to be a literal list, and an action missing from it was dropped
+ * silently — `accelerate_promotion` was asked for and rejected on every turn
+ * of its first run with nothing in the notes to say so. That is the same trap
+ * `ORDER` in the action menu carries, which is why that one has a test; this
+ * one now cannot go stale at all.
+ */
+const KNOWN_ACTIONS: ReadonlySet<string> = new Set<string>(ACTION_IDS);
+
 function isKnownAction(id: string): id is Parameters<typeof isActionAvailable>[1] {
-  return (
-    [
-      'call_out_reserve', 'recall_ex_regular', 'trace_strategic_reserve', 'stop_loss', 'draw_contingency', 'introduce_bill', 'amend_bill',
-      'set_callup', 'expand_capacity', 'compress_syllabus', 'contract_civilian_instructors', 'junior_entry',
-      'equipment_buy', 'address_nation', 'raise_spending', 'blame_predecessors',
-    ] as string[]
-  ).includes(id);
+  return KNOWN_ACTIONS.has(id);
 }
 
 interface MonthOutcome {
@@ -391,6 +397,12 @@ export function advanceMonth(
 
   // a. Legislation.
   if (advanceBillClock(s)) notes.push(`bill_passed:${s.turn}`);
+
+  // a2. Cadre courses finishing. Said out loud because the leadership factor
+  // jumps when one does, and a gauge that moves for no stated reason reads as
+  // a bug (§7c).
+  const graduatingCourses = s.promotionCourseMonths.filter((m) => m === s.turn).length;
+  if (graduatingCourses > 0) notes.push(`promotion_course_done:${graduatingCourses}`);
 
   // b. Capacity multiplier expiry (purchases/instructors come online by month comparison).
   if (s.capacityMultiplierUntil != null && s.capacityMultiplierUntil < s.turn) {

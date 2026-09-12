@@ -75,7 +75,7 @@ which is self-harm under the current rules. Treat their numbers as a floor.
 
 ## Benchmarks
 
-Output of `npm run dist -- 40`, at commit `24e967c`. **If a change moves these,
+Output of `npm run dist -- 40`, at commit `PENDING`. **If a change moves these,
 update this table in the same commit.** Median final ESE, percentage of the 40
 seeds that met the target, percentage that ended in resignation, and the median
 leadership factor at the end.
@@ -101,8 +101,8 @@ leadership factor at the end.
 | **reserves_plus_light** | 20,979 | **21,878** | 23,115 | **43** | 0 | 0.98 |
 | conscription_max_capacity | 5,037 | 5,435 | 5,844 | 0 | 0 | 0.68 |
 | conscription_over_capacity | 4,761 | 5,162 | 5,259 | 0 | 45 | 1.00 |
-| capacity_heavy | 18,568 | 19,479 | 20,520 | 0 | 0 | 0.67 |
-| max_effort | 16,146 | 17,634 | 19,028 | 0 | 0 | 0.48 |
+| capacity_heavy | 18,671 | 19,701 | 21,054 | 0 | 0 | 0.68 |
+| max_effort | 16,229 | 17,727 | 19,092 | 0 | 0 | 0.49 |
 
 ### Corps — target 45,000 in 24 months
 
@@ -110,19 +110,22 @@ leadership factor at the end.
 |---|---|---|---|---|---|---|
 | do_nothing | 3,736 | 3,756 | 3,786 | 0 | **100** | 1.00 |
 | reserves_only | 20,259 | 21,325 | 22,531 | 0 | 38 | 1.00 |
-| **reserves_plus_light** | 22,433 | **22,633** | 22,754 | 0 | **35** | 0.71 |
+| **reserves_plus_light** | 22,433 | **22,970** | 23,221 | 0 | **28** | 0.73 |
 | conscription_max_capacity | 7,234 | 7,551 | 8,079 | 0 | 48 | 0.28 |
 | conscription_over_capacity | 5,152 | 5,596 | 7,016 | 0 | 100 | 1.00 |
-| capacity_heavy | 19,772 | 20,162 | 21,066 | 0 | 0 | 0.43 |
-| max_effort | 17,505 | 18,208 | 19,268 | 0 | 28 | 0.29 |
+| capacity_heavy | 20,605 | 21,113 | 22,074 | 0 | 3 | 0.46 |
+| max_effort | 18,194 | 18,965 | 20,029 | 0 | 28 | 0.32 |
 
 **The three numbers to watch.** If any of these drifts, something has broken:
 
 - `reserves_plus_light` at Division meets the target on **43%** of seeds. Below
   ~25% the headline difficulty is a coin flip again (F2); above ~65% it is a
-  walkover.
-- The median leadership factor for `capacity_heavy` and `max_effort` is **0.67
-  and 0.48** at Division (0.43 and 0.29 at Corps). If either returns to 1.00, the mechanic has stopped firing (F3).
+  walkover. **This is a floor, and since F17 the ceiling is worth watching too:**
+  a player who runs a cadre course at every opportunity reaches **55%**. The
+  bots never do, because their guard fires below a leadership factor of 0.85
+  and at Division the sensible strategy sits at 0.98.
+- The median leadership factor for `capacity_heavy` and `max_effort` is **0.68
+  and 0.49** at Division (0.46 and 0.32 at Corps). If either returns to 1.00, the mechanic has stopped firing (F3).
 - `do_nothing` is **17%** of Division and **36%** of Brigade, and still resigns
   on **100%** of Corps seeds. If it climbs past ~60% of any rung, that rung is
   free; if it stops resigning at Corps, the delivery credit has become an idle
@@ -654,7 +657,10 @@ engagement.
 The mitigation already in place is that `reserves_plus_light` is *also* active
 play, just restrained, and it is the best performer. So the lesson is "choose
 well", not "do nothing". Watch for the reading going wrong in playtests. If it
-does, the answer is a supply-side lever (below), not a softer factor.
+does, the answer is a supply-side lever, not a softer factor — and there is one
+now: `accelerate_promotion` (F17) lets a minister who has over-expanded do
+something about it rather than only regret it. Both strategies improve under it,
+`capacity_heavy` at Corps by about 1,000 effective soldiers.
 
 ---
 
@@ -1040,23 +1046,101 @@ general hazard the review should hold onto: **a benchmark made of bots measures
 the game and the bots at once, and a change that touches how the bots decide is
 not measuring what you think it is.**
 
-## The next mechanic, if one is wanted
+### F17 — The signature constraint now has a counter-lever · *Built*
 
-The honest model now says: **you cannot lead what you raise.** That is true and
-it is the point, but a constraint with no counter-lever is a wall rather than a
-puzzle. Historically the counter is exactly what you would expect —
-war-substantive rank, accelerated promotion, short commissioning courses.
+The proposal this section used to carry, built on 12 September 2026. It is
+recorded as a finding rather than a proposal because measuring it changed what
+it is for.
 
-An action that *makes* junior leaders — converting trade-trained regulars into
-cadre after a delay, at a cost in the effectiveness of those it promotes —
-would turn the leadership factor from a penalty into something the player plays
-against. It would also give the middle game a decision that is not a reserve
-switch (F1), and give Corps a way to buy its way past the wall (F9).
+**The problem it answers.** After the leadership rework (F3) the honest model
+says *you cannot lead what you raise* — and said nothing else. A constraint with
+no counter-lever is a wall rather than a puzzle, and it carried the risk F10
+names: the two "do everything" strategies are the two worst, which can read as
+the game punishing engagement. Historically the counter is exactly what you
+would expect: war-substantive rank, accelerated promotion, short commissioning
+courses.
 
-This is a proposal, not a decision. It needs sourcing for the delay and the
-effectiveness cost, and both are likely to be assumptions.
+**What was built.** `accelerate_promotion` runs a cadre course. Model in
+`docs/sim-spec.md` §7c. Three things bound it: the promoted lead at
+`eff_promoted_leader`, the course borrows its instructors from the same cadre,
+and the battle school runs one course at a time.
+
+**The course length is sourced, and the near-miss is worth recording.** Eight
+weeks, from a peer-reviewed study whose subjects were soldiers on the course
+(Maroni et al. 2025, *Ergonomics* 69(2), 206–220). The first search returned
+**16 weeks** from a newspaper — that is the Platoon *Commanders'* Battle Course,
+an officer course and a different thing — alongside 7 weeks from the Caribbean
+Military Academy in Jamaica and "2/3 weeks" from an Arma 3 milsim clan. Taking
+the first plausible number would have put an officers' course length on an NCO
+mechanic, wrong by a factor of two. The MoD's own Infantry Battle School page
+gives no duration and refuses automated fetching.
+
+**The measurement changed what the lever is for.** It was scoped as a Corps
+lever, on the reasoning that F9 wanted a way to buy past the wall at the long
+difficulty. The arithmetic says otherwise, and it says something better. A
+course is worth about 124 effective leaders, against the gap each strategy
+carries at its deadline:
+
+| at the deadline | leaders short | courses to close it |
+|---|---|---|
+| **Division `reserves_plus_light`** | **326** | **3** |
+| Division `capacity_heavy` | 4,448 | 36 |
+| Corps `reserves_plus_light` | 4,566 | 37 |
+| Corps `max_effort` | 19,751 | **160** |
+
+A fixed-size lever helps most where the gap is smallest. **You can complete a
+division's cadre and you cannot build a corps's** — which is the game's own
+thesis, arrived at from the other end. The lever finishes a job that is nearly
+done and is marginal against a job that is not.
+
+**What it cost.** Brigade is byte-identical: a course takes two months and the
+bots' guard needs months left for the leaders to lead anybody, so there is never
+time. At Division the watch number is unchanged at 43% — the bots' guard fires
+below a leadership factor of 0.85 and the sensible strategy sits at 0.98, so it
+never triggers. The leadership watch numbers moved deliberately, 0.67/0.48 to
+**0.68/0.49** at Division and 0.43/0.29 to **0.46/0.32** at Corps, which is the
+mechanic firing. At Corps everything improves modestly and nothing breaks:
+`reserves_plus_light` 22,633 → 22,970 with resignations 35% → 28%,
+`capacity_heavy` 20,162 → 21,113, `max_effort` 18,208 → 18,965 with
+resignations unchanged at 28%. `do_nothing` still resigns on every Corps seed.
+
+**The one number to watch, and it is a ceiling rather than a floor.** A player
+who runs a cadre course at every opportunity takes `reserves_plus_light` at
+Division from 43% to **55%** of seeds meeting the target, with leadership
+reaching 1.00. That is inside the stated band — a walkover starts around 65% —
+and a lever that rewards being used well is the point of adding one. But it is a
+twelve-point swing from a single action, the benchmark cannot see it because the
+bots never trigger at Division, and it is the thing to look at first in
+playtests.
+
+**An escalating price was tried and abandoned**, the shape `pc_address_subsequent`
+uses. It made things worse in both directions, and the reason generalises:
+**political capital is abundant at Division and scarce at Corps**, so pricing a
+lever in capital charges the rung that does not need it and misses the one that
+does. It left the Division ceiling at 55–58% and took `max_effort` at Corps from
+28% resignations to 65%. What bounds this lever is the course length and the
+one-at-a-time rule, not its price.
+
+**A bug worth keeping in mind.** The action was asked for by the bots on every
+turn of its first run and silently dropped: `isKnownAction` in `step.ts` was a
+second hand-maintained list of action ids, alongside `ORDER` in the action menu,
+and an action missing from it was rejected before it reached `applyAction` with
+nothing in the notes. The benchmark came back byte-identical and looked like
+evidence that the lever did nothing. It is derived from `ACTION_IDS` now, and
+there is a test that fails if anyone turns it back into a literal. **Two
+hand-maintained lists of the same thing is one too many, and a byte-identical
+benchmark is a claim that needs checking rather than a result.**
 
 ---
+
+## The next mechanic, if one is wanted
+
+The leadership wall now has a counter-lever (F17), so the obvious gap is
+elsewhere. The two standing candidates are both recorded above rather than here:
+the spending side of political capital (F6's residue — fifteen event choices
+that are still a flat capital delta against a small thing, and the deck is at
+its 33-event cap so they are rewrites), and the three Bill clauses that still
+resolve into a pool that never binds (F4's residue).
 
 ## What is working — do not "fix" these
 

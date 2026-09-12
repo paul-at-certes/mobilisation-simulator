@@ -7,11 +7,12 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { BriefingFacts, GameEvent, GameState, Verdict } from '../src/types.js';
+import type { Action, BriefingFacts, GameEvent, GameState, Verdict } from '../src/types.js';
 import { briefingText, formatGbpBn, formatInt, formatPct } from '../src/ui/briefing.js';
 import { holdingOutlook } from '../src/ui/components/holding.js';
 import { courseMonths } from '../src/sim/pipeline.js';
 import { ACTION_IDS } from '../src/sim/actions.js';
+import { newGame, step } from '../src/sim/step.js';
 import { ACTION_COPY } from '../src/ui/action-copy.js';
 import { ORDER as MENU_ORDER } from '../src/ui/components/action-menu.js';
 import { P } from '../src/sim/params.js';
@@ -257,6 +258,23 @@ describe('the action menu', () => {
     expect([...MENU_ORDER].sort()).toEqual([...ACTION_IDS].sort());
   });
 
+  it('lets the step accept every action there is', () => {
+    // `isKnownAction` in step.ts used to be a second hand-maintained list, and
+    // an action missing from it was rejected before it reached applyAction,
+    // with no note saying so. accelerate_promotion was asked for and silently
+    // dropped on every turn of its first run. The list is derived now; this
+    // proves it, and would catch anyone turning it back into a literal.
+    for (const id of ACTION_IDS) {
+      const s = newGame(5, 'corps');
+      const after = step(s, { actions: [{ id } as Action], eventChoice: null });
+      // Only `action_unknown` is the bug being guarded against. An action
+      // that needs arguments this test does not supply is rejected on its
+      // arguments, which is correct and not what this is looking for.
+      const unknown = after.briefing.notes.filter((n) => n === `action_unknown:${id}`);
+      expect(unknown, `${id}: step does not know this action exists`).toEqual([]);
+    }
+  });
+
   it('gives every action copy and a group', () => {
     for (const id of ACTION_IDS) {
       const copy = ACTION_COPY[id];
@@ -380,7 +398,7 @@ describe('holding pool outlook', () => {
 function fakeState(over: Partial<GameState> = {}): GameState {
   const gauges = { forceReady: 4200, forceReadyPct: 16.8, forceQuality: 0.71, politicalCapital: 47, leadershipFactor: 1, headcountCounted: 5900 };
   return {
-    version: 2,
+    version: 3,
     seed: 42,
     rngState: 42,
     difficulty: 'division',
@@ -424,6 +442,7 @@ function fakeState(over: Partial<GameState> = {}): GameState {
     eligiblePoolMultiplier: 1,
     capacityPurchases: 0,
     capacityPurchaseMonths: [],
+    promotionCourseMonths: [],
     capacityMultiplier: 1,
     capacityMultiplierUntil: null,
     civilianInstructors: false,

@@ -211,6 +211,49 @@
       ],
       "rationale": "Infantry section of eight soldiers under a corporal; Phase 1 training-platoon instructor ratios are similar."
     },
+    "promotion_course_months": {
+      "value": 2,
+      "unit": "months",
+      "label": "Junior-leader cadre course",
+      "description": "Months a cadre course takes to turn a trade-trained soldier into a junior leader.",
+      "section": "leaders",
+      "source": "Maroni TD, Myers SD, Draper J, Ashdown KM, Walker FS, Alexander B, Blacker SD (2025), 'An ergonomic assessment of British Army Infantry career training courses to identify opportunities for evidence-based interventions to enhance role-related physical fitness', Ergonomics 69(2), pp. 206-220",
+      "url": "https://doi.org/10.1080/00140139.2025.2456538",
+      "asOf": "2025-01-31",
+      "confidence": "derived",
+      "derivation": "The paper's abstract states it assessed 'the British Army's 8-week Platoon Sergeant and Section Commander Battle Courses (PSBC, SCBC)'. Converted with the same weeks-to-months rounding the conscript course uses (section 5): round(8 x 12 / 52) = 2.",
+      "note": "The Section Commanders' Battle Course is the qualifying course for substantive Corporal in the infantry. The figure is taken from a peer-reviewed study whose subjects were soldiers on those courses, so the duration is a fact about its own method rather than a claim repeated at second hand; two of its seven authors are listed with Army Headquarters (Personnel Policy) affiliations. The MoD's own Infantry Battle School page states no duration and refuses automated fetching. Beware the widely quoted 16 weeks: that is the Platoon Commanders' Battle Course, which is an officer course and a different thing."
+    },
+    "promotion_cadre_size": {
+      "value": 206,
+      "unit": "people",
+      "label": "Junior leaders per cadre course",
+      "description": "Trade-trained soldiers promoted to junior leader by one accelerated cadre course.",
+      "section": "leaders",
+      "source": "Derived from MoD, UK armed forces quarterly service personnel statistics, Tables 3a and 11a (trained strength and junior-leader strength) and the Army's annual trained output",
+      "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
+      "asOf": "2026-06-30",
+      "confidence": "derived",
+      "derivation": "One course pulls forward about one month of the Army's own promotion output. Junior leaders are junior_leaders / regular_trained_start = 29,563 / 70,951 = 41.67% of the trained strength; in a steady state the cadre holds its share, so the flow into it is 41.67% x regular_gains_annual (5,933) = 2,472 a year, or 206 a month.",
+      "note": "The quarterly statistics publish strength, intake and outflow by rank but not promotion flows, so there is no published count of promotions to Corporal to read directly; this reconstructs the steady-state flow from three figures that are published. It is the rate, not a capacity: the Infantry Battle School's throughput is not modelled, and a minister can run courses back to back for as long as the cadre can staff them."
+    },
+    "eff_promoted_leader": {
+      "value": 0.6,
+      "unit": "ratio",
+      "label": "Effectiveness of an accelerated junior leader",
+      "description": "What a junior leader promoted early is worth against one who reached the rank in the normal course of a career.",
+      "section": "leaders",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        0.35,
+        0.8
+      ],
+      "rationale": "The one frank assumption in this mechanic, in the way conscription_refusal_conversion is in the refusal model: no figure for the effectiveness of accelerated promotion exists or is likely to. What is being discounted is narrow, which argues for a high value rather than a low one - the soldier has passed the same 8-week course as anyone else, and what they lack is the years in rank behind it, not the training. Set level with eff_ex_regular (0.6), which discounts a recalled ex-regular by the same order for the mirror-image problem: the ex-regular had the experience and lost it, the accelerated corporal has the course and has not yet earned it. The range runs from a third, at which the promotion is a fiction, to four fifths, at which time in rank hardly matters and the Army would have no reason not to promote everyone early.",
+      "note": "Historically this is war-substantive and acting rank, which is how every mass mobilisation has answered the same problem. The model simplifies in one direction and it is worth stating: a promoted soldier stops doing the trade they were trained for, and that loss is not charged - the costs modelled are the political capital, the action slot, the cadre held back to instruct, and this discount."
+    },
     "junior_leaders_spareable_fraction": {
       "value": 0.3,
       "unit": "ratio",
@@ -2454,6 +2497,22 @@
       "asOf": "2026-04-01",
       "confidence": "derived",
       "derivation": "95000 - 34755 = 60245"
+    },
+    "pc_cost_accelerate_promotion": {
+      "value": -1,
+      "unit": "pc",
+      "label": "Cost: accelerate promotion",
+      "description": "Political capital cost of running an accelerated junior-leader cadre course.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        -4,
+        -1
+      ],
+      "rationale": "Cheap, because a cadre course buys no buildings and no contracts: it is an internal personnel decision the Army can largely take for itself, where expanding the training estate (pc_cost_expand_capacity, -3) cannot. It is not free, because a lever with no price is a lever with no decision. An escalating price was tried - the shape pc_address_subsequent uses - and abandoned, because political capital is abundant at Division and scarce at Corps: charging more for later courses left the Division ceiling where it was (55% to 58% of seeds meeting the target) and took max_effort at Corps from 28% resignations to 65%. It priced the rung that did not need it and missed the one that did. What bounds this lever is the course length and the one-course-at-a-time rule, not its price."
     }
   }
 }

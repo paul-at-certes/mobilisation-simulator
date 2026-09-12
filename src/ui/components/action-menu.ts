@@ -64,6 +64,7 @@ export const ORDER: ActionId[] = [
   'amend_bill',
   'set_callup',
   'expand_capacity',
+  'accelerate_promotion',
   'compress_syllabus',
   'contract_civilian_instructors',
   'equipment_buy',
