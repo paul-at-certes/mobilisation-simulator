@@ -175,14 +175,12 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 /* Groups are <details>: the list is too long for a phone with everything open (F7). */
 .action-group { margin-top: 0.5rem; border-top: 1px solid var(--rule); }
 .action-group > summary {
-  cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;
+  cursor: pointer; list-style: none; display: flex; align-items: baseline; gap: 0.5rem;
   padding: 0.6rem 0.1rem; min-height: 44px;
 }
 .action-group > summary::-webkit-details-marker { display: none; }
 .action-group .group-title { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
-.action-group .group-count { font-size: 0.78rem; color: var(--ink-3); white-space: nowrap; }
-.action-group .group-count::after { content: " +"; font-variant-numeric: tabular-nums; }
-.action-group[open] .group-count::after { content: " −"; }
+.action-group .group-count { flex: none; margin-left: auto; font-size: 0.78rem; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .action-group[open] > summary { border-bottom: 1px solid var(--rule); margin-bottom: 0.4rem; }
 .action { display: flex; gap: 0.6rem; align-items: flex-start; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.55rem 0.7rem; margin-bottom: 0.4rem; }
 .action.selected { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
@@ -214,30 +212,38 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 .action-detail > summary::-webkit-details-marker { display: none; }
 .action-detail > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
 /*
- * A caret, not a "+".
+ * One disclosure marker for the whole game: a caret.
  *
- * The marker used to be a "+" appended to the cost, so a row read
- * "-3 PC +" and, open, "-3 PC -": next to a signed number the disclosure
- * glyph is arithmetic. It is drawn with borders rather than set as text, so
- * there is no character for a screen reader to read out either — the summary
- * already announces itself as expanded or collapsed.
+ * It used to be a "+" appended to the last thing on the line, which on two of
+ * the three disclosures was a number: an action row read "-3 PC +" and, open,
+ * "-3 PC -"; the ledger read "GDP £0.12bn +". Next to a figure the marker is
+ * arithmetic. A caret cannot be read as a sign, so the rule is now simply
+ * that a caret means this opens, with no exceptions to remember.
  *
- * This splits the idiom deliberately, and the split is the rule: +/- marks a
- * section you open (the action groups, the ledger), a caret marks a row
- * inside one. Only the rows carry a signed number.
+ * Drawn with borders rather than set as a character, so a screen reader has
+ * nothing to read out — <summary> already announces itself as expanded or
+ * collapsed.
  */
+.action-group > summary::after,
+details.ledger > summary::after,
 .action-detail > summary .action-title::after {
-  /* On the first line, beside the cost: `align-self: center` put it halfway
-     down a title that wrapped to two lines, where it read as belonging to
-     neither. The margin drops it to the cap height of the first line. */
-  content: ""; flex: none; align-self: flex-start; margin-top: 0.42em; width: 0; height: 0;
+  content: ""; flex: none; align-self: center; width: 0; height: 0;
   border-left: 5px solid var(--ink-3);
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
   transition: transform 120ms ease;
 }
+/* The action row's title can wrap to two lines, and a centred caret then reads
+   as belonging to neither. This puts it on the first line, beside the cost. */
+.action-detail > summary .action-title::after { align-self: flex-start; margin-top: 0.42em; }
+.action-group[open] > summary::after,
+details.ledger[open] > summary::after,
 .action-detail[open] > summary .action-title::after { transform: rotate(90deg); }
-@media (prefers-reduced-motion: reduce) { .action-detail > summary .action-title::after { transition: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .action-group > summary::after,
+  details.ledger > summary::after,
+  .action-detail > summary .action-title::after { transition: none; }
+}
 .action-detail > .action-desc { margin-top: 0.3rem; }
 .action.unavailable .action-detail > summary { cursor: default; }
 .action .action-reason { font-size: 0.8rem; color: var(--warn); }
@@ -253,10 +259,9 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 
 /* Ledger */
 details.ledger { margin: 1rem 0; border: 1px solid var(--rule); border-radius: var(--radius); background: #fff; }
-details.ledger summary { cursor: pointer; padding: 0.6rem 0.8rem; font-weight: 600; list-style: none; display: flex; justify-content: space-between; }
+details.ledger summary { cursor: pointer; padding: 0.6rem 0.8rem; font-weight: 600; list-style: none; display: flex; align-items: baseline; gap: 0.5rem; }
 details.ledger summary::-webkit-details-marker { display: none; }
-details.ledger summary::after { content: "+"; color: var(--ink-3); }
-details.ledger[open] summary::after { content: "−"; }
+details.ledger summary > :last-of-type { margin-left: auto; }
 details.ledger .ledger-body { padding: 0 0.8rem 0.8rem; }
 .kv { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 1rem; font-size: 0.9rem; }
 .kv dt { color: var(--ink-2); }

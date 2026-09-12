@@ -569,8 +569,9 @@ the gate was there for a reason and the reason has not gone away: the sourced
 paragraphs are the argument, and they are now one tap further from the reader.
 
 Each action row is a `<details>`. The summary is the line that was already
-there — title, cost, and a `+`/`−` in the groups' and the ledger's idiom — so
-the disclosure costs no height at all. The paragraph is what opens.
+there — title, cost, and a marker, at that time a `+`/`−` in the groups' and
+the ledger's idiom (F24 replaced it with a caret, for reasons this pass should
+have seen) — so the disclosure costs no height at all. The paragraph is what opens.
 
 | | before | after |
 |---|---|---|
@@ -623,9 +624,8 @@ have to be good enough to make a reader want the detail. Watch for it.
 
 **A first step against that risk: the menu now says the rows open.** One line
 under the *Decisions* heading — "Tap a title for what the decision does, and
-where its numbers come from." The `+` beside the cost was the entire
-affordance, and it is the same glyph the groups and the ledger use for a
-section header, not for a row inside one. The line wraps to two at 375px and
+where its numbers come from." The marker beside the cost was the entire
+affordance, and at the time it was a `+` — which F24 then had to deal with. The line wraps to two at 375px and
 costs 45px there — once, not per row — which is the cheapest thing to try
 before anything that gives the paragraphs their height back.
 
@@ -1920,23 +1920,45 @@ one follows a **signed number**, and `−3 PC +` is a sum. Open, it was worse:
 `−3 PC −`. The one line on the screen that says what a decision costs was the
 line made ambiguous.
 
-**Fix.** A caret, and the split in idiom is now the rule: **`+`/`−` marks a
-section you open** (the groups, the ledger), **a caret marks a row inside
-one** — and only the rows carry a signed number. It is drawn with borders
-rather than set as a character, so there is nothing for a screen reader to
-read out; `<summary>` already announces itself as expanded or collapsed. It
-rotates 90° on open, and holds still under `prefers-reduced-motion`.
+**Fix, first attempt.** A caret on the action rows, and a rule to go with it:
+`+`/`−` marks a section you open (the groups, the ledger), a caret marks a row
+inside one, because only the rows carry a signed number. It is drawn with
+borders rather than set as a character, so there is nothing for a screen
+reader to read out; `<summary>` already announces itself as expanded or
+collapsed. It rotates 90° on open, and holds still under
+`prefers-reduced-motion`.
 
-**Two things the change turned up in the layout.**
+**That rule lasted one check.** Paul, immediately: *"now check the group and
+ledger markers still read right."* The group headers were fine — *"4 available
++"* follows a word. **The ledger was the same bug in a different place**: its
+summary carries the running totals, so it read **"GDP £0.12bn +"**, and open,
+**"GDP £0.12bn −"**. Two of the three disclosures in the game put the marker
+after a number.
 
-1. `.action-title` was `justify-content: space-between` with two children.
-   Adding the caret as a third stranded the cost in the middle of the row.
-   The cost now takes `margin-left: auto` and the caret follows it.
+So the caret is now all three, and the rule is the simpler one that should
+have been reached first: **a caret means this opens.** No exception to
+remember, and nothing to get wrong the next time a figure is added to a
+summary line. The three carets are one CSS block.
+
+**Three things the change turned up in the layout.** All three summaries used
+`justify-content: space-between` with two children, which strands the middle
+one once a caret makes three:
+
+1. The action row's cost now takes `margin-left: auto` and the caret follows
+   it. So does the group's *"4 available"*, and so do the ledger's totals.
 2. The cost is `white-space: nowrap`, and as a shrinkable flex item it
    overflowed its own text on the longest row — the caret sat on top of the
    "PC" in `−12 to −6 PC`. It is `flex: none` now: **the title is the part
    that wraps.** Checked on every row of a mid-game menu at 375px, that no
    cost reaches its container's edge.
+3. A centred caret sits halfway down a title that has wrapped to two lines,
+   belonging to neither. The action row's caret is `flex-start` with a
+   `0.42em` top margin, which puts it on the first line beside the cost; the
+   group and ledger summaries are one line and stay centred.
+
+**Verified** by sweeping all 17 `<summary>` elements on a mid-game turn
+screen: none carries textual `::before`/`::after` content, and every one has
+the caret.
 
 ---
 
