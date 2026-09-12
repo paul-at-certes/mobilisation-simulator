@@ -75,7 +75,7 @@ which is self-harm under the current rules. Treat their numbers as a floor.
 
 ## Benchmarks
 
-Output of `npm run dist -- 40`, at commit `HEAD`. **If a change moves these,
+Output of `npm run dist -- 40`, at commit `a476fe8`. **If a change moves these,
 update this table in the same commit.** Median final ESE, percentage of the 40
 seeds that met the target, percentage that ended in resignation, and the median
 leadership factor at the end.
