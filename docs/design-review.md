@@ -1281,8 +1281,11 @@ difficulty and per bucket rather than as one number.
 5. **Split `missed_any_broken` (17.0%) on the cause of the break,** which needed
    a second new dimension (`cadre: diverted | swamped`, spec §11) because the
    margin band is no use here — 142 of its 143 endings are `clear` misses.
-6. **Fixed two verdicts that were telling players things that were not true**,
-   found by sweeping every count placeholder for values that render as zero.
+6. **Fixed three defects where the copy said something untrue**, found by
+   sweeping every count placeholder for values that render as zero: two
+   verdicts naming a cause the run did not have, and a rounding rule that
+   printed a miss as a draw across the verdict, the end screen, the share card
+   and the briefing.
 
 **The missed split is better motivated than the concentration made it look.**
 `missed_high_intact` was read as the game's thesis — *you did everything right
@@ -1442,22 +1445,44 @@ arithmetic rather than the bots.** Two of the four cuts would have been wrong.
   or the difficulty targets move, re-check that 10% still lands in the gap
   between the Brigade and Division win distributions; today it has 9.8
   percentage points of room on either side.
+- There are three separate `formatInt` implementations in the repo —
+  `src/sim/score.ts`, `src/ui/dom.ts` and `src/ui/briefing.ts` — which is how
+  one rounding rule came to be applied three different ways. They are not
+  consolidated here, but F17's lesson applies: *two hand-maintained copies of
+  the same thing is one too many.* The display helpers above are deliberately
+  in one place for exactly that reason.
 - `met_mid_any` is down to **five** scripted endings and `met_high_intact` to
   thirteen. Neither is at risk of being unreachable — both have witnesses — but
   they are the thinnest copy in the file and the first to check if a balance
   change moves the quality bands.
 
-**One defect of this class is known and not fixed here.** On a missed run whose
-ESE rounds up to the target, `missed_high_intact` renders *"You fielded 22,000
-soldiers against a target of 22,000: 0 short"* — the displayed shortfall and the
-displayed ESE are rounded independently, so a genuine miss of 0.4 soldiers reads
-as a contradiction. It is rare (once in about 65,000 endings) and it is **not
-only a verdict problem**: `src/ui/share-card.ts` and `src/ui/screens/scoring.ts`
-print *"Target missed by {shortfall} effective soldiers"* from the same number.
-The fix is a shared formatter that rounds a missed run's achievement down and
-its gap up — never flattering a miss into a draw — applied at all three call
-sites. That is a display change across the UI rather than a verdict change,
-which is why it is recorded here rather than folded into this pass.
+**A third defect of this class was a rounding rule, and it was everywhere.**
+`missed_high_intact` rendered *"You fielded 22,000 soldiers against a target of
+22,000: 0 short"*. Force Ready is a real number and the target is a whole one,
+so rounding each to nearest and independently turned a genuine miss of 0.4 of a
+soldier into a printed draw. It is rare — about once in 65,000 endings — and it
+was **not only a verdict problem**: the end screen, the share card and the
+monthly briefing each did their own `Math.round` on the same figure, so the
+share card would have carried the contradiction off-site.
+
+**The rule now is that rounding never flatters the result:** what was achieved
+rounds down, the gap rounds up. That is not only honest, it reconciles — for a
+whole-numbered target, `floor(ese) + ceil(target − ese) === target` exactly, and
+`floor(ese) === target + floor(surplus)` on a run that met it. So the two
+figures a player is invited to add up always do. `displayEse`,
+`displayShortfall` and `displaySurplus` live in `score.ts` and are used by the
+verdict templates, `src/ui/screens/scoring.ts`, `src/ui/share-card.ts` and
+`src/ui/briefing.ts`. The sentence now reads *"You fielded 21,999 soldiers
+against a target of 22,000: 1 short."*
+
+Two things fell out of the fix that are worth recording because they are the
+usual shape of a rounding change. Making the gap round up made **"missed by 1"
+reachable for the first time**, so the headline needed a singular — it had been
+safe only because the number was never 1. And the scoring screen's *Effective*
+bar still printed the un-floored figure next to the corrected headline, which
+would have put 22,000 and "missed by 1" on the same screen. **A rounding rule
+applied in one place is a rounding rule that disagrees with itself somewhere
+else.**
 
 ---
 

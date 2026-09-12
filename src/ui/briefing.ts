@@ -12,6 +12,7 @@ import { type ParamId, P } from '../sim/params.js';
 import { deliveryCredit } from '../sim/politics.js';
 import { outflowIntent } from '../sim/outflow.js';
 import { effectiveWillingness } from '../sim/politics.js';
+import { displayEse } from '../sim/score.js';
 
 // Sourced helpers: every parameter-based number in a briefing carries its popover.
 import { sourcedHtml } from './components/sourced';
@@ -170,7 +171,7 @@ function finalNote(state: GameState): string[] {
   }
 
   out.push(
-    `Force Ready stands at ${formatInt(g.forceReady)} against a target of ${formatInt(state.target)} (${formatPct(g.forceReadyPct)}), at quality ${g.forceQuality.toFixed(2)} from ${formatInt(g.headcountCounted)} personnel counted.`,
+    `Force Ready stands at ${formatInt(displayEse(g.forceReady))} against a target of ${formatInt(state.target)} (${formatPct(g.forceReadyPct)}), at quality ${g.forceQuality.toFixed(2)} from ${formatInt(g.headcountCounted)} personnel counted.`,
   );
 
   out.push(
@@ -188,7 +189,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
   const g = state.gauges;
   const turn = state.turn;
   const remaining = state.deadlineMonths - turn;
-  const ese = formatInt(g.forceReady);
+  const ese = formatInt(displayEse(g.forceReady));
   const target = formatInt(state.target);
   const pct = formatPct(g.forceReadyPct);
   const quality = g.forceQuality.toFixed(2);

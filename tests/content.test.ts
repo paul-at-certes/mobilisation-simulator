@@ -12,6 +12,7 @@ import { briefingText, formatGbpBn, formatInt, formatPct } from '../src/ui/brief
 import { holdingOutlook } from '../src/ui/components/holding.js';
 import { courseMonths } from '../src/sim/pipeline.js';
 import { ACTION_IDS } from '../src/sim/actions.js';
+import { displayEse, displayShortfall, displaySurplus, fillTemplate } from '../src/sim/score.js';
 import { newGame, step } from '../src/sim/step.js';
 import { ACTION_COPY } from '../src/ui/action-copy.js';
 import { ORDER as MENU_ORDER } from '../src/ui/components/action-menu.js';
@@ -414,6 +415,36 @@ describe('verdicts.json', () => {
     for (const v of verdicts) {
       if (v.id === 'fallback') continue; // the safety net: reached only if the file is wrong
       expect(reachable.has(v.id), `${v.id} can never be selected: an earlier entry always matches first`).toBe(true);
+    }
+  });
+
+  /**
+   * Force Ready is a real number and the target is a whole one. Rounding each
+   * to nearest and independently printed a miss as a draw — 21,999.6 against
+   * 22,000 came out as "You fielded 22,000 soldiers against a target of
+   * 22,000: 0 short" — which is the run this test pins. Rounding never
+   * flatters: the achievement rounds down, the gap rounds up, and the two
+   * reconcile against the target exactly. Design review F18.
+   */
+  it('never rounds a miss into a draw, and the figures reconcile', () => {
+    const target = 22_000;
+    const ese = 21_999.6; // a genuine miss of 0.4 of a soldier
+    const rendered = fillTemplate('{ese} of {target}: {shortfall} short.', {
+      target, ese, headcount: 33_000, months: 12, quality: 0.66, leadership: 0.95,
+      costBn: 2.4, gdpLossBn: 1.1, conscripts: 0, reservists: 0, regulars: 0,
+      shortfall: target - ese, surplus: 0,
+    });
+    expect(rendered).toBe('21,999 of 22,000: 1 short.');
+
+    // The identity that makes the two figures add up, over the awkward cases.
+    for (const e of [21_999.6, 21_999.5, 21_999.4, 21_998.001, 22_000, 17_500.5]) {
+      const short = Math.max(0, target - e);
+      if (e < target) {
+        expect(displayShortfall(short), `shortfall for ${e}`).toBeGreaterThanOrEqual(1);
+        expect(displayEse(e) + displayShortfall(short)).toBe(target);
+      } else {
+        expect(displayEse(e)).toBe(target + displaySurplus(e - target));
+      }
     }
   });
 

@@ -4,6 +4,7 @@
  * a one-line verdict and the seed URL. No external assets.
  */
 import type { Score, Difficulty } from '../types';
+import { displayEse, displayShortfall } from '../sim/score';
 
 export interface ShareCardInput {
   difficulty: Difficulty;
@@ -56,8 +57,9 @@ export function renderShareCard(input: ShareCardInput): HTMLCanvasElement {
   const headline = score.resigned
     ? 'The Prime Minister has accepted your resignation.'
     : score.met
-      ? `Target met: ${fmt(score.ese)} effective soldiers.`
-      : `Target missed by ${fmt(score.shortfall)} effective soldiers.`;
+      ? `Target met: ${fmt(displayEse(score.ese))} effective soldiers.`
+      // A shortfall now rounds up, so "missed by 1" is reachable and has to be singular.
+      : `Target missed by ${fmt(displayShortfall(score.shortfall))} effective soldier${displayShortfall(score.shortfall) === 1 ? '' : 's'}.`;
   ctx.fillStyle = score.met && !score.resigned ? COLOURS.ok : COLOURS.accent;
   ctx.font = `600 40px ${SERIF}`;
   wrapText(ctx, headline, 60, 160, 1080, 46, 2);

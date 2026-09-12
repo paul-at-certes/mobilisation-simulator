@@ -1714,14 +1714,62 @@ reachability sweep in F18, which reports every verdict's share.
 byte-identical to the pre-F18 commit on all 21 rows. The three verdicts that
 carried **69% of all endings now carry 41%**, spread over six.
 
-**One defect of this class is known and deliberately not fixed here.** On a
-missed run whose ESE rounds up to the target, `missed_high_intact` renders *"You
-fielded 22,000 soldiers against a target of 22,000: 0 short"*. It is rare — once
-in about 65,000 endings — and it is not only a verdict problem:
-`src/ui/share-card.ts` and `src/ui/screens/scoring.ts` print *"Target missed by
-{shortfall} effective soldiers"* from the same number, so the same contradiction
-appears in the UI chrome. The fix is a shared formatter that rounds a missed
-run's achievement down and its gap up, applied at all three call sites — a
-display change across the UI, not a verdict change. **ASK:** worth doing as its
-own small pass, and it is the kind of thing that is much cheaper to fix now than
-after someone screenshots it.
+**One defect of this class was left as an ASK and has since been taken** — see
+the entry below.
+
+## Rounding never flatters the result (12 September 2026)
+
+The **ASK** in the entry above, answered: fix it. `missed_high_intact` rendered
+*"You fielded 22,000 soldiers against a target of 22,000: 0 short"*.
+
+**What it was.** Force Ready is a real number and the target is a whole one.
+Rounding each to nearest, independently, turns a genuine miss of 0.4 of a
+soldier into a printed draw. About once in 65,000 endings.
+
+**Why it was worth more than its frequency.** It was not a verdict bug. Four
+places rendered the same figure and each did its own `Math.round`: the verdict
+templates, `src/ui/screens/scoring.ts`, `src/ui/share-card.ts` and
+`src/ui/briefing.ts`. The share card is the one that travels, so this was a
+contradiction the game could publish. The briefing version is arguably worse
+than the verdict one, because it appears every month: *"Force Ready 22,000 of
+22,000 (100%)"* on a run that has not met the target tells a player mid-game
+that they are finished when they are not.
+
+**The rule.** *Rounding never flatters the result* — what was achieved rounds
+down, the gap rounds up. It is chosen for honesty, but the reason it is the
+right rule rather than merely a safe one is that **it reconciles**: for a
+whole-numbered target, `floor(ese) + ceil(target − ese) === target` exactly, and
+`floor(ese) === target + floor(surplus)` on a run that met it. The two figures
+the player is invited to add up always do. `displayEse`, `displayShortfall` and
+`displaySurplus` live in `score.ts` and every call site uses them.
+
+**Two things fell out of the fix, and they are the usual shape of a rounding
+change.**
+
+1. Making the gap round up made **"missed by 1" reachable for the first time**,
+   and the headline read *"missed by 1 effective soldiers"*. The plural had been
+   safe only because the number could never be 1.
+2. The scoring screen's *Effective* bar still printed the un-floored figure, so
+   the corrected headline would have sat next to an uncorrected 22,000.
+
+**A rounding rule applied in one place is a rounding rule that disagrees with
+itself somewhere else.** Both were caught by re-reading the rendered output
+rather than by the tests, which is the same instrument that found the other two
+copy defects.
+
+**There are three `formatInt` implementations in this repo** — `src/sim/score.ts`,
+`src/ui/dom.ts`, `src/ui/briefing.ts` — which is how one rounding rule came to
+be applied three different ways in the first place. They are **not** consolidated
+here, because that is a refactor with its own blast radius and this pass is
+already four files wide. F17's lesson stands and is now recorded against them:
+*two hand-maintained copies of the same thing is one too many.* The three new
+display helpers are deliberately in one place so they cannot drift the same way.
+
+**The test pins the exact string.** `tests/content.test.ts` renders
+`{ese} of {target}: {shortfall} short.` at 21,999.6 against 22,000 and requires
+`21,999 of 22,000: 1 short.`; it fails with `22,000 of 22,000: 0 short.` on the
+old code. It also checks the reconciliation identity over the awkward values
+(x.6, x.5, x.4, exact hits).
+
+**What it cost.** `score.ts` gained 29 lines and nothing else in `src/sim/`
+changed; the benchmark is byte-identical to the pre-F18 commit on all 21 rows.

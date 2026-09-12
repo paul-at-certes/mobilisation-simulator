@@ -72,9 +72,38 @@ export function formatInt(n: number): string {
   return sign + String(Math.abs(rounded)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+/**
+ * Rounding for the figures the player is invited to add up.
+ *
+ * `forceReady` is a real number and `target` is a whole one, so rounding each
+ * to nearest and independently can print a miss as a draw: 21,999.6 against a
+ * target of 22,000 rendered as *"You fielded 22,000 soldiers against a target
+ * of 22,000: 0 short"*. The rule is that **rounding never flatters the
+ * result** — what was achieved rounds down, the gap rounds up. That also makes
+ * the figures reconcile, because for a whole-numbered target
+ * `floor(ese) + ceil(target − ese) === target` exactly, and likewise
+ * `floor(ese) === target + floor(surplus)` on a run that met it.
+ *
+ * Use these wherever Force Ready is shown against the target — the verdict
+ * templates, the end screen, the share card and the monthly briefing all did
+ * their own `Math.round` before. Design review F18.
+ */
+export function displayEse(ese: number): number {
+  return Math.floor(ese);
+}
+export function displayShortfall(shortfall: number): number {
+  return Math.ceil(shortfall);
+}
+export function displaySurplus(surplus: number): number {
+  return Math.floor(surplus);
+}
+
 function formatVar(key: keyof VerdictVars, value: number): string {
   if (key === 'quality' || key === 'leadership') return value.toFixed(2);
   if (key === 'costBn' || key === 'gdpLossBn') return value.toFixed(1);
+  if (key === 'ese') return formatInt(displayEse(value));
+  if (key === 'shortfall') return formatInt(displayShortfall(value));
+  if (key === 'surplus') return formatInt(displaySurplus(value));
   return formatInt(value);
 }
 

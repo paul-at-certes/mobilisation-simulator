@@ -3,6 +3,7 @@ import type { GameState, Score } from '../../types';
 import { h, fmtInt, fmtBn, fmtPct } from '../dom';
 import { renderShareCard, copyImage, downloadImage } from '../share-card';
 import { sourced } from '../components/sourced';
+import { displayEse, displayShortfall } from '../../sim/score';
 
 export function renderScoring(opts: { state: GameState; score: Score; siteUrl: string; onRestart: () => void }): HTMLElement {
   const { state, score } = opts;
@@ -31,8 +32,9 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
   const headline = score.resigned
     ? 'The Prime Minister has accepted your resignation.'
     : score.met
-      ? `Target met. ${fmtInt(score.ese)} effective soldiers against ${fmtInt(score.target)}.`
-      : `Target missed by ${fmtInt(score.shortfall)} effective soldiers.`;
+      ? `Target met. ${fmtInt(displayEse(score.ese))} effective soldiers against ${fmtInt(score.target)}.`
+      // A shortfall now rounds up, so "missed by 1" is reachable and has to be singular.
+      : `Target missed by ${fmtInt(displayShortfall(score.shortfall))} effective soldier${displayShortfall(score.shortfall) === 1 ? '' : 's'}.`;
 
   const canvas = renderShareCard({ difficulty: state.difficulty, score, siteUrl: opts.siteUrl });
   const status = h('span', { class: 'small muted', 'aria-live': 'polite' });
@@ -50,7 +52,7 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
       'div',
       { class: 'stacked' },
       bar('Bodies', score.headcount, 2),
-      bar('Effective', score.ese, 3),
+      bar('Effective', displayEse(score.ese), 3),
       h('div', { class: 'legend' }, ...segs.map((s) => h('span', { class: 'legend-item' }, h('span', { class: `swatch ${s[1]}` }), `${s[0]}: ${fmtInt(s[2])} bodies, ${fmtInt(s[3])} effective`))),
     ),
     h(
