@@ -1852,6 +1852,50 @@ shortened, shorten it for a reason about the argument, not about the screen.
 
 ---
 
+### F23 — The event cards cited their sources by parameter id · *Addressed*
+
+**Checked on Paul's instruction** after F21 and F22, the event card being the
+third thing on the turn screen that carries sourced numbers.
+
+**The text was clean.** All 33 events: no repository reference, no parameter
+id, no `GBP` where the game writes `£`, no `ESE`, apostrophes consistent.
+
+**The source line was not.** `renderEvent` printed each chip as
+`id.replace(/_/g, ' ')`, so the foot of the Day 0 card read:
+
+> Source: MoD press release, 15 January 2026 · strategic reserve recall age ·
+> strategic reserve claimed · **ex regular tracked tri service**
+
+The label was in the data all along — *Ex-Regular Reserve on record, all three
+Services* — and is what the chips carry now. 25 distinct parameters across 15
+event cards were affected; the id stays as a fallback for a parameter that has
+gone missing, which is a bug the popover already announces.
+
+A consequence worth keeping: `sourced()` built its `aria-label` as
+`"{display}. {label}. Show source"`, so a chip whose text *is* the label read
+it out twice. It now says it once when they are the same.
+
+**Three things found in the same pass and deliberately not changed.** Each is
+a judgement about the game rather than a defect, and each is Paul's call:
+
+1. **Numbers inside event text are not tappable.** `renderEvent` escapes the
+   text, so the card's figures are plain — the sources are chips at the foot
+   instead. 11 of the 33 cards print a figure that has a chip below it. The
+   opening screen promises *"Every number can be tapped for its source"*, and
+   on these cards that is answered one line down rather than in place. Making
+   them tappable means markup in `events.json` and 33 rewrites.
+2. **A ratio reads as a ratio in the popover and a percentage in the prose.**
+   The card says *"25% of notices served are contested"*; its chip's popover
+   is headed **0.247**. Same figure, two dresses: 16 parameters the action
+   copy renders as a percentage are `unit: ratio`, which `formatValue` prints
+   raw. Showing *0.247 (25%)* would settle it, and would move the methodology
+   table and `ASSUMPTIONS.md` with it.
+3. **`opening.ts` uses curly apostrophes** where every other piece of copy in
+   the game uses straight ones — 3 against 96. The cause is mechanical: those
+   strings are single-quoted, where a straight apostrophe would need escaping.
+
+---
+
 ## The next mechanic, if one is wanted
 
 The leadership wall now has a counter-lever (F17), so the obvious gap is

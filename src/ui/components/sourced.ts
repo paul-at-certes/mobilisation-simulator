@@ -28,7 +28,11 @@ export function sourced(display: string, paramId: ParamId | string, opts: { titl
   b.dataset.param = String(paramId);
   b.textContent = display;
   const p = PARAMS[paramId];
-  b.setAttribute('aria-label', `${display}. ${opts.title ?? p?.label ?? ''}. Show source`);
+  // "3,311. Trade-trained voluntary outflow. Show source". Where the trigger
+  // already reads as the label — the event cards' source chips — saying it
+  // twice is the screen reader's version of a stutter.
+  const name = opts.title ?? p?.label ?? '';
+  b.setAttribute('aria-label', name && name !== display ? `${display}. ${name}. Show source` : `${display}. Show source`);
   b.setAttribute('aria-haspopup', 'dialog');
   return b;
 }

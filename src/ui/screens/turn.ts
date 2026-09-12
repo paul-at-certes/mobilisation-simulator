@@ -6,7 +6,7 @@ import { forecast } from '../../sim/forecast';
 import { renderHoldingPool } from '../components/holding';
 import { renderLedger } from '../components/ledger';
 import { renderActionMenu } from '../components/action-menu';
-import { sourced, escapeHtml } from '../components/sourced';
+import { sourced, escapeHtml, getParam } from '../components/sourced';
 
 export interface TurnScreenDeps {
   state: GameState;
@@ -98,8 +98,19 @@ function renderEvent(ev: GameEvent, onChoose: (i: number) => void): HTMLElement 
     buttons.push(b);
     choices.append(b);
   });
+  // The chips carry the parameter's label, not its id with the underscores
+  // taken out: "ex regular tracked tri service" is not a thing anybody is
+  // called, and "Ex-Regular Reserve on record, all three Services" was sitting
+  // in the data unused. The id falls back in only if the parameter is missing,
+  // which is a bug the popover will say so about.
   const src = ev.source
-    ? h('p', { class: 'small muted' }, 'Source: ', ev.source.url ? h('a', { href: ev.source.url, target: '_blank', rel: 'noopener' }, ev.source.name) : ev.source.name, ...(ev.source.paramIds ?? []).map((id) => [' · ', sourced(id.replace(/_/g, ' '), id)]))
+    ? h(
+        'p',
+        { class: 'small muted' },
+        'Source: ',
+        ev.source.url ? h('a', { href: ev.source.url, target: '_blank', rel: 'noopener' }, ev.source.name) : ev.source.name,
+        ...(ev.source.paramIds ?? []).map((id) => [' · ', sourced(getParam(id)?.label ?? id.replace(/_/g, ' '), id)]),
+      )
     : null;
   return h('section', { class: 'event', 'aria-label': 'Event' }, h('h3', {}, ev.title), h('p', { html: escapeHtml(ev.text) }), ev.choices.length ? choices : h('p', { class: 'small muted' }, 'No decision required.'), src);
 }
