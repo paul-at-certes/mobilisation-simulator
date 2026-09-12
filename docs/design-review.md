@@ -1906,6 +1906,40 @@ a judgement about the game rather than a defect, and each is Paul's call:
 
 ---
 
+### F24 — The disclosure marker read as arithmetic · *Addressed*
+
+**Raised by Paul**, 12 September 2026: *"having a + to expand the decision tile
+is confusing, as it is next to the PC impact, so it reads as for example
+'-3 PC +'."*
+
+**Quite right, and F7 walked into it.** When the action paragraphs went behind
+a tap, the marker was appended to the cost with `.action-pc::after`, on the
+reasoning that `+`/`−` was already the idiom of the action groups and the
+ledger. But those markers follow a *word* — "4 available +", "Money −". This
+one follows a **signed number**, and `−3 PC +` is a sum. Open, it was worse:
+`−3 PC −`. The one line on the screen that says what a decision costs was the
+line made ambiguous.
+
+**Fix.** A caret, and the split in idiom is now the rule: **`+`/`−` marks a
+section you open** (the groups, the ledger), **a caret marks a row inside
+one** — and only the rows carry a signed number. It is drawn with borders
+rather than set as a character, so there is nothing for a screen reader to
+read out; `<summary>` already announces itself as expanded or collapsed. It
+rotates 90° on open, and holds still under `prefers-reduced-motion`.
+
+**Two things the change turned up in the layout.**
+
+1. `.action-title` was `justify-content: space-between` with two children.
+   Adding the caret as a third stranded the cost in the middle of the row.
+   The cost now takes `margin-left: auto` and the caret follows it.
+2. The cost is `white-space: nowrap`, and as a shrinkable flex item it
+   overflowed its own text on the longest row — the caret sat on top of the
+   "PC" in `−12 to −6 PC`. It is `flex: none` now: **the title is the part
+   that wraps.** Checked on every row of a mid-game menu at 375px, that no
+   cost reaches its container's edge.
+
+---
+
 ## The next mechanic, if one is wanted
 
 The leadership wall now has a counter-lever (F17), so the obvious gap is

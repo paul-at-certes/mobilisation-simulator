@@ -198,18 +198,46 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
 }
 .action.unavailable .action-tick { cursor: default; }
 .action .action-body { flex: 1; min-width: 0; }
-.action .action-title { font-weight: 600; display: flex; justify-content: space-between; gap: 0.5rem; }
-.action .action-pc { font-variant-numeric: tabular-nums; color: var(--ink-3); font-weight: 400; white-space: nowrap; }
+.action .action-title { font-weight: 600; display: flex; align-items: baseline; gap: 0.5rem; }
+/* The cost sits at the right, and the caret after it. `margin-left: auto` does
+   the spacing that `justify-content: space-between` used to, so adding the
+   caret as a third item does not strand the cost in the middle. `flex: none`
+   because the cost is `nowrap`: allowed to shrink, it overflowed its own text
+   and the caret sat on top of the "PC". The title is the part that wraps. */
+.action .action-pc { flex: none; margin-left: auto; font-variant-numeric: tabular-nums; color: var(--ink-3); font-weight: 400; white-space: nowrap; }
 .action .action-desc { font-size: 0.88rem; color: var(--ink-2); }
 /* Title and cost first, the paragraph behind a tap (F7). The summary line is
    exactly the height the title line was, so the disclosure itself costs
-   nothing; the +/− marker follows the groups' and the ledger's idiom. */
+   nothing. */
 .action-detail { min-width: 0; }
 .action-detail > summary { cursor: pointer; list-style: none; display: block; }
 .action-detail > summary::-webkit-details-marker { display: none; }
 .action-detail > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
-.action-detail .action-pc::after { content: " +"; }
-.action-detail[open] .action-pc::after { content: " \2212"; }
+/*
+ * A caret, not a "+".
+ *
+ * The marker used to be a "+" appended to the cost, so a row read
+ * "-3 PC +" and, open, "-3 PC -": next to a signed number the disclosure
+ * glyph is arithmetic. It is drawn with borders rather than set as text, so
+ * there is no character for a screen reader to read out either — the summary
+ * already announces itself as expanded or collapsed.
+ *
+ * This splits the idiom deliberately, and the split is the rule: +/- marks a
+ * section you open (the action groups, the ledger), a caret marks a row
+ * inside one. Only the rows carry a signed number.
+ */
+.action-detail > summary .action-title::after {
+  /* On the first line, beside the cost: `align-self: center` put it halfway
+     down a title that wrapped to two lines, where it read as belonging to
+     neither. The margin drops it to the cap height of the first line. */
+  content: ""; flex: none; align-self: flex-start; margin-top: 0.42em; width: 0; height: 0;
+  border-left: 5px solid var(--ink-3);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform 120ms ease;
+}
+.action-detail[open] > summary .action-title::after { transform: rotate(90deg); }
+@media (prefers-reduced-motion: reduce) { .action-detail > summary .action-title::after { transition: none; } }
 .action-detail > .action-desc { margin-top: 0.3rem; }
 .action.unavailable .action-detail > summary { cursor: default; }
 .action .action-reason { font-size: 0.8rem; color: var(--warn); }
