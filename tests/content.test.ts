@@ -290,6 +290,18 @@ describe('verdicts.json', () => {
   const MET = [true, false];
   const QUALITY = ['low', 'mid', 'high'] as const;
   const LEADERSHIP = ['broken', 'strained', 'intact'] as const;
+  const SHORTFALL = ['near', 'clear'] as const;
+
+  /**
+   * The two ending states the model cannot produce, measured in design review
+   * F18: meeting the target needs the leadership factor, which multiplies
+   * everything raised, so a met run cannot have a broken cadre; and meeting it
+   * at a quality below 0.45 needs 48,889 bodies at Division against a ceiling
+   * of 39,314. Both fall to the fallback by design. If a balance change ever
+   * makes one reachable, the `every verdict can be reached` test below starts
+   * failing on the fallback and this list is what to revisit.
+   */
+  const UNREACHABLE = (met: boolean, q: string, l: string) => met && (l === 'broken' || q === 'low');
 
   it('has 10–12 verdicts with unique ids and valid bands', () => {
     expect(verdicts.length).toBeGreaterThanOrEqual(10);
@@ -316,17 +328,75 @@ describe('verdicts.json', () => {
     expect(verdicts.slice(firstNonResigned).some((v) => v.resigned)).toBe(false);
   });
 
-  it('covers every (met, quality, leadership) combination before the fallback', () => {
+  it('covers every reachable combination before the fallback', () => {
     const specific = verdicts.slice(0, -1).filter((v) => !v.resigned);
     for (const met of MET) {
       for (const q of QUALITY) {
         for (const l of LEADERSHIP) {
-          const hit = specific.find(
-            (v) => (v.met === 'any' || v.met === met) && (v.quality === 'any' || v.quality === q) && (v.leadership === 'any' || v.leadership === l),
-          );
-          expect(hit, `no verdict for met=${met} quality=${q} leadership=${l}`).toBeDefined();
+          for (const sf of SHORTFALL) {
+            const hit = specific.find(
+              (v) => (v.met === 'any' || v.met === met)
+                && (v.quality === 'any' || v.quality === q)
+                && (v.leadership === 'any' || v.leadership === l)
+                && (v.shortfall == null || v.shortfall === sf),
+            );
+            // Combinations the model cannot produce are not required to have
+            // copy; that they do not is asserted separately below.
+            if (UNREACHABLE(met, q, l)) continue;
+            expect(hit, `no verdict for met=${met} quality=${q} leadership=${l} shortfall=${sf}`).toBeDefined();
+          }
         }
       }
+    }
+  });
+
+  /**
+   * Meeting the target at a quality below 0.45 is arithmetically out of reach
+   * (F18), so there is no longer a verdict written for it. A wider entry may
+   * still span the cell — `met_mid_any` covers met/mid/broken because it is
+   * reached through met/mid/intact — but nothing may *require* the impossible
+   * state, which is what the shadow test below enforces.
+   */
+  it('has no verdict written for meeting the target at low quality', () => {
+    const dedicated = verdicts.filter((v) => v.met === true && v.quality === 'low');
+    expect(dedicated.map((v) => v.id)).toEqual([]);
+  });
+
+  /**
+   * The bug this guards against (design review F18): selection is first-match,
+   * so an entry can sit in the file for months behind a wider one and never be
+   * chosen. Four of twelve were in that state when F18 was opened. Copy nobody
+   * can read is not copy.
+   */
+  it('can reach every verdict: none is shadowed by an earlier entry', () => {
+    const firstMatch = (met: boolean, q: string, l: string, resigned: boolean, sf: string) =>
+      verdicts.find(
+        (v) => (v.met === 'any' || v.met === met)
+          && (v.quality === 'any' || v.quality === q)
+          && (v.leadership === 'any' || v.leadership === l)
+          && (v.resigned == null || v.resigned === resigned)
+          && (v.shortfall == null || v.shortfall === sf),
+      );
+    const reachable = new Set<string>();
+    for (const met of MET) {
+      for (const q of QUALITY) {
+        for (const l of LEADERSHIP) {
+          for (const resigned of [true, false]) {
+            for (const sf of SHORTFALL) {
+              if (UNREACHABLE(met, q, l)) continue;
+              // A met run is never short of the target, and a missed one always is.
+              if (met && sf === 'clear') continue;
+              if (!met && sf === 'near' && q === 'low') continue; // measured: never observed
+              const hit = firstMatch(met, q, l, resigned, sf);
+              if (hit) reachable.add(hit.id);
+            }
+          }
+        }
+      }
+    }
+    for (const v of verdicts) {
+      if (v.id === 'fallback') continue; // the safety net: reached only if the file is wrong
+      expect(reachable.has(v.id), `${v.id} can never be selected: an earlier entry always matches first`).toBe(true);
     }
   });
 

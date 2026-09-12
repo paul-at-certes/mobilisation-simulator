@@ -1160,6 +1160,179 @@ benchmark is a claim that needs checking rather than a result.**
 
 ---
 
+### F18 — A third of the endings shared one verdict, and four could never be read · *Addressed*
+
+**Symptom.** Four of the twelve entries in `verdicts.json` had never once been
+selected, and three verdicts covered 69% of all endings. The verdict is the
+payoff — the last thing a player reads, and the only part of the game that
+travels, because it is what the share card carries.
+
+**Evidence as found.** Every ending of 3 difficulties × 7 scripted strategies ×
+40 seeds, 840 in all, at commit `16ff355`:
+
+| Verdict | fires | share |
+|---|---|---|
+| `missed_high_intact` | 263 | **31.3%** |
+| `met_high_intact` | 173 | 20.6% |
+| `missed_any_broken` | 143 | 17.0% |
+| `resigned_generic` | 124 | 14.8% |
+| `missed_any_any` | 101 | 12.0% |
+| `resigned_broken` | 31 | 3.7% |
+| `met_mid_any` | 5 | 0.6% |
+| `met_any_broken` | 0 | **never** |
+| `met_high_strained` | 0 | **never** |
+| `met_low_any` | 0 | **never** |
+| `missed_low_any` | 0 | **never** |
+| `fallback` | 0 | *(correct — it is the safety net)* |
+
+**The bands were not the problem, and that is the point.** Quality across the
+840 endings runs 0.243 to 1.000 (median 0.697) and leadership 0.264 to 1.000;
+122 endings sit in the `low` quality band and 280 are not `intact`. Both bands
+are well populated. This is **not** the F13 shape, where a threshold sat
+outside the range the game produces.
+
+**The bots are a floor, and here that mattered more than anywhere else.** This
+document has said since it was written to treat scripted-strategy numbers as a
+floor because the bots never re-plan. Taking the 840 endings as the reachable
+set would have retired two verdicts that a player can reach. Three further
+populations were run before anything was cut:
+
+| population | endings | what it is |
+|---|---|---|
+| scripted | 840 | 7 strategies × 3 difficulties × 40 seeds |
+| directed | 23,040 | a parameterised family around `reserves_plus_light` — bill, 0–4 capacity purchases, call-up at 0–100% of spare intake, equipment, syllabus, civilian instructors, cadre courses |
+| random | 20,000 | random legal actions, the `invariants.test.ts` generator |
+| capacity-biased | 90,000 | random play weighted toward `expand_capacity`, the only leader sink a player controls |
+
+**Two of the four were reachable, and they were kept.**
+
+- **`met_high_strained` fires.** Division, bill + 3 capacity purchases +
+  call-up at 75% of spare intake + equipment + cadre courses: quality 0.652,
+  leadership 0.87, **22,055 against 22,000**. Found independently by the
+  random sweep (seed 286169225, 22,003 against 22,000). No bot finds it because
+  `reserves_plus_light` sits at leadership 0.98 and the two heavy strategies
+  fall past `strained` to `broken` — nothing scripted lands in the window.
+- **`missed_low_any` fires**, 18 times in 90,000: missed, low quality,
+  *strained* leadership, served to the deadline (e.g. Division seed 1814393114,
+  9,713 against 22,000 at quality 0.433, leadership 0.60). The diagnosis that it
+  was shadowed by `missed_any_broken` holds **for bot play only** — every
+  low-quality bot ending is also broken-leadership. It is not true in general,
+  and no reorder was needed.
+
+**Two were genuinely impossible, and the arithmetic says so.** Write ESE as
+`U + lf × S`, where `U` is the part the cadre does not scale (the regular
+deployable slice and mobilised volunteer reservists, who bring their own
+corporals — §7b) and `S` is everything raised on top. Taking the highest value
+ever observed for each term, across all 133,880 endings:
+
+| | `U` max | `S` max | ceiling at `lf < 0.6` | target | |
+|---|---|---|---|---|---|
+| Brigade | 13,038 | 7,426 | 17,494 | 10,000 | *not excluded by this bound* |
+| Division | 13,201 | 12,954 | 20,973 | 22,000 | **95% of target** |
+| Corps | 13,335 | 30,775 | 31,800 | 45,000 | **71% of target** |
+
+Brigade is excluded by a different constraint, and a cleaner one: **it is out of
+action slots.** Four months at two actions a turn is eight slots, three of which
+must go on the call-out, the recall and the trace — without them there is nobody
+to lead and the factor stays at 1.00 by construction. That leaves five
+`expand_capacity` purchases, diverting 5 × 625 = 3,125 corporals, against the
+6,462 needed to push the factor below 0.6. Adding every adverse event choice in
+the deck (`instructor_revolt` −500, `phase1_instructor_shortage` −300,
+`junior_leader_exhaustion` −250, `regular_retention_wobble` −150) still leaves
+it short. Measured: **30,000 capacity-biased random Brigade runs, lowest
+leadership factor 1.000.** Brigade cannot leave the `intact` band at all.
+
+`met_low_any` fails on bodies. Meeting the target at a quality below 0.45 needs
+`target / 0.45` people counted:
+
+| | bodies needed | highest `headcountCounted` ever observed | |
+|---|---|---|---|
+| Division | 48,889 | 39,314 | 80% of what is needed |
+| Corps | 100,000 | 68,266 | 68% |
+| Brigade | 22,222 | 29,238 | *enough bodies* — but Brigade has no conscripts (nothing graduates in four months) and cannot leave `intact`, so its quality never falls below 0.628 |
+
+**A correction to the brief that opened this.** It put the observed body ceiling
+at "about 32,000 in any run". The true figure is 39,314 at Division and 68,266
+at Corps — the brief was quoting an ESE number where a headcount number was
+needed. The conclusion survives, with a smaller margin than it claimed (80% of
+what is needed, not 65%), and this is why the ceiling is now stated per
+difficulty and per bucket rather than as one number.
+
+**What was done.**
+
+1. **Retired `met_any_broken` and `met_low_any`.** Both described meeting the
+   target with a force the model cannot produce. They now fall to the generic
+   `fallback`, which is what it is for.
+2. **Kept `met_high_strained` and `missed_low_any`,** with the witness runs
+   above. `met_high_strained`'s rule said `leadership: "any"` — it behaved as
+   *strained* only because two earlier entries happened to absorb `intact` and
+   `broken`, which meant retiring `met_any_broken` would have silently widened
+   it. Its rule now says `strained`, which is what its id and its text have
+   always said.
+3. **Split `missed_high_intact` on the size of the shortfall,** which is a new
+   selector dimension (`shortfall: near | clear`, spec §11). The boundary is
+   10% of target. It is not a round number chosen for tidiness: at Division it
+   is 2,200 effective soldiers, and the benchmark note above records the p10–p90
+   spread there as around 2,000, so a shortfall this size is inside the
+   simulation's own run-to-run noise.
+
+**The split is better motivated than the concentration made it look.** The
+verdict was read as the game's thesis — *you did everything right and still
+could not do it*. That is true of 42 of its 263 endings. The other 221 are the
+opposite ending: median headcount **3,612**, which is the regular deployable
+slice and nothing else, median Treasury cost **£0.1bn**, and quality as high as
+1.000. The quality figures were excellent because the minister never mobilised.
+One verdict was telling both stories, and the good line in it — *the general
+told the ally he would rather have this than the number* — only makes sense for
+the first. It keeps the near miss; the wide shortfall has new copy.
+
+**Reachability after the change**, same 840 endings:
+
+| Verdict | before | after |
+|---|---|---|
+| `missed_high_intact_wide` | — | 221 (26.3%) |
+| `met_high_intact` | 173 | 173 (20.6%) |
+| `missed_any_broken` | 143 | 143 (17.0%) |
+| `resigned_generic` | 124 | 124 (14.8%) |
+| `missed_any_any` | 101 | 101 (12.0%) |
+| `missed_high_intact` | 263 | **42 (5.0%)** |
+| `resigned_broken` | 31 | 31 (3.7%) |
+| `met_mid_any` | 5 | 5 (0.6%) |
+| `met_high_strained` | 0 | 0 in bot play; **reachable**, witness above |
+| `missed_low_any` | 0 | 0 in bot play; **reachable**, 18 in 90,000 |
+| `met_any_broken`, `met_low_any` | 0 | *retired* |
+| `fallback` | 0 | 0 |
+
+Eleven verdicts, all reachable, none shadowed. The largest share falls from
+**31.3% to 26.3%**. `fallback` still fires on nothing, which is correct.
+
+**The benchmark is byte-identical** — all 21 rows across the three difficulties.
+Nothing in `src/sim/` changed but `score.ts`, and the change there adds a band
+without touching ESE, met, resignation or the leadership factor.
+
+**Two tests now hold this shut**, both in `tests/content.test.ts`. One asserts
+that **every entry in the file can be selected** — it fails on the file as it
+was, naming `met_any_broken`. The other asserts that **no verdict is written
+for an impossible state**. The coverage test it replaces asserted that all 18
+band combinations had copy, which is what put dead copy in the file in the first
+place: it rewarded writing a verdict for every cell of the grid without ever
+asking whether the model could reach it.
+
+**The general lesson.** *Selection is first-match, so order is meaning, and a
+test that demands total coverage of a grid will quietly fill the unreachable
+cells.* F3's note that "several verdicts were unreachable and now fire" was the
+same class of problem found by accident; this is it found on purpose. The
+transferable habit is the one this document keeps arriving at from different
+directions: **before concluding that the model cannot produce a state, check the
+arithmetic rather than the bots.** Two of the four cuts would have been wrong.
+
+**Watch for.** If a balance pass raises the body ceiling at Division past about
+49,000, or lets the target be met with a hollowed cadre, `met_low_any` and
+`met_any_broken` become reachable again and the fallback will start firing on
+real endings. The `fallback` count is the alarm: it should stay at zero.
+
+---
+
 ## The next mechanic, if one is wanted
 
 The leadership wall now has a counter-lever (F17), so the obvious gap is

@@ -4,7 +4,7 @@
  * Verdict templates come from src/data/verdicts.json through the content
  * registry; if none match (or the file is absent) a generic verdict is used.
  */
-import type { GameState, LeadershipBand, QualityBand, Score, Verdict, VerdictVars } from '../types.js';
+import type { GameState, LeadershipBand, QualityBand, Score, ShortfallBand, Verdict, VerdictVars } from '../types.js';
 import { P } from './params.js';
 import { getVerdicts } from './content.js';
 import { computeForce } from './effectiveness.js';
@@ -19,6 +19,22 @@ export function leadershipBand(lf: number): LeadershipBand {
   if (lf < 0.6) return 'broken';
   if (lf <= 0.9) return 'strained';
   return 'intact';
+}
+
+/**
+ * A shortfall inside this share of the target is a near miss.
+ *
+ * 10% is not a round number chosen for tidiness. At Division it is 2,200
+ * effective soldiers, and the review already records that the spread between
+ * the 10th and 90th percentile there is around 2,000 — so a shortfall this
+ * size is inside the run-to-run noise of the simulation, and is a shortfall
+ * the seed produced as much as the minister did. Anything wider is a decision.
+ */
+export const SHORTFALL_NEAR_FRACTION = 0.1;
+
+export function shortfallBand(shortfall: number, target: number): ShortfallBand {
+  if (target <= 0) return 'near';
+  return shortfall <= target * SHORTFALL_NEAR_FRACTION ? 'near' : 'clear';
 }
 
 /** Thousands separators without relying on the runtime locale. */
@@ -51,12 +67,19 @@ const GENERIC_VERDICT: Verdict = {
   oneLiner: '{ese} of {target} soldiers’ worth in {months} months.',
 };
 
-export function pickVerdict(met: boolean, quality: QualityBand, leadership: LeadershipBand, resigned: boolean): Verdict {
+export function pickVerdict(
+  met: boolean,
+  quality: QualityBand,
+  leadership: LeadershipBand,
+  resigned: boolean,
+  shortfall: ShortfallBand = 'near',
+): Verdict {
   for (const v of getVerdicts()) {
     if (v.met !== 'any' && v.met !== met) continue;
     if (v.quality !== 'any' && v.quality !== quality) continue;
     if (v.leadership !== 'any' && v.leadership !== leadership) continue;
     if (v.resigned != null && v.resigned !== resigned) continue;
+    if (v.shortfall != null && v.shortfall !== shortfall) continue;
     return v;
   }
   return GENERIC_VERDICT;
@@ -74,6 +97,7 @@ export function score(state: GameState): Score {
   const cost = state.ledger.cumulativeCost;
   const gdpLoss = state.ledger.cumulativeGdpLoss;
   const shortfall = Math.max(0, state.target - f.forceReady);
+  const sBand = shortfallBand(shortfall, state.target);
   const vars: VerdictVars = {
     target: state.target,
     ese: f.forceReady,
@@ -89,7 +113,7 @@ export function score(state: GameState): Score {
     shortfall,
     surplus: Math.max(0, f.forceReady - state.target),
   };
-  const verdict = pickVerdict(met, qBand, lBand, resigned);
+  const verdict = pickVerdict(met, qBand, lBand, resigned, sBand);
   return {
     met,
     resigned,
@@ -102,6 +126,7 @@ export function score(state: GameState): Score {
     qualityBand: qBand,
     leadership: f.leadershipFactor,
     leadershipBand: lBand,
+    shortfallBand: sBand,
     composition: f.composition,
     cost,
     costPctDefenceBudget: (cost / P.defence_budget_2025) * 100,

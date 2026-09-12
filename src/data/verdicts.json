@@ -26,18 +26,10 @@
     "oneLiner": "Target met with a force that is actually a force. It will do."
   },
   {
-    "id": "met_any_broken",
-    "met": true,
-    "quality": "any",
-    "leadership": "broken",
-    "text": "You delivered {headcount} bodies and {ese} soldiers. The division exists on paper and on the parade square. The conscript battalions have one experienced sergeant for every forty men, and the sergeants know it. The general has asked for the deployment to be phased. He means that half of it is not ready to go.",
-    "oneLiner": "{headcount} bodies, {ese} soldiers. One sergeant per forty men."
-  },
-  {
     "id": "met_high_strained",
     "met": true,
     "quality": "high",
-    "leadership": "any",
+    "leadership": "strained",
     "text": "Target met: {ese} against {target}, from {headcount} personnel. The quality is good and the leadership is stretched; the junior NCOs have been doing two jobs for {months} months and it shows in the sickness returns. The general's advice is to deploy now, before the corporals notice that they can leave. Cost to the Treasury: about £{costBn}bn.",
     "oneLiner": "Target met. Good soldiers, tired corporals."
   },
@@ -50,20 +42,22 @@
     "oneLiner": "Target met, mid quality: a division that needs a quiet first month."
   },
   {
-    "id": "met_low_any",
-    "met": true,
-    "quality": "low",
-    "leadership": "any",
-    "text": "You delivered {headcount} bodies and {ese} soldiers. The target is met by counting a great many people at a fraction each. That is how the target was written. The general has declined to call it a division in writing. He will take it, because the alternative is nothing, and he has asked that the conscripts be kept behind the regulars for the first month.",
-    "oneLiner": "{headcount} bodies, {ese} soldiers. A division by arithmetic."
-  },
-  {
     "id": "missed_high_intact",
     "met": false,
     "quality": "high",
     "leadership": "intact",
+    "shortfall": "near",
     "text": "You fielded {ese} soldiers against a target of {target}: {shortfall} short. What you fielded is good: regulars, reservists and a leadership cadre that is still intact. The general told the ally he would rather have this than the number. The ally wanted the number. The Treasury cost was about £{costBn}bn.",
     "oneLiner": "{shortfall} short, but what exists is real."
+  },
+  {
+    "id": "missed_high_intact_wide",
+    "met": false,
+    "quality": "high",
+    "leadership": "intact",
+    "shortfall": "clear",
+    "text": "Against a target of {target} you fielded {ese}: a shortfall of {shortfall}, after {months} months. What exists is in good order, and it is in good order partly because there is less of it: an establishment that is not stretched does not show the strain. The general's assessment spends one paragraph on the quality and the rest on the gap. The ally has been told the number, and has not asked for the quality figures.",
+    "oneLiner": "{shortfall} short, and good order was never the thing in question."
   },
   {
     "id": "missed_any_broken",

@@ -595,10 +595,17 @@ rather than as a threshold the band either crosses or does not. See `docs/design
 
 `score(state): Score` in `src/sim/score.ts`:
 - `met = forceReady ≥ target`; `resigned = overReason == 'resigned'`.
-- Bands: quality `<0.45 low, ≤0.65 mid, else high`; leadership `<0.6 broken, ≤0.9 strained, else intact`.
+- Bands: quality `<0.45 low, ≤0.65 mid, else high`; leadership `<0.6 broken, ≤0.9 strained, else intact`; shortfall `≤ SHORTFALL_NEAR_FRACTION × target near, else clear` (a met run is `near`).
 - `costPctDefenceBudget = cumulativeCost / defence_budget_2025 × 100`;
   `gdpLossPctGdp = cumulativeGdpLoss / uk_gdp_2025 × 100`.
-- Verdict: pick from `verdicts.json` the first entry whose `met`/`quality`/`leadership`/`resigned` match (`'any'` wildcards), fill `{placeholders}` from `VerdictVars` with formatted integers.
+- Verdict: pick from `verdicts.json` the first entry whose `met`/`quality`/`leadership`/`resigned`/`shortfall` match (`'any'`, or an omitted `resigned`/`shortfall`, are wildcards), fill `{placeholders}` from `VerdictVars` with formatted integers.
+- **Selection is first-match, so order is meaning.** An entry placed after a
+  wider one that subsumes it can never be chosen. Two states the model cannot
+  produce have no verdict written for them and fall to the generic fallback by
+  design: meeting the target with a broken cadre, and meeting it at low
+  quality. Both are measured in `docs/design-review.md` F18, and
+  `tests/content.test.ts` holds a test that every entry in the file can be
+  reached and one that no verdict is written for the impossible states.
 - `seedUrl`: `?seed=<seed>&difficulty=<difficulty>`.
 
 ## 12. Invariants (tests/invariants.test.ts)

@@ -1450,3 +1450,109 @@ It is logged because a wrong reason is worse than no reason - it would send the
 next person off to fetch data they already have. **Check `docs/` for a CSV before
 concluding a figure needs sourcing.** There are two: the population table and
 `sps_1jul2026_key_figures.csv`.
+
+## The verdicts that could never be read (12 September 2026)
+
+Four of the twelve entries in `verdicts.json` had never once been selected, and
+three verdicts covered 69% of all endings. Full evidence in
+`docs/design-review.md` F18; this records the decisions and the reasoning behind
+them.
+
+**Two of the four were reachable, and the measurement that found them is the
+part worth keeping.** The brief that opened this task grouped
+`met_any_broken`, `met_high_strained` and `met_low_any` together as "genuinely
+impossible states" and diagnosed `missed_low_any` as shadowed by an earlier
+entry. Two of those four calls were wrong, and both would have thrown away good
+copy for a state a player can actually reach:
+
+- `met_high_strained` **fires**. At Division, a bill with three capacity
+  purchases, call-up at 75% of spare intake, equipment and cadre courses lands
+  at quality 0.652, leadership 0.87 and 22,055 against a target of 22,000. The
+  random sweep found it independently at 22,003.
+- `missed_low_any` **fires**, 18 times in 90,000 runs: missed, low quality,
+  *strained* leadership, served to the deadline. The shadow diagnosis is true of
+  bot play only — every low-quality *bot* ending is also broken-leadership — and
+  not true in general. No reorder was needed.
+
+The 840 scripted endings say neither of these exists. **This document has said
+since F1 that the bots are a floor because they never re-plan; this is the first
+time that caveat would have changed a decision rather than a number.** Three
+further populations were run before anything was cut — a directed family around
+`reserves_plus_light` (23,040 endings), random legal play (20,000) and random
+play weighted toward `expand_capacity` (90,000).
+
+**Decision 1: retire `met_any_broken` and `met_low_any`.** Both are impossible,
+and the arithmetic rather than the bot sweep is the reason.
+
+Meeting the target with a broken cadre: ESE is `U + lf × S`, where `U` is the
+part leadership does not scale. Taking the highest `U` and `S` ever observed and
+`lf` at its band ceiling of 0.6 gives 20,973 against 22,000 at Division and
+31,800 against 45,000 at Corps. Brigade is excluded by a different and cleaner
+constraint — **it runs out of action slots.** Eight slots in four months, three
+of which must buy the people who need leading, leaves five capacity purchases:
+3,125 corporals diverted against the 6,462 needed. Thirty thousand
+capacity-biased Brigade runs never move the factor off 1.000.
+
+Meeting it at low quality fails on bodies: `22,000 / 0.45` is 48,889 people
+counted, against a ceiling of 39,314 ever observed at Division.
+
+**A number in the brief was wrong and is corrected here.** It put the observed
+body ceiling at "about 32,000 in any run"; the true figures are 39,314 at
+Division and 68,266 at Corps. It was quoting an ESE number where a headcount
+number was needed. The conclusion survives with a thinner margin than claimed,
+which is why F18 now states the ceiling per difficulty and per bucket instead of
+as a single number.
+
+**Decision 2: `met_high_strained`'s rule now says what its text says.** It was
+`leadership: "any"` and behaved as *strained* only because `met_high_intact` and
+`met_any_broken` happened to sit in front of it and absorb the other two bands.
+Retiring `met_any_broken` would have silently widened it to catch met+broken.
+A rule that means something different from its own id is a trap for whoever
+edits the file next.
+
+**Decision 3: split `missed_high_intact` on the size of the shortfall,** at 10%
+of target, which needed a new selector dimension (`shortfall: near | clear`,
+spec §11).
+
+The boundary is not a round number chosen for tidiness. At Division 10% is 2,200
+effective soldiers, and the benchmark note records the p10–p90 spread there as
+around 2,000 — **so a shortfall inside this band is inside the simulation's own
+run-to-run noise, and is a shortfall the seed produced as much as the minister
+did.** Anything wider is a decision. There is no natural gap in the data to cut
+at: the bot sweep looks bimodal, but that is an artefact of having only seven
+strategies, and under random play the distribution is smooth. The boundary has
+to be argued rather than found, so it is argued.
+
+**What the split revealed is the better reason for doing it.** The verdict was
+read as carrying the game's thesis — *you did everything right and still could
+not do it*. That is true of 42 of its 263 endings. The other 221 are the
+opposite ending: median headcount **3,612**, which is the regular deployable
+slice and nothing else, median Treasury cost **£0.1bn**, and quality as high as
+1.000. The quality figures were excellent because the minister never mobilised.
+One verdict was telling both stories. The existing text keeps the near miss —
+its best line, *the general told the ally he would rather have this than the
+number*, only makes sense when there is something to prefer — and the wide
+shortfall has new copy whose point is that good order is easy in an Army you
+never expanded.
+
+**What this cost.** Nothing in `src/sim/` changed but `score.ts`, and the
+benchmark came back byte-identical on all 21 rows. The largest single verdict
+share falls from 31.3% to 26.3%.
+
+**The test that let this happen is the thing to fix, not just the file.** The
+old coverage test asserted that all 18 (met, quality, leadership) combinations
+had copy before the fallback. That is what put dead copy in the file: it
+rewarded writing a verdict for every cell of the grid without ever asking
+whether the model could reach the cell. It is replaced by two tests — every
+entry in the file must be selectable (this one fails on the file as it was,
+naming `met_any_broken`), and no verdict may be written for a state the model
+cannot produce. `fallback` firing on a real ending is now the alarm that a
+balance change has reopened this.
+
+**ASK — the concentration is reduced, not solved.** `missed_high_intact_wide`
+is now the largest verdict at 26.3%, and `met_high_intact` at 20.6% covers every
+successful Division and Brigade run alike. Whether either deserves splitting
+further is a copy question, not a reachability one, and is better taken
+deliberately than folded into this pass. The instrument for deciding it now
+exists: the reachability sweep is reproducible and the share of each verdict is
+a number that can be watched.
