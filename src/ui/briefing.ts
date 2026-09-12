@@ -144,9 +144,12 @@ function openingNote(state: GameState): string[] {
     'The score counts soldiers rather than bodies, and the difference between the two is the training estate and the sergeants to run it.',
   ]);
 
+  // Names the office the player holds. The opening screen says it too, but
+  // that screen is left behind at "Take office" and the only role named on the
+  // turn screens was the Permanent Secretary's, who is the correspondent.
   const close = pick(state, 4, [
-    `You may take ${sv('actions_per_turn')} actions a month. The Prime Minister has asked you to make it happen.`,
-    `You have ${sv('actions_per_turn')} actions a month, and the Prime Minister's confidence for as long as the figures hold.`,
+    `You are the Secretary of State for Defence. You may take ${sv('actions_per_turn')} actions a month, and the Prime Minister has asked you to make it happen.`,
+    `You are the Secretary of State for Defence. You have ${sv('actions_per_turn')} actions a month, and the Prime Minister's confidence for as long as the figures hold.`,
   ]);
 
   return [premise, strength, point, close];

@@ -17,7 +17,7 @@ initSourcedPopover();
 
 root.innerHTML = `
   <h1>How this works</h1>
-  <p class="premise">The game is the mechanics of mobilisation. Every number the player sees is drawn from a sourced dataset and can be inspected by tapping it. This page lists all of them, explains the model, and says what it leaves out.</p>
+  <p class="premise">The game is the mechanics of mobilisation. The player is the Secretary of State for Defence — the minister of the title; the Permanent Secretary is the official who writes to them each month, and is not the player. Every number the player sees is drawn from a sourced dataset and can be inspected by tapping it. This page lists all of them, explains the model, and says what it leaves out.</p>
   <p class="toc">
     <a href="#model">The model</a> <a href="#effectiveness">Effectiveness</a> <a href="#assumptions">Assumptions</a>
     <a href="#parameters">All parameters</a> <a href="#ignored">What is ignored</a> <a href="#sources">Sources</a>

@@ -1675,6 +1675,47 @@ learned it first; the rows learned it here.
 
 ---
 
+### F20 — The only role the turn screen named was the one the player does not hold · *Addressed*
+
+**Raised by Paul**, 12 September 2026: the game is called *Mobilisation
+Minister* and the briefing box is headed *Permanent Secretary*. Those are two
+different people.
+
+**What was actually wrong.** The fiction was right and the labelling was not.
+The player is the Secretary of State for Defence — a minister, and the minister
+of the title; the Permanent Secretary is the department's senior official, who
+writes to them. But the only place that said so was one sentence in the third
+paragraph of the opening screen, which the player leaves at *Take office* and
+never sees again. From then on the sole role named anywhere on screen was
+`Permanent Secretary · Month 3`, in the uppercase slot that everywhere else in
+this UI holds a heading. Read as a badge rather than a by-line, it makes the
+player the civil servant.
+
+**Fix — four lines, no new chrome.**
+
+1. **The note head is a from-and-to**: *Permanent Secretary to the Secretary of
+   State*. It names the writer and the reader in the one line the player sees
+   every month. The month came off it, because the sticky head directly above
+   already carries *Month 3 of 12*; the head wraps to two lines at 375px and
+   costs 17px against that.
+2. **The Day 0 note names the office** — *"You are the Secretary of State for
+   Defence. You may take 2 actions a month…"* — in both seeded variants of the
+   closing line. This is the one that matters: it is inside the game rather
+   than on the screen before it.
+3. **The opening note head** gains the article it was missing, so both screens
+   read the same: *Permanent Secretary to the Secretary of State · Personal*.
+4. **The methodology page says it plainly**, for anyone who arrives from a
+   shared link rather than the front door: the player is the Secretary of
+   State, the Permanent Secretary is not the player.
+
+**Left alone on purpose.** `verdicts.json` and the model's comments call the
+player *the minister* in the third person. That is correct — a Secretary of
+State is a minister — and it is what ties the title to the role. And the
+Permanent Secretary stays the author of the monthly note: a game about the
+machinery is better for having the machinery write to you.
+
+---
+
 ## The next mechanic, if one is wanted
 
 The leadership wall now has a counter-lever (F17), so the obvious gap is

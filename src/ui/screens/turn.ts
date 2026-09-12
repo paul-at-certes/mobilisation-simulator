@@ -60,7 +60,11 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
     ),
     renderGauges(state, forecast(state)),
     renderHoldingPool(state),
-    h('div', { class: 'note' }, h('div', { class: 'note-head' }, `Permanent Secretary · ${monthLabel}`), ...d.briefing.map((s) => h('p', { html: s }))),
+    // From and to. "Permanent Secretary · Month 3" read as the player's own
+    // badge in a game called Mobilisation Minister; the player is the
+    // Secretary of State, and this is their official writing to them. The
+    // month goes because the sticky head above already carries it.
+    h('div', { class: 'note' }, h('div', { class: 'note-head' }, 'Permanent Secretary to the Secretary of State'), ...d.briefing.map((s) => h('p', { html: s }))),
     eventEl,
     menu.element,
     renderLedger(state),

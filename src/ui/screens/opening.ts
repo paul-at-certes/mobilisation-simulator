@@ -24,7 +24,7 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
     h(
       'div',
       { class: 'note' },
-      h('div', { class: 'note-head' }, 'Permanent Secretary to Secretary of State · Personal'),
+      h('div', { class: 'note-head' }, 'Permanent Secretary to the Secretary of State · Personal'),
       h(
         'p',
         {},
