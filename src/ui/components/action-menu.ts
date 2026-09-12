@@ -5,10 +5,10 @@
  */
 import type { Action, ActionAvailability, ActionId, AgeBand, BillClauses, BillProcedure, ExemptionRegime, GameState, MedicalStandard, ReserveNotice } from '../../types';
 import { FREE_ACTIONS } from '../../types';
-import { h, signed } from '../dom';
+import { h } from '../dom';
 import { ACTION_COPY, GROUP_TITLES, type ActionGroup } from '../action-copy';
 import { getParam, sourced } from './sourced';
-import { formatInt } from '../../format';
+import { formatInt, signedInt } from '../../format';
 
 const pcOf = (id: string): string => { const v = getParam(id)?.value ?? 0; return v > 0 ? `+${v}` : String(v); };
 const mOf = (id: string): number => getParam(id)?.value ?? 0;
@@ -173,7 +173,7 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
       if (options) options.hidden = !cb.checked;
       updateCounter();
     });
-    const pcText = isFree ? 'free' : id === 'introduce_bill' ? `${pcOf('pc_cost_bill_emergency')} to ${pcOf('pc_cost_bill_normal')} PC` : a.pcDelta === 0 ? '0 PC' : `${signed(a.pcDelta)} PC`;
+    const pcText = isFree ? 'free' : id === 'introduce_bill' ? `${pcOf('pc_cost_bill_emergency')} to ${pcOf('pc_cost_bill_normal')} PC` : a.pcDelta === 0 ? '0 PC' : `${signedInt(a.pcDelta)} PC`;
     /**
      * Title and cost first, the paragraph behind a tap (F7). The player scans
      * fifteen titles and two-thirds of the height was the paragraphs under

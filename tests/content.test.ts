@@ -8,8 +8,8 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Action, BriefingFacts, GameEvent, GameState, Verdict } from '../src/types.js';
-import { briefingText, formatGbpBn, formatPct } from '../src/ui/briefing.js';
-import { formatInt } from '../src/format.js';
+import { briefingText } from '../src/ui/briefing.js';
+import { formatInt, gbpProse, gbpTabular, pctProse, pctTabular, signedInt } from '../src/format.js';
 import { holdingOutlook } from '../src/ui/components/holding.js';
 import { courseMonths } from '../src/sim/pipeline.js';
 import { ACTION_IDS } from '../src/sim/actions.js';
@@ -316,15 +316,57 @@ describe('formatInt', () => {
     expect(formatInt(-0)).toBe('0');
   });
 
-  it('is the only integer formatter in the source tree', () => {
+  /**
+   * Every number formatter lives in one file. The names that used to sit in
+   * `ui/dom.ts` and `ui/briefing.ts` are listed too, so pasting an old one back
+   * fails here rather than quietly giving the UI two of anything again.
+   */
+  it('is the only place a number is turned into text', () => {
+    const FORMATTERS = [
+      'formatInt', 'fmtInt',
+      'gbpTabular', 'pctTabular', 'gbpProse', 'pctProse',
+      'fmtBn', 'fmtPct', 'formatGbpBn', 'formatPct',
+      'signedInt', 'signed',
+    ];
     const root = resolve(__dirname, '../src');
     const walk = (dir: string): string[] =>
       readdirSync(dir).flatMap((e) => {
         const full = resolve(dir, e);
         return statSync(full).isDirectory() ? walk(full) : full.endsWith('.ts') ? [full] : [];
       });
-    const definers = walk(root).filter((f) => /function\s+(fmtInt|formatInt)\s*\(/.test(readFileSync(f, 'utf8')));
+    const pattern = new RegExp(`function\\s+(${FORMATTERS.join('|')})\\s*\\(`);
+    const definers = walk(root).filter((f) => pattern.test(readFileSync(f, 'utf8')));
     expect(definers.map((f) => f.slice(root.length + 1))).toEqual(['format.ts']);
+  });
+
+  /**
+   * The rename this pins: `*Tabular` holds the unit fixed so a column lines up,
+   * `*Prose` picks the natural unit for a sentence. Picking the wrong one used
+   * to be easy, because they were called `fmtBn` and `formatGbpBn`.
+   */
+  it('keeps the tabular and prose forms distinct', () => {
+    // 90 million: a column keeps it in billions, a sentence says millions.
+    expect(gbpTabular(90e6)).toBe('£0.09bn');
+    expect(gbpProse(90e6)).toBe('£90m');
+    // Above a billion both use bn, and below £10bn — where a run's Treasury
+    // cost actually lands — the column carries the extra place.
+    expect(gbpTabular(2.345e9)).toBe('£2.35bn');
+    expect(gbpProse(2.345e9)).toBe('£2.3bn');
+    // Percentages: a decimal place in a column, whole numbers in a sentence.
+    expect(pctTabular(12.34)).toBe('12.3%');
+    expect(pctTabular(12.34, 2)).toBe('12.34%');
+    expect(pctProse(12.34)).toBe('12%');
+    // All four refuse to show the player a JavaScript value.
+    for (const f of [gbpTabular, pctTabular, gbpProse, pctProse]) expect(f(NaN)).toBe('n/a');
+  });
+
+  it('signs a delta the same way everywhere', () => {
+    expect(signedInt(8)).toBe('+8');
+    expect(signedInt(0)).toBe('0');
+    // The action menu printed an ASCII hyphen here while the briefing printed U+2212.
+    expect(signedInt(-7)).toBe('\u22127');
+    expect(signedInt(-7)[0]).toBe('\u2212');
+    expect(signedInt(-1500)).toBe('\u22121,500');
   });
 });
 
@@ -662,9 +704,9 @@ describe('briefing', () => {
   it('formats numbers in the house style', () => {
     expect(formatInt(70951)).toBe('70,951');
     expect(formatInt(1234567.4)).toBe('1,234,567');
-    expect(formatGbpBn(12_340_000_000)).toBe('£12.3bn');
-    expect(formatGbpBn(85_000_000)).toBe('£85m');
-    expect(formatPct(16.8)).toBe('17%');
+    expect(gbpProse(12_340_000_000)).toBe('£12.3bn');
+    expect(gbpProse(85_000_000)).toBe('£85m');
+    expect(pctProse(16.8)).toBe('17%');
   });
 
   it('writes a Day 0 note with the premise and the trade-trained strength', () => {

@@ -13,7 +13,7 @@ import { deliveryCredit } from '../sim/politics.js';
 import { outflowIntent } from '../sim/outflow.js';
 import { effectiveWillingness } from '../sim/politics.js';
 import { displayEse } from '../sim/score.js';
-import { formatInt } from '../format.js';
+import { formatInt, gbpProse, pctProse, signedInt } from '../format.js';
 
 // Sourced helpers: every parameter-based number in a briefing carries its popover.
 import { sourcedHtml } from './components/sourced';
@@ -21,10 +21,10 @@ function sv(id: ParamId): string {
   return sourcedHtml(formatInt(P[id]), id);
 }
 function svPct(id: ParamId): string {
-  return sourcedHtml(formatPct(P[id]), id);
+  return sourcedHtml(pctProse(P[id]), id);
 }
 function svRatioPct(id: ParamId): string {
-  return sourcedHtml(formatPct(P[id] * 100), id);
+  return sourcedHtml(pctProse(P[id] * 100), id);
 }
 
 // ---------------------------------------------------------------------------
@@ -32,20 +32,8 @@ function svRatioPct(id: ParamId): string {
 // ---------------------------------------------------------------------------
 
 /** A sum in pounds → "£12.3bn", or "£85m" below a billion. */
-export function formatGbpBn(n: number): string {
-  if (!Number.isFinite(n)) return 'n/a';
-  const abs = Math.abs(n);
-  const sign = n < 0 ? '−' : '';
-  if (abs < 1e9) return `${sign}£${Math.round(abs / 1e6)}m`;
-  if (abs < 100e9) return `${sign}£${(abs / 1e9).toFixed(1)}bn`;
-  return `${sign}£${Math.round(abs / 1e9)}bn`;
-}
 
 /** A percentage number (43.2) → "43%". */
-export function formatPct(n: number): string {
-  if (!Number.isFinite(n)) return 'n/a';
-  return `${Math.round(n)}%`;
-}
 
 // ---------------------------------------------------------------------------
 // Deterministic variety
@@ -97,11 +85,6 @@ function formationLabel(state: GameState): string {
     case 'corps':
       return 'a corps';
   }
-}
-
-function signed(n: number): string {
-  const r = Math.round(n);
-  return r > 0 ? `+${r}` : `${formatInt(r)}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -164,13 +147,13 @@ function finalNote(state: GameState): string[] {
   }
 
   out.push(
-    `Force Ready stands at ${formatInt(displayEse(g.forceReady))} against a target of ${formatInt(state.target)} (${formatPct(g.forceReadyPct)}), at quality ${g.forceQuality.toFixed(2)} from ${formatInt(g.headcountCounted)} personnel counted.`,
+    `Force Ready stands at ${formatInt(displayEse(g.forceReady))} against a target of ${formatInt(state.target)} (${pctProse(g.forceReadyPct)}), at quality ${g.forceQuality.toFixed(2)} from ${formatInt(g.headcountCounted)} personnel counted.`,
   );
 
   out.push(
     pick(state, 12, [
-      `The Treasury has spent ${formatGbpBn(state.ledger.cumulativeCost)} and the economy has forgone ${formatGbpBn(state.ledger.cumulativeGdpLoss)} of output.`,
-      `Cumulative cost to the Treasury is ${formatGbpBn(state.ledger.cumulativeCost)}; lost output is ${formatGbpBn(state.ledger.cumulativeGdpLoss)}.`,
+      `The Treasury has spent ${gbpProse(state.ledger.cumulativeCost)} and the economy has forgone ${gbpProse(state.ledger.cumulativeGdpLoss)} of output.`,
+      `Cumulative cost to the Treasury is ${gbpProse(state.ledger.cumulativeCost)}; lost output is ${gbpProse(state.ledger.cumulativeGdpLoss)}.`,
     ]),
   );
 
@@ -184,7 +167,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
   const remaining = state.deadlineMonths - turn;
   const ese = formatInt(displayEse(g.forceReady));
   const target = formatInt(state.target);
-  const pct = formatPct(g.forceReadyPct);
+  const pct = pctProse(g.forceReadyPct);
   const quality = g.forceQuality.toFixed(2);
   const pc = formatInt(g.politicalCapital);
 
@@ -241,7 +224,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
       .filter((r) => r.delta < 0)
       .sort((a, b) => a.delta - b.delta)
       .slice(0, 2)
-      .map((r) => `${lowerFirst(r.label)} (${signed(r.delta)})`);
+      .map((r) => `${lowerFirst(r.label)} (${signedInt(r.delta)})`);
     const why = reasons.length ? `: ${reasons.join(', ')}` : '';
     urgent.push(`Political capital fell by ${formatInt(-facts.pcDelta)} this month${why}.`);
   }
@@ -264,7 +247,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     const courses = Math.max(1, Number(cadre.split(':')[1]) || 1);
     changes.push(
       `${formatInt(courses * P.promotion_cadre_size)} soldiers have come off the cadre course and taken junior rank. `
-      + `They lead at ${formatPct(P.eff_promoted_leader * 100)} of a corporal who earned it, and their instructors are back in the line.`,
+      + `They lead at ${pctProse(P.eff_promoted_leader * 100)} of a corporal who earned it, and their instructors are back in the line.`,
     );
   }
 
@@ -392,11 +375,11 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
   const baseline = P.regular_outflow_intent_pct;
   if (intent >= baseline + 3) {
     colour.push(
-      `${formatPct(intent)} of the Army now says it means to leave early, against ${formatPct(baseline)} before the crisis.`,
+      `${pctProse(intent)} of the Army now says it means to leave early, against ${pctProse(baseline)} before the crisis.`,
     );
   } else if (intent <= baseline - 2) {
     colour.push(
-      `The intention to leave has fallen to ${formatPct(intent)}, from ${formatPct(baseline)} before the crisis.`,
+      `The intention to leave has fallen to ${pctProse(intent)}, from ${pctProse(baseline)} before the crisis.`,
     );
   }
 
@@ -405,7 +388,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
   // than not quoting it at all.
   if (state.conscriptionEverActive) {
     colour.push(
-      `Willingness to serve stands at ${formatPct(effectiveWillingness(state))}. Every ${sv('pc_refusal_per_charge')} who refuse costs a point of political capital in the month they are called.`,
+      `Willingness to serve stands at ${pctProse(effectiveWillingness(state))}. Every ${sv('pc_refusal_per_charge')} who refuse costs a point of political capital in the month they are called.`,
     );
   }
 
@@ -417,7 +400,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
 
   if (turn % 3 === 0) {
     colour.push(
-      `Cumulative Treasury cost is ${formatGbpBn(state.ledger.cumulativeCost)}; lost output ${formatGbpBn(state.ledger.cumulativeGdpLoss)}.`,
+      `Cumulative Treasury cost is ${gbpProse(state.ledger.cumulativeCost)}; lost output ${gbpProse(state.ledger.cumulativeGdpLoss)}.`,
     );
   }
 

@@ -1820,7 +1820,7 @@ one decimal. `fmtPct` carries a decimal place; `formatPct` rounds. **Confusingly
 similar names are not the same defect as duplicated logic,** and merging them
 would have destroyed a real distinction between a figure in a table and a figure
 in a sentence. The names are worth improving one day; the functions are not
-worth merging.
+worth merging. **That day was the next commit — see the entry below.**
 
 **The guard.** A test walks `src/` and asserts exactly one file defines an
 integer formatter, naming any that reappear — it fails with
@@ -1834,3 +1834,64 @@ build` passes, the benchmark is byte-identical, and no rounding rule moved —
 `displayEse`, `displayShortfall` and `displaySurplus` stay in `score.ts`,
 because *"never flatter the result"* is a scoring decision and `format.ts` is
 only typography.
+
+## Tabular or prose: naming the two kinds of number (12 September 2026)
+
+`fmtBn` and `fmtPct` are renamed so they cannot be mistaken for `formatGbpBn`
+and `formatPct`. The entry above left this as worth doing one day; Paul asked
+for it.
+
+**The rename had to name the real distinction, not just break the collision.**
+Appending a disambiguator would have stopped the two being confusable and left
+the reader no better off at deciding which they wanted. The axis is the
+destination:
+
+| | in a column | in a sentence |
+|---|---|---|
+| money | `gbpTabular` — `£2.35bn` | `gbpProse` — `£90m`, `£2.3bn` |
+| percentage | `pctTabular` — `12.3%` | `pctProse` — `12%` |
+
+`*Tabular` holds the unit fixed and carries an extra decimal place, because the
+reader is comparing the figure with the one above it and the decimal points have
+to line up. **The word is not decoration: those call sites are the ones the CSS
+already sets in `tabular-nums`,** so the name points at something real in the
+code. `*Prose` picks the natural unit and rounds harder, because the reader
+meets it once and reads it aloud in their head. Checking the call sites first
+was what settled this — every `fmtBn` and `fmtPct` use is inside a `stat()` tile
+or a ledger `row()`, and not one is in running text.
+
+**The old names were not merely confusable, one was wrong.** `formatGbpBn`
+renders `£85m` below a billion, so the `Bn` in its name was a lie. They were
+moved to `src/format.ts` as well as renamed, because a pair you can only see one
+half of at a time is a pair you can still pick wrong.
+
+**Renaming them turned up a third pair, and that one was a live defect.** There
+were two functions called `signed` — one exported from `ui/dom.ts`, one private
+to `ui/briefing.ts` — with the same name and different output. `dom`'s printed
+an ASCII hyphen and did not round; `briefing`'s went through `formatInt`. So the
+interface showed **`-7 PC` in the action menu and `−7` in the Permanent
+Secretary's note, for the same number, on the same screen.** There is one
+`signedInt` now, and it obeys the convention the entry above set.
+
+**That is the only change a player could see, and it is the correction.** Every
+minus in the game is now U+2212. Everything else is byte-identical: all 3,651
+rendered briefing and verdict strings are unchanged, and `gbpTabular` and
+`pctTabular` agree with the functions they replace on **3,000,000** finite
+values tested — the difference is confined to non-finite input, which now prints
+`n/a` instead of `£NaNbn`.
+
+**The guard is widened rather than repeated.** The test that asserted one
+integer formatter now asserts that exactly one file turns any number into text,
+and it lists the **old** names alongside the new ones — so pasting `fmtBn` back
+into `ui/dom.ts` fails the test by name instead of quietly giving the UI two of
+something again. A second test pins the tabular/prose distinction itself with
+the £90m and £2.35bn cases, so a future tidy-up cannot collapse the two forms
+into one without saying so.
+
+**A mistake worth recording, because it is the good kind.** The first version of
+that test asserted `gbpTabular(12.34e9) === '£12.34bn'` and failed: the
+two-decimal branch only applies below £10bn, so both forms render `£12.3bn`
+there. The test was wrong, not the code. **The distinction is narrower than it
+looks — it only shows below £10bn — which happens to be exactly where a run's
+Treasury cost lands**, so the test now uses £2.345bn, a figure the game actually
+produces.

@@ -1,8 +1,8 @@
 /** Collapsible ledger: money, GDP, headcount by category, outflow. */
 import type { GameState } from '../../types';
-import { h, fmtBn, fmtPct } from '../dom';
+import { h } from '../dom';
 import { sourced, getParam } from './sourced';
-import { formatInt } from '../../format';
+import { formatInt, gbpTabular, pctTabular } from '../../format';
 
 export function renderLedger(state: GameState, open = false): HTMLElement {
   const L = state.ledger;
@@ -22,12 +22,12 @@ export function renderLedger(state: GameState, open = false): HTMLElement {
     h(
       'dl',
       { class: 'kv' },
-      ...row('Treasury cost, cumulative (incremental)', fmtBn(L.cumulativeCost)),
-      ...row(['of the 2025/26 defence budget of ', sourced(fmtBn(budget), 'defence_budget_2025')], fmtPct((L.cumulativeCost / budget) * 100)),
-      ...row('This month', fmtBn(L.monthlyCost)),
-      ...row('GDP output lost, cumulative', fmtBn(L.cumulativeGdpLoss)),
-      ...row(['of 2025 GDP of ', sourced(fmtBn(gdp), 'uk_gdp_2025')], fmtPct((L.cumulativeGdpLoss / gdp) * 100, 2)),
-      ...row('Regular pay (paid anyway, not counted)', fmtBn(L.costBreakdown.regularPay) + '/month'),
+      ...row('Treasury cost, cumulative (incremental)', gbpTabular(L.cumulativeCost)),
+      ...row(['of the 2025/26 defence budget of ', sourced(gbpTabular(budget), 'defence_budget_2025')], pctTabular((L.cumulativeCost / budget) * 100)),
+      ...row('This month', gbpTabular(L.monthlyCost)),
+      ...row('GDP output lost, cumulative', gbpTabular(L.cumulativeGdpLoss)),
+      ...row(['of 2025 GDP of ', sourced(gbpTabular(gdp), 'uk_gdp_2025')], pctTabular((L.cumulativeGdpLoss / gdp) * 100, 2)),
+      ...row('Regular pay (paid anyway, not counted)', gbpTabular(L.costBreakdown.regularPay) + '/month'),
     ),
     h('h4', { class: 'small muted' }, 'Headcount'),
     h(
@@ -57,6 +57,6 @@ export function renderLedger(state: GameState, open = false): HTMLElement {
     ),
   );
 
-  const details = h('details', { class: 'ledger', open }, h('summary', {}, h('span', {}, 'Ledger'), h('span', { class: 'muted small' }, `${fmtBn(L.cumulativeCost)} · GDP ${fmtBn(L.cumulativeGdpLoss)}`)), body);
+  const details = h('details', { class: 'ledger', open }, h('summary', {}, h('span', {}, 'Ledger'), h('span', { class: 'muted small' }, `${gbpTabular(L.cumulativeCost)} · GDP ${gbpTabular(L.cumulativeGdpLoss)}`)), body);
   return details;
 }

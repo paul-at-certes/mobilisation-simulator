@@ -1450,23 +1450,46 @@ in prose, and digit-width so it aligns in the `tabular-nums` columns the UI
 sets — `holding.ts` had already reached for it by hand), grouping cannot shift
 with the runtime's locale data, and `-0` prints as `0`.
 
-**Nothing the player sees changed.** Every one of the 3,651 rendered strings
+**Nothing the player saw changed.** Every one of the 3,651 rendered strings
 across 252 runs — every monthly briefing and every verdict — is byte-identical
 to before, and the two old implementations agree with the new one on all
 **2,200,001** non-negative finite values tested, which is the whole domain the
 DOM components pass it. The `-0` was latent rather than live: every caller
 either passes a count or handles the sign itself.
 
-**What was *not* consolidated, and why.** `fmtBn`/`formatGbpBn` and
-`fmtPct`/`formatPct` look like the same pairs and are not: `fmtBn` renders
-`£12.34bn` for a stat tile where `formatGbpBn` renders `£85m` in prose, and
-`fmtPct` carries a decimal place where `formatPct` rounds. Two presentations,
-correctly separate — **confusingly similar names are not the same defect as
-duplicated logic,** and merging them would have lost a distinction.
+**The money and percentage pairs were a different problem: real distinctions
+under confusable names.** `fmtBn`/`formatGbpBn` and `fmtPct`/`formatPct` were
+not duplicates — one of each pair is for a figure in a column and the other for
+a figure in a sentence — so merging them would have destroyed something. They
+are renamed onto that axis instead, and moved beside `formatInt`:
 
-**A test now fails if anyone writes a second one.** It walks `src/` and asserts
-that exactly one file defines an integer formatter, naming any that reappear.
-That is the same guard F17 put on `isKnownAction`, for the same reason.
+| | in a column | in a sentence |
+|---|---|---|
+| money | `gbpTabular` — `£2.35bn` | `gbpProse` — `£90m`, `£2.3bn` |
+| percentage | `pctTabular` — `12.3%` | `pctProse` — `12%` |
+
+`*Tabular` holds the unit fixed and carries an extra decimal place, because the
+reader is comparing it with the figure above it and the points have to line up
+— these are the ones set in `tabular-nums`. `*Prose` picks the natural unit and
+rounds harder, because the reader meets it once. **The old names hid that
+`formatGbpBn` did not always render billions:** below £1bn it renders `£85m`,
+so its name was wrong as well as confusable.
+
+**Renaming them turned up a third pair, and this one was a live inconsistency.**
+There were two functions called `signed`, one exported from `ui/dom.ts` and one
+private to `ui/briefing.ts`, and they disagreed: `dom`'s printed an ASCII hyphen
+and did not round, `briefing`'s went through `formatInt`. So the same interface
+showed **`-7 PC` in the action menu and `−7` in the Permanent Secretary's note,
+for the same figure**. One `signedInt` now, obeying the one convention. This is
+the only change in this pass that a player could see, and it is the correction:
+every minus in the game is now U+2212.
+
+**A test now fails if anyone writes a second one of any of them.** It walks
+`src/` and asserts exactly one file turns a number into text, naming any file
+that reappears — and it lists the *old* names too, so pasting one back fails
+there rather than quietly giving the UI two of something again. Same guard F17
+put on `isKnownAction`, for the same reason: the failure mode is not writing the
+wrong code, it is writing the right code twice.
 
 **Watch for.** Three things.
 

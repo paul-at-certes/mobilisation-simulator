@@ -1,10 +1,10 @@
 /** Scoring screen: headline, the two bars, cost, the general's verdict, share card. */
 import type { GameState, Score } from '../../types';
-import { h, fmtBn, fmtPct } from '../dom';
+import { h } from '../dom';
 import { renderShareCard, copyImage, downloadImage } from '../share-card';
 import { sourced } from '../components/sourced';
 import { displayEse, displayShortfall } from '../../sim/score';
-import { formatInt } from '../../format';
+import { formatInt, gbpTabular, pctTabular } from '../../format';
 
 export function renderScoring(opts: { state: GameState; score: Score; siteUrl: string; onRestart: () => void }): HTMLElement {
   const { state, score } = opts;
@@ -61,8 +61,8 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
       { class: 'stat-grid' },
       stat('Force quality', score.quality.toFixed(2), `${score.qualityBand} band`),
       stat('Leadership factor', score.leadership.toFixed(2), `${score.leadershipBand}`),
-      stat('Treasury cost', fmtBn(score.cost), [fmtPct(score.costPctDefenceBudget), ' of the ', sourced('2025/26 defence budget', 'defence_budget_2025')]),
-      stat('GDP output lost', fmtBn(score.gdpLoss), [fmtPct(score.gdpLossPctGdp, 2), ' of ', sourced('2025 GDP', 'uk_gdp_2025')]),
+      stat('Treasury cost', gbpTabular(score.cost), [pctTabular(score.costPctDefenceBudget), ' of the ', sourced('2025/26 defence budget', 'defence_budget_2025')]),
+      stat('GDP output lost', gbpTabular(score.gdpLoss), [pctTabular(score.gdpLossPctGdp, 2), ' of ', sourced('2025 GDP', 'uk_gdp_2025')]),
       // Only shown when there were any: a nil return is not worth a tile.
       score.refused >= 1
         ? stat(

@@ -33,13 +33,3 @@ export function clear(el: Element): void {
   while (el.firstChild) el.removeChild(el.firstChild);
 }
 
-export function fmtBn(n: number): string {
-  const bn = n / 1e9;
-  return `£${bn < 10 ? bn.toFixed(2) : bn < 100 ? bn.toFixed(1) : Math.round(bn)}bn`;
-}
-export function fmtPct(n: number, dp = 1): string {
-  return `${n.toFixed(dp)}%`;
-}
-export function signed(n: number): string {
-  return n > 0 ? `+${n}` : String(n);
-}
