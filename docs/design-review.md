@@ -1199,9 +1199,10 @@ resolve into a pool that never binds (F4's residue).
 - `docs/sim-spec.md` — the model. §7 is effectiveness and leadership, §7.1 the
   projection, §13 the scripted strategies.
 - `ASSUMPTIONS.md` — generated; every assumption with its range and rationale.
-- `docs/next-task.md` — a ready-to-paste prompt for F4's residue, carrying the
-  measurements and the three traps this repo has already sprung. Delete it once
-  done.
+- `docs/next-task.md` — two ready-to-paste prompts, the verdict screen first and
+  F4's residue second, carrying the measurements and the three traps this repo
+  has already sprung. Delete a brief when its work is done, and the file when
+  both are.
 - `mobilisation-minister-design-brief.md` — the original brief. Its §10.3
   balance criteria are the ones the benchmark table above tests, with one
   change: criterion (d), "a sensible mixed strategy can make Division", is now
