@@ -1,7 +1,8 @@
 /** The three always-visible gauges. Every gauge has a text value; colour is never the only signal. */
 import type { GameState } from '../../types';
 import type { Forecast } from '../../sim/forecast';
-import { h, fmtInt } from '../dom';
+import { h } from '../dom';
+import { formatInt } from '../../format';
 
 /**
  * The three thresholds, in one place: the gauges and the sticky strip must
@@ -37,8 +38,8 @@ export function renderGauges(state: GameState, projection?: Forecast): HTMLEleme
   return h(
     'section',
     { class: 'gauges', 'aria-label': 'Gauges' },
-    gauge('Force Ready', fmtInt(g.forceReady), `of ${fmtInt(state.target)}`, pct, readyClass, forecastNote(state, projection), `${Math.round(g.forceReadyPct)}%`),
-    gauge('Force Quality', g.forceQuality.toFixed(2), 'of 1.00', g.forceQuality * 100, qClass, leadershipNote, `${fmtInt(g.headcountCounted)} counted`),
+    gauge('Force Ready', formatInt(g.forceReady), `of ${formatInt(state.target)}`, pct, readyClass, forecastNote(state, projection), `${Math.round(g.forceReadyPct)}%`),
+    gauge('Force Quality', g.forceQuality.toFixed(2), 'of 1.00', g.forceQuality * 100, qClass, leadershipNote, `${formatInt(g.headcountCounted)} counted`),
     gauge('Political Capital', String(Math.round(g.politicalCapital)), 'of 100', g.politicalCapital, pcClass, g.politicalCapital < 15 ? 'Resignation below 0' : '', ''),
   );
 }
@@ -55,7 +56,7 @@ function forecastNote(state: GameState, projection?: Forecast): HTMLElement | nu
     'div',
     { class: 'forecast' },
     h('span', { class: 'forecast-label' }, 'On present decisions'),
-    `: ${fmtInt(projection.forceReady)} by month ${state.deadlineMonths} (${Math.round(projection.forceReadyPct)}%).`,
+    `: ${formatInt(projection.forceReady)} by month ${state.deadlineMonths} (${Math.round(projection.forceReadyPct)}%).`,
   );
 }
 
@@ -84,7 +85,7 @@ export function renderStatusStrip(state: GameState): HTMLElement {
   return h(
     'div',
     { class: 'statusstrip', 'aria-hidden': 'true' },
-    item('Ready', fmtInt(g.forceReady), `/ ${fmtInt(state.target)}`, readyState(g.forceReadyPct)),
+    item('Ready', formatInt(g.forceReady), `/ ${formatInt(state.target)}`, readyState(g.forceReadyPct)),
     item('Quality', g.forceQuality.toFixed(2), '', qualityState(g.forceQuality)),
     item('Capital', String(Math.round(g.politicalCapital)), '', pcState(g.politicalCapital)),
   );

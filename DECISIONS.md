@@ -1759,11 +1759,11 @@ copy defects.
 
 **There are three `formatInt` implementations in this repo** — `src/sim/score.ts`,
 `src/ui/dom.ts`, `src/ui/briefing.ts` — which is how one rounding rule came to
-be applied three different ways in the first place. They are **not** consolidated
-here, because that is a refactor with its own blast radius and this pass is
-already four files wide. F17's lesson stands and is now recorded against them:
-*two hand-maintained copies of the same thing is one too many.* The three new
-display helpers are deliberately in one place so they cannot drift the same way.
+be applied three different ways in the first place. They are not consolidated in
+*this* commit, because that is a refactor with its own blast radius and this pass
+is already four files wide. F17's lesson stands and is now recorded against them:
+*two hand-maintained copies of the same thing is one too many.* **Taken in the
+next commit — see the entry below.**
 
 **The test pins the exact string.** `tests/content.test.ts` renders
 `{ese} of {target}: {shortfall} short.` at 21,999.6 against 22,000 and requires
@@ -1773,3 +1773,64 @@ old code. It also checks the reconciliation identity over the awkward values
 
 **What it cost.** `score.ts` gained 29 lines and nothing else in `src/sim/`
 changed; the benchmark is byte-identical to the pre-F18 commit on all 21 rows.
+
+## One formatInt (12 September 2026)
+
+The three implementations noted in the entry above are now one, in
+`src/format.ts`.
+
+**They were not merely duplicated. They disagreed**, on nine of nineteen test
+inputs:
+
+| | `sim/score` | `ui/dom` | `ui/briefing` |
+|---|---|---|---|
+| `-1234` | `-1,234` (ASCII hyphen) | `-1,234` (ASCII hyphen) | `−1,234` (U+2212) |
+| `NaN` | `NaN` | `NaN` | `n/a` |
+| `Infinity` | `Infinity` | `∞` | `n/a` |
+| `-0.4` | `0` | **`-0`** | `0` |
+| grouping | manual, locale-free | `toLocaleString('en-GB')` | manual, locale-free |
+
+**Which is why this was a bug fix and not a tidy-up.** Consolidating three
+functions that agree is housekeeping; consolidating three that disagree means
+choosing, and the choice is visible to the player. `ui/dom` could print `-0`,
+and `sim/score` could print `NaN` into a verdict.
+
+**The briefing's was the best of the three and is canonical.** Non-finite prints
+`n/a` — reachable, because `refusalCaseload` is infinite when the courts never
+clear, which `score.ts` already guards against by hand. The minus is U+2212: the
+correct glyph in running text, and digit-width so it aligns in the
+`tabular-nums` columns the UI sets. `holding.ts` had already reached for U+2212
+by hand when writing a negative delta, which settled the convention rather than
+leaving it to taste. Grouping stays manual so it cannot shift with the runtime's
+locale data — `sim/score`'s original comment said so explicitly, and `ui/dom`
+had quietly broken that intent.
+
+**Nothing the player sees changed, and that was checked rather than assumed.**
+All 3,651 rendered strings across 252 runs — every monthly briefing and every
+verdict — are byte-identical to the previous commit. For the DOM components,
+which need a browser to render, the equivalent proof is numeric: the two old
+implementations agree with the new one on all **2,200,001** non-negative finite
+values tested, which is the whole domain those call sites pass. The `-0` was
+latent rather than live.
+
+**What was deliberately not consolidated.** `fmtBn`/`formatGbpBn` and
+`fmtPct`/`formatPct` look like the same two pairs and are not. `fmtBn` renders
+`£12.34bn` for a stat tile; `formatGbpBn` renders `£85m` in prose and drops to
+one decimal. `fmtPct` carries a decimal place; `formatPct` rounds. **Confusingly
+similar names are not the same defect as duplicated logic,** and merging them
+would have destroyed a real distinction between a figure in a table and a figure
+in a sentence. The names are worth improving one day; the functions are not
+worth merging.
+
+**The guard.** A test walks `src/` and asserts exactly one file defines an
+integer formatter, naming any that reappear — it fails with
+`[ 'format.ts', 'ui/dom.ts' ]` if the old one is pasted back. Same guard F17 put
+on `isKnownAction`, for the same reason: the failure mode is not writing the
+wrong code, it is writing the right code twice.
+
+**Scope.** `src/format.ts` is new; `score.ts`, `briefing.ts` and `dom.ts` lost
+their copies; 41 call sites across six UI files now use one name. `npm run
+build` passes, the benchmark is byte-identical, and no rounding rule moved —
+`displayEse`, `displayShortfall` and `displaySurplus` stay in `score.ts`,
+because *"never flatter the result"* is a scoring decision and `format.ts` is
+only typography.

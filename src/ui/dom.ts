@@ -33,9 +33,6 @@ export function clear(el: Element): void {
   while (el.firstChild) el.removeChild(el.firstChild);
 }
 
-export function fmtInt(n: number): string {
-  return Math.round(n).toLocaleString('en-GB');
-}
 export function fmtBn(n: number): string {
   const bn = n / 1e9;
   return `£${bn < 10 ? bn.toFixed(2) : bn < 100 ? bn.toFixed(1) : Math.round(bn)}bn`;

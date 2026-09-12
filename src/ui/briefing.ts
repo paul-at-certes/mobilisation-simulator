@@ -13,6 +13,7 @@ import { deliveryCredit } from '../sim/politics.js';
 import { outflowIntent } from '../sim/outflow.js';
 import { effectiveWillingness } from '../sim/politics.js';
 import { displayEse } from '../sim/score.js';
+import { formatInt } from '../format.js';
 
 // Sourced helpers: every parameter-based number in a briefing carries its popover.
 import { sourcedHtml } from './components/sourced';
@@ -29,14 +30,6 @@ function svRatioPct(id: ParamId): string {
 // ---------------------------------------------------------------------------
 // Formatting helpers (shared with other UI modules)
 // ---------------------------------------------------------------------------
-
-/** 70951 → "70,951". Rounds to the nearest integer. */
-export function formatInt(n: number): string {
-  if (!Number.isFinite(n)) return 'n/a';
-  const r = Math.round(n);
-  const sign = r < 0 ? '−' : '';
-  return sign + String(Math.abs(r)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
 
 /** A sum in pounds → "£12.3bn", or "£85m" below a billion. */
 export function formatGbpBn(n: number): string {

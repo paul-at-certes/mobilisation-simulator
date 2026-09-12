@@ -8,8 +8,9 @@
  * it, including the case where the honest answer is nothing.
  */
 import type { GameState } from '../../types';
-import { h, fmtInt } from '../dom';
+import { h } from '../dom';
 import { courseMonths, spareIntake } from '../../sim/pipeline';
+import { formatInt } from '../../format';
 
 export type HoldingVerdict = 'clearable' | 'compress_only' | 'too_late';
 
@@ -63,8 +64,8 @@ export function renderHoldingPool(state: GameState): HTMLElement | null {
   const o = holdingOutlook(state);
   if (o.pool < 1) return null;
 
-  const change = o.delta > 0 ? `+${fmtInt(o.delta)} this month` : o.delta < 0 ? `−${fmtInt(-o.delta)} this month` : 'unchanged this month';
-  const months = (n: number) => `${fmtInt(n)} month${n === 1 ? '' : 's'}`;
+  const change = o.delta > 0 ? `+${formatInt(o.delta)} this month` : o.delta < 0 ? `−${formatInt(-o.delta)} this month` : 'unchanged this month';
+  const months = (n: number) => `${formatInt(n)} month${n === 1 ? '' : 's'}`;
 
   const lines: string[] = ['Called up, paid, counted in lost output, and producing nothing until a training place opens.'];
 
@@ -74,16 +75,16 @@ export function renderHoldingPool(state: GameState): HTMLElement | null {
     );
   } else if (o.verdict === 'compress_only') {
     lines.push(
-      `On the ${fmtInt(o.course)}-month course none of them can graduate in time. Only a compressed syllabus still can, and only for those who start within ${months(o.bestWindow)}.`,
+      `On the ${formatInt(o.course)}-month course none of them can graduate in time. Only a compressed syllabus still can, and only for those who start within ${months(o.bestWindow)}.`,
     );
   } else {
     const clearance = o.spare > 0
-      ? `At this month's spare intake of ${fmtInt(o.spare)} it would take ${months(Math.ceil(o.pool / o.spare))} to place them all, and there ${o.monthsLeft === 1 ? 'is' : 'are'} ${months(o.monthsLeft)} left.`
+      ? `At this month's spare intake of ${formatInt(o.spare)} it would take ${months(Math.ceil(o.pool / o.spare))} to place them all, and there ${o.monthsLeft === 1 ? 'is' : 'are'} ${months(o.monthsLeft)} left.`
       : 'No training place comes free at the current intake: they stay where they are.';
     lines.push(clearance);
     if (o.placeable < o.pool) {
       lines.push(
-        `Allowing for the ${fmtInt(o.course)}-month course, at this intake at most ${fmtInt(o.placeable)} of them can start in time to graduate before the deadline.`,
+        `Allowing for the ${formatInt(o.course)}-month course, at this intake at most ${formatInt(o.placeable)} of them can start in time to graduate before the deadline.`,
       );
     }
     lines.push(
@@ -96,7 +97,7 @@ export function renderHoldingPool(state: GameState): HTMLElement | null {
     'section',
     { class: `holding${o.verdict === 'too_late' ? ' holding-lost' : ''}`, role: 'group', 'aria-label': 'Holding pool' },
     h('span', { class: 'holding-label' }, 'Holding pool'),
-    h('span', { class: 'holding-value' }, fmtInt(o.pool)),
+    h('span', { class: 'holding-value' }, formatInt(o.pool)),
     h('span', { class: 'holding-change small muted' }, change),
     ...lines.map((t) => h('div', { class: 'holding-note' }, t)),
   );

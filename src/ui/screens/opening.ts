@@ -1,7 +1,8 @@
 /** Opening screen: premise, difficulty, start. */
 import type { Difficulty } from '../../types';
-import { h, fmtInt } from '../dom';
+import { h } from '../dom';
 import { sourced, getParam } from '../components/sourced';
+import { formatInt } from '../../format';
 
 export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: number; onStart: (d: Difficulty, seed: number) => void }): HTMLElement {
   const pv = (id: string) => getParam(id)?.value ?? 0;
@@ -28,7 +29,7 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
         'p',
         {},
         'A NATO ally has been attacked. Article 5 has been invoked. The Chief of the Defence Staff has told the Prime Minister that the UK’s contribution must be a deployable division: ',
-        sourced(fmtInt(pv('target_division')), 'target_division'),
+        sourced(formatInt(pv('target_division')), 'target_division'),
         ' trade-trained personnel with their enablers, ready to move in ',
         sourced(String(pv('deadline_division')), 'deadline_division'),
         ' months.',
@@ -37,7 +38,7 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
         'p',
         {},
         'The regular Army’s trade-trained strength this morning is ',
-        sourced(fmtInt(pv('regular_trained_start')), 'regular_trained_start'),
+        sourced(formatInt(pv('regular_trained_start')), 'regular_trained_start'),
         '. Of those, the Chief of the General Staff can release perhaps ',
         sourced(`${Math.round(pv('regular_deployable_fraction') * 100)}%`, 'regular_deployable_fraction'),
         ' without breaking commitments we already have. The rest of the division has to be found.',
@@ -65,9 +66,9 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
     h(
       'div',
       { class: 'difficulty', role: 'radiogroup', 'aria-label': 'Difficulty' },
-      diff('brigade', `Brigade: ${fmtInt(pv('target_brigade'))} in ${pv('deadline_brigade')} months`, 'A brigade group, fast. The Army Reserve’s standard notice is 180 days.'),
-      diff('division', `Division: ${fmtInt(pv('target_division'))} in ${pv('deadline_division')} months`, 'What the Chief asked for.'),
-      diff('corps', `Corps: ${fmtInt(pv('target_corps'))} in ${pv('deadline_corps')} months`, 'The Chief asked for 60,000. Nobody has managed even this in testing.'),
+      diff('brigade', `Brigade: ${formatInt(pv('target_brigade'))} in ${pv('deadline_brigade')} months`, 'A brigade group, fast. The Army Reserve’s standard notice is 180 days.'),
+      diff('division', `Division: ${formatInt(pv('target_division'))} in ${pv('deadline_division')} months`, 'What the Chief asked for.'),
+      diff('corps', `Corps: ${formatInt(pv('target_corps'))} in ${pv('deadline_corps')} months`, 'The Chief asked for 60,000. Nobody has managed even this in testing.'),
     ),
     h(
       'p',

@@ -5,9 +5,10 @@
  */
 import type { Action, ActionAvailability, ActionId, AgeBand, BillClauses, BillProcedure, ExemptionRegime, GameState, MedicalStandard, ReserveNotice } from '../../types';
 import { FREE_ACTIONS } from '../../types';
-import { h, fmtInt, signed } from '../dom';
+import { h, signed } from '../dom';
 import { ACTION_COPY, GROUP_TITLES, type ActionGroup } from '../action-copy';
 import { getParam, sourced } from './sourced';
+import { formatInt } from '../../format';
 
 const pcOf = (id: string): string => { const v = getParam(id)?.value ?? 0; return v > 0 ? `+${v}` : String(v); };
 const mOf = (id: string): number => getParam(id)?.value ?? 0;
@@ -237,15 +238,15 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
       case 'set_callup': {
         const input = h('input', { type: 'number', min: 0, step: 500, value: String(Math.round(state.callupPerMonth)), id: `opt-${id}-n`, 'aria-label': 'Conscripts called per month' }) as HTMLInputElement;
         input.addEventListener('input', () => (optionState.callup = Math.max(0, Number(input.value) || 0)));
-        const field = h('span', { class: 'field' }, h('label', { for: `opt-${id}-n` }, `Per month (eligible pool ${fmtInt(state.pools.conscriptEligible)})`), input);
+        const field = h('span', { class: 'field' }, h('label', { for: `opt-${id}-n` }, `Per month (eligible pool ${formatInt(state.pools.conscriptEligible)})`), input);
         // A ceiling the player cannot see is an unexplained shortfall next month.
         const cap = state.callupCapPerMonth;
         if (cap == null) return h('div', { class: 'action-options' }, field);
         const until = state.callupCapUntil;
         const left = until == null ? null : Math.max(0, until - state.turn + 1);
-        const when = left == null ? 'until further notice' : `for ${fmtInt(left)} more month${left === 1 ? '' : 's'}`;
+        const when = left == null ? 'until further notice' : `for ${formatInt(left)} more month${left === 1 ? '' : 's'}`;
         // The ceiling is a parameter, so it carries its source popover like every other.
-        const capEl = state.callupCapParam ? sourced(fmtInt(cap), state.callupCapParam) : h('span', {}, fmtInt(cap));
+        const capEl = state.callupCapParam ? sourced(formatInt(cap), state.callupCapParam) : h('span', {}, formatInt(cap));
         return h(
           'div',
           { class: 'action-options' },

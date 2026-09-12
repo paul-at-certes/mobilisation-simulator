@@ -8,6 +8,7 @@ import type { CadreBand, GameState, LeadershipBand, MarginBand, QualityBand, Sco
 import { P } from './params.js';
 import { getVerdicts } from './content.js';
 import { computeForce, leadersAvailable, leadersNeeded } from './effectiveness.js';
+import { formatInt } from '../format.js';
 
 export function qualityBand(q: number): QualityBand {
   if (q < 0.45) return 'low';
@@ -63,13 +64,6 @@ export function cadreBand(s: GameState): CadreBand {
   if (needed <= 0) return 'diverted';
   const ifReturned = (leadersAvailable(s) + s.ledger.juniorLeadersDiverted) / needed;
   return ifReturned < 0.6 ? 'swamped' : 'diverted';
-}
-
-/** Thousands separators without relying on the runtime locale. */
-export function formatInt(n: number): string {
-  const rounded = Math.round(n);
-  const sign = rounded < 0 ? '-' : '';
-  return sign + String(Math.abs(rounded)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 /**

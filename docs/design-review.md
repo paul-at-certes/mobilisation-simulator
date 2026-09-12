@@ -1430,6 +1430,44 @@ transferable habit is the one this document keeps arriving at from different
 directions: **before concluding that the model cannot produce a state, check the
 arithmetic rather than the bots.** Two of the four cuts would have been wrong.
 
+**The three formatters are now one.** `formatInt` existed in `src/sim/score.ts`,
+`src/ui/dom.ts` (as `fmtInt`) and `src/ui/briefing.ts`, which is how one
+rounding rule came to be applied three different ways. They were not merely
+duplicated, they **disagreed on nine of nineteen test inputs**:
+
+| | `sim/score` | `ui/dom` | `ui/briefing` |
+|---|---|---|---|
+| `-1234` | `-1,234` (ASCII hyphen) | `-1,234` (ASCII hyphen) | `−1,234` (U+2212) |
+| `NaN` | `NaN` | `NaN` | `n/a` |
+| `Infinity` | `Infinity` | `∞` | `n/a` |
+| `-0.4` | `0` | **`-0`** | `0` |
+| grouping | manual, locale-free | `toLocaleString('en-GB')` | manual, locale-free |
+
+The briefing's was the best of the three and is now canonical, in
+`src/format.ts`: non-finite prints `n/a` (reachable — `refusalCaseload` is
+infinite when the courts never clear), the minus is U+2212 (the correct glyph
+in prose, and digit-width so it aligns in the `tabular-nums` columns the UI
+sets — `holding.ts` had already reached for it by hand), grouping cannot shift
+with the runtime's locale data, and `-0` prints as `0`.
+
+**Nothing the player sees changed.** Every one of the 3,651 rendered strings
+across 252 runs — every monthly briefing and every verdict — is byte-identical
+to before, and the two old implementations agree with the new one on all
+**2,200,001** non-negative finite values tested, which is the whole domain the
+DOM components pass it. The `-0` was latent rather than live: every caller
+either passes a count or handles the sign itself.
+
+**What was *not* consolidated, and why.** `fmtBn`/`formatGbpBn` and
+`fmtPct`/`formatPct` look like the same pairs and are not: `fmtBn` renders
+`£12.34bn` for a stat tile where `formatGbpBn` renders `£85m` in prose, and
+`fmtPct` carries a decimal place where `formatPct` rounds. Two presentations,
+correctly separate — **confusingly similar names are not the same defect as
+duplicated logic,** and merging them would have lost a distinction.
+
+**A test now fails if anyone writes a second one.** It walks `src/` and asserts
+that exactly one file defines an integer formatter, naming any that reappear.
+That is the same guard F17 put on `isKnownAction`, for the same reason.
+
 **Watch for.** Three things.
 
 - If a balance pass raises the body ceiling at Division past about 49,000, or
@@ -1445,12 +1483,9 @@ arithmetic rather than the bots.** Two of the four cuts would have been wrong.
   or the difficulty targets move, re-check that 10% still lands in the gap
   between the Brigade and Division win distributions; today it has 9.8
   percentage points of room on either side.
-- There are three separate `formatInt` implementations in the repo —
-  `src/sim/score.ts`, `src/ui/dom.ts` and `src/ui/briefing.ts` — which is how
-  one rounding rule came to be applied three different ways. They are not
-  consolidated here, but F17's lesson applies: *two hand-maintained copies of
-  the same thing is one too many.* The display helpers above are deliberately
-  in one place for exactly that reason.
+- The three separate `formatInt` implementations that let one rounding rule be
+  applied three different ways are **now one**, in `src/format.ts`. See the
+  note below.
 - `met_mid_any` is down to **five** scripted endings and `met_high_intact` to
   thirteen. Neither is at risk of being unreachable — both have witnesses — but
   they are the thinnest copy in the file and the first to check if a balance

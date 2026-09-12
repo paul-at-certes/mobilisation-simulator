@@ -1,9 +1,10 @@
 /** Scoring screen: headline, the two bars, cost, the general's verdict, share card. */
 import type { GameState, Score } from '../../types';
-import { h, fmtInt, fmtBn, fmtPct } from '../dom';
+import { h, fmtBn, fmtPct } from '../dom';
 import { renderShareCard, copyImage, downloadImage } from '../share-card';
 import { sourced } from '../components/sourced';
 import { displayEse, displayShortfall } from '../../sim/score';
+import { formatInt } from '../../format';
 
 export function renderScoring(opts: { state: GameState; score: Score; siteUrl: string; onRestart: () => void }): HTMLElement {
   const { state, score } = opts;
@@ -23,18 +24,18 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
       h('span', {}, label),
       h(
         'div',
-        { class: 'track', role: 'img', 'aria-label': `${label}: ${fmtInt(total)} (${segs.map((s) => `${s[0]} ${fmtInt(s[idx])}`).join(', ')})` },
-        ...segs.map((s) => h('span', { class: `seg ${s[1]}`, style: `width:${(s[idx] / maxV) * 100}%`, title: `${s[0]}: ${fmtInt(s[idx])}` })),
+        { class: 'track', role: 'img', 'aria-label': `${label}: ${formatInt(total)} (${segs.map((s) => `${s[0]} ${formatInt(s[idx])}`).join(', ')})` },
+        ...segs.map((s) => h('span', { class: `seg ${s[1]}`, style: `width:${(s[idx] / maxV) * 100}%`, title: `${s[0]}: ${formatInt(s[idx])}` })),
       ),
-      h('span', { class: 'num', style: 'text-align:right;font-variant-numeric:tabular-nums' }, fmtInt(total)),
+      h('span', { class: 'num', style: 'text-align:right;font-variant-numeric:tabular-nums' }, formatInt(total)),
     );
 
   const headline = score.resigned
     ? 'The Prime Minister has accepted your resignation.'
     : score.met
-      ? `Target met. ${fmtInt(displayEse(score.ese))} effective soldiers against ${fmtInt(score.target)}.`
+      ? `Target met. ${formatInt(displayEse(score.ese))} effective soldiers against ${formatInt(score.target)}.`
       // A shortfall now rounds up, so "missed by 1" is reachable and has to be singular.
-      : `Target missed by ${fmtInt(displayShortfall(score.shortfall))} effective soldier${displayShortfall(score.shortfall) === 1 ? '' : 's'}.`;
+      : `Target missed by ${formatInt(displayShortfall(score.shortfall))} effective soldier${displayShortfall(score.shortfall) === 1 ? '' : 's'}.`;
 
   const canvas = renderShareCard({ difficulty: state.difficulty, score, siteUrl: opts.siteUrl });
   const status = h('span', { class: 'small muted', 'aria-live': 'polite' });
@@ -53,7 +54,7 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
       { class: 'stacked' },
       bar('Bodies', score.headcount, 2),
       bar('Effective', displayEse(score.ese), 3),
-      h('div', { class: 'legend' }, ...segs.map((s) => h('span', { class: 'legend-item' }, h('span', { class: `swatch ${s[1]}` }), `${s[0]}: ${fmtInt(s[2])} bodies, ${fmtInt(s[3])} effective`))),
+      h('div', { class: 'legend' }, ...segs.map((s) => h('span', { class: 'legend-item' }, h('span', { class: `swatch ${s[1]}` }), `${s[0]}: ${formatInt(s[2])} bodies, ${formatInt(s[3])} effective`))),
     ),
     h(
       'div',
@@ -66,9 +67,9 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
       score.refused >= 1
         ? stat(
             'Refused to report',
-            fmtInt(score.refused),
+            formatInt(score.refused),
             score.refusalBacklog >= 1
-              ? [fmtInt(score.refusalBacklog), ' cases still unheard when you left'].join('')
+              ? [formatInt(score.refusalBacklog), ' cases still unheard when you left'].join('')
               : 'all heard',
           )
         : null,

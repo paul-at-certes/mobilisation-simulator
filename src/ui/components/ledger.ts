@@ -1,7 +1,8 @@
 /** Collapsible ledger: money, GDP, headcount by category, outflow. */
 import type { GameState } from '../../types';
-import { h, fmtInt, fmtBn, fmtPct } from '../dom';
+import { h, fmtBn, fmtPct } from '../dom';
 import { sourced, getParam } from './sourced';
+import { formatInt } from '../../format';
 
 export function renderLedger(state: GameState, open = false): HTMLElement {
   const L = state.ledger;
@@ -32,25 +33,25 @@ export function renderLedger(state: GameState, open = false): HTMLElement {
     h(
       'dl',
       { class: 'kv' },
-      ...row('Regular, trade-trained', fmtInt(p.regularTrained)),
-      ...row(['of which counted (', sourced(`${Math.round((getParam('regular_deployable_fraction')?.value ?? 0) * 100)}%`, 'regular_deployable_fraction'), ' deployable slice)'], fmtInt(state.composition.regulars.headcount)),
-      ...row('Regular, untrained', fmtInt(p.regularUntrained)),
-      ...row('Volunteer reservists mobilised', fmtInt(p.reserveVolunteerMobilised) + (p.reserveVolunteerPending > 0 ? ` (+${fmtInt(p.reserveVolunteerPending)} pending)` : '')),
-      ...row('Ex-regulars reported', fmtInt(p.exRegularReported)),
-      ...row('Strategic Reserve traced', fmtInt(p.strategicTraced)),
-      ...row('Conscripts, holding pool', fmtInt(p.holdingPool), p.holdingPool > 0),
-      ...row('Conscripts in training', fmtInt(inTraining)),
-      ...row('Conscripts trained, unequipped', fmtInt(trainedUneq), trainedUneq > 0),
-      ...row('Conscripts trained, equipped', fmtInt(trainedEq)),
-      ...row('Conscripts called to date', fmtInt(state.conscriptsCalledTotal)),
+      ...row('Regular, trade-trained', formatInt(p.regularTrained)),
+      ...row(['of which counted (', sourced(`${Math.round((getParam('regular_deployable_fraction')?.value ?? 0) * 100)}%`, 'regular_deployable_fraction'), ' deployable slice)'], formatInt(state.composition.regulars.headcount)),
+      ...row('Regular, untrained', formatInt(p.regularUntrained)),
+      ...row('Volunteer reservists mobilised', formatInt(p.reserveVolunteerMobilised) + (p.reserveVolunteerPending > 0 ? ` (+${formatInt(p.reserveVolunteerPending)} pending)` : '')),
+      ...row('Ex-regulars reported', formatInt(p.exRegularReported)),
+      ...row('Strategic Reserve traced', formatInt(p.strategicTraced)),
+      ...row('Conscripts, holding pool', formatInt(p.holdingPool), p.holdingPool > 0),
+      ...row('Conscripts in training', formatInt(inTraining)),
+      ...row('Conscripts trained, unequipped', formatInt(trainedUneq), trainedUneq > 0),
+      ...row('Conscripts trained, equipped', formatInt(trainedEq)),
+      ...row('Conscripts called to date', formatInt(state.conscriptsCalledTotal)),
     ),
     h('h4', { class: 'small muted' }, 'The bathtub'),
     h(
       'dl',
       { class: 'kv' },
-      ...row(['Voluntary outflow to date (', sourced(fmtInt(getParam('regular_voluntary_outflow_annual')?.value ?? 0), 'regular_voluntary_outflow_annual'), '/yr', state.stopLoss ? ', stopped' : '', ')'], fmtInt(L.regularOutflowToDate), L.regularOutflowToDate > 0 && !state.stopLoss),
-      ...row('Junior leaders lost to outflow', fmtInt(L.juniorLeadersLostToOutflow), L.juniorLeadersLostToOutflow > 0),
-      ...row('Junior leaders diverted to training', fmtInt(L.juniorLeadersDiverted), L.juniorLeadersDiverted > 0),
+      ...row(['Voluntary outflow to date (', sourced(formatInt(getParam('regular_voluntary_outflow_annual')?.value ?? 0), 'regular_voluntary_outflow_annual'), '/yr', state.stopLoss ? ', stopped' : '', ')'], formatInt(L.regularOutflowToDate), L.regularOutflowToDate > 0 && !state.stopLoss),
+      ...row('Junior leaders lost to outflow', formatInt(L.juniorLeadersLostToOutflow), L.juniorLeadersLostToOutflow > 0),
+      ...row('Junior leaders diverted to training', formatInt(L.juniorLeadersDiverted), L.juniorLeadersDiverted > 0),
       ...row('Leadership factor', state.gauges.leadershipFactor.toFixed(2), state.gauges.leadershipFactor < 1),
       ...row('Months elapsed', `${state.turn} of ${state.deadlineMonths}`),
     ),

@@ -5,10 +5,11 @@
  * added or renamed there, this test should be updated deliberately.
  */
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Action, BriefingFacts, GameEvent, GameState, Verdict } from '../src/types.js';
-import { briefingText, formatGbpBn, formatInt, formatPct } from '../src/ui/briefing.js';
+import { briefingText, formatGbpBn, formatPct } from '../src/ui/briefing.js';
+import { formatInt } from '../src/format.js';
 import { holdingOutlook } from '../src/ui/components/holding.js';
 import { courseMonths } from '../src/sim/pipeline.js';
 import { ACTION_IDS } from '../src/sim/actions.js';
@@ -284,6 +285,46 @@ describe('the action menu', () => {
       expect(copy.html.length, `${id}: no description`).toBeGreaterThan(20);
       expect(['reserves', 'conscription', 'pipeline', 'political']).toContain(copy.group);
     }
+  });
+});
+
+/**
+ * Number formatting (src/format.ts).
+ *
+ * There were three implementations of this and they disagreed on nine of
+ * nineteen inputs. F17's lesson, applied again: two hand-maintained copies of
+ * the same thing is one too many.
+ */
+describe('formatInt', () => {
+  it('groups, and never shows the player a JavaScript value', () => {
+    expect(formatInt(0)).toBe('0');
+    expect(formatInt(999)).toBe('999');
+    expect(formatInt(1000)).toBe('1,000');
+    expect(formatInt(1234567)).toBe('1,234,567');
+    expect(formatInt(21999.6)).toBe('22,000'); // plain rounding; the scoring rules live in score.ts
+    // Non-finite is reachable: refusalCaseload is Infinity when the courts never clear.
+    expect(formatInt(NaN)).toBe('n/a');
+    expect(formatInt(Infinity)).toBe('n/a');
+    expect(formatInt(-Infinity)).toBe('n/a');
+  });
+
+  it('uses the typographic minus, and has no negative zero', () => {
+    expect(formatInt(-1234)).toBe('\u22121,234');
+    expect(formatInt(-1234)[0]).toBe('\u2212'); // U+2212, not the ASCII hyphen
+    // Math.round(-0.4) is -0; the locale-based implementation printed "-0".
+    expect(formatInt(-0.4)).toBe('0');
+    expect(formatInt(-0)).toBe('0');
+  });
+
+  it('is the only integer formatter in the source tree', () => {
+    const root = resolve(__dirname, '../src');
+    const walk = (dir: string): string[] =>
+      readdirSync(dir).flatMap((e) => {
+        const full = resolve(dir, e);
+        return statSync(full).isDirectory() ? walk(full) : full.endsWith('.ts') ? [full] : [];
+      });
+    const definers = walk(root).filter((f) => /function\s+(fmtInt|formatInt)\s*\(/.test(readFileSync(f, 'utf8')));
+    expect(definers.map((f) => f.slice(root.length + 1))).toEqual(['format.ts']);
   });
 });
 
