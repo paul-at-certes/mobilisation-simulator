@@ -21,6 +21,18 @@ const fmt = (v, unit) => {
   return v.toLocaleString('en-GB');
 };
 
+/**
+ * The Value column, in both dresses: `0.247 (25%)`. Mirrors `headlineValue` in
+ * `src/ui/components/sourced.ts` — this file is the same table as the source
+ * popover, printed. Range columns keep `fmt`, the raw figure the model uses.
+ */
+const headline = (v, unit) => {
+  const raw = fmt(v, unit);
+  if (unit !== 'ratio' || v <= 0 || v > 1) return raw;
+  const pct = v * 100;
+  return `${raw} (${pct < 1 ? pct.toFixed(1) : Math.round(pct)}%)`;
+};
+
 const sections = data.sections;
 const bySection = {};
 for (const [id, p] of Object.entries(data.parameters)) {
@@ -41,7 +53,7 @@ for (const [sec, title] of Object.entries(sections)) {
   if (!rows.length) continue;
   out += `### ${title}\n\n| Parameter | Value | Range | Rationale |\n|---|---|---|---|\n`;
   for (const [id, p] of rows) {
-    out += `| \`${id}\` · ${p.label} | ${fmt(p.value, p.unit)} | ${fmt(p.range[0], p.unit)} – ${fmt(p.range[1], p.unit)} | ${p.rationale} |\n`;
+    out += `| \`${id}\` · ${p.label} | ${headline(p.value, p.unit)} | ${fmt(p.range[0], p.unit)} – ${fmt(p.range[1], p.unit)} | ${p.rationale} |\n`;
   }
   out += '\n';
 }
@@ -50,7 +62,7 @@ out += `## Derived figures\n\nFigures computed from primary sources, with the ar
 for (const [id, p] of Object.entries(data.parameters)) {
   if (p.confidence !== 'derived') continue;
   const src = p.url ? `[${p.source}](${p.url})` : p.source;
-  out += `| \`${id}\` · ${p.label} | ${fmt(p.value, p.unit)} | ${p.derivation ?? ''} | ${src} |\n`;
+  out += `| \`${id}\` · ${p.label} | ${headline(p.value, p.unit)} | ${p.derivation ?? ''} | ${src} |\n`;
 }
 out += '\n';
 

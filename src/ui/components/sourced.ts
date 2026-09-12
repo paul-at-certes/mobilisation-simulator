@@ -66,6 +66,28 @@ export function formatValue(p: Parameter): string {
   }
 }
 
+/**
+ * The same figure in both dresses: `0.247 (25%)`.
+ *
+ * A ratio is written as a percentage everywhere the game speaks prose — the
+ * action copy renders every `ratio` as one, and an event card says "25% of
+ * notices served are contested" — while the parameter itself is 0.247. Tapping
+ * the one and being shown the other reads like a different number (F23). The
+ * headline says both; ranges and prose keep the raw form, which is the figure
+ * the model actually multiplies by.
+ *
+ * Only for ratios that are a share of something: `junior_leader_ratio` (2.4)
+ * and `instructor_ratio` (8) are one-per-n ratios, and a regression slope is
+ * not a percentage of anything.
+ */
+export function headlineValue(p: Parameter): string {
+  const raw = formatValue(p);
+  if (p.unit !== 'ratio' || p.value <= 0 || p.value > 1) return raw;
+  const pct = p.value * 100;
+  // A fifth of a percent rounds to nothing, and "0%" of anything is a lie.
+  return `${raw} (${pct < 1 ? pct.toFixed(1) : Math.round(pct)}%)`;
+}
+
 let popover: HTMLDivElement | null = null;
 let lastTrigger: HTMLElement | null = null;
 
@@ -114,7 +136,7 @@ function openPopover(trigger: HTMLElement): void {
     const link = p.url ? `<a class="popover-link" href="${escapeHtml(p.url)}" target="_blank" rel="noopener">Open source ↗</a>` : '';
     popover.innerHTML = `
       <div class="popover-head">
-        <span class="popover-value">${escapeHtml(formatValue(p))}</span>
+        <span class="popover-value">${escapeHtml(headlineValue(p))}</span>
         ${badge}
         <button type="button" class="popover-close" aria-label="Close">×</button>
       </div>

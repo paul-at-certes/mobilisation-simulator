@@ -1886,13 +1886,23 @@ a judgement about the game rather than a defect, and each is Paul's call:
    them tappable means markup in `events.json` and 33 rewrites.
 2. **A ratio reads as a ratio in the popover and a percentage in the prose.**
    The card says *"25% of notices served are contested"*; its chip's popover
-   is headed **0.247**. Same figure, two dresses: 16 parameters the action
-   copy renders as a percentage are `unit: ratio`, which `formatValue` prints
-   raw. Showing *0.247 (25%)* would settle it, and would move the methodology
-   table and `ASSUMPTIONS.md` with it.
-3. **`opening.ts` uses curly apostrophes** where every other piece of copy in
-   the game uses straight ones — 3 against 96. The cause is mechanical: those
+   was headed **0.247**. ***Taken, on Paul's instruction.*** `headlineValue()`
+   prints both — **0.247 (25%)** — and is used by the popover's headline and
+   the methodology table's Value column; `build-assumptions.mjs` mirrors it, so
+   the generated table says the same thing (41 rows carry the dual form).
+   Ranges and prose keep the raw figure, which is what the model multiplies by:
+   *"Plausible range: 0.7 – 0.9"* under a headline of *0.8 (80%)*.
+
+   Only ratios that are a **share of something** get the percentage. A guard on
+   `0 < v <= 1` leaves `instructor_ratio` (8), `junior_leader_ratio` (2.4) and
+   a regression slope (-0.7738) alone, and a value under 1% keeps a decimal
+   place rather than rounding to *"0%"*, which would be a lie.
+3. **`opening.ts` used curly apostrophes** where every other piece of copy in
+   the game uses straight ones — 3 against 96. The cause was mechanical: those
    strings are single-quoted, where a straight apostrophe would need escaping.
+   ***Taken, on Paul's instruction:*** the three literals are double-quoted
+   now, which costs nothing and needs no backslashes. The game is at 156
+   straight apostrophes and none curly.
 
 ---
 

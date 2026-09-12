@@ -6,7 +6,7 @@
 import './styles.css';
 import paramsFile from './data/parameters.json' with { type: 'json' };
 import type { Parameter } from './types';
-import { initSourcedPopover, sourcedHtml, formatValue, confidenceLabel, escapeHtml } from './ui/components/sourced';
+import { initSourcedPopover, sourcedHtml, formatValue, headlineValue, confidenceLabel, escapeHtml } from './ui/components/sourced';
 import preamble from '../scripts/assumptions-preamble.md?raw';
 
 const PARAMS = paramsFile.parameters as unknown as Record<string, Parameter>;
@@ -92,7 +92,7 @@ for (const [sec, title] of Object.entries(SECTIONS)) {
   wrap.innerHTML = `<table class="param-table"><thead><tr><th>Parameter</th><th class="num">Value</th><th>Confidence</th><th>Source</th><th>As of</th></tr></thead><tbody>${rows
     .map(
       ([id, p]) =>
-        `<tr><td>${escapeHtml(p.label)}<br><span class="small muted"><code>${escapeHtml(id)}</code></span></td><td class="num">${sourcedHtml(formatValue(p), id)}</td><td><span class="badge badge-${p.confidence}">${confidenceLabel(p.confidence)}</span></td><td class="small">${p.url ? `<a href="${escapeHtml(p.url)}" target="_blank" rel="noopener">${escapeHtml(p.source)}</a>` : escapeHtml(p.source)}</td><td class="small">${escapeHtml(p.asOf)}</td></tr>`,
+        `<tr><td>${escapeHtml(p.label)}<br><span class="small muted"><code>${escapeHtml(id)}</code></span></td><td class="num">${sourcedHtml(headlineValue(p), id)}</td><td><span class="badge badge-${p.confidence}">${confidenceLabel(p.confidence)}</span></td><td class="small">${p.url ? `<a href="${escapeHtml(p.url)}" target="_blank" rel="noopener">${escapeHtml(p.source)}</a>` : escapeHtml(p.source)}</td><td class="small">${escapeHtml(p.asOf)}</td></tr>`,
     )
     .join('')}</tbody></table>`;
   secEl.append(h, wrap);

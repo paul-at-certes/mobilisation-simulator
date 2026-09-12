@@ -28,7 +28,7 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
       h(
         'p',
         {},
-        'A NATO ally has been attacked. Article 5 has been invoked. The Chief of the Defence Staff has told the Prime Minister that the UK’s contribution must be a deployable division: ',
+        "A NATO ally has been attacked. Article 5 has been invoked. The Chief of the Defence Staff has told the Prime Minister that the UK's contribution must be a deployable division: ",
         sourced(formatInt(pv('target_division')), 'target_division'),
         ' trade-trained personnel with their enablers, ready to move in ',
         sourced(String(pv('deadline_division')), 'deadline_division'),
@@ -37,7 +37,7 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
       h(
         'p',
         {},
-        'The regular Army’s trade-trained strength this morning is ',
+        "The regular Army's trade-trained strength this morning is ",
         sourced(formatInt(pv('regular_trained_start')), 'regular_trained_start'),
         '. Of those, the Chief of the General Staff can release perhaps ',
         sourced(`${Math.round(pv('regular_deployable_fraction') * 100)}%`, 'regular_deployable_fraction'),
@@ -66,7 +66,7 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
     h(
       'div',
       { class: 'difficulty', role: 'radiogroup', 'aria-label': 'Difficulty' },
-      diff('brigade', `Brigade: ${formatInt(pv('target_brigade'))} in ${pv('deadline_brigade')} months`, 'A brigade group, fast. The Army Reserve’s standard notice is 180 days.'),
+      diff('brigade', `Brigade: ${formatInt(pv('target_brigade'))} in ${pv('deadline_brigade')} months`, "A brigade group, fast. The Army Reserve's standard notice is 180 days."),
       diff('division', `Division: ${formatInt(pv('target_division'))} in ${pv('deadline_division')} months`, 'What the Chief asked for.'),
       diff('corps', `Corps: ${formatInt(pv('target_corps'))} in ${pv('deadline_corps')} months`, 'The Chief asked for 60,000. Nobody has managed even this in testing.'),
     ),
