@@ -1156,7 +1156,9 @@ it could ship, but not that one.
 so every band contained the most hostile group (18-24: 27% support, 45%
 strongly opposed) and widening only diluted it. 26-40 is the only band on offer
 with a movable lower bound. It needed no new sourcing, which is why it was
-preferred to the 25-40 band the handover proposed: `ew_pop_18_40 - ew_pop_18_25`
+preferred to the 25-40 band the handover proposed —
+**and that reason was wrong; see the correction below.** The derivation itself
+holds: `ew_pop_18_40 - ew_pop_18_25`
 is exactly ages 26-40, both bounds being inclusive, and every single year of age
 in it falls inside YouGov's 25-49 group, so its population-weighted support is
 that group's figure exactly, 39.0%. The long way round — subtracting the 18-25
@@ -1426,3 +1428,25 @@ commit.
 accident and Division stops feeling like a close-run thing, the answer is a
 smaller course or a bound on how many a run may hold, not a higher target -
 moving `target_division` would punish the player who never found the lever.
+
+## Correction: the single-year population data was in the repo all along (12 September 2026)
+
+The 26-40 band was chosen over the 25-40 one the handover proposed partly on the
+grounds that 25-40 "needs single-year population data that is not in the repo".
+That was wrong. `docs/ew_population_single_year_mid2025.csv` has been in the
+repository since the first commit: ONS MYE2, England and Wales, persons and
+females by single year of age, with its source line at the top of the file. A
+25-40 band was equally derivable - 13,508,614 persons and 6,904,640 women.
+
+**The numbers that shipped are right.** `ew_pop_26_40` (12,727,220) and
+`ew_pop_f_26_40` (6,520,779) were derived by subtracting the 18-25 band from the
+18-40 band; they have now been checked against the single-year table directly and
+match to the person, as do `ew_pop_18_25`, `ew_pop_18_30` and `ew_pop_18_65`. So
+this corrects the reasoning and not the parameter file, and 26-40 remains the
+better band on its own merits: it is the one the polling can price exactly,
+because every age in it falls inside YouGov's 25-49 group.
+
+It is logged because a wrong reason is worse than no reason - it would send the
+next person off to fetch data they already have. **Check `docs/` for a CSV before
+concluding a figure needs sourcing.** There are two: the population table and
+`sps_1jul2026_key_figures.csv`.

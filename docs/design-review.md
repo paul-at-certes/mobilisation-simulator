@@ -938,6 +938,18 @@ the reason the band is priced in capital and in attrition instead.
 would scale refusal across every band equally and change nothing about the
 decision; the problem was the span, not the level.
 
+**Correction: the reason given for choosing 26–40 over 25–40 was wrong.** It was
+recorded as "25–40 needs single-year population data that is not in the repo".
+That data *is* in the repo, and has been since the first commit —
+`docs/ew_population_single_year_mid2025.csv`, ONS MYE2 by single year of age. A
+25–40 band would have been just as derivable: 13,508,614 persons and 6,904,640
+women. **The figures that shipped are right** — `ew_pop_26_40` (12,727,220) and
+`ew_pop_f_26_40` (6,520,779) have since been checked against that table and match
+to the person, as do all three older bands — so this is a correction to the
+reasoning and not to the numbers. It is recorded because the wrong reason would
+send the next person looking for data they already have. **Check `docs/` for a
+CSV before concluding a figure needs sourcing.**
+
 ---
 
 ### F15 — A cliff at 25 decided more than any clause did · *Addressed*
@@ -1187,6 +1199,9 @@ resolve into a pool that never binds (F4's residue).
 - `docs/sim-spec.md` — the model. §7 is effectiveness and leadership, §7.1 the
   projection, §13 the scripted strategies.
 - `ASSUMPTIONS.md` — generated; every assumption with its range and rationale.
+- `docs/next-task.md` — a ready-to-paste prompt for F4's residue, carrying the
+  measurements and the three traps this repo has already sprung. Delete it once
+  done.
 - `mobilisation-minister-design-brief.md` — the original brief. Its §10.3
   balance criteria are the ones the benchmark table above tests, with one
   change: criterion (d), "a sensible mixed strategy can make Division", is now

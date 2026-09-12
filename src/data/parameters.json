@@ -616,7 +616,7 @@
       "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
       "asOf": "2025-06-30",
       "confidence": "derived",
-      "derivation": "ew_pop_18_40 - ew_pop_18_25 = 18,665,415 - 5,938,195 = 12,727,220. Both are inclusive of their end years, so removing 18-25 from 18-40 leaves exactly 26-40; no figure outside the two already in this file is used."
+      "derivation": "ew_pop_18_40 - ew_pop_18_25 = 18,665,415 - 5,938,195 = 12,727,220. Both are inclusive of their end years, so removing 18-25 from 18-40 leaves exactly 26-40; no figure outside the two already in this file is used. Checked against docs/ew_population_single_year_mid2025.csv (ONS MYE2 by single year of age, in this repository): the subtraction matches the summed single years exactly."
     },
     "ew_pop_f_26_40": {
       "value": 6520779,
@@ -628,7 +628,7 @@
       "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
       "asOf": "2025-06-30",
       "confidence": "derived",
-      "derivation": "ew_pop_f_18_40 - ew_pop_f_18_25 = 9,419,482 - 2,898,703 = 6,520,779."
+      "derivation": "ew_pop_f_18_40 - ew_pop_f_18_25 = 9,419,482 - 2,898,703 = 6,520,779. Checked against docs/ew_population_single_year_mid2025.csv (ONS MYE2 by single year of age, in this repository): the subtraction matches the summed single years exactly."
     },
     "ew_pop_18_65": {
       "value": 38201921,
