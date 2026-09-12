@@ -595,10 +595,15 @@ rather than as a threshold the band either crosses or does not. See `docs/design
 
 `score(state): Score` in `src/sim/score.ts`:
 - `met = forceReady ≥ target`; `resigned = overReason == 'resigned'`.
-- Bands: quality `<0.45 low, ≤0.65 mid, else high`; leadership `<0.6 broken, ≤0.9 strained, else intact`; shortfall `≤ SHORTFALL_NEAR_FRACTION × target near, else clear` (a met run is `near`).
+- Bands: quality `<0.45 low, ≤0.65 mid, else high`; leadership `<0.6 broken, ≤0.9 strained, else intact`; margin `|ese − target| ≤ MARGIN_NEAR_FRACTION × target near, else clear`.
+- **Margin is unsigned**; its direction is carried by `met`, so `near` is a
+  close-run thing either way — a narrow win or a narrow miss — and `clear` is a
+  comfortable win or a plain failure. One boundary (10%) does both jobs, and
+  lands in a measured gap: every Brigade win clears the target by ≥19% and
+  every Division win by ≤9.2% (design review F18).
 - `costPctDefenceBudget = cumulativeCost / defence_budget_2025 × 100`;
   `gdpLossPctGdp = cumulativeGdpLoss / uk_gdp_2025 × 100`.
-- Verdict: pick from `verdicts.json` the first entry whose `met`/`quality`/`leadership`/`resigned`/`shortfall` match (`'any'`, or an omitted `resigned`/`shortfall`, are wildcards), fill `{placeholders}` from `VerdictVars` with formatted integers.
+- Verdict: pick from `verdicts.json` the first entry whose `met`/`quality`/`leadership`/`resigned`/`margin` match (`'any'`, or an omitted `resigned`/`margin`, are wildcards), fill `{placeholders}` from `VerdictVars` with formatted integers.
 - **Selection is first-match, so order is meaning.** An entry placed after a
   wider one that subsumes it can never be chosen. Two states the model cannot
   produce have no verdict written for them and fall to the generic fallback by

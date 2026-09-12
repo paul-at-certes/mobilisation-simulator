@@ -1160,7 +1160,7 @@ benchmark is a claim that needs checking rather than a result.**
 
 ---
 
-### F18 — A third of the endings shared one verdict, and four could never be read · *Addressed*
+### F18 — Two verdicts carried half the endings, and four could never be read · *Addressed*
 
 **Symptom.** Four of the twelve entries in `verdicts.json` had never once been
 selected, and three verdicts covered 69% of all endings. The verdict is the
@@ -1269,42 +1269,81 @@ difficulty and per bucket rather than as one number.
    `broken`, which meant retiring `met_any_broken` would have silently widened
    it. Its rule now says `strained`, which is what its id and its text have
    always said.
-3. **Split `missed_high_intact` on the size of the shortfall,** which is a new
-   selector dimension (`shortfall: near | clear`, spec §11). The boundary is
-   10% of target. It is not a round number chosen for tidiness: at Division it
-   is 2,200 effective soldiers, and the benchmark note above records the p10–p90
-   spread there as around 2,000, so a shortfall this size is inside the
-   simulation's own run-to-run noise.
+3. **Added a margin dimension** (`margin: near | clear`, spec §11): how far
+   from the target the run finished as a share of it, in whichever direction,
+   the direction itself carried by `met`. The boundary is 10% of target. It is
+   not a round number chosen for tidiness: at Division it is 2,200 effective
+   soldiers, and the benchmark note above records the p10–p90 spread there as
+   around 2,000, so a margin this size is inside the simulation's own
+   run-to-run noise.
+4. **Split both of the big verdicts on it** — `missed_high_intact` (31.3%) and
+   `met_high_intact` (20.6%), which between them were half of all endings.
 
-**The split is better motivated than the concentration made it look.** The
-verdict was read as the game's thesis — *you did everything right and still
-could not do it*. That is true of 42 of its 263 endings. The other 221 are the
-opposite ending: median headcount **3,612**, which is the regular deployable
-slice and nothing else, median Treasury cost **£0.1bn**, and quality as high as
-1.000. The quality figures were excellent because the minister never mobilised.
-One verdict was telling both stories, and the good line in it — *the general
-told the ally he would rather have this than the number* — only makes sense for
-the first. It keeps the near miss; the wide shortfall has new copy.
+**The missed split is better motivated than the concentration made it look.**
+`missed_high_intact` was read as the game's thesis — *you did everything right
+and still could not do it*. That is true of 42 of its 263 endings. The other 221
+are the opposite ending: median headcount **3,612**, which is the regular
+deployable slice and nothing else, median Treasury cost **£0.1bn**, and quality
+as high as 1.000. The quality figures were excellent because the minister never
+mobilised. One verdict was telling both stories, and the good line in it — *the
+general told the ally he would rather have this than the number* — only makes
+sense for the first. It keeps the near miss; the wide shortfall has new copy.
+
+**The met split falls out of the same boundary, and the data makes the cut for
+itself.** `met_high_intact` covered every successful run at every difficulty.
+Sorted by how much they cleared the target by, the endings do not overlap at
+all:
+
+| | wins | surplus over target |
+|---|---|---|
+| Brigade | 160 | **19.0% – 104.0%** (median 44–92% by strategy) |
+| Division | 18 | **0.4% – 9.2%** (median 4.7%) |
+| Corps | 0 | — |
+
+There is a clean gap from 9.2% to 19.0% and the 10% boundary sits inside it, so
+the same dimension that splits the missed verdict splits this one without a
+second number being invented. **It cuts on the mechanism and gets the
+difficulty story for free:** no `difficulty` selector was added, and if a rung
+is ever retuned the split follows the margin rather than the label. This is the
+opposite of the missed side, where there is no natural gap under player-like
+play and the boundary had to be argued rather than found.
+
+What the two halves say is F8 restated from the winning end. A `clear` win is
+in practice **the Brigade win** — every one of the 160 is Brigade, and the best
+Division run found anywhere reaches 23,809 against the 24,200 a clear win would
+need, missing the band by 1.6%. Brigade is won by anyone who calls out the
+reserves (F8, *by design*), and the new copy says so: the force was found rather
+than built, and the next rung up cannot be. The narrow win keeps the existing
+text, whose closing line — *the general's note is one line: it will do* — is the
+restrained ending the close-run Division result has earned and the Brigade
+walkover has not.
 
 **Reachability after the change**, same 840 endings:
 
 | Verdict | before | after |
 |---|---|---|
-| `missed_high_intact_wide` | — | 221 (26.3%) |
-| `met_high_intact` | 173 | 173 (20.6%) |
+| `missed_high_intact_clear` | — | 221 (26.3%) |
+| `met_high_intact_clear` | — | 160 (19.0%) |
 | `missed_any_broken` | 143 | 143 (17.0%) |
 | `resigned_generic` | 124 | 124 (14.8%) |
 | `missed_any_any` | 101 | 101 (12.0%) |
 | `missed_high_intact` | 263 | **42 (5.0%)** |
 | `resigned_broken` | 31 | 31 (3.7%) |
+| `met_high_intact` | 173 | **13 (1.5%)** |
 | `met_mid_any` | 5 | 5 (0.6%) |
 | `met_high_strained` | 0 | 0 in bot play; **reachable**, witness above |
 | `missed_low_any` | 0 | 0 in bot play; **reachable**, 18 in 90,000 |
 | `met_any_broken`, `met_low_any` | 0 | *retired* |
 | `fallback` | 0 | 0 |
 
-Eleven verdicts, all reachable, none shadowed. The largest share falls from
-**31.3% to 26.3%**. `fallback` still fires on nothing, which is correct.
+Twelve verdicts, all reachable, none shadowed. The largest share falls from
+**31.3% to 26.3%**, and the two biggest verdicts from **51.9% of all endings to
+45.3%** spread over four. `fallback` still fires on nothing, which is correct.
+
+**The file is now at its cap.** `tests/content.test.ts` holds `verdicts.json` to
+10–12 entries and there are twelve. That is a content budget rather than a
+technical limit, but the next split has to retire something or raise the cap on
+purpose, which is the right place for that decision to be taken.
 
 **The benchmark is byte-identical** — all 21 rows across the three difficulties.
 Nothing in `src/sim/` changed but `score.ts`, and the change there adds a band
@@ -1326,10 +1365,21 @@ transferable habit is the one this document keeps arriving at from different
 directions: **before concluding that the model cannot produce a state, check the
 arithmetic rather than the bots.** Two of the four cuts would have been wrong.
 
-**Watch for.** If a balance pass raises the body ceiling at Division past about
-49,000, or lets the target be met with a hollowed cadre, `met_low_any` and
-`met_any_broken` become reachable again and the fallback will start firing on
-real endings. The `fallback` count is the alarm: it should stay at zero.
+**Watch for.** Three things.
+
+- If a balance pass raises the body ceiling at Division past about 49,000, or
+  lets the target be met with a hollowed cadre, `met_low_any` and
+  `met_any_broken` become reachable again and the fallback will start firing on
+  real endings. **The `fallback` count is the alarm: it should stay at zero.**
+- If Division ESE rises by about 2%, Division starts producing `clear` wins.
+  That is not a problem — the copy holds, since a Division winner told a corps
+  cannot be found this way is being told the truth — but `met_high_intact` would
+  stop being the Division verdict, and its 13 endings are the thinnest margin in
+  the file.
+- The margin boundary is one number doing two jobs. If either the quality bands
+  or the difficulty targets move, re-check that 10% still lands in the gap
+  between the Brigade and Division win distributions; today it has 9.8
+  percentage points of room on either side.
 
 ---
 

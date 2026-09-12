@@ -22,8 +22,18 @@
     "met": true,
     "quality": "high",
     "leadership": "intact",
+    "margin": "near",
     "text": "You delivered {headcount} personnel and {ese} soldiers' worth of them, against a target of {target}. The formation is led, equipped and largely regular or reservist, and its junior leaders are where they should be. It cost the Treasury about £{costBn}bn and the economy about £{gdpLossBn}bn in lost output. Nobody will remember either figure. The general's note is one line: it will do.",
     "oneLiner": "Target met with a force that is actually a force. It will do."
+  },
+  {
+    "id": "met_high_intact_clear",
+    "met": true,
+    "quality": "high",
+    "leadership": "intact",
+    "margin": "clear",
+    "text": "You delivered {headcount} personnel and {ese} soldiers' worth of them against a target of {target}, clearing it by {surplus}. Almost all of them were soldiers already on the day you took office: the call-out and the recall did the work, and anything the training pipeline added arrived as margin rather than as the answer. The general's note is appreciative and short. It observes that a force this size can be found without building anything, and that the next one up cannot.",
+    "oneLiner": "Target met with {surplus} to spare. A force this size can be found, not built."
   },
   {
     "id": "met_high_strained",
@@ -46,16 +56,16 @@
     "met": false,
     "quality": "high",
     "leadership": "intact",
-    "shortfall": "near",
+    "margin": "near",
     "text": "You fielded {ese} soldiers against a target of {target}: {shortfall} short. What you fielded is good: regulars, reservists and a leadership cadre that is still intact. The general told the ally he would rather have this than the number. The ally wanted the number. The Treasury cost was about £{costBn}bn.",
     "oneLiner": "{shortfall} short, but what exists is real."
   },
   {
-    "id": "missed_high_intact_wide",
+    "id": "missed_high_intact_clear",
     "met": false,
     "quality": "high",
     "leadership": "intact",
-    "shortfall": "clear",
+    "margin": "clear",
     "text": "Against a target of {target} you fielded {ese}: a shortfall of {shortfall}, after {months} months. What exists is in good order, and it is in good order partly because there is less of it: an establishment that is not stretched does not show the strain. The general's assessment spends one paragraph on the quality and the rest on the gap. The ally has been told the number, and has not asked for the quality figures.",
     "oneLiner": "{shortfall} short, and good order was never the thing in question."
   },

@@ -240,12 +240,14 @@ export interface GameEvent {
 export type QualityBand = 'low' | 'mid' | 'high'; // <0.45, 0.45–0.65, >0.65
 export type LeadershipBand = 'broken' | 'strained' | 'intact'; // <0.6, 0.6–0.9, >0.9
 /**
- * How far short the run finished, as a share of the target: `near` is within
- * `SHORTFALL_NEAR_FRACTION`, `clear` is anything wider. A met run is `near`.
- * The band exists because a missed run can be either of two quite different
- * endings — see design review F18.
+ * How far from the target the run finished, as a share of it, in whichever
+ * direction: `near` is within `MARGIN_NEAR_FRACTION`, `clear` is anything
+ * wider. The direction is carried by `met`, so `near` is a close-run thing
+ * either way and `clear` is a comfortable win or a plain failure. The band
+ * exists because both of those are two quite different endings wearing one
+ * verdict — see design review F18.
  */
-export type ShortfallBand = 'near' | 'clear';
+export type MarginBand = 'near' | 'clear';
 
 export interface Verdict {
   id: string;
@@ -253,8 +255,8 @@ export interface Verdict {
   quality: QualityBand | 'any';
   leadership: LeadershipBand | 'any';
   resigned?: boolean;
-  /** Omitted means either band; see ShortfallBand. */
-  shortfall?: ShortfallBand;
+  /** Omitted means either band; see MarginBand. */
+  margin?: MarginBand;
   /** Template with {placeholders}: see VerdictVars. */
   text: string;
   /** One line for the share card, same placeholders. */
@@ -505,7 +507,7 @@ export interface Score {
   qualityBand: QualityBand;
   leadership: number;
   leadershipBand: LeadershipBand;
-  shortfallBand: ShortfallBand;
+  marginBand: MarginBand;
   composition: Composition;
   cost: number;
   costPctDefenceBudget: number;

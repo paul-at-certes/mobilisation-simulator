@@ -4,7 +4,7 @@
  * Verdict templates come from src/data/verdicts.json through the content
  * registry; if none match (or the file is absent) a generic verdict is used.
  */
-import type { GameState, LeadershipBand, QualityBand, Score, ShortfallBand, Verdict, VerdictVars } from '../types.js';
+import type { GameState, LeadershipBand, MarginBand, QualityBand, Score, Verdict, VerdictVars } from '../types.js';
 import { P } from './params.js';
 import { getVerdicts } from './content.js';
 import { computeForce } from './effectiveness.js';
@@ -22,19 +22,26 @@ export function leadershipBand(lf: number): LeadershipBand {
 }
 
 /**
- * A shortfall inside this share of the target is a near miss.
+ * Finishing this close to the target, on either side of it, is a near thing.
  *
  * 10% is not a round number chosen for tidiness. At Division it is 2,200
  * effective soldiers, and the review already records that the spread between
- * the 10th and 90th percentile there is around 2,000 — so a shortfall this
- * size is inside the run-to-run noise of the simulation, and is a shortfall
- * the seed produced as much as the minister did. Anything wider is a decision.
+ * the 10th and 90th percentile there is around 2,000 — so a margin this size
+ * is inside the run-to-run noise of the simulation, and is a margin the seed
+ * produced as much as the minister did. Anything wider is a decision.
+ *
+ * The same boundary does both jobs. On the missing side it separates the near
+ * miss from the plain shortfall; on the meeting side it separates the
+ * close-run win from the one that was never in doubt. That it lands cleanly
+ * on both is measured, not assumed: every Brigade win clears the target by at
+ * least 19% and every Division win by at most 9.2%, so nothing sits near the
+ * line (design review F18).
  */
-export const SHORTFALL_NEAR_FRACTION = 0.1;
+export const MARGIN_NEAR_FRACTION = 0.1;
 
-export function shortfallBand(shortfall: number, target: number): ShortfallBand {
+export function marginBand(ese: number, target: number): MarginBand {
   if (target <= 0) return 'near';
-  return shortfall <= target * SHORTFALL_NEAR_FRACTION ? 'near' : 'clear';
+  return Math.abs(ese - target) <= target * MARGIN_NEAR_FRACTION ? 'near' : 'clear';
 }
 
 /** Thousands separators without relying on the runtime locale. */
@@ -72,14 +79,14 @@ export function pickVerdict(
   quality: QualityBand,
   leadership: LeadershipBand,
   resigned: boolean,
-  shortfall: ShortfallBand = 'near',
+  margin: MarginBand = 'near',
 ): Verdict {
   for (const v of getVerdicts()) {
     if (v.met !== 'any' && v.met !== met) continue;
     if (v.quality !== 'any' && v.quality !== quality) continue;
     if (v.leadership !== 'any' && v.leadership !== leadership) continue;
     if (v.resigned != null && v.resigned !== resigned) continue;
-    if (v.shortfall != null && v.shortfall !== shortfall) continue;
+    if (v.margin != null && v.margin !== margin) continue;
     return v;
   }
   return GENERIC_VERDICT;
@@ -97,7 +104,7 @@ export function score(state: GameState): Score {
   const cost = state.ledger.cumulativeCost;
   const gdpLoss = state.ledger.cumulativeGdpLoss;
   const shortfall = Math.max(0, state.target - f.forceReady);
-  const sBand = shortfallBand(shortfall, state.target);
+  const mBand = marginBand(f.forceReady, state.target);
   const vars: VerdictVars = {
     target: state.target,
     ese: f.forceReady,
@@ -113,7 +120,7 @@ export function score(state: GameState): Score {
     shortfall,
     surplus: Math.max(0, f.forceReady - state.target),
   };
-  const verdict = pickVerdict(met, qBand, lBand, resigned, sBand);
+  const verdict = pickVerdict(met, qBand, lBand, resigned, mBand);
   return {
     met,
     resigned,
@@ -126,7 +133,7 @@ export function score(state: GameState): Score {
     qualityBand: qBand,
     leadership: f.leadershipFactor,
     leadershipBand: lBand,
-    shortfallBand: sBand,
+    marginBand: mBand,
     composition: f.composition,
     cost,
     costPctDefenceBudget: (cost / P.defence_budget_2025) * 100,

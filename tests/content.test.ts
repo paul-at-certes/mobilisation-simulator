@@ -290,7 +290,7 @@ describe('verdicts.json', () => {
   const MET = [true, false];
   const QUALITY = ['low', 'mid', 'high'] as const;
   const LEADERSHIP = ['broken', 'strained', 'intact'] as const;
-  const SHORTFALL = ['near', 'clear'] as const;
+  const MARGIN = ['near', 'clear'] as const;
 
   /**
    * The two ending states the model cannot produce, measured in design review
@@ -333,17 +333,17 @@ describe('verdicts.json', () => {
     for (const met of MET) {
       for (const q of QUALITY) {
         for (const l of LEADERSHIP) {
-          for (const sf of SHORTFALL) {
+          for (const mg of MARGIN) {
             const hit = specific.find(
               (v) => (v.met === 'any' || v.met === met)
                 && (v.quality === 'any' || v.quality === q)
                 && (v.leadership === 'any' || v.leadership === l)
-                && (v.shortfall == null || v.shortfall === sf),
+                && (v.margin == null || v.margin === mg),
             );
             // Combinations the model cannot produce are not required to have
             // copy; that they do not is asserted separately below.
             if (UNREACHABLE(met, q, l)) continue;
-            expect(hit, `no verdict for met=${met} quality=${q} leadership=${l} shortfall=${sf}`).toBeDefined();
+            expect(hit, `no verdict for met=${met} quality=${q} leadership=${l} margin=${mg}`).toBeDefined();
           }
         }
       }
@@ -369,25 +369,25 @@ describe('verdicts.json', () => {
    * can read is not copy.
    */
   it('can reach every verdict: none is shadowed by an earlier entry', () => {
-    const firstMatch = (met: boolean, q: string, l: string, resigned: boolean, sf: string) =>
+    const firstMatch = (met: boolean, q: string, l: string, resigned: boolean, mg: string) =>
       verdicts.find(
         (v) => (v.met === 'any' || v.met === met)
           && (v.quality === 'any' || v.quality === q)
           && (v.leadership === 'any' || v.leadership === l)
           && (v.resigned == null || v.resigned === resigned)
-          && (v.shortfall == null || v.shortfall === sf),
+          && (v.margin == null || v.margin === mg),
       );
     const reachable = new Set<string>();
     for (const met of MET) {
       for (const q of QUALITY) {
         for (const l of LEADERSHIP) {
           for (const resigned of [true, false]) {
-            for (const sf of SHORTFALL) {
+            for (const mg of MARGIN) {
+              // Margin runs in both directions: `clear` is a comfortable win
+              // as well as a plain shortfall, so the only cells to skip are
+              // the two the model cannot produce at all.
               if (UNREACHABLE(met, q, l)) continue;
-              // A met run is never short of the target, and a missed one always is.
-              if (met && sf === 'clear') continue;
-              if (!met && sf === 'near' && q === 'low') continue; // measured: never observed
-              const hit = firstMatch(met, q, l, resigned, sf);
+              const hit = firstMatch(met, q, l, resigned, mg);
               if (hit) reachable.add(hit.id);
             }
           }
@@ -401,10 +401,12 @@ describe('verdicts.json', () => {
   });
 
   it('uses only VerdictVars placeholders and keeps one-liners under 90 characters', () => {
+    // Every value is a wide one on purpose: the share card is width-limited,
+    // so the length guard below is only worth having if the sample stresses it.
     const sample: Record<string, string> = {
       target: '25,000', ese: '11,400', headcount: '27,000', months: '12', quality: '0.42', leadership: '0.55',
       costBn: '14', gdpLossBn: '9', conscripts: '18,000', reservists: '6,500', regulars: '7,100',
-      shortfall: '13,600', surplus: '0',
+      shortfall: '13,600', surplus: '13,600',
     };
     for (const v of verdicts) {
       for (const field of [v.text, v.oneLiner]) {

@@ -1556,3 +1556,84 @@ further is a copy question, not a reachability one, and is better taken
 deliberately than folded into this pass. The instrument for deciding it now
 exists: the reachability sweep is reproducible and the share of each verdict is
 a number that can be watched.
+
+## Splitting the winning verdict, and one boundary doing both jobs (12 September 2026)
+
+The entry above closed with an **ASK**: `met_high_intact` at 20.6% covered every
+successful run at every difficulty, and whether it deserved splitting was left
+open. Paul asked for the split. This records how it was cut and what changed
+underneath it.
+
+**The data made the cut.** `met_high_intact`'s 173 endings, sorted by how much
+they cleared the target by, do not overlap at all:
+
+| | wins | surplus over target |
+|---|---|---|
+| Brigade | 160 | **19.0% – 104.0%** |
+| Division | 18 | **0.4% – 9.2%** |
+| Corps | 0 | — |
+
+There is a clean gap from 9.2% to 19.0%, and **the 10% boundary already in use
+on the missing side sits inside it.** So the split needed no second number and
+no new dimension — the `shortfall` band added in the entry above was generalised
+rather than joined.
+
+**Why the margin and not the difficulty.** The obvious cut is Brigade versus
+Division, and it would have given the same 160/13 split today. It was rejected
+because it labels the ending instead of describing it. Cutting on the margin
+**gets the difficulty story for free and survives a retune**: if a rung's target
+moves, the split follows how close the run actually was rather than a label that
+no longer means what it did. It also needed no `difficulty` selector in
+`verdicts.json`, which would have been a fourth axis earning its place on one
+verdict.
+
+**`shortfall: near | clear` is now `margin: near | clear`, and it is unsigned.**
+It measures `|ese − target| / target`; the direction is carried by the `met`
+field, which was already there. So `near` is a close-run thing either way and
+`clear` is a comfortable win or a plain failure. **A field called `shortfall`
+holding the value `near` on a winning run was nonsense**, and renaming it one
+commit later is cheaper than leaving the trap. Two ids moved with it, so the
+names match the band values: `missed_high_intact_wide` →
+`missed_high_intact_clear`, and the new winner is `met_high_intact_clear`.
+Anything in the entry above naming the old field or the old id is superseded
+here.
+
+**The two sides of the boundary are not equally well founded, and it is worth
+being honest about which is which.** On the meeting side there is a real gap in
+the data and the boundary sits in the middle of it, with 9.8 percentage points
+of room either way. On the missing side there is no gap at all under
+player-like play — the bimodality in the bot sweep is an artefact of having
+seven strategies — so there the boundary is argued from the p10–p90 spread and
+not found. Same number, two different qualities of evidence.
+
+**What the halves say.** A `clear` win is **the Brigade win**: all 160 are
+Brigade, and the best Division run found anywhere reaches 23,809 against the
+24,200 a clear win would need, missing the band by 1.6%. That is F8 — *Brigade
+is won by anyone who calls out the reserves*, recorded as **by design** — stated
+from the winning end, so the new copy says it: the force was found rather than
+built, and the next rung up cannot be. The narrow win keeps the existing text,
+whose closing line, *the general's note is one line: it will do*, is the
+restrained ending a close-run Division result has earned and a Brigade walkover
+has not.
+
+**The shadow test paid for itself during the change.** The new entry was added
+after `met_high_intact` without giving the older one a `margin`, leaving it a
+wildcard that swallowed everything behind it — the exact defect F18 exists to
+fix, reintroduced within minutes of fixing it. The test named
+`met_high_intact_clear` as unreachable before anything else was run. **A rule
+whose narrowness depends on what sits in front of it is the trap in this file,
+and it is not a trap you stop falling into by being careful.**
+
+**What it cost.** Nothing in `src/sim/` but `score.ts`; the benchmark is
+byte-identical to the pre-F18 commit on all 21 rows. The two largest verdicts
+went from **51.9% of all endings to 45.3%** spread over four. The file now holds
+**twelve** verdicts against a test cap of twelve.
+
+**The cap is the next decision, not a problem yet.** `verdicts.json` is full.
+That cap is a content budget in the same spirit as the 33-event cap on the deck,
+and the next split has to retire something or raise it deliberately. The
+candidates if it is ever raised: `missed_high_intact_clear` at 26.3% is now the
+largest, and `missed_any_broken` at 17.0% covers both a hollowed cadre that was
+hollowed on purpose and one hollowed by outflow. Neither is urgent, and the
+instrument for judging it — the reachability sweep, with every verdict's share
+as a watchable number — is in F18.
