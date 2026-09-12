@@ -380,7 +380,7 @@ describe('holding pool outlook', () => {
 function fakeState(over: Partial<GameState> = {}): GameState {
   const gauges = { forceReady: 4200, forceReadyPct: 16.8, forceQuality: 0.71, politicalCapital: 47, leadershipFactor: 1, headcountCounted: 5900 };
   return {
-    version: 1,
+    version: 2,
     seed: 42,
     rngState: 42,
     difficulty: 'division',

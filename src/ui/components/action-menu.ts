@@ -216,7 +216,7 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
       return h('span', { class: 'field' }, h('label', { for: `opt-${id}-${name}` }, label), s);
     };
     const clauseFields = (clauses: BillClauses, onchange: (c: BillClauses) => void) => [
-      sel<AgeBand>('Age band', 'age', clauses.ageBand, [['18-25', '18–25'], ['18-30', '18–30'], ['18-40', '18–40'], ['18-65', '18–65']], (v) => onchange({ ...clauses, ageBand: (clauses.ageBand = v) })),
+      sel<AgeBand>('Age band', 'age', clauses.ageBand, [['18-25', '18–25'], ['18-30', '18–30'], ['26-40', `26–40 (${pcOf('pc_cost_band_26_40')} PC)`], ['18-65', `18–65 (${pcOf('pc_cost_band_18_65')} PC)`]], (v) => onchange({ ...clauses, ageBand: (clauses.ageBand = v) })),
       sel<'yes' | 'no'>('Include women', 'women', clauses.includeWomen ? 'yes' : 'no', [['yes', 'Yes'], ['no', `No (${pcOf('pc_cost_exclude_women')} PC)`]], (v) => onchange({ ...clauses, includeWomen: (clauses.includeWomen = v === 'yes') })),
       sel<MedicalStandard>('Medical standard', 'medical', clauses.medical, [['peacetime', 'Peacetime'], ['relaxed', `Relaxed (${pcOf('pc_cost_medical_relaxed')} PC)`], ['wartime', `Wartime (${pcOf('pc_cost_medical_wartime')} PC)`]], (v) => onchange({ ...clauses, medical: (clauses.medical = v) })),
       sel<ExemptionRegime>('Exemptions', 'exempt', clauses.exemptions, [['strict', 'Strict (reserved occupations)'], ['broad', 'Broad (students, carers, key workers)'], ['minimal', `Minimal (${pcOf('pc_cost_exemptions_minimal')} PC)`]], (v) => onchange({ ...clauses, exemptions: (clauses.exemptions = v) })),

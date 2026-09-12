@@ -75,7 +75,7 @@ which is self-harm under the current rules. Treat their numbers as a floor.
 
 ## Benchmarks
 
-Output of `npm run dist -- 40`, at commit `0735300`. **If a change moves these,
+Output of `npm run dist -- 40`, at commit `PENDING`. **If a change moves these,
 update this table in the same commit.** Median final ESE, percentage of the 40
 seeds that met the target, percentage that ended in resignation, and the median
 leadership factor at the end.
@@ -98,11 +98,11 @@ leadership factor at the end.
 |---|---|---|---|---|---|---|
 | do_nothing | 3,693 | 3,696 | 3,696 | 0 | 0 | 1.00 |
 | reserves_only | 19,352 | 20,417 | 21,653 | **3** | 0 | 1.00 |
-| **reserves_plus_light** | 20,805 | **21,858** | 23,115 | **43** | 0 | 0.98 |
+| **reserves_plus_light** | 20,805 | **21,878** | 23,115 | **43** | 0 | 0.98 |
 | conscription_max_capacity | 5,019 | 5,435 | 5,844 | 0 | 15 | 0.68 |
-| conscription_over_capacity | 4,301 | 4,908 | 5,257 | 0 | 90 | 1.00 |
-| capacity_heavy | 18,560 | 19,592 | 20,760 | 0 | 0 | 0.67 |
-| max_effort | 16,099 | 17,363 | 18,750 | 0 | 0 | 0.47 |
+| conscription_over_capacity | 4,301 | 4,760 | 5,256 | 0 | 95 | 1.00 |
+| capacity_heavy | 18,568 | 19,592 | 20,760 | 0 | 0 | 0.67 |
+| max_effort | 16,100 | 17,512 | 18,750 | 0 | 0 | 0.47 |
 
 ### Corps — target 45,000 in 24 months
 
@@ -110,11 +110,11 @@ leadership factor at the end.
 |---|---|---|---|---|---|---|
 | do_nothing | 3,736 | 3,756 | 3,786 | 0 | **100** | 1.00 |
 | reserves_only | 20,259 | 21,325 | 22,531 | 0 | 38 | 1.00 |
-| **reserves_plus_light** | 22,504 | **22,657** | 22,761 | 0 | **35** | 0.71 |
+| **reserves_plus_light** | 22,504 | **22,652** | 22,766 | 0 | **35** | 0.71 |
 | conscription_max_capacity | 6,584 | 7,270 | 7,970 | 0 | 100 | 0.39 |
 | conscription_over_capacity | 4,312 | 4,911 | 5,792 | 0 | 100 | 1.00 |
-| capacity_heavy | 19,754 | 20,084 | 20,945 | 0 | 5 | 0.42 |
-| max_effort | 17,437 | 18,122 | 19,133 | 0 | 18 | 0.28 |
+| capacity_heavy | 19,754 | 20,098 | 20,945 | 0 | 3 | 0.42 |
+| max_effort | 17,437 | 18,147 | 19,198 | 0 | 20 | 0.28 |
 
 **The three numbers to watch.** If any of these drifts, something has broken:
 
@@ -127,6 +127,13 @@ leadership factor at the end.
   on **100%** of Corps seeds. If it climbs past ~60% of any rung, that rung is
   free; if it stops resigning at Corps, the delivery credit has become an idle
   income (F6).
+
+**And one number that is not in the table**, because it is what F13 fixed:
+`reserves_plus_light` at Division is now charged Treasury pressure on **32 of
+40 seeds** and draws the Equipment Plan's contingency on **14**. If either
+returns to zero, the money mechanic has gone dormant again. Read it with
+`npm run dist` alongside a check of `briefing.pcReasons`; there is a test for
+the shape of it (`tests/step.test.ts`, "the Treasury allowance").
 
 ---
 
@@ -286,7 +293,11 @@ was the one this data could reach. Women, medical standard and exemptions still
 resolve into pool size and attrition, and the pool still never binds. For
 those, the options are as they were.
 
-**And the band's own effect is smaller than it should be — see F14.**
+**The band's own effect has since been widened — see F14.** Replacing 18–40
+with 26–40 doubles what the clause is worth against the default, and the band
+now carries a political-capital cost and an attrition cost of its own. Three of
+the four selectors are still pool-size controls, and the pool still never
+binds.
 
 ---
 
@@ -743,12 +754,12 @@ pins at 40 is asserting something the survey does not support.
 
 ---
 
-### F13 — Neither money penalty ever fires · *Open*
+### F13 — Neither money penalty ever fires · *Addressed, and half of it by deletion*
 
 Found while sizing the contingency draw (F6), and it is about the model that
 was already there rather than about that action.
 
-**Evidence.** Final cumulative cost across 40 seeds, `npm run dist`:
+**Evidence as found.** Final cumulative cost across 40 seeds, `npm run dist`:
 
 | strategy | Division | Corps |
 |---|---|---|
@@ -758,27 +769,61 @@ was already there rather than about that action.
 | capacity_heavy | £3.2bn | £8.6bn |
 | max_effort | £3.3bn | £9.7bn (max £11.1bn) |
 
-`cost_pc_penalty_threshold` is **£5bn**. So:
+`cost_pc_penalty_threshold` was **£5bn**. So the money mechanic was entirely
+dormant at Brigade and Division — the most expensive strategy at Division
+finished at £3.7bn on its worst seed, 74% of one step, and no run had ever paid
+a penny of Treasury pressure at the headline difficulty. At Corps it fired once,
+twice for the biggest spender.
 
-- **At Brigade and Division the money mechanic is entirely dormant.** The most
-  expensive strategy at Division finishes at £3.7bn on its worst seed, which is
-  74% of one step. No run has ever paid a penny of Treasury pressure at the
-  headline difficulty.
-- **At Corps it fires once**, twice for the biggest spender. `raise_spending`
-  costs 6 political capital to halve a charge of 2 a month.
+**The diagnosis, which is the reusable part.** A flat threshold on a
+*cumulative* total, charged *every month*, cannot be tuned across three run
+lengths. The charge is steps × months remaining, so it grows with the square of
+the campaign. Measured over 40 seeds, the political capital a lowered flat
+threshold takes off `reserves_plus_light` across a whole run:
 
-**Why it matters.** Money is one of the three things the game says it is about,
-and the scoring screen reports cost as a share of the defence budget. But cost
-does not *do* anything to the player at two of three difficulties. That is the
-same shape as F3 — a mechanic that cannot fire because something upstream binds
-first — except here nothing binds it; the threshold is simply set above the
-range the game produces.
+| flat threshold | Brigade | Division | Corps |
+|---|---|---|---|
+| £5bn (as found) | 0 | **0** | 2 |
+| £2.5bn (the range floor) | 0 | 2 | 22 |
+| £2bn (below the range) | 0 | 6 | **36** |
 
-**The GDP penalty is worse: it has never fired once, anywhere.** A step is
-`gdp_pc_penalty_step_pct` = 0.25% of GDP, which is **£7.6bn of lost output**,
-for 3 political capital a month. The largest cumulative GDP loss produced by
-any strategy at any difficulty across 40 seeds is **£4.35bn** — 57% of a single
-step:
+Anything low enough to be felt at Division is an order of magnitude heavier at
+Corps, landing on exactly the rung F6 and F9 had just rescued. The number was
+not set wrong; the *shape* was wrong.
+
+**Fix: the threshold became an allowance sized to the campaign.**
+`cost_pc_allowance_per_month` × the difficulty's deadline — £0.8bn at Brigade,
+£2.4bn at Division, £4.8bn at Corps. The fiction is better than the flat figure
+it replaced: the Treasury votes a budget for an operation, and a longer
+operation is voted a bigger one. At £200m a month — 3.9% of one month of the
+defence budget — the sensible strategy at Division is charged on **32 of 40
+seeds**, and Corps lands within a point or two of where F6 and F9 left it
+(`reserves_plus_light` 35% resignations, unchanged; `max_effort` 18% → 20%).
+
+Two properties fixed the level inside its range, and both are load-bearing:
+
+- **Below about £175m Corps gets materially harder** than F9 left it —
+  `max_effort` resignations 18% → 35–40%. That is a difficulty change smuggled
+  in under a different finding, and it was not wanted.
+- **`equipment_plan_contingency` must stay worth less than one whole step at
+  Corps** — £4.1bn against an allowance of £4.8bn is 0.85 steps, where the old
+  flat £5bn gave 0.82. If the contingency cleared a step on its own, drawing it
+  would win everywhere and the fork it exists for would close. It very nearly
+  did: at £150m a month the draw beat raising spending on every Corps seed. The
+  crossover is back where F6 put it, just above £9.6bn, and the bots resolve it
+  19 draw against 18 raise. There is a test for this
+  (`tests/step.test.ts`, "the Treasury allowance").
+
+At Division the contingency is worth 1.7 allowances and clears the charge
+outright. That is honest rather than broken — the mobilisation there costs less
+than the Equipment Plan's buffer holds — and the price is paid in the
+three-month equipment slip instead, which at a twelve-month deadline is real.
+`reserves_plus_light` draws it on 14 of 40 seeds.
+
+**The GDP penalty was not fixed. It was deleted.** A step was
+`gdp_pc_penalty_step_pct` = 0.25% of GDP, **£7.6bn of lost output**, and the
+largest cumulative loss any strategy produces at any difficulty across 40 seeds
+is **£4.35bn** — 57% of one step:
 
 | strategy | Division (max) | Corps (max) |
 |---|---|---|
@@ -786,35 +831,35 @@ step:
 | capacity_heavy | £1.34bn | £3.88bn |
 | **max_effort** | £1.32bn | **£4.35bn** |
 
-So the whole GDP arm of the model — `output_per_worker_labour_share`, the four
-`gdp_age_multiplier_*`, `monthlyGdpLoss` — reaches the player **only through
-the number on the scoring screen and one event trigger**. It costs nothing.
+To fire at Division the step would have had to fall to about **0.03%** of GDP —
+a factor of eight, well below the stated range floor of 0.1, and £0.9bn of lost
+output is not a politically salient quantity. The parameter had been sized for
+a mobilisation an order of magnitude larger than the one the game models. And
+even re-justified it would not have earned its place, for a reason measured
+below in F14: at Division, conscripts are £0.09bn of `reserves_plus_light`'s
+£1.17bn of cumulative output loss, so it would have behaved as a second Treasury
+penalty on reservist numbers. `gdp_pc_penalty_step_pct` and
+`gdp_pc_penalty_per_step` are gone from `parameters.json` and from §9.
+Cumulative output loss is now **stated** to be a scoring-screen quantity and an
+event trigger, in the spec (§8) and in a test, rather than being one by
+accident.
 
-**A consequence worth knowing before doing F14.** The GDP multipliers have since
-been re-derived from ASHE and the Labour Force Survey (they were assumptions,
-and every one was too high — the 18–25 band by a third). That was worth doing
-for the scoring screen and because F13 needs them right, but it **changed
-almost nothing in the benchmark**, which is the proof of this finding rather
-than a disappointment.
+**The GDP multipliers were re-derived on the way, and it changed nothing.** The
+four `gdp_age_multiplier_*` came from ASHE and the Labour Force Survey rather
+than from an assumed ladder, and every one was too high — the 18–25 band by a
+third. The benchmark did not move. That is the proof of this finding rather
+than a disappointment, and the re-derivation still earns its keep: it is what
+priced the 26–40 band in F14.
 
-**Not fixed here, deliberately.** `cost_pc_penalty_threshold` is an assumption
-with range [£2.5bn, £10bn] and `gdp_pc_penalty_step_pct` with range — both
-would have to come down, the GDP one by a factor of about three, for either to
-bite at Division. That is a difficulty increase across every rung, landing on
-top of four changes in one sitting (F1, F12, F6, F4), and it should be measured
-on its own. **ASK.**
+**What this cost elsewhere.** Nothing at Brigade, which spends £0.36bn against
+an £0.8bn allowance and stays the tutorial rung (F8). At Division,
+`conscription_over_capacity` resignations 90% → 95%: it is the one strategy
+that spends heavily and delivers nothing, so it is the one the charge finds.
 
-**Watch for.** If it is lowered, re-derive the contingency crossover: the draw
-is worth `equipment_plan_contingency / threshold` steps of headroom, so the
-decision the action exists for moves with the threshold. The arithmetic is in
-`contingency_drawn_penalty_add`'s rationale.
+### F14 — Every age band started at 18, so the band could not do much · *Addressed*
 
----
-
-### F14 — Every age band starts at 18, so the band cannot do much · *Open, gated on F13*
-
-Found while wiring the YouGov polling into the age-band clause (F4), and it is
-about how the clause is *defined* rather than how it is modelled.
+Found while wiring the YouGov polling into the age-band clause (F4), and it was
+about how the clause was *defined* rather than how it was modelled.
 
 **The data.** Support for compulsory service by age (YouGov, 4,205 GB adults,
 28 May 2024 — the question offers military service *or* community volunteering,
@@ -825,13 +870,9 @@ so the levels are generous, but the gradient is the point):
 | support | 27% | 39% | 53% | 63% |
 | **strongly oppose** | **45%** | 37% | 24% | 18% |
 
-A 36-point spread, and the people who would be conscripted are the ones who
-object. That is exactly the material the clause needs.
-
-**Why almost none of it reaches the player.** The four bands the Bill offers
-are 18–25, 18–30, 18–40 and 18–65. **All of them start at 18.** Weighting the
-poll by the England and Wales population of each single year of age inside each
-band:
+**Why almost none of it reached the player.** The four bands the Bill offered
+were 18–25, 18–30, 18–40 and 18–65. **All of them started at 18**, so all of
+them contained the most hostile group and widening only diluted it:
 
 | band | population | weighted support | vs 18–30 |
 |---|---|---|---|
@@ -840,50 +881,103 @@ band:
 | 18–40 | 18.7m | 35.7% | +3 |
 | 18–65 | 38.2m | 42.2% | +9 |
 
-**The whole range is 13 points**, because every band contains the most hostile
-group and widening only dilutes it. A band of 25–40 would be far more popular
-than 18–25 and the game cannot express one. So the clause moves refusal by
-about three percentage points across its entire range — real, sourced, and
-thin.
+**Fix: 18–40 is replaced by 26–40**, the only band on offer whose lower bound
+is not 18. It is worth **+6** against the default where 18–40 was worth +3, and
+it needed no new sourcing: `ew_pop_18_40 − ew_pop_18_25` is exactly ages 26–40
+(both are inclusive of their end years), and every single year of age in it
+falls inside YouGov's 25–49 group, so its population-weighted support is that
+group's figure exactly — 39.0%. Checked the long way round, by subtracting the
+18–25 band's weighting from the 18–40 band's, it comes to 38.99%. The same
+subtraction gives its output multiplier, 0.862, the highest of the four.
 
-**The fix is a clause shape, not a number** — give the age band a *lower* bound
-the player can move. But the gain is much smaller than this entry first claimed,
-and the correction matters more than the original estimate.
+**It is paid for twice, and the second one is the one that matters.**
 
-**Correction: the span goes to about 15 points, not 36.** The 36-point figure is
-the raw spread between 18–24 and the over-65s, and a mobilisation cannot
-conscript only the over-65s. Population-weighted support for every band that is
-militarily plausible:
+1. **`pc_cost_band_26_40` = −8, `pc_cost_band_18_65` = −14.** The age band was
+   the one clause in the Bill that cost no political capital at all. That was
+   not a gap this finding created — see F15 — but it is one this finding had to
+   close before adding a better band.
+2. **`attrition_age_add_26_40` = +5 points on a base of 26.** This is the part
+   that lands, and the reasoning is F3's lesson applied. The obvious places to
+   charge an older band — `medical_pass_*`, `exemption_*` — both resolve into
+   the size of the eligible pool, and the eligible pool never binds, so a cost
+   charged there is a cost not charged at all. Training attrition acts on the
+   people actually on the course. The band now buys survival and pays in
+   soldiers: at Corps `reserves_plus_light` resigns on 20% of seeds under 26–40
+   against 35% under the default, and finishes on 22,580 ESE against 22,652.
 
-| band | support | pool |
-|---|---|---|
-| 18–65 | 42.2% | 38.2m |
-| 25–55 | 41.6% | 25.2m |
-| 25–50 | 39.5% | 21.2m |
-| **25–40** | **39.0%** | 13.5m |
-| 18–40 | 35.7% | 18.7m |
-| 18–30 (default) | 32.8% | 10.0m |
-| 18–25 | 28.6% | 5.9m |
+**And the counterweight this was gated on turned out not to be the one it
+needed.** The plan of record was: fix the money penalties (F13), then ship the
+band, because the band's cost is that it takes people at peak earnings and peak
+earnings only cost something once the GDP penalty fires. Measuring it killed
+that plan. Cumulative output loss at Division, split by who it comes from:
 
-**15.2 points end to end**, against the 13.6 the four current bands already
-span. Replacing 18–40 with 25–40 buys **+6 against the default instead of +3** —
-about two extra points of range, not twenty-three.
+| strategy | conscripts | reservists | total | total under 26–40 | change |
+|---|---|---|---|---|---|
+| **reserves_plus_light** | **£0.09bn** | £1.08bn | £1.17bn | £1.22bn | **+4.3%** |
+| capacity_heavy | £0.19bn | £0.96bn | £1.15bn | £1.26bn | +9.4% |
+| max_effort | £0.24bn | £0.81bn | £1.05bn | £1.19bn | +12.8% |
 
-**And it is gated on F13.** A 25–40 band is more willing *and* has a bigger pool
-than 18–30. Its only cost is that it takes people at peak earnings — 0.85 of
-average output per head against 18–30's 0.55, now derived rather than assumed.
-**But output costs the player nothing, because the GDP penalty never fires**
-(F13). Shipping the band before F13 is fixed would put a strictly better option
-in the Bill: a free lever, which is the thing this whole pass has been removing.
-
-**So: F13 first, then this.** Together they are one change — a counterweight and
-the thing it counterweighs. **ASK.**
+The benchmark strategy's output loss is seven-eighths reservists, who carry a
+multiplier of 1.0 whatever the Bill says. Changing the band moves the quantity
+by 4%, and a step function does not notice 4%. **The GDP arm could never have
+priced this band for the strategy the benchmark watches**, at any threshold —
+which is the argument for deleting it (F13) rather than re-justifying it, and
+the reason the band is priced in capital and in attrition instead.
 
 **Do not reach for a bigger `conscription_refusal_conversion` instead.** That
 would scale refusal across every band equally and change nothing about the
-decision; the problem is the span, not the level.
+decision; the problem was the span, not the level.
 
 ---
+
+### F15 — A cliff at 25 decides more than any clause does · *Open*
+
+Found while pricing F14's new band, by switching the cliff off and re-running
+the sweep.
+
+**The mechanic.** `pc_low_willingness_penalty` charges 2 political capital a
+month whenever conscription is active and `effectiveWillingness` is below
+`willingness_low_threshold_pct` = 25. Willingness starts at 20. The band
+adjustments are −4, 0, +6, +9. So **two of the four bands clear the threshold
+and two do not**, and nothing else in the game reliably crosses it: an address
+is a temporary boost, and the event deck's willingness effects are small.
+
+**What it is worth.** Two political capital a month for the rest of the run —
+about 22 over a Division run, 46 over a Corps one — against a clause that until
+this change cost nothing at all. Holding everything else fixed and re-running
+the 40 seeds with the threshold set to 0, so that nobody is ever charged:
+
+| Corps, `reserves_plus_light` resign% | cliff on | cliff off |
+|---|---|---|
+| 18–30 (default) | **35** | **3** |
+| 26–40 | 20 | 20 |
+| 18–65 | 38 | 38 |
+
+The two bands above the line do not move, because they were never charged. The
+default band moves by 32 points. **Nearly all of Corps's difficulty for a
+default Bill, and the whole of 26–40's advantage over it, is one binary
+threshold** — not the polling, not the refusal rate, not the pipeline.
+
+**Why it is not fixed here.** A one-off clause cost cannot price a per-month
+stream that runs for 4, 12 or 24 months: the arithmetic does not work, and
+inflating `pc_cost_band_*` until the Corps numbers looked right would have
+made Division punitive to hide a Corps problem. The band is therefore priced
+honestly against what it does, and this is recorded as its own finding.
+
+**The fix, when it is taken, is a shape and not a number** — the same
+correction F13 just made to the Treasury penalty, and the same one §10a already
+made to willingness itself. The label on the charge says *"Refusal cases in the
+courts"*, and the model now knows exactly how many people refused
+(`conscriptsRefusedTotal`, §10a). Charging on refusals that actually happened
+would make the band move the penalty continuously instead of switching it off,
+and would put a third consequence on a quantity the last change went to some
+trouble to make consequential. It needs its own measurement pass: it moves
+every rung, and it interacts with `conscription_refusal_conversion`, which is
+the model's one frank assumption. **ASK.**
+
+**Watch for.** Any future clause or event effect that moves willingness by
+enough to cross 25 will look far more powerful than its size suggests. That is
+the tell.
 
 ## The next mechanic, if one is wanted
 
@@ -933,8 +1027,6 @@ effectiveness cost, and both are likely to be assumptions.
 - `docs/sim-spec.md` — the model. §7 is effectiveness and leadership, §7.1 the
   projection, §13 the scripted strategies.
 - `ASSUMPTIONS.md` — generated; every assumption with its range and rationale.
-- `docs/next-task.md` — a ready-to-paste prompt for the F13 + F14 change,
-  carrying the measurements and the ordering constraint. Delete it once done.
 - `mobilisation-minister-design-brief.md` — the original brief. Its §10.3
   balance criteria are the ones the benchmark table above tests, with one
   change: criterion (d), "a sensible mixed strategy can make Division", is now

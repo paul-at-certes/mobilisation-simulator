@@ -39,7 +39,7 @@ export interface ParameterFile {
 // ---------------------------------------------------------------------------
 
 export type Difficulty = 'brigade' | 'division' | 'corps';
-export type AgeBand = '18-25' | '18-30' | '18-40' | '18-65';
+export type AgeBand = '18-25' | '18-30' | '26-40' | '18-65';
 export type MedicalStandard = 'peacetime' | 'relaxed' | 'wartime';
 export type ExemptionRegime = 'strict' | 'broad' | 'minimal';
 export type Syllabus = 'normal' | 'compressed';
@@ -293,6 +293,14 @@ export interface TrainingCohort {
   graduationMonth: number;
   syllabus: Syllabus;
   medical: MedicalStandard;
+  /**
+   * The Bill's age band when the cohort entered training. Held on the cohort
+   * rather than read from the Bill, for the same reason `medical` is: amending
+   * the Bill cannot change who is already on the course. Optional because a
+   * cohort saved before the field existed has none, and is then charged no
+   * age adjustment.
+   */
+  ageBand?: AgeBand;
 }
 
 export interface TrainedCohort {
@@ -359,7 +367,7 @@ export interface BriefingFacts {
 }
 
 export interface GameState {
-  version: 1;
+  version: 2;
   seed: number;
   rngState: number;
   difficulty: Difficulty;

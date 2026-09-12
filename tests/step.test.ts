@@ -7,19 +7,19 @@ import { beforeAll, afterAll, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { GameEvent, GameState, TurnInput } from '../src/types.js';
-import { P, param } from '../src/sim/params.js';
+import { P, param, ageBandClauseCost } from '../src/sim/params.js';
 import { getEvents, setEvents } from '../src/sim/content.js';
 import { newGame, step, derive } from '../src/sim/step.js';
 import { availableActions, applyAction } from '../src/sim/actions.js';
 import { eligiblePoolSize, refusalRate, strongOpposition } from '../src/sim/legislation.js';
-import { spareIntake, courseMonths } from '../src/sim/pipeline.js';
+import { spareIntake, courseMonths, cohortAttrition } from '../src/sim/pipeline.js';
 import { leadershipFactor, ledPersonnel, leadersNeeded, leadersRecalled, leadersAvailable, leadersSpareable } from '../src/sim/effectiveness.js';
 import { next, seedFromString, pickWeighted, uniform } from '../src/sim/rng.js';
 import { score } from '../src/sim/score.js';
 import { STRATEGIES } from '../src/sim/strategies.js';
 import { applyEffects, conditionVars, eligibleEvents, eventEligible } from '../src/sim/events.js';
 import { effectiveWillingness } from '../src/sim/politics.js';
-import { chargeableCost, costPenaltyPerStep, costPenaltySteps } from '../src/sim/politics.js';
+import { chargeableCost, costPenaltyPerStep, costPenaltySteps, costPenaltyThreshold } from '../src/sim/politics.js';
 
 const NOTHING: TurnInput = { actions: [], eventChoice: null };
 
@@ -176,13 +176,18 @@ describe('scenarios without events', () => {
     expect(s.pools.conscriptEligible).toBeCloseTo(hand, 3);
     expect(eligiblePoolSize(clauses)).toBeCloseTo(hand, 3);
     // Women excluded, wartime medical, minimal exemptions: clause costs and pool.
-    const harsh = { ageBand: '18-40', includeWomen: false, medical: 'wartime', exemptions: 'minimal' } as const;
+    const harsh = { ageBand: '26-40', includeWomen: false, medical: 'wartime', exemptions: 'minimal' } as const;
     const pcBefore = s.politicalCapital;
     s = step(s, { actions: [{ id: 'amend_bill', clauses: harsh }], eventChoice: null });
-    const handHarsh = (P.ew_pop_18_40 - P.ew_pop_f_18_40) * P.uk_population_scaling * (1 - P.exemption_minimal) * P.medical_pass_wartime;
+    const handHarsh = (P.ew_pop_26_40 - P.ew_pop_f_26_40) * P.uk_population_scaling * (1 - P.exemption_minimal) * P.medical_pass_wartime;
     expect(s.pools.conscriptEligible).toBeCloseTo(handHarsh, 3);
     expect(s.politicalCapital).toBe(
-      pcBefore + P.pc_cost_exclude_women + P.pc_cost_medical_wartime + P.pc_cost_exemptions_minimal - P.pc_baseline_drain,
+      pcBefore
+        + P.pc_cost_exclude_women
+        + P.pc_cost_medical_wartime
+        + P.pc_cost_exemptions_minimal
+        + (P.pc_cost_band_26_40 - P.pc_cost_band_18_30)
+        - P.pc_baseline_drain,
     );
     // Normal procedure takes longer and costs less.
     let n = newGame(5, 'corps');
@@ -550,23 +555,30 @@ describe('scenarios without events', () => {
 });
 
 describe('the age band and refusal', () => {
-  const BANDS = ['18-25', '18-30', '18-40', '18-65'] as const;
+  const BANDS = ['18-25', '18-30', '26-40', '18-65'] as const;
   const clausesFor = (ageBand: (typeof BANDS)[number]) =>
     ({ ageBand, includeWomen: true, medical: 'relaxed', exemptions: 'broad' }) as const;
 
-  it('makes a wider band more popular, because every band starts at 18', () => {
+  it('is more popular the less of the hostile group it contains', () => {
     const w = BANDS.map((b) => {
       const s = newGame(3, 'division');
       s.clauses = { ...clausesFor(b) };
       return effectiveWillingness(s);
     });
-    // Monotonically increasing: widening dilutes the most hostile group.
+    // Monotonically increasing across the four the Bill offers.
     expect(w).toEqual([...w].sort((a, b) => a - b));
     expect(w[0]).toBeLessThan(w[3]);
-    // ...but only by the whole span of the gradient, which is small (F14).
     expect(w[3] - w[0]).toBe(
       P.conscription_willingness_adj_18_65 - P.conscription_willingness_adj_18_25,
     );
+    // 26-40 is the point of the set: it is the only band whose lower bound is
+    // not 18, so it is the only one that excludes the 18-24s outright rather
+    // than diluting them, and it beats a band nearly half as wide again
+    // (18-40, which this replaced, was worth +3 where this is worth +6).
+    const [, def, older, widest] = w;
+    expect(older - def).toBe(P.conscription_willingness_adj_26_40);
+    expect(older).toBeGreaterThan(def);
+    expect(widest - older).toBeLessThan(older - def);
   });
 
   it('turns willingness into people who do not report, not only into capital', () => {
@@ -611,7 +623,7 @@ describe("the Equipment Plan's contingency", () => {
 
   it('costs no capital now and takes the contingency off the Treasury bill', () => {
     let s = newGame(31, 'corps');
-    s.ledger.cumulativeCost = P.cost_pc_penalty_threshold * 1.5;
+    s.ledger.cumulativeCost = costPenaltyThreshold(s) * 1.5;
     expect(costPenaltySteps(s)).toBe(1);
     const pcBefore = s.politicalCapital;
 
@@ -635,10 +647,10 @@ describe("the Equipment Plan's contingency", () => {
       P.cost_pc_penalty_per_step + P.contingency_drawn_penalty_add,
     );
     // One step of pressure: drawing clears it outright.
-    const oneStep = P.cost_pc_penalty_threshold + P.equipment_plan_contingency - 1e6;
+    const oneStep = costPenaltyThreshold(base) + P.equipment_plan_contingency - 1e6;
     expect(at(oneStep, true)).toBeLessThan(at(oneStep, false));
     // Two steps and up: the steeper slope costs more than the headroom saves.
-    const threeSteps = P.cost_pc_penalty_threshold * 3;
+    const threeSteps = costPenaltyThreshold(base) * 3;
     expect(at(threeSteps, true)).toBeGreaterThan(at(threeSteps, false));
   });
 
@@ -666,6 +678,111 @@ describe("the Equipment Plan's contingency", () => {
     expect(again?.exhausted).toBe(true);
     const blocked = draw(s);
     expect(blocked.briefing.notes.some((n) => n.startsWith('action_unavailable:draw_contingency'))).toBe(true);
+  });
+});
+
+describe('the Treasury allowance', () => {
+  it('is sized to the campaign, not fixed', () => {
+    const [b, d, c] = (['brigade', 'division', 'corps'] as const).map((x) => newGame(11, x));
+    expect(costPenaltyThreshold(b)).toBe(P.cost_pc_allowance_per_month * P.deadline_brigade);
+    expect(costPenaltyThreshold(d)).toBe(P.cost_pc_allowance_per_month * P.deadline_division);
+    expect(costPenaltyThreshold(c)).toBe(P.cost_pc_allowance_per_month * P.deadline_corps);
+    expect(costPenaltyThreshold(b)).toBeLessThan(costPenaltyThreshold(d));
+    expect(costPenaltyThreshold(d)).toBeLessThan(costPenaltyThreshold(c));
+    // Raising spending still doubles whatever the allowance is.
+    expect(costPenaltyThreshold({ ...d, spendingRaised: true })).toBe(costPenaltyThreshold(d) * P.raise_spending_threshold_multiplier);
+  });
+
+  it('leaves the contingency worth less than one whole step at Corps', () => {
+    // The load-bearing property of the level: if the Equipment Plan's
+    // contingency clears a whole allowance on its own, drawing it wins
+    // everywhere and the fork `draw_contingency` exists for closes. See the
+    // parameter's rationale and docs/design-review.md F13.
+    expect(P.equipment_plan_contingency).toBeLessThan(costPenaltyThreshold(newGame(11, 'corps')));
+  });
+
+  it('charges the mounting bill at Division, where a flat threshold never did', () => {
+    let s = newGame(11, 'division');
+    s.ledger.cumulativeCost = costPenaltyThreshold(s) * 1.2;
+    s = step(s, NOTHING);
+    expect(s.briefing.pcReasons.some((r) => r.label.startsWith('Treasury pressure'))).toBe(true);
+  });
+});
+
+describe('cumulative output loss', () => {
+  it('is reported and never charged', () => {
+    // The GDP arm reaches the player through the scoring screen and one event
+    // trigger. It costs no political capital, because the game never removes
+    // enough people from the workforce for a penalty on a share of annual GDP
+    // to be in reach (docs/design-review.md F13).
+    const base = step(newGame(13, 'division'), NOTHING);
+    const loud = newGame(13, 'division');
+    loud.ledger.cumulativeGdpLoss = P.uk_gdp_2025; // a year of national output
+    const after = step(loud, NOTHING);
+    expect(after.politicalCapital).toBe(base.politicalCapital);
+    expect(after.briefing.pcReasons.map((r) => r.label)).toEqual(base.briefing.pcReasons.map((r) => r.label));
+    expect(score(after).gdpLossPctGdp).toBeCloseTo(100, 6);
+  });
+});
+
+describe('the age band as a priced clause', () => {
+  const clauses = (ageBand: '18-25' | '18-30' | '26-40' | '18-65') =>
+    ({ ageBand, includeWomen: true, medical: 'peacetime', exemptions: 'broad' }) as const;
+
+  it('charges the band on introduction and the difference on amendment', () => {
+    let s = newGame(17, 'corps');
+    const before = s.politicalCapital;
+    s = step(s, { actions: [{ id: 'introduce_bill', procedure: 'emergency', clauses: clauses('26-40') }], eventChoice: null });
+    expect(s.politicalCapital).toBe(before + P.pc_cost_bill_emergency + P.pc_cost_band_26_40 - P.pc_baseline_drain);
+
+    // Widening costs the difference, not the whole of the wider band.
+    const mid = s.politicalCapital;
+    s = step(s, { actions: [{ id: 'amend_bill', clauses: { ageBand: '18-65' } }], eventChoice: null });
+    expect(s.politicalCapital).toBe(mid + (P.pc_cost_band_18_65 - P.pc_cost_band_26_40) - P.pc_baseline_drain);
+
+    // Narrowing back refunds it: the Bill is being narrowed, and the House
+    // is being asked for less than it has already given.
+    const wide = s.politicalCapital;
+    s = step(s, { actions: [{ id: 'amend_bill', clauses: { ageBand: '18-30' } }], eventChoice: null });
+    expect(s.politicalCapital).toBe(wide + (P.pc_cost_band_18_30 - P.pc_cost_band_18_65) - P.pc_baseline_drain);
+  });
+
+  it('prices the two bands that clear the refusal threshold', () => {
+    // 26-40 and 18-65 both lift willingness over willingness_low_threshold_pct
+    // and so switch off a standing monthly charge. Neither may be free.
+    for (const b of ['26-40', '18-65'] as const) {
+      const s = newGame(17, 'division');
+      s.clauses = { ...clauses(b) };
+      expect(effectiveWillingness(s)).toBeGreaterThanOrEqual(P.willingness_low_threshold_pct);
+      expect(ageBandClauseCost(b)).toBeLessThan(0);
+    }
+    for (const b of ['18-25', '18-30'] as const) {
+      const s = newGame(17, 'division');
+      s.clauses = { ...clauses(b) };
+      expect(effectiveWillingness(s)).toBeLessThan(P.willingness_low_threshold_pct);
+    }
+    // The wider reach is the dearer one.
+    expect(ageBandClauseCost('18-65')).toBeLessThan(ageBandClauseCost('26-40'));
+  });
+
+  it('costs the older band training attrition, on the cohorts it raised', () => {
+    expect(cohortAttrition('normal', 'peacetime', '26-40'))
+      .toBeCloseTo(cohortAttrition('normal', 'peacetime', '18-30') + P.attrition_age_add_26_40, 9);
+    // It lands on throughput, which is where a band's cost can actually be
+    // felt: the eligible pool never binds (docs/design-review.md F3, F4).
+    expect(P.attrition_age_add_26_40).toBeGreaterThan(0);
+
+    // A cohort keeps the band it was raised under, exactly as it keeps the
+    // medical standard: amending the Bill cannot change who is on the course.
+    let s = newGame(17, 'corps');
+    s = step(s, { actions: [{ id: 'introduce_bill', procedure: 'emergency', clauses: clauses('26-40') }], eventChoice: null });
+    while (s.billStatus !== 'passed') s = step(s, NOTHING);
+    s = step(s, { actions: [{ id: 'set_callup', perMonth: 3000 }], eventChoice: null });
+    const raised = s.trainingCohorts.filter((c) => c.size > 0);
+    expect(raised.length, 'no cohort was raised').toBeGreaterThan(0);
+    expect(raised.every((c) => c.ageBand === '26-40')).toBe(true);
+    s = step(s, { actions: [{ id: 'amend_bill', clauses: { ageBand: '18-25' } }], eventChoice: null });
+    expect(s.trainingCohorts.some((c) => c.ageBand === '26-40')).toBe(true);
   });
 });
 

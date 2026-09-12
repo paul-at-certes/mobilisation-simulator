@@ -5,8 +5,8 @@
  * after regular recruiting, course length by syllabus and the attrition rate
  * a cohort suffers. Pure functions of state; nothing here mutates.
  */
-import type { GameState, MedicalStandard, Syllabus } from '../types.js';
-import { P } from './params.js';
+import type { AgeBand, GameState, MedicalStandard, Syllabus } from '../types.js';
+import { P, ageBandAttritionAdd } from './params.js';
 
 export function purchasedCapacityActive(s: GameState): number {
   return s.capacityPurchaseMonths.filter((m) => m <= s.turn).length;
@@ -68,9 +68,20 @@ export function medicalAttritionAdd(medical: MedicalStandard): number {
   return 0;
 }
 
-/** Attrition rate for a conscript cohort. */
-export function cohortAttrition(syllabus: Syllabus, medical: MedicalStandard): number {
+/**
+ * Attrition rate for a conscript cohort.
+ *
+ * The age band is charged here rather than on the eligible pool because this is
+ * the only place a band's cost can land: `medical_pass_*` and `exemption_*`
+ * resize a pool that never binds, while attrition acts on the people actually
+ * on the course (design review F3, F4). `ageBand` is optional so that a cohort
+ * saved before the field existed is charged no adjustment.
+ */
+export function cohortAttrition(syllabus: Syllabus, medical: MedicalStandard, ageBand?: AgeBand): number {
   const a =
-    P.training_attrition + (syllabus === 'compressed' ? P.attrition_compressed_add : 0) + medicalAttritionAdd(medical);
+    P.training_attrition
+    + (syllabus === 'compressed' ? P.attrition_compressed_add : 0)
+    + medicalAttritionAdd(medical)
+    + (ageBand ? ageBandAttritionAdd(ageBand) : 0);
   return Math.min(1, Math.max(0, a));
 }

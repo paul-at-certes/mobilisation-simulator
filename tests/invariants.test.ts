@@ -18,7 +18,7 @@ import { POOL_KEYS } from '../src/sim/pools.js';
 
 const RUNS = 1000;
 const DIFFICULTIES = ['brigade', 'division', 'corps'] as const;
-const AGE_BANDS = ['18-25', '18-30', '18-40', '18-65'] as const;
+const AGE_BANDS = ['18-25', '18-30', '26-40', '18-65'] as const;
 const MEDICALS = ['peacetime', 'relaxed', 'wartime'] as const;
 const EXEMPTIONS = ['strict', 'broad', 'minimal'] as const;
 

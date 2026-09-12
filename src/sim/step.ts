@@ -63,7 +63,7 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
   pools.strategicUntracked = P.strategic_reserve_untracked;
 
   const s: GameState = {
-    version: 1,
+    version: 2,
     seed: seedValue,
     rngState: seedValue,
     difficulty,
@@ -450,6 +450,7 @@ export function advanceMonth(
         graduationMonth: s.turn + courseMonths(s.syllabus),
         syllabus: s.syllabus,
         medical: s.clauses.medical,
+        ageBand: s.clauses.ageBand,
       };
       s.trainingCohorts.push(cohort);
     }
@@ -462,7 +463,7 @@ export function advanceMonth(
   const remaining: TrainingCohort[] = [];
   for (const c of s.trainingCohorts) {
     if (c.graduationMonth <= s.turn) {
-      const grads = c.size * (1 - cohortAttrition(c.syllabus, c.medical));
+      const grads = c.size * (1 - cohortAttrition(c.syllabus, c.medical, c.ageBand));
       graduations += grads;
       if (grads > 0) {
         s.trainedCohorts.push({ size: grads, graduationMonth: s.turn, syllabus: c.syllabus, equipped });

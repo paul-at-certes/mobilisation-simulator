@@ -8,7 +8,7 @@
  * accumulate in `ledger.costBreakdown` and are folded into the month's cost.
  */
 import type { Action, ActionAvailability, ActionId, ActionResult, BillClauses, GameState } from '../types.js';
-import { P } from './params.js';
+import { P, ageBandClauseCost } from './params.js';
 import { billMonths, recomputeEligible } from './legislation.js';
 import { leadersSpareable } from './effectiveness.js';
 
@@ -51,9 +51,17 @@ export const ACTION_IDS: readonly ActionId[] = [
   'blame_predecessors',
 ];
 
-/** PC cost of the clauses that carry a cost, relative to `previous` (all clauses if undefined). */
+/**
+ * PC cost of the clauses that carry a cost, relative to `previous` (all clauses
+ * if undefined).
+ *
+ * The age band is charged as a difference rather than as a flat cost, because
+ * unlike the other three it is never absent: every Bill has a band, and the
+ * default 18-30 is the zero. Amending from a dearer band to a cheaper one
+ * therefore refunds, which is right — the Bill is being narrowed.
+ */
 export function clauseCosts(next: BillClauses, previous?: BillClauses): number {
-  let pc = 0;
+  let pc = ageBandClauseCost(next.ageBand) - (previous ? ageBandClauseCost(previous.ageBand) : 0);
   if (!next.includeWomen && (!previous || previous.includeWomen)) pc += P.pc_cost_exclude_women;
   if (next.medical === 'relaxed' && (!previous || previous.medical !== 'relaxed')) pc += P.pc_cost_medical_relaxed;
   if (next.medical === 'wartime' && (!previous || previous.medical !== 'wartime')) pc += P.pc_cost_medical_wartime;
@@ -337,7 +345,7 @@ export function applyAction(s: GameState, action: Action): ActionResult {
   }
 }
 
-const AGE_BANDS = ['18-25', '18-30', '18-40', '18-65'];
+const AGE_BANDS = ['18-25', '18-30', '26-40', '18-65'];
 const MEDICALS = ['peacetime', 'relaxed', 'wartime'];
 const EXEMPTIONS = ['strict', 'broad', 'minimal'];
 

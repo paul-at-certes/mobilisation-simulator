@@ -2,9 +2,15 @@
  * politics.ts — monthly political-capital arithmetic (spec §9).
  *
  * `monthlyPcChanges` returns the list of reasons with deltas for the month
- * (baseline drain, cost and GDP penalties, the delivery credit, refusal cases,
- * and the penalty for a minister who has pulled no levers for months). Action
- * and event deltas are applied when they happen and merely listed alongside.
+ * (baseline drain, the Treasury's cost penalty, the delivery credit, refusal
+ * cases, and the penalty for a minister who has pulled no levers for months).
+ * Action and event deltas are applied when they happen and merely listed
+ * alongside.
+ *
+ * Cumulative output loss is reported on the scoring screen and charged
+ * nowhere: the game never removes enough people from the workforce for a
+ * penalty on a share of annual GDP to be in reach. See docs/design-review.md
+ * F13, and §8 of the spec.
  */
 import type { GameState } from '../types.js';
 import { P, conscriptionWillingnessAdj } from './params.js';
@@ -28,9 +34,24 @@ export function effectiveWillingness(s: GameState): number {
   return w;
 }
 
+/**
+ * The cumulative cost the mobilisation may run up before the Treasury starts
+ * charging.
+ *
+ * It is an allowance sized to the campaign, not a fixed sum: the Treasury votes
+ * a budget for an operation, and a longer operation is voted a bigger one. Four
+ * months buys GBP 0.6bn, twelve GBP 1.8bn, twenty-four GBP 3.6bn. A flat
+ * threshold could not do this job, because it is charged every month on a total
+ * that only grows: any threshold low enough to bite inside a Division run was
+ * an order of magnitude heavier across a Corps one (design review F13).
+ */
+export function costPenaltyThreshold(s: GameState): number {
+  const allowance = P.cost_pc_allowance_per_month * s.deadlineMonths;
+  return allowance * (s.spendingRaised ? P.raise_spending_threshold_multiplier : 1);
+}
+
 export function costPenaltySteps(s: GameState): number {
-  const threshold = P.cost_pc_penalty_threshold * (s.spendingRaised ? P.raise_spending_threshold_multiplier : 1);
-  return Math.floor(chargeableCost(s) / threshold);
+  return Math.floor(chargeableCost(s) / costPenaltyThreshold(s));
 }
 
 /**
@@ -50,11 +71,6 @@ export function chargeableCost(s: GameState): number {
  */
 export function costPenaltyPerStep(s: GameState): number {
   return P.cost_pc_penalty_per_step + (s.contingencyDrawn ? P.contingency_drawn_penalty_add : 0);
-}
-
-export function gdpPenaltySteps(s: GameState): number {
-  const pct = (s.ledger.cumulativeGdpLoss / P.uk_gdp_2025) * 100;
-  return Math.floor(pct / P.gdp_pc_penalty_step_pct);
 }
 
 /**
@@ -89,8 +105,6 @@ export function monthlyPcChanges(s: GameState, delivered: number): PcReason[] {
       : 'Treasury pressure over cumulative cost';
     reasons.push({ label, delta: -costPenaltyPerStep(s) * costSteps });
   }
-  const gdpSteps = gdpPenaltySteps(s);
-  if (gdpSteps > 0) reasons.push({ label: 'Economic damage from lost output', delta: -P.gdp_pc_penalty_per_step * gdpSteps });
   const credit = deliveryCredit(delivered);
   if (credit > 0) {
     reasons.push({ label: `Soldiers reaching their units (${Math.round(delivered).toLocaleString('en-GB')})`, delta: credit });

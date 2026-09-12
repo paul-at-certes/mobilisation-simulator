@@ -36,7 +36,7 @@ export function isParamId(id: string): id is ParamId {
 const BAND_SUFFIX: Record<AgeBand, string> = {
   '18-25': '18_25',
   '18-30': '18_30',
-  '18-40': '18_40',
+  '26-40': '26_40',
   '18-65': '18_65',
 };
 
@@ -58,6 +58,21 @@ export function ewPopulationFemale(band: AgeBand): number {
 /** Points added to public willingness by conscripting this band (spec §10a). */
 export function conscriptionWillingnessAdj(band: AgeBand): number {
   return lookup(`conscription_willingness_adj_${BAND_SUFFIX[band]}`);
+}
+
+/**
+ * Political capital charged for a Bill that conscripts this band, relative to
+ * the default 18-30 (spec §3.1). The band is the one clause whose cost the
+ * player cannot read off the poll: a wider or older band is *more* popular in
+ * the abstract and harder to legislate, because it reaches into employment.
+ */
+export function ageBandClauseCost(band: AgeBand): number {
+  return lookup(`pc_cost_band_${BAND_SUFFIX[band]}`);
+}
+
+/** Extra training attrition for conscripts raised under this band (spec §5). */
+export function ageBandAttritionAdd(band: AgeBand): number {
+  return lookup(`attrition_age_add_${BAND_SUFFIX[band]}`);
 }
 
 /** GDP output multiplier for the conscript age band. */

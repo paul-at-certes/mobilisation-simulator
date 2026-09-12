@@ -9,7 +9,7 @@ import type { Action, BillClauses, GameState, TurnInput } from '../types.js';
 import { P } from './params.js';
 import { findEvent } from './events.js';
 import { spareIntake } from './pipeline.js';
-import { costPenaltySteps, effectiveWillingness } from './politics.js';
+import { costPenaltySteps, costPenaltyThreshold, effectiveWillingness } from './politics.js';
 
 export type Strategy = (state: GameState) => TurnInput;
 export type StrategyId = 'do_nothing' | 'reserves_only' | 'reserves_plus_light' | 'conscription_max_capacity' | 'conscription_over_capacity' | 'capacity_heavy' | 'max_effort';
@@ -91,7 +91,7 @@ function contingencyPaysOff(s: GameState): boolean {
   if (s.contingencyDrawn) return false;
   // An order in flight would slip; wait for it to land, which costs nothing.
   if (s.equipmentArrivalMonth != null && s.equipmentArrivalMonth > s.turn) return false;
-  const threshold = P.cost_pc_penalty_threshold * (s.spendingRaised ? P.raise_spending_threshold_multiplier : 1);
+  const threshold = costPenaltyThreshold(s);
   const projected = s.ledger.cumulativeCost + s.ledger.monthlyCost * monthsLeft(s);
   const asIs = P.cost_pc_penalty_per_step * Math.floor(projected / threshold);
   const drawn =

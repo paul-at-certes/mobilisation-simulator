@@ -85,6 +85,17 @@ availability and displayed PC delta. Rules:
 `exemptions = 'minimal'` → `pc_cost_exemptions_minimal`. Charged when the
 clause is set (on introduction, or on amendment if changed).
 
+The **age band** is charged differently, because unlike the other three it is
+never absent: every Bill has one, and `pc_cost_band_18_30` is the zero. The
+charge is `pc_cost_band_<next> − pc_cost_band_<previous>` (the whole of the
+band's cost on introduction), so widening costs the difference and narrowing
+refunds it. The dearer bands are the ones that reach into employment: 26–40
+takes people at peak earnings, 18–65 legislates for 38 million. Without a
+price the band was the one clause that cost nothing, and 18–65 was then a
+strictly better Bill than the default — it clears `willingness_low_threshold_pct`
+(§9, §10a) and so switches off a standing monthly charge. See
+`docs/design-review.md` F14.
+
 ## 4. Legislation and the eligible pool
 
 When `turn >= billPassesMonth`: `billStatus = 'passed'` and
@@ -128,13 +139,19 @@ Conscription each month (only if `billStatus == 'passed'`):
    Called conscripts enter `conscriptCalled`.
 2. Allocation: `toTrain = min(holdingPool + conscriptCalled, spareIntake)`.
    Holding pool has priority. Create one `TrainingCohort` for the month:
-   `{ size: toTrain, startMonth: turn, graduationMonth: turn + courseMonths, syllabus, medical: clauses.medical }`
+   `{ size: toTrain, startMonth: turn, graduationMonth: turn + courseMonths, syllabus, medical: clauses.medical, ageBand: clauses.ageBand }`
    where `courseMonths = round((phase1 + phase2 weeks) × 12 / 52)` (34 → 8; 22 → 5).
    Remainder → `holdingPool`. `conscriptCalled` → 0 after allocation.
 3. Graduation: cohorts with `graduationMonth ≤ turn` graduate:
    `graduates = size × (1 − attrition)`, with
-   `attrition = training_attrition + (syllabus compressed ? attrition_compressed_add : 0) + medicalAdd`
-   (`medicalAdd`: peacetime 0, relaxed `attrition_relaxed_medical_add`, wartime `attrition_wartime_medical_add`).
+   `attrition = training_attrition + (syllabus compressed ? attrition_compressed_add : 0) + medicalAdd + ageAdd`
+   (`medicalAdd`: peacetime 0, relaxed `attrition_relaxed_medical_add`, wartime `attrition_wartime_medical_add`;
+   `ageAdd`: `attrition_age_add_<ageBand>`, 0 for a cohort saved before the field existed).
+   The cohort carries the `medical` standard **and the `ageBand`** it was raised
+   under: amending the Bill cannot change who is already on the course. The age
+   band is charged here rather than on the eligible pool because this is the
+   only place its cost can land — `medical_pass_*` and `exemption_*` resize a
+   pool that never binds (design review F3, F4).
    Graduates become a `TrainedCohort { size, graduationMonth: turn, syllabus, equipped: equipmentArrived }`.
    `conscriptInTraining` is the sum of live training cohorts.
 4. Equipment: when `equipmentArrivalMonth ≤ turn`, all trained cohorts become
@@ -326,6 +343,15 @@ monthlyGdpLoss = removed × output_per_worker_labour_share × gdp_age_multiplier
 
 The age multiplier applies to conscripts; reservists use 1.0.
 
+**Cumulative output loss is reported and never charged.** It reaches the player
+through the scoring screen (§11) and the `gdp_employers` event's trigger, and
+through nothing else. A penalty on a share of annual GDP was tried and could
+not fire: one step at the smallest defensible size is still several billion
+pounds of lost output, and the largest cumulative loss any strategy produces at
+any difficulty across 40 seeds is £4.35bn. The parameter had been sized for a
+mobilisation an order of magnitude larger than the one the game models. See
+`docs/design-review.md` F13.
+
 ### 8a. The Equipment Plan's contingency
 
 The `draw_contingency` action spends the £4.1bn the Ministry of Defence holds
@@ -338,14 +364,23 @@ chargeableCost     = max(0, cumulativeCost − (contingencyDrawn ? equipment_pla
 costPenaltyPerStep = cost_pc_penalty_per_step + (contingencyDrawn ? contingency_drawn_penalty_add : 0)
 ```
 
+The draw is worth `equipment_plan_contingency / allowance` steps of headroom,
+so its value moves with the allowance (§9) and with the difficulty. At Corps
+that is £4.1bn against £4.8bn — **less than one whole step**, which is the
+property that keeps this a decision: if the contingency cleared a step on its
+own, drawing would win everywhere. At Division it is 1.7 steps and clears the
+whole charge, which is honest — the mobilisation there costs less than the
+contingency holds — and the price is paid in the equipment slip instead.
+
 It costs **no political capital**, which is the point, and carries two costs
 instead:
 
 - **Every later step of Treasury pressure costs more**, because there is no
   buffer left to absorb an overrun. The draw therefore wins while it clears
   your only step of pressure and loses from the second step on — a crossover
-  at about £9bn of cumulative cost, which sits between what a restrained Corps
-  programme spends (£6.8bn) and what `max_effort` spends (£9.7bn).
+  just above £9.6bn of cumulative cost at Corps, which still sits between what
+  a restrained Corps programme spends (£6.8bn) and what `max_effort` spends
+  (£9.7bn). The bots resolve it 19 draw against 18 raising spending.
 - **The emergency equipment order takes `contingency_equipment_delay_months`
   longer**, whether it was already placed (the arrival month slips) or is
   bought afterwards (it is quoted the longer lead time). The contingency's
@@ -361,8 +396,9 @@ small programme and the worse one on a large — the fork the action exists for.
 ```
 pcDelta  = −pc_baseline_drain
          + action costs (already applied at action time, but listed in pcReasons)
-         − costPenaltyPerStep × floor(chargeableCost / (cost_pc_penalty_threshold × (spendingRaised ? raise_spending_threshold_multiplier : 1)))   [§8a]
-         − gdp_pc_penalty_per_step × floor((cumulativeGdpLoss / uk_gdp_2025 × 100) / gdp_pc_penalty_step_pct)
+         − costPenaltyPerStep × floor(chargeableCost / allowance)   [§8a]
+             where allowance = cost_pc_allowance_per_month × deadlineMonths
+                               × (spendingRaised ? raise_spending_threshold_multiplier : 1)
          + min(pc_delivery_max, floor(delivered / pc_delivery_per_credit))
          − (conscriptionEverActive && effectiveWillingness < willingness_low_threshold_pct ? pc_low_willingness_penalty : 0)
          − (idleMonths > pc_idle_grace_months ? pc_idle_penalty : 0)
@@ -386,6 +422,15 @@ lesson the pipeline already teaches, charged again in the other currency.
 
 This replaces the momentum bonus, which paid on a *share of target* and was
 therefore unreachable at Corps scale (see `docs/design-review.md` F6, F9).
+
+**The Treasury's allowance is sized to the campaign, not fixed.** The Treasury
+votes a budget for an operation and a longer operation is voted a bigger one:
+four months buys £0.8bn, twelve £2.4bn, twenty-four £4.8bn. A flat threshold
+could not do this job, because it is charged every month against a total that
+only grows, so any figure low enough to bite inside a Division run was an order
+of magnitude heavier across a Corps one — which is why the mechanic had been
+dormant at two of three difficulties rather than merely gentle. See
+`docs/design-review.md` F13.
 
 `effectiveWillingness = willingness + Σ active boosts`. Boosts with `until < turn` are dropped.
 
@@ -445,6 +490,17 @@ political capital with extra steps, which is why the design review counts
 `willingness` effects as routing back to PC (F6). Refusal puts it **upstream of
 the training pipeline** instead, so the age band, the addresses and every event
 that moves willingness now decide how many soldiers arrive.
+
+**The bands, and why one of them does not start at 18.** The Bill offers
+18–25, 18–30, **26–40** and 18–65. Every band that starts at 18 contains the
+most hostile age group (18–24: 27% support, 45% strongly opposed), so widening
+one only dilutes that group and the whole clause moved willingness by about
+three points. 26–40 is the only band with a movable lower bound, and every
+single year of age in it falls inside YouGov's 25–49 group, so its support is
+that group's figure exactly: +6 against the default where the 18–40 band it
+replaced was worth +3. It is paid for in `pc_cost_band_26_40` (§3.1) and in
+`attrition_age_add_26_40` (§5), because it is also the band that takes people
+at peak earnings and peak employment. See `docs/design-review.md` F14.
 
 **Two properties worth preserving.**
 

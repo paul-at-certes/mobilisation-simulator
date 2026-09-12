@@ -1087,3 +1087,131 @@ conscript only the over-65s. Across every militarily plausible band the span is
 18–40 with 25–40 buys +6 against the default instead of +3. The clause shape is
 still worth changing; it is worth about two points of range, not twenty-three.
 
+
+## Money that bites, and a band that does not start at 18 (12 September 2026)
+
+F13 and F14, taken as one change because F14's fix was gated on F13's. Paul
+settled the four decisions the handover reserved for him; the measurements
+below are what they were settled against.
+
+**F13's cost penalty: the shape was wrong, not the number.** `cost_pc_penalty_threshold`
+was a flat GBP 5bn on a *cumulative* total, charged *every* month. The charge is
+therefore steps times months remaining, and grows with the square of the
+campaign — so it cannot be tuned across a 4-month, a 12-month and a 24-month
+run at once. Political capital taken off `reserves_plus_light` across a whole
+run, 40 seeds: at GBP 5bn, 0 at Division and 2 at Corps; at the range floor of
+GBP 2.5bn, 2 and 22; at GBP 2bn, 6 and 36. Anything felt at Division landed an
+order of magnitude harder on the rung F6 and F9 had just rescued.
+
+**So the threshold became an allowance sized to the campaign**:
+`cost_pc_allowance_per_month` times the difficulty's deadline. GBP 0.8bn at
+Brigade, GBP 2.4bn at Division, GBP 4.8bn at Corps. The fiction is better than
+the flat figure it replaced — the Treasury votes a budget for an operation and
+a longer operation is voted a bigger one — and it is anchored on the defence
+budget at 3.9% of one month of it.
+
+Two properties fixed the level at GBP 200m inside its range, and the second one
+is the reason the first candidate was rejected:
+
+- Below about GBP 175m a month, Corps gets materially harder than F9 left it:
+  `max_effort` resignations 18% to 35-40%. That is a difficulty change smuggled
+  in under another finding.
+- `equipment_plan_contingency` must stay worth **less than one whole step** at
+  Corps. GBP 4.1bn against an allowance of GBP 4.8bn is 0.85 steps, where the
+  old flat GBP 5bn gave 0.82. At GBP 150m a month it was 1.14 steps and the draw
+  beat raising spending on every Corps seed — F6's fork closed without anyone
+  touching it. The crossover is back just above GBP 9.6bn and the bots split
+  19 draw against 18 raise. F13's own "watch for" note predicted exactly this;
+  it is now a test rather than a note (`tests/step.test.ts`, "the Treasury
+  allowance").
+
+At Division the contingency is worth 1.7 allowances and clears the charge
+outright. That is honest rather than broken — the mobilisation there costs less
+than the Equipment Plan's buffer holds — and the three-month equipment slip is
+the price instead. `reserves_plus_light` draws it on 14 of 40 seeds, where
+before it drew it on none.
+
+**F13's GDP penalty was deleted, not repaired.** A step was 0.25% of GDP, GBP
+7.6bn of lost output, against a largest-ever cumulative loss of GBP 4.35bn. To
+fire at Division the step would have to fall to about 0.03% — a factor of
+eight, far below its stated range floor, and GBP 0.9bn of lost output is not a
+politically salient quantity. The parameter had been sized for a mobilisation an
+order of magnitude larger than the one the game models. `gdp_pc_penalty_step_pct`
+and `gdp_pc_penalty_per_step` are gone; cumulative output loss is now *stated*
+to be a scoring-screen quantity and an event trigger, in the spec and in a test,
+rather than being one by accident.
+
+**And the measurement that killed the plan of record.** F14 was gated on F13 on
+the reasoning that a 26-40 band's cost is peak earnings, and peak earnings only
+cost something once the GDP penalty fires. That reasoning does not survive
+being measured. At Division, `reserves_plus_light`'s cumulative output loss is
+GBP 0.09bn of conscripts against GBP 1.08bn of reservists, who carry a
+multiplier of 1.0 whatever the Bill says. Changing the band moves the total by
+**4.3%**, and a step function does not notice 4.3%. The GDP arm could never have
+priced the band for the strategy the benchmark watches, at any threshold. The
+gating was right for the wrong reason: the band did need a counterweight before
+it could ship, but not that one.
+
+**F14: 18-40 is replaced by 26-40.** Every band the Bill offered started at 18,
+so every band contained the most hostile group (18-24: 27% support, 45%
+strongly opposed) and widening only diluted it. 26-40 is the only band on offer
+with a movable lower bound. It needed no new sourcing, which is why it was
+preferred to the 25-40 band the handover proposed: `ew_pop_18_40 - ew_pop_18_25`
+is exactly ages 26-40, both bounds being inclusive, and every single year of age
+in it falls inside YouGov's 25-49 group, so its population-weighted support is
+that group's figure exactly, 39.0%. The long way round — subtracting the 18-25
+band's weighting from the 18-40 band's — gives 38.99%. The same subtraction
+gives the output multiplier, 0.862, the highest of the four. Two derivations,
+no new data, and they agree.
+
+**It is paid for twice, and the second is the one that lands.**
+`pc_cost_band_26_40` is -8 and `pc_cost_band_18_65` is -14, charged as a
+difference so that widening costs and narrowing refunds. And
+`attrition_age_add_26_40` adds 5 points to training attrition on a base of 26.
+The attrition is the important half, and the reasoning is F3's lesson applied:
+the obvious places to charge an older band — `medical_pass_*`, `exemption_*` —
+both resolve into the size of the eligible pool, and the eligible pool never
+binds, so a cost charged there is a cost not charged at all. Attrition acts on
+the people actually on the course. The band now buys survival and pays in
+soldiers: at Corps `reserves_plus_light` resigns on 20% of seeds under 26-40
+against 35% under the default, and finishes on 22,580 ESE against 22,652.
+
+No published figure exists for British Army training attrition by age at entry
+— the quarterly service personnel statistics give untrained intake and outflow
+and break neither by age — so `attrition_age_add_*` is a frank assumption in
+the way `conscription_refusal_conversion` is, and says so in its rationale.
+
+**A free lever that was already shipped, and is now closed.** The age band was
+the one clause in the Bill that cost no political capital at all, and
+`willingness_low_threshold_pct` is 25 against a start of 20, so 18-65's +9
+cleared it and switched off a standing 2 a month for nothing. At Division it
+took `conscription_over_capacity` from 90% resignations to 5% and
+`conscription_max_capacity` from 15% to 0%. This was not introduced by F14; it
+was found while pricing F14's band, and it had been in the game since the
+polling was wired in.
+
+**And the new finding, F15: the cliff at 25 decides more than any clause does.**
+Re-running the 40 seeds with `willingness_low_threshold_pct` set to 0, so that
+nobody is ever charged, moves Corps `reserves_plus_light` from 35% resignations
+to **3%** under the default band — and moves 26-40 and 18-65 not at all, because
+they were never charged. Nearly all of Corps's difficulty for a default Bill,
+and the whole of 26-40's advantage over it, is one binary threshold. It is not
+fixed here, deliberately: a one-off clause cost cannot price a per-month stream
+that runs for 4, 12 or 24 months, and inflating `pc_cost_band_*` until the Corps
+numbers looked right would have made Division punitive to hide a Corps problem.
+The fix is a shape and not a number — charge on refusals that actually happened,
+which the model now counts — and it deserves its own pass. **ASK.**
+
+**Balance** (`npm run dist -- 40`). All three watch numbers hold: Division
+`reserves_plus_light` 43% met (unchanged), leadership 0.67 and 0.47 at Division
+(unchanged), `do_nothing` resigning on 100% of Corps seeds (unchanged) and
+unchanged at every rung. Brigade is byte-identical: it spends GBP 0.36bn against
+an GBP 0.8bn allowance and stays the tutorial rung (F8). The movement is small
+and all of it is deliberate — Division `reserves_plus_light` median 21,858 to
+21,878 and `max_effort` 17,363 to 17,512; Division `conscription_over_capacity`
+resignations 90% to 95%, it being the one strategy that spends heavily and
+delivers nothing; Corps `capacity_heavy` 5% to 3% and `max_effort` 18% to 20%.
+
+Saved runs from before this change are discarded rather than resumed: the
+GameState version goes 1 to 2, because a run saved mid-Bill could be carrying
+an age band that no longer exists.

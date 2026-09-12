@@ -1,6 +1,6 @@
 {
-  "version": "0.3.0",
-  "generated": "2026-09-11",
+  "version": "0.4.0",
+  "generated": "2026-09-12",
   "sections": {
     "regular": "Regular Army (MoD Service Personnel Statistics, 1 July 2026)",
     "leaders": "Junior leadership cadre",
@@ -563,27 +563,29 @@
       "asOf": "2025-06-30",
       "confidence": "primary"
     },
-    "ew_pop_18_40": {
-      "value": 18665415,
+    "ew_pop_26_40": {
+      "value": 12727220,
       "unit": "people",
-      "label": "England and Wales, aged 18–40",
-      "description": "Mid-2025 population estimate, persons aged 18 to 40 inclusive.",
+      "label": "England and Wales, aged 26–40",
+      "description": "Mid-2025 population estimate, persons aged 26 to 40 inclusive.",
       "section": "conscription",
       "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
       "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
       "asOf": "2025-06-30",
-      "confidence": "primary"
+      "confidence": "derived",
+      "derivation": "ew_pop_18_40 - ew_pop_18_25 = 18,665,415 - 5,938,195 = 12,727,220. Both are inclusive of their end years, so removing 18-25 from 18-40 leaves exactly 26-40; no figure outside the two already in this file is used."
     },
-    "ew_pop_f_18_40": {
-      "value": 9419482,
+    "ew_pop_f_26_40": {
+      "value": 6520779,
       "unit": "people",
-      "label": "England and Wales, women aged 18–40",
-      "description": "Mid-2025 population estimate, females aged 18 to 40 inclusive.",
+      "label": "England and Wales, women aged 26–40",
+      "description": "Mid-2025 population estimate, females aged 26 to 40 inclusive.",
       "section": "conscription",
       "source": "ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
       "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
       "asOf": "2025-06-30",
-      "confidence": "primary"
+      "confidence": "derived",
+      "derivation": "ew_pop_f_18_40 - ew_pop_f_18_25 = 9,419,482 - 2,898,703 = 6,520,779."
     },
     "ew_pop_18_65": {
       "value": 38201921,
@@ -697,18 +699,17 @@
       "derivation": "Support (strongly + somewhat) by YouGov age group -- 18-24: 27%, 25-49: 39%, 50-64: 53%, 65+: 63% -- weighted by the England and Wales population of each single year of age inside the band gives 32.84% for 18-30, against 32.84% for 18-30. Difference rounded to whole points.",
       "note": "The question offers military service OR community volunteering, so its absolute level overstates support for military-only conscription. Only the age gradient is used; the level stays anchored to willingness_start_pct. Every band this game offers starts at 18, so all of them contain the most hostile group and widening only dilutes it: the whole range from 18-25 to 18-65 is 13 points. See docs/design-review.md F14."
     },
-    "conscription_willingness_adj_18_40": {
-      "value": 3,
+    "conscription_willingness_adj_26_40": {
+      "value": 6,
       "unit": "pct",
-      "label": "Willingness adjustment, band 18-40",
-      "description": "Points added to public willingness when the Bill conscripts ages 18-40, relative to the default 18-30 band.",
+      "label": "Willingness adjustment, band 26-40",
+      "description": "Points added to public willingness when the Bill conscripts ages 26-40, relative to the default 18-30 band.",
       "section": "conscription",
       "source": "Derived from YouGov, 4,205 GB adults, 28 May 2024: \"Would you support or oppose it being made compulsory for all young people to either serve in the military for a year or spend one weekend every month for a year community volunteering?\"; ONS, Estimates of the population for England and Wales, mid-2025 (MYE2)",
       "url": "https://yougov.co.uk/politics/articles/49555-would-britons-support-a-return-to-national-service",
       "asOf": "2024-05-28",
       "confidence": "derived",
-      "derivation": "Support (strongly + somewhat) by YouGov age group -- 18-24: 27%, 25-49: 39%, 50-64: 53%, 65+: 63% -- weighted by the England and Wales population of each single year of age inside the band gives 35.68% for 18-40, against 32.84% for 18-30. Difference rounded to whole points.",
-      "note": "The question offers military service OR community volunteering, so its absolute level overstates support for military-only conscription. Only the age gradient is used; the level stays anchored to willingness_start_pct. Every band this game offers starts at 18, so all of them contain the most hostile group and widening only dilutes it: the whole range from 18-25 to 18-65 is 13 points. See docs/design-review.md F14."
+      "derivation": "Every single year of age from 26 to 40 falls inside YouGov's 25-49 group, so the population-weighted support for this band is that group's figure exactly: 39.0%, against 32.84% for 18-30. Difference 6.15, rounded to whole points. Checked against the other bands by subtraction: (35.68 x 18,665,415 - 28.58 x 5,938,195) / 12,727,220 = 38.99%, which is the same figure. This is the only band the Bill offers whose lower bound is not 18, and therefore the only one that does not contain the most hostile age group (18-24, 27% support, 45% strongly opposed)."
     },
     "conscription_willingness_adj_18_65": {
       "value": 9,
@@ -1027,6 +1028,70 @@
         0.08
       ],
       "rationale": "Interpolated between peacetime (+0) and wartime (+10pp)."
+    },
+    "attrition_age_add_18_25": {
+      "value": 0.0,
+      "unit": "ratio",
+      "label": "Extra attrition, age band 18-25",
+      "description": "Percentage points added to training attrition for conscript cohorts raised under a 18-25 age band.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        0.0,
+        0.02
+      ],
+      "rationale": "Basic training is designed around entrants of this age, and training_attrition is measured on an intake that is overwhelmingly this age, so the default band carries no adjustment. Zero as the reference."
+    },
+    "attrition_age_add_18_30": {
+      "value": 0.0,
+      "unit": "ratio",
+      "label": "Extra attrition, age band 18-30",
+      "description": "Percentage points added to training attrition for conscript cohorts raised under a 18-30 age band.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        0.0,
+        0.02
+      ],
+      "rationale": "The default band, and the reference point. training_attrition (0.26) is measured on the Army's actual untrained intake, which sits inside it. Zero by construction."
+    },
+    "attrition_age_add_26_40": {
+      "value": 0.05,
+      "unit": "ratio",
+      "label": "Extra attrition, age band 26-40",
+      "description": "Percentage points added to training attrition for conscript cohorts raised under a 26-40 age band.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        0.0,
+        0.1
+      ],
+      "rationale": "No figure for British Army training attrition by age at entry is published: the quarterly service personnel statistics give untrained intake and outflow but do not break either by age, so this is a frank assumption rather than a derivation, in the way conscription_refusal_conversion is. What it stands for is real and one-directional - a recruit in their thirties is more likely to be injured, medically downgraded or to leave for reasons outside training than one at 19 - and it is set at 5 points against a base of 26 because that is the same order as attrition_relaxed_medical_add (4) and below attrition_wartime_medical_add (10), which are the two comparable adjustments already in the model. It exists because it is the only place an older band's cost can actually land: it charges throughput, where medical_pass_* and exemption_* only resize an eligible pool that never binds (design review F3, F4). Replace it if attrition by age at entry is ever published."
+    },
+    "attrition_age_add_18_65": {
+      "value": 0.03,
+      "unit": "ratio",
+      "label": "Extra attrition, age band 18-65",
+      "description": "Percentage points added to training attrition for conscript cohorts raised under a 18-65 age band.",
+      "section": "pipeline",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        0.0,
+        0.08
+      ],
+      "rationale": "The same assumption as attrition_age_add_26_40, weighted down because the band is mostly younger people: two thirds of the 18-65 population is under 45, so the band's mean age at entry is below 26-40's even though its upper bound is far higher."
     },
     "capacity_purchase_annual": {
       "value": 5000,
@@ -1447,37 +1512,37 @@
       "confidence": "derived",
       "derivation": "Cap on the employer's award as made; later amendments not checked."
     },
-    "cost_pc_penalty_threshold": {
-      "value": 5000000000,
+    "cost_pc_allowance_per_month": {
+      "value": 200000000,
       "unit": "gbp",
-      "label": "Cost penalty threshold",
-      "description": "Every £5bn of cumulative Treasury cost costs 2 political capital per turn thereafter.",
+      "label": "Treasury allowance per month of the campaign",
+      "description": "Cumulative Treasury cost the mobilisation may run up per month of its deadline before the Treasury starts charging political capital. The allowance for a run is this figure times the difficulty's deadline in months.",
       "section": "politics",
       "source": "Modelling assumption",
       "url": "",
-      "asOf": "2026-09-11",
+      "asOf": "2026-09-12",
       "confidence": "assumption",
       "range": [
-        2500000000,
-        10000000000
+        100000000,
+        400000000
       ],
-      "rationale": "Design brief."
+      "rationale": "Replaces a flat GBP 5bn threshold that could not fire at Brigade or Division and fired once at Corps (design review F13). The Treasury's tolerance is a budget voted for an operation, and a longer operation is voted a bigger one, so the allowance is sized to the campaign rather than fixed: 4 months buys GBP 0.8bn, 12 months GBP 2.4bn, 24 months GBP 4.8bn. The level is anchored on the defence budget: GBP 200m is 3.9% of one month of defence_budget_2025 (GBP 5.19bn), the order of in-year flexibility a department can absorb before the Treasury takes an interest; the range runs 1.9% to 7.7% of a month's defence budget. A flat threshold cannot do this job at all, because it is charged every month against a total that only grows: measured over 40 seeds, lowering the flat figure far enough to charge the sensible strategy 6 political capital across a Division run charged it 36 across a Corps one. Two properties fixed the level inside the range. Below about GBP 175m Corps gets materially harder than F6 and F9 left it (max_effort resignations 18% to 35-40%). And equipment_plan_contingency must stay worth less than one whole step at Corps (GBP 4.1bn against an allowance of GBP 4.8bn = 0.85 steps, where the old flat GBP 5bn gave 0.82), or drawing the contingency wins everywhere and the fork that action exists for closes. Above about GBP 250m the mechanic is dormant at every rung, which is where it was."
     },
     "cost_pc_penalty_per_step": {
       "value": 2,
       "unit": "pc",
-      "label": "Cost penalty per £5bn",
-      "description": "Political capital lost per turn for each £5bn of cumulative cost.",
+      "label": "Cost penalty per allowance step",
+      "description": "Political capital lost per turn for each whole Treasury allowance of cumulative cost run up (see cost_pc_allowance_per_month).",
       "section": "politics",
       "source": "Modelling assumption",
       "url": "",
-      "asOf": "2026-09-11",
+      "asOf": "2026-09-12",
       "confidence": "assumption",
       "range": [
         1,
         4
       ],
-      "rationale": "Design brief."
+      "rationale": "Design brief. The quantity it multiplies changed from a flat GBP 5bn threshold to an allowance sized to the campaign (design review F13); the charge per step did not."
     },
     "defence_budget_2025": {
       "value": 62300000000,
@@ -1632,18 +1697,17 @@
       "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
       "note": "Was an assumption of 0.75. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
     },
-    "gdp_age_multiplier_18_40": {
-      "value": 0.717,
+    "gdp_age_multiplier_26_40": {
+      "value": 0.862,
       "unit": "multiplier",
-      "label": "Output multiplier, 18–40",
-      "description": "Output per worker in the 18–40 band relative to the all-age average.",
+      "label": "Output multiplier, 26–40",
+      "description": "Output per worker in the 26–40 band relative to the all-age average.",
       "section": "gdp",
       "source": "Derived from ONS, Annual Survey of Hours and Earnings, Table 6.1a (gross weekly pay, all employee jobs, by age group), UK 2025 provisional; ONS, Labour market status by age group (Table A05 SA), UK, Apr-Jun 2026; ONS mid-2025 population estimates",
       "url": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/agegroupashetable6",
       "asOf": "2026-08-18",
       "confidence": "derived",
-      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
-      "note": "Was an assumption of 0.9. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
+      "derivation": "The same per-year quantity as the other bands (employment rate x mean gross weekly pay relative to the all-employee mean), weighted by the England and Wales population of each year, obtained by subtracting the 18-25 band from the 18-40 band: (0.717 x 18,665,415 - 0.407 x 5,938,195) / 12,727,220 = 0.862. It is the highest of the four because the band takes people at peak earnings and peak employment and none at all from the 18-24 group, where 59.1% are employed and those who are earn 43% of the all-employee mean."
     },
     "gdp_age_multiplier_18_65": {
       "value": 0.762,
@@ -1657,38 +1721,6 @@
       "confidence": "derived",
       "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
       "note": "Was an assumption of 1.0. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
-    },
-    "gdp_pc_penalty_step_pct": {
-      "value": 0.25,
-      "unit": "pct",
-      "label": "GDP penalty step",
-      "description": "Every 0.25% of annual GDP in cumulative output loss costs political capital each turn.",
-      "section": "politics",
-      "source": "Modelling assumption",
-      "url": "",
-      "asOf": "2026-09-11",
-      "confidence": "assumption",
-      "range": [
-        0.1,
-        0.5
-      ],
-      "rationale": "Design brief."
-    },
-    "gdp_pc_penalty_per_step": {
-      "value": 3,
-      "unit": "pc",
-      "label": "GDP penalty per step",
-      "description": "Political capital lost per turn for each 0.25% of GDP in cumulative output loss.",
-      "section": "politics",
-      "source": "Modelling assumption",
-      "url": "",
-      "asOf": "2026-09-11",
-      "confidence": "assumption",
-      "range": [
-        1,
-        5
-      ],
-      "rationale": "Design brief."
     },
     "pc_start": {
       "value": 70,
@@ -1977,6 +2009,70 @@
         -6
       ],
       "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+    },
+    "pc_cost_band_18_25": {
+      "value": 0,
+      "unit": "pc",
+      "label": "Cost: age band 18-25",
+      "description": "Political capital cost of a Bill whose conscription age band is 18-25, relative to the default 18-30.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        -4,
+        0
+      ],
+      "rationale": "The narrowest band the Bill offers, and the one Parliament is least likely to resist: it conscripts the group that objects most loudly (18-24s, 45% strongly opposed) but the fewest people, almost none of them settled in work. Held at zero as the reference alongside the default band; the ladder above it prices the reach of the wider ones."
+    },
+    "pc_cost_band_18_30": {
+      "value": 0,
+      "unit": "pc",
+      "label": "Cost: age band 18-30",
+      "description": "Political capital cost of a Bill whose conscription age band is 18-30, relative to the default 18-30.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        -4,
+        0
+      ],
+      "rationale": "The default band, and the reference point for the other three. Zero by construction."
+    },
+    "pc_cost_band_26_40": {
+      "value": -8,
+      "unit": "pc",
+      "label": "Cost: age band 26-40",
+      "description": "Political capital cost of a Bill whose conscription age band is 26-40, relative to the default 18-30.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        -14,
+        -4
+      ],
+      "rationale": "The first band whose lower bound is not 18, and the one the polling most favours: it is 6 points more willing than the default and has a quarter more people in it. What the poll cannot see is who is being taken. Every one of them is settled in work at or near peak earnings (gdp_age_multiplier_26_40 is the highest of the four, 0.862), so the resistance is not the conscripts' but their employers' and their MPs'. Sized against the willingness gain it buys: crossing willingness_low_threshold_pct stops a standing 2 a month, which is worth about 22 over a Division run, so 8 up front is a real price and not a prohibitive one. Tuned against npm run dist -- 40; see DECISIONS.md."
+    },
+    "pc_cost_band_18_65": {
+      "value": -14,
+      "unit": "pc",
+      "label": "Cost: age band 18-65",
+      "description": "Political capital cost of a Bill whose conscription age band is 18-65, relative to the default 18-30.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        -22,
+        -8
+      ],
+      "rationale": "Legislating to conscript 38 million people, up to and including pensioners, is a far larger parliamentary undertaking than any of the other three, and it reaches every employer in the country at once. Priced above 26-40 because it is the widest reach and because, like 26-40, it clears willingness_low_threshold_pct and so buys a standing monthly saving; without a price it was the strictly best band in the Bill, which is what the design review's F14 warned against shipping."
     },
     "pc_cost_expand_capacity": {
       "value": -3,
