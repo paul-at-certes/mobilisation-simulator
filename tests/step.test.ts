@@ -19,7 +19,7 @@ import { score } from '../src/sim/score.js';
 import { STRATEGIES } from '../src/sim/strategies.js';
 import { applyEffects, conditionVars, eligibleEvents, eventEligible } from '../src/sim/events.js';
 import { effectiveWillingness } from '../src/sim/politics.js';
-import { chargeableCost, costPenaltyPerStep, costPenaltySteps, costPenaltyThreshold } from '../src/sim/politics.js';
+import { chargeableCost, costPenaltyPerStep, costPenaltySteps, costPenaltyThreshold, monthlyPcChanges, settleRefusalCases } from '../src/sim/politics.js';
 
 const NOTHING: TurnInput = { actions: [], eventChoice: null };
 
@@ -725,6 +725,70 @@ describe('cumulative output loss', () => {
   });
 });
 
+describe('the refusal caseload', () => {
+  it('charges every refusal eventually, carrying the remainder', () => {
+    // The property the threshold it replaced did not have: no call-up size is
+    // free, and the total charged is the total who refused over the rate.
+    const s = newGame(19, 'corps');
+    const per = P.pc_refusal_per_charge;
+    // A trickle well under one charge a month still adds up to whole points.
+    let charged = 0;
+    for (let m = 0; m < 10; m++) charged += settleRefusalCases(s, per / 10);
+    expect(charged).toBe(1);
+    expect(s.refusalCaseload).toBeCloseTo(0, 6);
+  });
+
+  it('never charges more than the courts can hear in a month, and keeps the rest', () => {
+    const s = newGame(19, 'corps');
+    const per = P.pc_refusal_per_charge;
+    const flood = per * 20;
+    expect(settleRefusalCases(s, flood)).toBe(P.pc_refusal_max);
+    expect(s.refusalCaseload).toBeCloseTo(flood - P.pc_refusal_max * per, 6);
+    // The list outlives the call-up that made it: a month with nobody called
+    // is still charged while the backlog lasts.
+    expect(settleRefusalCases(s, 0)).toBe(P.pc_refusal_max);
+  });
+
+  it('is charged in the month, named in the briefing, and reported at the end', () => {
+    let s = newGame(19, 'corps');
+    s = step(s, { actions: [{ id: 'introduce_bill', procedure: 'emergency', clauses: { ageBand: '18-30', includeWomen: true, medical: 'peacetime', exemptions: 'broad' } }], eventChoice: null });
+    while (s.billStatus !== 'passed') s = step(s, NOTHING);
+    s = step(s, { actions: [{ id: 'set_callup', perMonth: 6000 }], eventChoice: null });
+    const charge = s.briefing.pcReasons.find((r) => r.label.startsWith('Refusal cases in the courts'));
+    expect(charge, 'no refusal charge after a large call-up').toBeDefined();
+    expect(charge!.delta).toBeLessThan(0);
+    expect(charge!.label).toMatch(/refused/);
+    expect(s.conscriptsRefusedTotal).toBeGreaterThan(0);
+    expect(score(s).refused).toBe(s.conscriptsRefusedTotal);
+    expect(score(s).refusalBacklog).toBeGreaterThanOrEqual(0);
+  });
+
+  it('costs a more willing band less, in proportion and not in steps', () => {
+    // F15's point: the band now moves the bill by its own size. Under the
+    // threshold it replaced, two bands paid everything and two paid nothing.
+    const charged = (ageBand: '18-25' | '18-30' | '26-40' | '18-65'): number => {
+      const s = newGame(19, 'corps');
+      s.clauses = { ageBand, includeWomen: true, medical: 'peacetime', exemptions: 'broad' };
+      return refusalRate(s) * 10_000;
+    };
+    const bands = ['18-25', '18-30', '26-40', '18-65'] as const;
+    const costs = bands.map(charged);
+    expect(costs).toEqual([...costs].sort((a, b) => b - a));
+    // Every step between adjacent bands is a real one — no two bands are the
+    // same price, which is what the threshold made them.
+    for (let i = 1; i < costs.length; i++) expect(costs[i - 1] - costs[i]).toBeGreaterThan(0);
+  });
+
+  it('has no threshold left to cross', () => {
+    // The regression guard for F15 itself: if a flat charge keyed to a
+    // willingness threshold ever comes back, this fails.
+    const s = newGame(19, 'corps');
+    s.conscriptionEverActive = true;
+    s.willingness = 0;
+    expect(monthlyPcChanges(s, 0).some((r) => r.label.startsWith('Refusal cases'))).toBe(false);
+  });
+});
+
 describe('the age band as a priced clause', () => {
   const clauses = (ageBand: '18-25' | '18-30' | '26-40' | '18-65') =>
     ({ ageBand, includeWomen: true, medical: 'peacetime', exemptions: 'broad' }) as const;
@@ -747,20 +811,18 @@ describe('the age band as a priced clause', () => {
     expect(s.politicalCapital).toBe(wide + (P.pc_cost_band_18_30 - P.pc_cost_band_18_65) - P.pc_baseline_drain);
   });
 
-  it('prices the two bands that clear the refusal threshold', () => {
-    // 26-40 and 18-65 both lift willingness over willingness_low_threshold_pct
-    // and so switch off a standing monthly charge. Neither may be free.
-    for (const b of ['26-40', '18-65'] as const) {
+  it('prices the bands that buy a lower refusal rate', () => {
+    // A more willing band is charged less for refusals every month it calls
+    // anyone up (§9, §10a), so the more willing bands may not also be free.
+    const rateFor = (b: '18-25' | '18-30' | '26-40' | '18-65'): number => {
       const s = newGame(17, 'division');
       s.clauses = { ...clauses(b) };
-      expect(effectiveWillingness(s)).toBeGreaterThanOrEqual(P.willingness_low_threshold_pct);
-      expect(ageBandClauseCost(b)).toBeLessThan(0);
-    }
-    for (const b of ['18-25', '18-30'] as const) {
-      const s = newGame(17, 'division');
-      s.clauses = { ...clauses(b) };
-      expect(effectiveWillingness(s)).toBeLessThan(P.willingness_low_threshold_pct);
-    }
+      return refusalRate(s);
+    };
+    expect(rateFor('26-40')).toBeLessThan(rateFor('18-30'));
+    expect(rateFor('18-65')).toBeLessThan(rateFor('26-40'));
+    expect(rateFor('18-30')).toBeLessThan(rateFor('18-25'));
+    for (const b of ['26-40', '18-65'] as const) expect(ageBandClauseCost(b)).toBeLessThan(0);
     // The wider reach is the dearer one.
     expect(ageBandClauseCost('18-65')).toBeLessThan(ageBandClauseCost('26-40'));
   });

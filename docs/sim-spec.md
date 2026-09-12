@@ -91,10 +91,9 @@ charge is `pc_cost_band_<next> − pc_cost_band_<previous>` (the whole of the
 band's cost on introduction), so widening costs the difference and narrowing
 refunds it. The dearer bands are the ones that reach into employment: 26–40
 takes people at peak earnings, 18–65 legislates for 38 million. Without a
-price the band was the one clause that cost nothing, and 18–65 was then a
-strictly better Bill than the default — it clears `willingness_low_threshold_pct`
-(§9, §10a) and so switches off a standing monthly charge. See
-`docs/design-review.md` F14.
+price the band was the one clause that cost nothing, while being the clause
+that moved the refusal caseload (§9a) more than anything else the player could
+do. See `docs/design-review.md` F14 and F15.
 
 ## 4. Legislation and the eligible pool
 
@@ -400,7 +399,7 @@ pcDelta  = −pc_baseline_drain
              where allowance = cost_pc_allowance_per_month × deadlineMonths
                                × (spendingRaised ? raise_spending_threshold_multiplier : 1)
          + min(pc_delivery_max, floor(delivered / pc_delivery_per_credit))
-         − (conscriptionEverActive && effectiveWillingness < willingness_low_threshold_pct ? pc_low_willingness_penalty : 0)
+         − refusalCases                                              [§9a]
          − (idleMonths > pc_idle_grace_months ? pc_idle_penalty : 0)
 ```
 
@@ -431,6 +430,39 @@ only grows, so any figure low enough to bite inside a Division run was an order
 of magnitude heavier across a Corps one — which is why the mechanic had been
 dormant at two of three difficulties rather than merely gentle. See
 `docs/design-review.md` F13.
+
+### 9a. The refusal caseload
+
+```
+refusalCaseload += refused this month                     [§10a, step 3e]
+refusalCases     = min(pc_refusal_max, floor(refusalCaseload / pc_refusal_per_charge))
+refusalCaseload -= refusalCases × pc_refusal_per_charge
+```
+
+Conscripts called up who do not report go onto a court list. Every
+`pc_refusal_per_charge` of them costs one political capital, at most
+`pc_refusal_max` a month, and **what is not charged this month stays on the
+list**. Three properties follow, and all three are the point:
+
+- **No refusal is free.** The total charged across a run is the total who
+  refused divided by the rate. A small programme is not under a threshold; it
+  is charged slowly.
+- **An effect that moves the refusal rate moves the bill by its own size.** An
+  address to the nation changes refusals by about a tenth, and therefore
+  changes what is charged by about a tenth. Rounded off month by month, a tenth
+  of a small number is nothing — which is how the first attempt at this charge
+  made the address worthless, and why the carry-over is not a tidy-up.
+- **The list can outlive the call-up.** The cap is court throughput, so calling
+  up far over the training estate's spare intake makes the list run longer
+  rather than cost more per month, and a minister can leave office with cases
+  unheard. `Score.refusalBacklog` reports them.
+
+This replaced a flat `pc_low_willingness_penalty` charged whenever
+`effectiveWillingness` sat below a threshold. Willingness starts at 20 and the
+threshold was 25, so of the four age bands two paid it in full and two did not
+pay it at all, nothing else in the game reliably crossed the line, and the
+clause therefore decided more than the polling behind it did. See
+`docs/design-review.md` F15.
 
 `effectiveWillingness = willingness + Σ active boosts`. Boosts with `until < turn` are dropped.
 
@@ -500,19 +532,26 @@ single year of age in it falls inside YouGov's 25–49 group, so its support is
 that group's figure exactly: +6 against the default where the 18–40 band it
 replaced was worth +3. It is paid for in `pc_cost_band_26_40` (§3.1) and in
 `attrition_age_add_26_40` (§5), because it is also the band that takes people
-at peak earnings and peak employment. See `docs/design-review.md` F14.
+at peak earnings and peak employment. What it buys is a lower refusal rate, and
+therefore a shorter court list (§9a) — in proportion to the gap in the polling,
+rather than as a threshold the band either crosses or does not. See `docs/design-review.md` F14.
 
 **Two properties worth preserving.**
 
-- **Calling over capacity is insurance against refusal.** A minister calling up
-  exactly the spare training intake loses the refusers outright; one calling
-  over capacity loses them out of a surplus that was going to sit in the
-  holding pool anyway. That is a real strategy, not an oversight.
+- **Calling over capacity is insurance against refusal, and the premium is now
+  paid in court.** A minister calling up exactly the spare training intake
+  loses the refusers outright; one calling over capacity loses them out of a
+  surplus that was going to sit in the holding pool anyway. The soldiers are
+  still insured — but the refusers are now prosecuted (§9a), so the insurance
+  has a price where it used to be free. The price is capped at the courts'
+  throughput, which is a known under-charge on the largest call-ups and is
+  recorded as such in `pc_refusal_max`'s rationale.
 - **Refusal raises the leadership factor while lowering headcount.** Fewer
   conscripts is fewer people for the cadre to lead (§7), so a refused call-up
   is bad for the score and good for the quality of what remains. It also cuts
   graduations, and so the delivery credit (§9) — refusal costs political
-  capital a second time, through the income rather than the penalty.
+  capital twice over, once through the income it forgoes and once through the
+  court list it creates (§9a).
 
 ## 11. Scoring
 

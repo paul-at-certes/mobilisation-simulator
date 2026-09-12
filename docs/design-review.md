@@ -75,7 +75,7 @@ which is self-harm under the current rules. Treat their numbers as a floor.
 
 ## Benchmarks
 
-Output of `npm run dist -- 40`, at commit `52bcbae`. **If a change moves these,
+Output of `npm run dist -- 40`, at commit `PENDING`. **If a change moves these,
 update this table in the same commit.** Median final ESE, percentage of the 40
 seeds that met the target, percentage that ended in resignation, and the median
 leadership factor at the end.
@@ -98,11 +98,11 @@ leadership factor at the end.
 |---|---|---|---|---|---|---|
 | do_nothing | 3,693 | 3,696 | 3,696 | 0 | 0 | 1.00 |
 | reserves_only | 19,352 | 20,417 | 21,653 | **3** | 0 | 1.00 |
-| **reserves_plus_light** | 20,805 | **21,878** | 23,115 | **43** | 0 | 0.98 |
-| conscription_max_capacity | 5,019 | 5,435 | 5,844 | 0 | 15 | 0.68 |
-| conscription_over_capacity | 4,301 | 4,760 | 5,256 | 0 | 95 | 1.00 |
-| capacity_heavy | 18,568 | 19,592 | 20,760 | 0 | 0 | 0.67 |
-| max_effort | 16,100 | 17,512 | 18,750 | 0 | 0 | 0.47 |
+| **reserves_plus_light** | 20,979 | **21,878** | 23,115 | **43** | 0 | 0.98 |
+| conscription_max_capacity | 5,037 | 5,435 | 5,844 | 0 | 0 | 0.68 |
+| conscription_over_capacity | 4,761 | 5,162 | 5,259 | 0 | 45 | 1.00 |
+| capacity_heavy | 18,568 | 19,479 | 20,520 | 0 | 0 | 0.67 |
+| max_effort | 16,146 | 17,634 | 19,028 | 0 | 0 | 0.48 |
 
 ### Corps — target 45,000 in 24 months
 
@@ -110,11 +110,11 @@ leadership factor at the end.
 |---|---|---|---|---|---|---|
 | do_nothing | 3,736 | 3,756 | 3,786 | 0 | **100** | 1.00 |
 | reserves_only | 20,259 | 21,325 | 22,531 | 0 | 38 | 1.00 |
-| **reserves_plus_light** | 22,504 | **22,652** | 22,766 | 0 | **35** | 0.71 |
-| conscription_max_capacity | 6,584 | 7,270 | 7,970 | 0 | 100 | 0.39 |
-| conscription_over_capacity | 4,312 | 4,911 | 5,792 | 0 | 100 | 1.00 |
-| capacity_heavy | 19,754 | 20,098 | 20,945 | 0 | 3 | 0.42 |
-| max_effort | 17,437 | 18,147 | 19,198 | 0 | 20 | 0.28 |
+| **reserves_plus_light** | 22,433 | **22,633** | 22,754 | 0 | **35** | 0.71 |
+| conscription_max_capacity | 7,234 | 7,551 | 8,079 | 0 | 48 | 0.28 |
+| conscription_over_capacity | 5,152 | 5,596 | 7,016 | 0 | 100 | 1.00 |
+| capacity_heavy | 19,772 | 20,162 | 21,066 | 0 | 0 | 0.43 |
+| max_effort | 17,505 | 18,208 | 19,268 | 0 | 28 | 0.29 |
 
 **The three numbers to watch.** If any of these drifts, something has broken:
 
@@ -122,7 +122,7 @@ leadership factor at the end.
   ~25% the headline difficulty is a coin flip again (F2); above ~65% it is a
   walkover.
 - The median leadership factor for `capacity_heavy` and `max_effort` is **0.67
-  and 0.47** at Division (0.42 and 0.28 at Corps). If either returns to 1.00, the mechanic has stopped firing (F3).
+  and 0.48** at Division (0.43 and 0.29 at Corps). If either returns to 1.00, the mechanic has stopped firing (F3).
 - `do_nothing` is **17%** of Division and **36%** of Brigade, and still resigns
   on **100%** of Corps seeds. If it climbs past ~60% of any rung, that rung is
   free; if it stops resigning at Corps, the delivery credit has become an idle
@@ -893,9 +893,10 @@ subtraction gives its output multiplier, 0.862, the highest of the four.
 **It is paid for twice, and the second one is the one that matters.**
 
 1. **`pc_cost_band_26_40` = −8, `pc_cost_band_18_65` = −14.** The age band was
-   the one clause in the Bill that cost no political capital at all. That was
-   not a gap this finding created — see F15 — but it is one this finding had to
-   close before adding a better band.
+   the one clause in the Bill that cost no political capital at all, while
+   being the clause that moved the refusal charge more than anything else the
+   player could do. That was not a gap this finding created — see F15 — but it
+   is one this finding had to close before adding a better band.
 2. **`attrition_age_add_26_40` = +5 points on a base of 26.** This is the part
    that lands, and the reasoning is F3's lesson applied. The obvious places to
    charge an older band — `medical_pass_*`, `exemption_*` — both resolve into
@@ -904,6 +905,8 @@ subtraction gives its output multiplier, 0.862, the highest of the four.
    people actually on the course. The band now buys survival and pays in
    soldiers: at Corps `reserves_plus_light` resigns on 20% of seeds under 26–40
    against 35% under the default, and finishes on 22,580 ESE against 22,652.
+   (Those figures were taken before F15; the direction is unchanged, and the
+   reason for it is now a lower court list rather than a threshold cleared.)
 
 **And the counterweight this was gated on turned out not to be the one it
 needed.** The plan of record was: fix the money penalties (F13), then ship the
@@ -930,22 +933,20 @@ decision; the problem was the span, not the level.
 
 ---
 
-### F15 — A cliff at 25 decides more than any clause does · *Open*
+### F15 — A cliff at 25 decided more than any clause did · *Addressed*
 
 Found while pricing F14's new band, by switching the cliff off and re-running
 the sweep.
 
-**The mechanic.** `pc_low_willingness_penalty` charges 2 political capital a
-month whenever conscription is active and `effectiveWillingness` is below
-`willingness_low_threshold_pct` = 25. Willingness starts at 20. The band
-adjustments are −4, 0, +6, +9. So **two of the four bands clear the threshold
-and two do not**, and nothing else in the game reliably crosses it: an address
-is a temporary boost, and the event deck's willingness effects are small.
+**The mechanic as found.** `pc_low_willingness_penalty` charged 2 political
+capital a month whenever conscription was active and `effectiveWillingness` was
+below `willingness_low_threshold_pct` = 25. Willingness starts at 20. The band
+adjustments are −4, 0, +6, +9. So **two of the four bands cleared the threshold
+and two did not**, and nothing else in the game reliably crossed it: an address
+is a temporary boost, and the deck's willingness effects are small.
 
-**What it is worth.** Two political capital a month for the rest of the run —
-about 22 over a Division run, 46 over a Corps one — against a clause that until
-this change cost nothing at all. Holding everything else fixed and re-running
-the 40 seeds with the threshold set to 0, so that nobody is ever charged:
+**What it was worth.** Holding everything else fixed and re-running the 40 seeds
+with the threshold set to 0, so that nobody is ever charged:
 
 | Corps, `reserves_plus_light` resign% | cliff on | cliff off |
 |---|---|---|
@@ -954,30 +955,90 @@ the 40 seeds with the threshold set to 0, so that nobody is ever charged:
 | 18–65 | 38 | 38 |
 
 The two bands above the line do not move, because they were never charged. The
-default band moves by 32 points. **Nearly all of Corps's difficulty for a
-default Bill, and the whole of 26–40's advantage over it, is one binary
-threshold** — not the polling, not the refusal rate, not the pipeline.
+default band moves by 32 points. Nearly all of Corps's difficulty for a default
+Bill, and the whole of 26–40's advantage over it, was one binary threshold —
+not the polling, not the refusal rate, not the pipeline.
 
-**Why it is not fixed here.** A one-off clause cost cannot price a per-month
-stream that runs for 4, 12 or 24 months: the arithmetic does not work, and
-inflating `pc_cost_band_*` until the Corps numbers looked right would have
-made Division punitive to hide a Corps problem. The band is therefore priced
-honestly against what it does, and this is recorded as its own finding.
+**Fix: charge the refusals that actually happen.** The model already counted
+them (`conscriptsRefusedTotal`, §10a); it simply never charged for them, which
+is why the label on screen — *"Refusal cases in the courts"* — was describing
+something the game was not doing. Refusals now go onto a court list. Every
+`pc_refusal_per_charge` = 200 of them costs one political capital, at most
+`pc_refusal_max` = 1 a month, and **what is not charged this month stays on the
+list**. Model in `docs/sim-spec.md` §9a.
 
-**The fix, when it is taken, is a shape and not a number** — the same
-correction F13 just made to the Treasury penalty, and the same one §10a already
-made to willingness itself. The label on the charge says *"Refusal cases in the
-courts"*, and the model now knows exactly how many people refused
-(`conscriptsRefusedTotal`, §10a). Charging on refusals that actually happened
-would make the band move the penalty continuously instead of switching it off,
-and would put a third consequence on a quantity the last change went to some
-trouble to make consequential. It needs its own measurement pass: it moves
-every rung, and it interacts with `conscription_refusal_conversion`, which is
-the model's one frank assumption. **ASK.**
+**The carry-over is the load-bearing part, and the first attempt did not have
+it.** Charging `ceil(refusals this month / rate)` looked equivalent and was not.
+An address to the nation moves the refusal rate by about a tenth; rounded off
+month by month, a tenth of a small number is nothing, so the address came out
+worth **exactly zero** and the bots stopped buying it. That is the same
+insensitivity as the threshold, wearing different clothes — a proportional
+charge that is not sensitive to the lever it exists to price. Accumulated, a
+tenth fewer refusals is a tenth fewer points, exactly. **If a charge is meant to
+make a lever matter, check that the lever moves it before believing the shape
+is fixed.**
 
-**Watch for.** Any future clause or event effect that moves willingness by
-enough to cross 25 will look far more powerful than its size suggests. That is
-the tell.
+**What it cost.** All three watch numbers are unchanged: Division
+`reserves_plus_light` 43% met, leadership 0.67 and 0.48, `do_nothing` resigning
+on 100% of Corps seeds. Corps `reserves_plus_light` holds at 35% resignations,
+paying 16 political capital across a run where the threshold charged it 12.
+What moved is the two ends, and both deliberately:
+
+| | before | after | |
+|---|---|---|---|
+| `max_effort`, Corps resign% | 20 | **28** | the biggest programme refuses the most and now pays for it |
+| `capacity_heavy`, Corps resign% | 3 | **0** | it conscripts moderately and was being charged as though it conscripted heavily |
+| `conscription_max_capacity`, Corps resign% | 100 | **48** | charged for a flat state before; charged for its actual refusals now |
+| `conscription_over_capacity`, Division resign% | 95 | **45** | see below — this one is a real cost of the cap |
+
+**The known under-charge, stated rather than hidden.**
+`conscription_over_capacity` refuses about 2,500 people a month, fourteen times
+what a restrained programme refuses, and the cap means it pays the same 1 a
+month. At Division that takes it from 95% resignations to 45%. It still scores
+5,162 against a target of 22,000 and still resigns on **100%** of Corps seeds,
+so F6's third property survives. The cap is there because political capital is
+an integer currency and the step from 1 to 2 is the difference between
+`max_effort` resigning on 28% of Corps seeds and on 90% of them; there is
+nothing in between. What the cap buys instead is that a huge call-up makes the
+list run *longer* rather than cost more per month, and the cases that were never
+heard are now reported on the scoring screen — the government ends, the court
+list does not.
+
+**Two things to watch.**
+
+- If `pc_refusal_max` is ever raised to 2, re-measure `max_effort` at Corps
+  before anything else. It is the strategy the cap protects.
+- The charge now runs on after a call-up stops, while the backlog clears. That
+  is deliberate and it is named in the briefing line (*"N still on the list"*),
+  because a charge with no visible cause reads as a bug.
+
+---
+
+### F16 — The bots handle the idle penalty by accident · *Watch*
+
+Found while fixing F15, as the thing that nearly corrupted its measurement.
+
+Before F15 the scripted strategies bought a third address to the nation when it
+would lift willingness back over the refusal threshold. That test was gated on
+`conscriptionEverActive`, and it was also — incidentally — the only thing
+stopping the bots idling into `pc_idle_penalty`. Removing the threshold removed
+the side effect: at Corps `reserves_plus_light` went from 1 idle-charged month a
+run to 5, and from 5 addresses to 2, which read as F15 having made the game
+much harder when it had made the *bot* much worse.
+
+The idle test is now explicit in `politicalUpkeep`, and deliberately left gated
+on `conscriptionEverActive` to match the scope the old rule had. **That leaves a
+known hole**: `reserves_only` never conscripts, so it never takes a third
+address and eats the idle charge all run. Ungating it moves `reserves_only` at
+Corps from **38% resignations to 15%** — a change to the instrument, not to the
+game, and one that would reset every number in the benchmark table above.
+
+So it is recorded rather than taken. If it is ever taken, take it on its own,
+re-baseline the whole table in the same commit, and say plainly that the
+movement is the bot improving rather than the game softening. This is the
+general hazard the review should hold onto: **a benchmark made of bots measures
+the game and the bots at once, and a change that touches how the bots decide is
+not measuring what you think it is.**
 
 ## The next mechanic, if one is wanted
 

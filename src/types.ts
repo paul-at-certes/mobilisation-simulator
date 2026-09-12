@@ -416,6 +416,12 @@ export interface GameState {
   conscriptsCalledTotal: number;
   /** Called up and did not report (spec §10a). */
   conscriptsRefusedTotal: number;
+  /**
+   * Refusal cases not yet charged. The courts work through the backlog at
+   * `pc_refusal_per_charge` cases per political capital (§9), and the
+   * remainder carries to next month so that no refusal is ever free.
+   */
+  refusalCaseload: number;
   eligiblePoolMultiplier: number; // event-driven adjustments to the eligible pool
 
   // Pipeline levers
@@ -487,6 +493,16 @@ export interface Score {
   costPctDefenceBudget: number;
   gdpLoss: number;
   gdpLossPctGdp: number;
+  /** Conscripts prosecuted for not reporting, across the whole run. */
+  refused: number;
+  /**
+   * Refusal cases the courts had not reached when the run ended. The charge is
+   * capped at `pc_refusal_max` a month (§9), so a minister who calls up far
+   * over the training estate's capacity leaves a list that outlives the
+   * government — which is the honest consequence, and the one the cap would
+   * otherwise hide.
+   */
+  refusalBacklog: number;
   verdictId: string;
   verdictText: string;
   verdictOneLiner: string;

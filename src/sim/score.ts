@@ -107,6 +107,8 @@ export function score(state: GameState): Score {
     costPctDefenceBudget: (cost / P.defence_budget_2025) * 100,
     gdpLoss,
     gdpLossPctGdp: (gdpLoss / P.uk_gdp_2025) * 100,
+    refused: state.conscriptsRefusedTotal,
+    refusalBacklog: Number.isFinite(state.refusalCaseload) ? state.refusalCaseload : 0,
     verdictId: verdict.id,
     verdictText: fillTemplate(verdict.text, vars),
     verdictOneLiner: fillTemplate(verdict.oneLiner, vars),

@@ -657,22 +657,6 @@
       "confidence": "derived",
       "derivation": "Secondary reporting; used for flavour only."
     },
-    "willingness_low_threshold_pct": {
-      "value": 25,
-      "unit": "pct",
-      "label": "Willingness threshold",
-      "description": "Below this willingness level, conscription draws refusal cases and costs political capital each month.",
-      "section": "politics",
-      "source": "Modelling assumption",
-      "url": "",
-      "asOf": "2026-09-11",
-      "confidence": "assumption",
-      "range": [
-        25,
-        40
-      ],
-      "rationale": "Design brief gave 30. Lowered in the balance pass so that an address to the nation (+5 points on a base of 20) lifts willingness clear of the refusal-cases penalty for its duration; otherwise the penalty is a flat tax with no counter."
-    },
     "conscription_willingness_adj_18_25": {
       "value": -4,
       "unit": "pct",
@@ -1786,21 +1770,37 @@
       ],
       "rationale": "The same 3 as the momentum bonus it replaces, so the best possible month is no larger than before; what changes is that an ordinary delivering month can now reach it. Uncapped, the month the reserves arrive would pay for the rest of the game."
     },
-    "pc_low_willingness_penalty": {
-      "value": 2,
-      "unit": "pc",
-      "label": "Refusal-cases penalty",
-      "description": "Political capital lost per month while conscription is active and willingness is below the threshold.",
+    "pc_refusal_per_charge": {
+      "value": 200,
+      "unit": "people",
+      "label": "Refusal cases per point of political capital",
+      "description": "Conscripts called up who did not report, per one political capital charged as the courts work through the backlog.",
       "section": "politics",
       "source": "Modelling assumption",
       "url": "",
-      "asOf": "2026-09-11",
+      "asOf": "2026-09-12",
+      "confidence": "assumption",
+      "range": [
+        100,
+        600
+      ],
+      "rationale": "The mirror of pc_delivery_per_credit, and deliberately steeper: a soldier who arrives is a line in a statistical return, a conscript who refuses is a prosecution with a name. It replaced a flat 2 a month levied whenever willingness sat below a threshold - a switch that the Bill's age band, and nothing else in the game, reliably flipped (design review F15). Cases carry over: what is not charged this month stays on the list, so no refusal is ever free and the total charged across a run is the total who refused divided by this figure. The carry-over is load-bearing rather than tidy. An address to the nation moves the refusal rate by about a tenth; rounded off month by month a tenth of a small number is nothing, and the first attempt at this charge left the address worth exactly zero to the bots - the same insensitivity as the threshold it replaced, in different clothes. The level holds the benchmark where F9 left it: at 1 per 200, reserves_plus_light pays 16 across a Corps run against the 12 the threshold charged it, and resigns on 35% of seeds, which is the figure unchanged. Above about 400 a restrained programme pays almost nothing and Corps falls to 5% resignations; below about 150 the programmes that conscript at scale are wiped out. Tuned against npm run dist -- 40; see DECISIONS.md."
+    },
+    "pc_refusal_max": {
+      "value": 1,
+      "unit": "pc",
+      "label": "Refusal cases chargeable in a month",
+      "description": "Most political capital the refusal cases can cost in a single month, however long the backlog is.",
+      "section": "politics",
+      "source": "Modelling assumption",
+      "url": "",
+      "asOf": "2026-09-12",
       "confidence": "assumption",
       "range": [
         1,
         4
       ],
-      "rationale": "Design brief."
+      "rationale": "Court throughput, not a safety valve. However many refuse, only so many can be prosecuted in a month, so the charge is a standing drip rather than a spike - and because the remainder carries over, calling up more people makes the list run for longer instead of costing more per month. A minister who calls up several times the training estate's spare intake ends the run with a backlog the courts have not reached, which is reported and is the honest consequence: the government ends, the cases do not. The value is 1 because the step to 2 is the difference between max_effort resigning on 28% of Corps seeds and on 90% of them, against the 20% F9 left it at; there is nothing between them, political capital being an integer currency. The cost of that choice is recorded in F15: conscription_over_capacity refuses fourteen times as many people as a restrained programme and is charged the same 1 a month, so at Division it resigns on 45% of seeds where the flat threshold resigned it on 95%. It still fails the target by four fifths and still resigns on every Corps seed."
     },
     "pc_idle_grace_months": {
       "value": 2,

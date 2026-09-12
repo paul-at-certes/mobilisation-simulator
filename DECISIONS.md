@@ -1215,3 +1215,80 @@ delivers nothing; Corps `capacity_heavy` 5% to 3% and `max_effort` 18% to 20%.
 Saved runs from before this change are discarded rather than resumed: the
 GameState version goes 1 to 2, because a run saved mid-Bill could be carrying
 an age band that no longer exists.
+
+## The refusal cliff becomes a court list (12 September 2026)
+
+F15, taken on its own the way F13 was, and for the same reason: it moves every
+rung.
+
+**What was wrong.** `pc_low_willingness_penalty` charged 2 political capital a
+month whenever conscription was active and willingness sat below
+`willingness_low_threshold_pct` = 25. Willingness starts at 20 and the four age
+bands adjust it by -4, 0, +6, +9, so two bands paid the charge in full and two
+did not pay it at all. Nothing else in the game reliably crossed the line.
+Re-running the 40 seeds with the threshold set to 0 moves Corps
+`reserves_plus_light` from 35% resignations to **3%** under the default band and
+moves the two bands above the line not at all: nearly all of Corps's difficulty
+for a default Bill was one binary threshold, and so was the whole of the 26-40
+band's advantage over the default.
+
+**The fix is the shape, not the number** - the same correction F13 made to the
+Treasury penalty. Refusals go onto a court list. Every `pc_refusal_per_charge`
+= 200 cases cost one political capital, at most `pc_refusal_max` = 1 a month,
+and what is not charged this month stays on the list. The model already counted
+refusals and simply never charged for them, which is why the label on screen -
+"Refusal cases in the courts" - was describing something the game was not doing.
+
+**The carry-over is load-bearing, and the first attempt did not have it.**
+Charging `ceil(refusals this month / 200)` looks equivalent and is not. An
+address to the nation moves the refusal rate by about a tenth; rounded off month
+by month, a tenth of a small number is nothing, so an address came out worth
+**exactly zero** and the bots stopped buying one. That is the same insensitivity
+as the threshold in different clothes. Accumulated, a tenth fewer refusals is a
+tenth fewer points, exactly. The general lesson, which is worth more than the
+change: **if a charge exists to make a lever matter, check that the lever moves
+it before believing the shape is fixed.**
+
+**And a measurement trap that nearly landed.** The old rule was gated on
+`conscriptionEverActive`, and it was also the only thing stopping the bots
+idling into `pc_idle_penalty`. Removing it took `reserves_plus_light` at Corps
+from 1 idle-charged month a run to 5 and from 5 addresses to 2, which read as
+F15 having made the game far harder when it had made the *bot* worse. The idle
+test is now explicit, and deliberately left gated on `conscriptionEverActive` to
+match the scope the old rule had: ungating it would move `reserves_only` at
+Corps from 38% resignations to 15% and reset every number in the benchmark
+table, which is a change to the instrument and not to the game. Recorded as
+F16 rather than taken.
+
+**The level, and what the cap costs.** At 1 per 200 with a cap of 1,
+`reserves_plus_light` pays 16 across a Corps run against the 12 the threshold
+charged it, and holds at 35% resignations - the watch number unchanged. Above
+about 400 a restrained programme pays almost nothing and Corps falls to 5%;
+below about 150 the programmes that conscript at scale are wiped out. The cap is
+1 rather than 2 because the step between them is the difference between
+`max_effort` resigning on 28% of Corps seeds and on 90%, against the 20% F9 left
+it at, and political capital is an integer currency so there is nothing in
+between.
+
+The cap has a price and it is stated rather than hidden:
+`conscription_over_capacity` refuses about 2,500 people a month, fourteen times
+what a restrained programme refuses, and is charged the same 1 a month. At
+Division that takes it from 95% resignations to 45%. It still scores 5,162
+against a target of 22,000 and still resigns on 100% of Corps seeds, so F6's
+third property holds. What the cap buys instead is that a huge call-up makes the
+list run *longer* rather than cost more per month, and the cases the courts never
+reached are now reported on the scoring screen: the government ends, the court
+list does not.
+
+**Balance** (`npm run dist -- 40`). All three watch numbers unchanged: Division
+`reserves_plus_light` 43% met, leadership 0.67 and 0.48, `do_nothing` resigning
+on 100% of Corps seeds. Brigade byte-identical - four months is not long enough
+for a Bill to pass and a call-up to generate a list. What moved, all of it at
+the two ends and all of it deliberate: Corps `max_effort` 20% to 28%
+resignations, `capacity_heavy` 3% to 0%, `conscription_max_capacity` 100% to
+48%; Division `conscription_over_capacity` 95% to 45% and
+`conscription_max_capacity` 15% to 0%.
+
+**One thing to watch.** The charge now runs on after a call-up stops, while the
+backlog clears. That is deliberate, and the briefing names it ("N still on the
+list"), because a charge with no visible cause reads as a bug.

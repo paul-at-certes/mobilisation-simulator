@@ -13,7 +13,7 @@ import { seedFromString, next, uniform } from './rng.js';
 import { emptyPools, syncDerivedPools } from './pools.js';
 import { computeForce } from './effectiveness.js';
 import { incrementalCost, monthlyCostBreakdown, monthlyGdpLoss } from './money.js';
-import { expireWillingnessBoosts, idleMonths, monthlyPcChanges, type PcReason } from './politics.js';
+import { expireWillingnessBoosts, idleMonths, monthlyPcChanges, settleRefusalCases, type PcReason } from './politics.js';
 import { applyAction, isActionAvailable, ACTION_LABELS } from './actions.js';
 import { advanceBillClock, refusalRate } from './legislation.js';
 import { cohortAttrition, courseMonths, equipmentArrived, spareIntake } from './pipeline.js';
@@ -98,6 +98,7 @@ export function newGame(seed: number | string, difficulty: Difficulty): GameStat
     conscriptionEverActive: false,
     conscriptsCalledTotal: 0,
     conscriptsRefusedTotal: 0,
+    refusalCaseload: 0,
     eligiblePoolMultiplier: 1,
     capacityPurchases: 0,
     capacityPurchaseMonths: [],
@@ -234,10 +235,12 @@ export function step(state: GameState, input: TurnInput): GameState {
   const month = advanceMonth(s, arrivals, notes);
 
   // 4. Politics. The delivery credit is paid on the headcount that actually
-  // reached units this month: graduations plus the month's arrivals (§9).
+  // reached units this month: graduations plus the month's arrivals (§9). The
+  // refusal charge is its mirror, on the people called up who did not report.
   expireWillingnessBoosts(s);
   const delivered = month.graduations + arrivals.reduce((total, a) => total + a.count, 0);
-  for (const r of monthlyPcChanges(s, delivered)) {
+  const refusals = { people: month.refused, points: settleRefusalCases(s, month.refused) };
+  for (const r of monthlyPcChanges(s, delivered, refusals)) {
     s.politicalCapital += r.delta;
     pcReasons.push(r);
   }
@@ -360,6 +363,8 @@ function isKnownAction(id: string): id is Parameters<typeof isActionAvailable>[1
 interface MonthOutcome {
   graduations: number;
   outflow: number;
+  /** Called up this month and did not report (§10a). Charged in politics (§9). */
+  refused: number;
 }
 
 export interface MonthOptions {
@@ -382,6 +387,8 @@ export function advanceMonth(
   notes: string[],
   opts: MonthOptions = {},
 ): MonthOutcome {
+  let refused = 0;
+
   // a. Legislation.
   if (advanceBillClock(s)) notes.push(`bill_passed:${s.turn}`);
 
@@ -432,12 +439,13 @@ export function advanceMonth(
       s.conscriptionEverActive = true;
       // Not everyone called reports (§10a). The refusers are out of the pool —
       // they have been called and are in the courts, not available again.
-      const refused = called * refusalRate(s);
-      if (refused > 0) {
-        s.conscriptsRefusedTotal += refused;
-        notes.push(`refused:${Math.round(refused)}`);
+      const refusedThisMonth = called * refusalRate(s);
+      if (refusedThisMonth > 0) {
+        refused = refusedThisMonth;
+        s.conscriptsRefusedTotal += refusedThisMonth;
+        notes.push(`refused:${Math.round(refusedThisMonth)}`);
       }
-      s.pools.conscriptCalled += called - refused;
+      s.pools.conscriptCalled += called - refusedThisMonth;
     }
   }
   const candidates = s.pools.holdingPool + s.pools.conscriptCalled;
@@ -544,7 +552,7 @@ export function advanceMonth(
   s.ledger.monthlyGdpLoss = monthlyGdpLoss(s);
   s.ledger.cumulativeGdpLoss += s.ledger.monthlyGdpLoss;
 
-  return { graduations, outflow };
+  return { graduations, outflow, refused };
 }
 
 /** Exposed for tests and the CLI: one RNG draw on a state (does not mutate). */

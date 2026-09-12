@@ -272,7 +272,7 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
     .reduce((a, n) => a + (Number(n.split(':')[1]) || 0), 0);
   if (refused > 0) {
     urgent.push(
-      `${formatInt(refused)} of those called did not report. A wider age band or an address to the nation would lift willingness and bring more of them in.`,
+      `${formatInt(refused)} of those called did not report, and the prosecutions are charged to you. An older age band or an address to the nation would lift willingness and bring more of them in.`,
     );
   }
 
@@ -400,9 +400,9 @@ function monthlyNote(state: GameState, facts: BriefingFacts): string[] {
   // Read the effective figure, not the raw one: the Bill's age band moves it
   // (§10a) and two lines quoting different numbers for the same thing is worse
   // than not quoting it at all.
-  if (state.conscriptionEverActive && effectiveWillingness(state) < P.willingness_low_threshold_pct) {
+  if (state.conscriptionEverActive) {
     colour.push(
-      `Willingness to serve stands at ${formatPct(effectiveWillingness(state))}; below ${svPct('willingness_low_threshold_pct')} the refusal cases keep coming.`,
+      `Willingness to serve stands at ${formatPct(effectiveWillingness(state))}. Every ${sv('pc_refusal_per_charge')} who refuse costs a point of political capital in the month they are called.`,
     );
   }
 

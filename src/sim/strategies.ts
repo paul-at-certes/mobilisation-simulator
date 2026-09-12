@@ -9,7 +9,8 @@ import type { Action, BillClauses, GameState, TurnInput } from '../types.js';
 import { P } from './params.js';
 import { findEvent } from './events.js';
 import { spareIntake } from './pipeline.js';
-import { costPenaltySteps, costPenaltyThreshold, effectiveWillingness } from './politics.js';
+import { costPenaltySteps, costPenaltyThreshold, effectiveWillingness, idleMonths } from './politics.js';
+import { refusalRate } from './legislation.js';
 
 export type Strategy = (state: GameState) => TurnInput;
 export type StrategyId = 'do_nothing' | 'reserves_only' | 'reserves_plus_light' | 'conscription_max_capacity' | 'conscription_over_capacity' | 'capacity_heavy' | 'max_effort';
@@ -100,10 +101,37 @@ function contingencyPaysOff(s: GameState): boolean {
   return drawn < asIs;
 }
 
-/** Would one more address lift willingness back over the refusal threshold? */
-function addressClearsRefusals(s: GameState): boolean {
-  const w = effectiveWillingness(s);
-  return w < P.willingness_low_threshold_pct && w + P.address_willingness_boost_pct >= P.willingness_low_threshold_pct;
+/**
+ * Does one more address pay for itself in refusals avoided?
+ *
+ * An address lifts willingness for `address_willingness_months`, which lowers
+ * the refusal rate and so the monthly charge (§9). Before F15 this was a
+ * threshold question — would the boost cross the line at which a flat penalty
+ * switched off — and the bot could answer it by comparing two numbers. Now the
+ * charge is proportional, so the bot is given the arithmetic instead: what the
+ * boost saves over its life, against what the address costs. A minister
+ * calling up nobody saves nothing.
+ */
+function addressPaysForItself(s: GameState): boolean {
+  const called = Math.min(
+    Math.max(0, s.callupPerMonth),
+    s.callupCapPerMonth ?? Infinity,
+    s.pools.conscriptEligible,
+  );
+  if (!(called > 0)) return false;
+  const lifted: GameState = {
+    ...s,
+    willingnessBoosts: [
+      ...s.willingnessBoosts,
+      { delta: P.address_willingness_boost_pct, until: s.turn + P.address_willingness_months },
+    ],
+  };
+  // In expectation, not in whole points: the caseload carries its remainder
+  // forward, so a tenth fewer refusals really is a tenth fewer points charged,
+  // and rounding the comparison would hide exactly the effect being bought.
+  const saved = (called * refusalRate(s) - called * refusalRate(lifted)) / P.pc_refusal_per_charge;
+  const months = Math.min(P.address_willingness_months, monthsLeft(s));
+  return saved * months > -P.pc_address_subsequent;
 }
 
 /**
@@ -111,9 +139,10 @@ function addressClearsRefusals(s: GameState): boolean {
  * At most one a month, in the order the arithmetic favours: the first two
  * addresses pay (+8, +4); blaming the previous government pays once; spending
  * is raised only once the Treasury has actually started charging; and a third
- * address, which costs `pc_address_subsequent`, is taken only when it would
- * lift willingness back over the refusal threshold and so stop a standing
- * monthly penalty. An address that clears nothing is not worth the money.
+ * address, which costs `pc_address_subsequent`, is taken when the refusal
+ * charge it avoids over the boost's life is worth more than it costs, or when
+ * it stops the charge for a government seen to be doing nothing. An address
+ * that saves neither is not worth the money.
  */
 function politicalUpkeep(s: GameState): Action[] {
   if (!boostActive(s) && s.addressCount < 2) return [{ id: 'address_nation' }];
@@ -129,13 +158,24 @@ function politicalUpkeep(s: GameState): Action[] {
   ) {
     return [{ id: 'raise_spending' }];
   }
-  // A clearing address pays for itself: it costs 5 once and buys three months
-  // free of the refusal-cases charge, and a month free of the idle charge. The
-  // safety floor does not apply to it — only not resigning over it does.
+  // A third address is bought when the refusals it avoids are worth more than
+  // it costs, or when the government is one month away from being charged for
+  // doing nothing — an address is the only repeatable action, so it is the only
+  // way to stop that clock. Before F15 the first test carried the second by
+  // accident: the address that cleared the willingness threshold also reset the
+  // idle count, and dropping the threshold cost the bot four idle months a run
+  // at Corps until this was made explicit. The safety floor does not apply to
+  // either — only not resigning over it does.
+  // Both tests are gated on a conscription programme existing, which is the
+  // scope the threshold rule had. Widening it would make every strategy play
+  // better — `reserves_only` at Corps goes from 38% resignations to 15% on the
+  // idle test alone — and that is a change to the instrument, not to the game.
+  // It belongs in its own pass, measured on its own (design review F16).
+  const stopsIdleCharge = idleMonths(s) >= P.pc_idle_grace_months;
   if (
     !boostActive(s)
     && s.conscriptionEverActive
-    && addressClearsRefusals(s)
+    && (stopsIdleCharge || addressPaysForItself(s))
     && s.politicalCapital + P.pc_address_subsequent > 0
   ) {
     return [{ id: 'address_nation' }];

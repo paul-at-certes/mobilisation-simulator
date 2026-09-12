@@ -60,6 +60,16 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
       stat('Leadership factor', score.leadership.toFixed(2), `${score.leadershipBand}`),
       stat('Treasury cost', fmtBn(score.cost), [fmtPct(score.costPctDefenceBudget), ' of the ', sourced('2025/26 defence budget', 'defence_budget_2025')]),
       stat('GDP output lost', fmtBn(score.gdpLoss), [fmtPct(score.gdpLossPctGdp, 2), ' of ', sourced('2025 GDP', 'uk_gdp_2025')]),
+      // Only shown when there were any: a nil return is not worth a tile.
+      score.refused >= 1
+        ? stat(
+            'Refused to report',
+            fmtInt(score.refused),
+            score.refusalBacklog >= 1
+              ? [fmtInt(score.refusalBacklog), ' cases still unheard when you left'].join('')
+              : 'all heard',
+          )
+        : null,
     ),
     h('div', { class: 'verdict' }, h('div', { class: 'note-head' }, "The general's verdict"), h('p', {}, score.verdictText)),
     h('h2', {}, 'Share'),
