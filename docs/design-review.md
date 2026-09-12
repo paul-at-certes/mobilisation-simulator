@@ -1708,11 +1708,33 @@ player the civil servant.
    shared link rather than the front door: the player is the Secretary of
    State, the Permanent Secretary is not the player.
 
+**The end of the run, checked after.** Neither the scoring screen nor the share
+card contradicted anything — they named no office at all. The only role words
+on either were *Prime Minister* (in the resignation headline) and *the
+general*, so a stranger arriving on a replay link or seeing the PNG in a feed
+learned who judged the run and not who ran it. Both now carry the same
+dateline, in the card's existing accent-uppercase idiom:
+
+> SECRETARY OF STATE FOR DEFENCE · DIVISION · 12 MONTHS
+
+It also tells the scoring screen which difficulty the run was, which that
+screen never said. The `og-image.png` needed nothing: it already opens *"You
+are the Secretary of State for Defence."*
+
 **Left alone on purpose.** `verdicts.json` and the model's comments call the
 player *the minister* in the third person. That is correct — a Secretary of
 State is a minister — and it is what ties the title to the role. And the
 Permanent Secretary stays the author of the monthly note: a game about the
 machinery is better for having the machinery write to you.
+
+**One persona still unnamed, and left that way for now.** The scoring screen's
+verdict is headed *The general's verdict*, and the verdict texts say *the
+general* throughout. Which general is never stated. The fiction points at the
+Chief of the Defence Staff — he asked for the division on the opening screen,
+and in `missed_high_intact` it is he who has told the ally — but the CGS is
+also on that screen, releasing regulars. This is not a conflict with the
+player's own role and the plain word reads better than the appointment; it is
+recorded here so it is a choice rather than an oversight.
 
 ---
 

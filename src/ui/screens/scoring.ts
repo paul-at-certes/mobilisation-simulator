@@ -44,6 +44,11 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
   return h(
     'div',
     { class: 'fade-in' },
+    // The same dateline the share card carries, for the same reason: this is
+    // where a run ends and where a stranger following a replay link arrives,
+    // and the office the player held was named nowhere on it (F20). It also
+    // says which difficulty the run was, which the screen never did.
+    h('div', { class: 'dateline' }, `Secretary of State for Defence · ${state.difficulty[0].toUpperCase()}${state.difficulty.slice(1)} · ${score.months} months`),
     h('h1', {}, score.resigned ? `Month ${state.turn}` : `Month ${state.deadlineMonths}. The deadline.`),
     h('p', { class: `headline ${score.met && !score.resigned ? 'met' : 'missed'}` }, headline),
     score.resigned ? h('p', { class: 'muted' }, 'Scored as things stood on the day you left.') : null,

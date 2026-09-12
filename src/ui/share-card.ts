@@ -50,7 +50,10 @@ export function renderShareCard(input: ShareCardInput): HTMLCanvasElement {
   ctx.fillText('Mobilisation Minister', 60, 70);
   ctx.font = `500 16px ${SANS}`;
   ctx.fillStyle = COLOURS.accent;
-  const label = `${cap(difficulty)} · ${score.months} months`;
+  // The office the player held. The card is the part of the game that travels
+  // to people who have not played it, and "Mobilisation Minister" on its own
+  // does not say which post the title means (F20).
+  const label = `Secretary of State for Defence · ${cap(difficulty)} · ${score.months} months`;
   ctx.fillText(label.toUpperCase(), 60, 100);
 
   // Headline
