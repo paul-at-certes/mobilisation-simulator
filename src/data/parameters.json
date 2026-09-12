@@ -91,7 +91,7 @@
       "url": "https://www.gov.uk/government/collections/armed-forces-continuous-attitude-survey-index",
       "asOf": "2026-05-28",
       "confidence": "derived",
-      "derivation": "Realised outflow regular_voluntary_outflow_annual / regular_trained_start = 3311 / 70951 = 4.6666% a year. Intention regular_outflow_intent_pct = 19%. 4.6666 / 19 = 0.2456. Carried to four places because the split has to reconstruct the published annual figure: 70,951 x 19% x 0.2456 = 3,310.9 against the 3,311 the Army reports.",
+      "derivation": "Realised outflow over trade-trained strength = 3,311 / 70,951 = 4.6666% a year. Intention to leave early = 19%. 4.6666 / 19 = 0.2456. Carried to four places because the split has to reconstruct the published annual figure: 70,951 x 19% x 0.2456 = 3,310.9 against the 3,311 the Army reports.",
       "note": "Holding this constant and letting intention move is the model's claim about what a minister can change: they cannot make people who want to leave stay, but what they do to Service life moves how many want to."
     },
     "outflow_intent_max_pct": {
@@ -192,7 +192,7 @@
       "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
       "asOf": "2026-04-01",
       "confidence": "derived",
-      "derivation": "regular_trained_start / junior_leaders = 70951 / 29563 = 2.4",
+      "derivation": "Trade-trained strength over the junior-leader cadre = 70,951 / 29,563 = 2.4",
       "note": "This is the whole-Army manning ratio, staff and headquarters posts included, not a doctrinal section-commander ratio. It is used because it is the rate at which the Army actually finds leaders for the soldiers it has. The instructor ratio is a separate parameter (instructor_ratio)."
     },
     "instructor_ratio": {
@@ -234,7 +234,7 @@
       "url": "https://www.gov.uk/government/statistics/quarterly-service-personnel-statistics-2026/quarterly-service-personnel-statistics-1-july-2026",
       "asOf": "2026-06-30",
       "confidence": "derived",
-      "derivation": "One course pulls forward about one month of the Army's own promotion output. Junior leaders are junior_leaders / regular_trained_start = 29,563 / 70,951 = 41.67% of the trained strength; in a steady state the cadre holds its share, so the flow into it is 41.67% x regular_gains_annual (5,933) = 2,472 a year, or 206 a month.",
+      "derivation": "One course pulls forward about one month of the Army's own promotion output. Junior leaders are 29,563 of the 70,951 trade-trained, 41.67%; in a steady state the cadre holds its share, so the flow into it is 41.67% of the 5,933 a year the pipeline graduates = 2,472 a year, or 206 a month.",
       "note": "The quarterly statistics publish strength, intake and outflow by rank but not promotion flows, so there is no published count of promotions to Corporal to read directly; this reconstructs the steady-state flow from three figures that are published. It is the rate, not a capacity: the Infantry Battle School's throughput is not modelled, and a minister can run courses back to back for as long as the cadre can staff them."
     },
     "eff_promoted_leader": {
@@ -251,7 +251,7 @@
         0.35,
         0.8
       ],
-      "rationale": "The one frank assumption in this mechanic, in the way conscription_refusal_conversion is in the refusal model: no figure for the effectiveness of accelerated promotion exists or is likely to. What is being discounted is narrow, which argues for a high value rather than a low one - the soldier has passed the same 8-week course as anyone else, and what they lack is the years in rank behind it, not the training. Set level with eff_ex_regular (0.6), which discounts a recalled ex-regular by the same order for the mirror-image problem: the ex-regular had the experience and lost it, the accelerated corporal has the course and has not yet earned it. The range runs from a third, at which the promotion is a fiction, to four fifths, at which time in rank hardly matters and the Army would have no reason not to promote everyone early.",
+      "rationale": "The one frank assumption in this mechanic, in the way the refusal conversion is in the refusal model: no figure for the effectiveness of accelerated promotion exists or is likely to. What is being discounted is narrow, which argues for a high value rather than a low one - the soldier has passed the same 8-week course as anyone else, and what they lack is the years in rank behind it, not the training. Set level with the recalled ex-regular's 0.6, which discounts them by the same order for the mirror-image problem: the ex-regular had the experience and lost it, the accelerated corporal has the course and has not yet earned it. The range runs from a third, at which the promotion is a fiction, to four fifths, at which time in rank hardly matters and the Army would have no reason not to promote everyone early.",
       "note": "Historically this is war-substantive and acting rank, which is how every mass mobilisation has answered the same problem. The model simplifies in one direction and it is worth stating: a promoted soldier stops doing the trade they were trained for, and that loss is not charged - the costs modelled are the political capital, the action slot, the cadre held back to instruct, and this discount."
     },
     "junior_leaders_spareable_fraction": {
@@ -276,11 +276,11 @@
       "label": "Instructors per capacity purchase",
       "description": "Junior leaders diverted from the field force for each +5,000/yr block of training capacity.",
       "section": "leaders",
-      "source": "Derived from capacity_purchase_annual and instructor_ratio",
+      "source": "Derived from the capacity bought per purchase and the instructor ratio",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "derived",
-      "derivation": "capacity_purchase_annual / instructor_ratio = 5000 / 8 = 625"
+      "derivation": "Capacity bought per purchase over the instructor ratio = 5,000 / 8 = 625"
     },
     "reserve_volunteer_trained": {
       "value": 23517,
@@ -303,7 +303,7 @@
       "url": "https://publications.parliament.uk/pa/cm200304/cmselect/cmdfence/57/5709.htm",
       "asOf": "2004-03-16",
       "confidence": "derived",
-      "derivation": "Two stages. Structural: of 23,517 trained Army Reserve (SPS Table 6a), 1,720 are on full-time reserve service and 615 already mobilised, leaving 0.901 of the strength available to be served a notice. Empirical: reserve_mobilisation_acceptance_rate, 0.579 of notices served were accepted into service on Operation Telic 1. 0.901 x 0.579 = 0.522, held at 0.50.",
+      "derivation": "Two stages. Structural: of 23,517 trained Army Reserve (SPS Table 6a), 1,720 are on full-time reserve service and 615 already mobilised, leaving 0.901 of the strength available to be served a notice. Empirical: 0.579 of notices served were accepted into service on Operation Telic 1. 0.901 x 0.579 = 0.522, held at 0.50.",
       "note": "This was an assumption of 0.50 reasoned from the composition of the trained figure; Operation Telic gives the first primary measurement of the same quantity and puts it at 0.52, so the value is unchanged and its standing is not. Held at 0.50 rather than raised to 0.52 because the Telic denominator had already been filtered for expected wastage (HC 57 paragraph 112) and because the trained figure has counted Phase-1-only personnel since October 2016 (SPS note 32), neither of which the two stages above capture. Both push the true figure below 0.522, not above it."
     },
     "reserve_mobilisation_acceptance_rate": {
@@ -397,7 +397,7 @@
       "label": "Reservist arrival, default notice",
       "description": "Months from call-out to reservists counting toward Force Ready at 180 days' notice, including a short refresher.",
       "section": "reserves",
-      "source": "Derived from reserve_notice_days_default",
+      "source": "Derived from the standard call-out notice period",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "derived",
@@ -409,7 +409,7 @@
       "label": "Reservist arrival, 90-day notice",
       "description": "Months from call-out to reservists counting toward Force Ready at 90 days' notice.",
       "section": "reserves",
-      "source": "Derived from reserve_notice_days_amended",
+      "source": "Derived from the amended call-out notice period",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "derived",
@@ -456,7 +456,7 @@
         0.3,
         0.52
       ],
-      "rationale": "The MoD has acknowledged that address records for the Regular Reserve are incomplete; medical and age exemptions remove more. Now an upper bound rather than a central estimate: reserve_medical_fail_ex_regular puts the medical failure rate for ex-regulars who actually reported at 0.48 (HC 57 paragraph 119), so the medical alone leaves 0.52 before any allowance for records or age. Lowering it would be a balance change, and has not been made."
+      "rationale": "The MoD has acknowledged that address records for the Regular Reserve are incomplete; medical and age exemptions remove more. Now an upper bound rather than a central estimate: the medical failure rate for ex-regulars who actually reported is 0.48 (HC 57 paragraph 119), so the medical alone leaves 0.52 before any allowance for records or age. Lowering it would be a balance change, and has not been made."
     },
     "ex_regular_report_rate_monthly": {
       "value": 0.2,
@@ -492,7 +492,7 @@
       "label": "Strategic Reserve not on record, Army share",
       "description": "Claimed Strategic Reserve less the Ex-Regular Reserve on record, scaled to the Army's share of the Regular Reserve.",
       "section": "reserves",
-      "source": "Derived from strategic_reserve_claimed, ex_regular_tracked_tri_service and ex_regular_tracked",
+      "source": "Derived from the claimed Strategic Reserve and the Ex-Regular Reserve on record",
       "url": "",
       "asOf": "2026-04-01",
       "confidence": "derived",
@@ -616,7 +616,7 @@
       "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
       "asOf": "2025-06-30",
       "confidence": "derived",
-      "derivation": "ew_pop_18_40 - ew_pop_18_25 = 18,665,415 - 5,938,195 = 12,727,220. Both are inclusive of their end years, so removing 18-25 from 18-40 leaves exactly 26-40; no figure outside the two already in this file is used. Checked against the ONS mid-2025 single-year-of-age table (MYE2): the subtraction matches the summed single years exactly."
+      "derivation": "England and Wales aged 18-40 minus aged 18-25 = 18,665,415 - 5,938,195 = 12,727,220. Both are inclusive of their end years, so removing 18-25 from 18-40 leaves exactly 26-40; no figure outside the two already in this file is used. Checked against the ONS mid-2025 single-year-of-age table (MYE2): the subtraction matches the summed single years exactly."
     },
     "ew_pop_f_26_40": {
       "value": 6520779,
@@ -628,7 +628,7 @@
       "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
       "asOf": "2025-06-30",
       "confidence": "derived",
-      "derivation": "ew_pop_f_18_40 - ew_pop_f_18_25 = 9,419,482 - 2,898,703 = 6,520,779. Checked against the ONS mid-2025 single-year-of-age table (MYE2): the subtraction matches the summed single years exactly."
+      "derivation": "Women in England and Wales aged 18-40 minus aged 18-25 = 9,419,482 - 2,898,703 = 6,520,779. Checked against the ONS mid-2025 single-year-of-age table (MYE2): the subtraction matches the summed single years exactly."
     },
     "ew_pop_18_65": {
       "value": 38201921,
@@ -761,7 +761,7 @@
       "url": "https://yougov.co.uk/politics/articles/49555-would-britons-support-a-return-to-national-service",
       "asOf": "2024-05-28",
       "confidence": "derived",
-      "derivation": "Least squares on YouGov's four age groups, (support%, strongly oppose%) = (27,45), (39,37), (53,24), (63,18): strongly_oppose = 66.206 - 0.7738 x support, R2 = 0.994.",
+      "derivation": "Least squares on YouGov's four age groups, (support%, strongly oppose%) = (27,45), (39,37), (53,24), (63,18): strongly oppose = 66.206 - 0.7738 x support, R2 = 0.994.",
       "note": "Used below the polled range: the game's willingness runs 16-34 where the poll observed 27-63, so the figures it produces (roughly 40-54% strongly opposed) sit at and beyond the most hostile group YouGov measured. That is an extrapolation, and it is the weakest link in this chain."
     },
     "refusal_strong_opposition_slope": {
@@ -774,7 +774,7 @@
       "url": "https://yougov.co.uk/politics/articles/49555-would-britons-support-a-return-to-national-service",
       "asOf": "2024-05-28",
       "confidence": "derived",
-      "derivation": "Slope of the same least-squares fit as refusal_strong_opposition_intercept."
+      "derivation": "Slope of the same least-squares fit as the intercept above."
     },
     "conscription_refusal_conversion": {
       "value": 0.25,
@@ -1070,7 +1070,7 @@
         0.0,
         0.02
       ],
-      "rationale": "Basic training is designed around entrants of this age, and training_attrition is measured on an intake that is overwhelmingly this age, so the default band carries no adjustment. Zero as the reference."
+      "rationale": "Basic training is designed around entrants of this age, and the training attrition rate is measured on an intake that is overwhelmingly this age, so the default band carries no adjustment. Zero as the reference."
     },
     "attrition_age_add_18_30": {
       "value": 0.0,
@@ -1086,7 +1086,7 @@
         0.0,
         0.02
       ],
-      "rationale": "The default band, and the reference point. training_attrition (0.26) is measured on the Army's actual untrained intake, which sits inside it. Zero by construction."
+      "rationale": "The default band, and the reference point. The training attrition rate (0.26) is measured on the Army's actual untrained intake, which sits inside it. Zero by construction."
     },
     "attrition_age_add_26_40": {
       "value": 0.05,
@@ -1102,7 +1102,7 @@
         0.0,
         0.1
       ],
-      "rationale": "No figure for British Army training attrition by age at entry is published: the quarterly service personnel statistics give untrained intake and outflow but do not break either by age, so this is a frank assumption rather than a derivation, in the way conscription_refusal_conversion is. What it stands for is real and one-directional - a recruit in their thirties is more likely to be injured, medically downgraded or to leave for reasons outside training than one at 19 - and it is set at 5 points against a base of 26 because that is the same order as attrition_relaxed_medical_add (4) and below attrition_wartime_medical_add (10), which are the two comparable adjustments already in the model. It exists because it is the only place an older band's cost can actually land: it charges throughput, where the medical standard and the exemptions regime only resize an eligible pool that never binds. Replace it if attrition by age at entry is ever published."
+      "rationale": "No figure for British Army training attrition by age at entry is published: the quarterly service personnel statistics give untrained intake and outflow but do not break either by age, so this is a frank assumption rather than a derivation, in the way the refusal conversion is. What it stands for is real and one-directional - a recruit in their thirties is more likely to be injured, medically downgraded or to leave for reasons outside training than one at 19 - and it is set at 5 points against a base of 26 because that is the same order as the relaxed medical standard's 4 points and below the wartime standard's 10, which are the two comparable adjustments already in the model. It exists because it is the only place an older band's cost can actually land: it charges throughput, where the medical standard and the exemptions regime only resize an eligible pool that never binds. Replace it if attrition by age at entry is ever published."
     },
     "attrition_age_add_18_65": {
       "value": 0.03,
@@ -1118,7 +1118,7 @@
         0.0,
         0.08
       ],
-      "rationale": "The same assumption as attrition_age_add_26_40, weighted down because the band is mostly younger people: two thirds of the 18-65 population is under 45, so the band's mean age at entry is below 26-40's even though its upper bound is far higher."
+      "rationale": "The same assumption as the 26-40 band's, weighted down because this band is mostly younger people: two thirds of the 18-65 population is under 45, so the band's mean age at entry is below 26-40's even though its upper bound is far higher."
     },
     "capacity_purchase_annual": {
       "value": 5000,
@@ -1246,7 +1246,7 @@
         4,
         12
       ],
-      "rationale": "Game design. The NAO puts the evidence against it: a decade of \"lean\" stockpiles and \"just in time\" delivery of spares has left no buffer to draw on, the MoD has had to earmark more than GBP 5 billion over ten years to re-establish war holdings, and it records that \"the lead time for replenishing stock and establishing war holdings presents challenges\" (HC 315 para 2.20). The Army separately told the NAO that semiconductor lead times had gone from one to three weeks to more than fifty (para 2.5), though that is components rather than the clothing, body armour, helmet and rifle this parameter buys. Four months is therefore the optimistic end of the range, not the middle, and the range is widened upward to say so. Not raised, because moving it is a balance change and the NAO figures are not measurements of this quantity."
+      "rationale": "Game design. The NAO puts the evidence against it: a decade of \"lean\" stockpiles and \"just in time\" delivery of spares has left no buffer to draw on, the MoD has had to earmark more than £5 billion over ten years to re-establish war holdings, and it records that \"the lead time for replenishing stock and establishing war holdings presents challenges\" (HC 315 para 2.20). The Army separately told the NAO that semiconductor lead times had gone from one to three weeks to more than fifty (para 2.5), though that is components rather than the clothing, body armour, helmet and rifle this parameter buys. Four months is therefore the optimistic end of the range, not the middle, and the range is widened upward to say so. Not raised, because moving it is a balance change and the NAO figures are not measurements of this quantity."
     },
     "junior_entry_attrition": {
       "value": 0.34,
@@ -1553,13 +1553,13 @@
         100000000,
         400000000
       ],
-      "rationale": "Replaces a flat GBP 5bn threshold that could not fire at Brigade or Division and fired once at Corps. The Treasury's tolerance is a budget voted for an operation, and a longer operation is voted a bigger one, so the allowance is sized to the campaign rather than fixed: 4 months buys GBP 0.8bn, 12 months GBP 2.4bn, 24 months GBP 4.8bn. The level is anchored on the defence budget: GBP 200m is 3.9% of one month of defence_budget_2025 (GBP 5.19bn), the order of in-year flexibility a department can absorb before the Treasury takes an interest; the range runs 1.9% to 7.7% of a month's defence budget. A flat threshold cannot do this job at all, because it is charged every month against a total that only grows: measured over 40 seeds, lowering the flat figure far enough to charge the sensible strategy 6 political capital across a Division run charged it 36 across a Corps one. Two properties fixed the level inside the range. Below about GBP 175m Corps gets materially harder than it is meant to be: a maximum-effort programme resigns on 35-40% of seeds rather than 18%. And equipment_plan_contingency must stay worth less than one whole step at Corps (GBP 4.1bn against an allowance of GBP 4.8bn = 0.85 steps, where the old flat GBP 5bn gave 0.82), or drawing the contingency wins everywhere and the fork that action exists for closes. Above about GBP 250m the mechanic is dormant at every rung, which is where it was."
+      "rationale": "Replaces a flat £5bn threshold that could not fire at Brigade or Division and fired once at Corps. The Treasury's tolerance is a budget voted for an operation, and a longer operation is voted a bigger one, so the allowance is sized to the campaign rather than fixed: 4 months buys £0.8bn, 12 months £2.4bn, 24 months £4.8bn. The level is anchored on the defence budget: £200m is 3.9% of one month of the 2025/26 defence budget (£5.19bn), the order of in-year flexibility a department can absorb before the Treasury takes an interest; the range runs 1.9% to 7.7% of a month's defence budget. A flat threshold cannot do this job at all, because it is charged every month against a total that only grows: measured over 40 seeds, lowering the flat figure far enough to charge the sensible strategy 6 political capital across a Division run charged it 36 across a Corps one. Two properties fixed the level inside the range. Below about £175m Corps gets materially harder than it is meant to be: a maximum-effort programme resigns on 35-40% of seeds rather than 18%. And the Equipment Plan's contingency must stay worth less than one whole step at Corps (£4.1bn against an allowance of £4.8bn = 0.85 steps, where the old flat £5bn gave 0.82), or drawing the contingency wins everywhere and the fork that action exists for closes. Above about £250m the mechanic is dormant at every rung, which is where it was."
     },
     "cost_pc_penalty_per_step": {
       "value": 2,
       "unit": "pc",
       "label": "Cost penalty per allowance step",
-      "description": "Political capital lost per turn for each whole Treasury allowance of cumulative cost run up (see cost_pc_allowance_per_month).",
+      "description": "Political capital lost per turn for each whole Treasury allowance of cumulative cost run up.",
       "section": "politics",
       "source": "Modelling assumption",
       "url": "",
@@ -1569,7 +1569,7 @@
         1,
         4
       ],
-      "rationale": "Game design. The quantity it multiplies changed from a flat GBP 5bn threshold to an allowance sized to the campaign; the charge per step did not."
+      "rationale": "Game design. The quantity it multiplies changed from a flat £5bn threshold to an allowance sized to the campaign; the charge per step did not."
     },
     "defence_budget_2025": {
       "value": 62300000000,
@@ -1593,7 +1593,7 @@
       "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
       "asOf": "2023-12-04",
       "confidence": "primary",
-      "note": "Forecast costs GBP 305.5bn against a budget of GBP 288.6bn over ten years, which the NAO records as the largest deficit since it began reporting on the Plan. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
+      "note": "Forecast costs £305.5bn against a budget of £288.6bn over ten years, which the NAO records as the largest deficit since it began reporting on the Plan. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
     },
     "defence_budget_deficit_10yr": {
       "value": 42500000000,
@@ -1605,7 +1605,7 @@
       "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
       "asOf": "2023-12-04",
       "confidence": "primary",
-      "note": "Against a GBP 4.3bn shortfall the year before. All six Top Level Budgets forecast costs above their ten-year budgets. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
+      "note": "Against a £4.3bn shortfall the year before. All six Top Level Budgets forecast costs above their ten-year budgets. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
     },
     "army_capability_gap": {
       "value": 12000000000,
@@ -1617,7 +1617,7 @@
       "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
       "asOf": "2023-12-04",
       "confidence": "primary",
-      "note": "Reported by the NAO as the Army's own estimate, alongside a declared Army deficit of GBP 1.2bn for the year. It is the number that makes the Chancellor's letter in this game a quotation rather than an invention. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
+      "note": "Reported by the NAO as the Army's own estimate, alongside a declared Army deficit of £1.2bn for the year. It is the number that makes the Chancellor's letter in this game a quotation rather than an invention. The Equipment Plan is reported annually and a 2026 edition would supersede this one; the figure is used because it is the most recent the project has been given, and because the Chancellor in this game would be quoting the last published audit rather than an unpublished one."
     },
     "equipment_plan_contingency": {
       "value": 4100000000,
@@ -1629,7 +1629,7 @@
       "url": "https://www.nao.org.uk/reports/the-equipment-plan-2023-2033/",
       "asOf": "2023-12-04",
       "confidence": "primary",
-      "note": "Down from GBP 4.3bn the year before and GBP 5.9bn in 2021. It is the only pot in the NAO's account that a minister could plausibly reach for at short notice, and it is the buffer the Plan relies on, which is what makes spending it a decision rather than a windfall."
+      "note": "Down from £4.3bn the year before and £5.9bn in 2021. It is the only pot in the NAO's account that a minister could plausibly reach for at short notice, and it is the buffer the Plan relies on, which is what makes spending it a decision rather than a windfall."
     },
     "contingency_drawn_penalty_add": {
       "value": 2,
@@ -1645,7 +1645,7 @@
         0,
         3
       ],
-      "rationale": "The contingency exists to absorb unexpected cost increases (NAO 1.9). Spend it on the mobilisation and every subsequent overrun lands on the Plan instead of on the buffer, so the Treasury's tolerance narrows. Doubling cost_pc_penalty_per_step rather than adding one to it, because the crossover has to sit inside the spend the game actually produces: a full Corps run costs GBP 4.6-11.1bn, so at +1 the draw was better everywhere and the decision was no decision. At +2 the draw wins while it clears your only step of Treasury pressure and loses from the second step on — crossover at about GBP 9bn of cumulative cost, which sits between what a restrained Corps programme spends (6.8) and what an all-out one spends (9.7)."
+      "rationale": "The contingency exists to absorb unexpected cost increases (NAO 1.9). Spend it on the mobilisation and every subsequent overrun lands on the Plan instead of on the buffer, so the Treasury's tolerance narrows. Doubling the charge per step rather than adding one to it, because the crossover has to sit inside the spend the game actually produces: a full Corps run costs £4.6-11.1bn, so at +1 the draw was better everywhere and the decision was no decision. At +2 the draw wins while it clears your only step of Treasury pressure and loses from the second step on — crossover at about £9bn of cumulative cost, which sits between what a restrained Corps programme spends (6.8) and what an all-out one spends (9.7)."
     },
     "contingency_equipment_delay_months": {
       "value": 3,
@@ -1661,7 +1661,7 @@
         1,
         6
       ],
-      "rationale": "The contingency's first stated purpose is to fund new equipment projects (NAO 1.9); an emergency order for tens of thousands of sets is exactly that. Spent elsewhere, the order joins the queue rather than jumping it. Three months against an equipment_lead_months of four roughly doubles the wait, which is the right order of magnitude for losing your place in a programme the NAO already describes as delay-prone."
+      "rationale": "The contingency's first stated purpose is to fund new equipment projects (NAO 1.9); an emergency order for tens of thousands of sets is exactly that. Spent elsewhere, the order joins the queue rather than jumping it. Three months against an equipment lead time of four roughly doubles the wait, which is the right order of magnitude for losing your place in a programme the NAO already describes as delay-prone."
     },
     "uk_gdp_2025": {
       "value": 3033900000000,
@@ -1708,7 +1708,7 @@
       "url": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/agegroupashetable6",
       "asOf": "2026-08-18",
       "confidence": "derived",
-      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
+      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because the output-per-worker figure it scales is itself a mean (compensation of employees / employees).",
       "note": "Was an assumption of 0.6. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
     },
     "gdp_age_multiplier_18_30": {
@@ -1721,7 +1721,7 @@
       "url": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/agegroupashetable6",
       "asOf": "2026-08-18",
       "confidence": "derived",
-      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
+      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because the output-per-worker figure it scales is itself a mean (compensation of employees / employees).",
       "note": "Was an assumption of 0.75. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
     },
     "gdp_age_multiplier_26_40": {
@@ -1746,7 +1746,7 @@
       "url": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/agegroupashetable6",
       "asOf": "2026-08-18",
       "confidence": "derived",
-      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because output_per_worker_labour_share is itself a mean (compensation of employees / employees).",
+      "derivation": "For each single year of age in the band: employment rate (A05: 18-24 59.1%, 25-34 84.5%, 35-49 85.1%, 50-64 72.2%, 65+ 13.3%) x that age group's mean gross weekly pay as a share of the all-employee mean (ASHE 6.1a: 18-21 329.4, 22-29 635.4, 30-39 809.6, 40-49 880.1, 50-59 840.7, 60+ 640.3, against 757.5 for all); weighted by the England and Wales population of each year. Mean rather than median because the output-per-worker figure it scales is itself a mean (compensation of employees / employees).",
       "note": "Was an assumption of 1.0. Every derived figure is lower, and the youngest band by a third: the assumed ladder priced a conscript as though they were an average employee scaled for age, when most 18-24s are not employees at all (59.1%) and those who are earn less than half the all-employee mean. Employment and pay are UK figures applied to England and Wales population weights, as elsewhere in the model. NOTE: this changes no outcome in the game today, because the GDP penalty never fires - see docs/design-review.md F13."
     },
     "pc_start": {
@@ -1795,7 +1795,7 @@
         250,
         1500
       ],
-      "rationale": "One point per 500 delivered is one point per month's worth of the Army's own trained-strength gain (regular_gains_annual, 5,933 a year, is 494 a month). The minister earns political credit at the rate at which the Army in peacetime produces soldiers, and only above it. It replaces an earlier bonus that was a share of the target and so unreachable at Corps scale."
+      "rationale": "One point per 500 delivered is one point per month's worth of the Army's own trained-strength gain (5,933 a year is 494 a month). The minister earns political credit at the rate at which the Army in peacetime produces soldiers, and only above it. It replaces an earlier bonus that was a share of the target and so unreachable at Corps scale."
     },
     "pc_delivery_max": {
       "value": 3,
@@ -1827,7 +1827,7 @@
         100,
         600
       ],
-      "rationale": "The mirror of pc_delivery_per_credit, and deliberately steeper: a soldier who arrives is a line in a statistical return, a conscript who refuses is a prosecution with a name. It replaced a flat 2 a month levied whenever willingness sat below a threshold - a switch that the Bill's age band, and nothing else in the game, reliably flipped. Cases carry over: what is not charged this month stays on the list, so no refusal is ever free and the total charged across a run is the total who refused divided by this figure. The carry-over is load-bearing rather than tidy. An address to the nation moves the refusal rate by about a tenth; rounded off month by month a tenth of a small number is nothing, and the first attempt at this charge left the address worth exactly zero in the scripted test runs - the same insensitivity as the threshold it replaced, in different clothes. The level holds the benchmark where the previous pass left it: at 1 per 200, a reserves-first programme pays 16 across a Corps run against the 12 the threshold charged it, and resigns on 35% of seeds, which is the figure unchanged. Above about 400 a restrained programme pays almost nothing and Corps falls to 5% resignations; below about 150 the programmes that conscript at scale are wiped out. Tuned over batches of 40 scripted runs."
+      "rationale": "The mirror of the credit for delivery, and deliberately steeper: a soldier who arrives is a line in a statistical return, a conscript who refuses is a prosecution with a name. It replaced a flat 2 a month levied whenever willingness sat below a threshold - a switch that the Bill's age band, and nothing else in the game, reliably flipped. Cases carry over: what is not charged this month stays on the list, so no refusal is ever free and the total charged across a run is the total who refused divided by this figure. The carry-over is load-bearing rather than tidy. An address to the nation moves the refusal rate by about a tenth; rounded off month by month a tenth of a small number is nothing, and the first attempt at this charge left the address worth exactly zero in the scripted test runs - the same insensitivity as the threshold it replaced, in different clothes. The level holds the benchmark where the previous pass left it: at 1 per 200, a reserves-first programme pays 16 across a Corps run against the 12 the threshold charged it, and resigns on 35% of seeds, which is the figure unchanged. Above about 400 a restrained programme pays almost nothing and Corps falls to 5% resignations; below about 150 the programmes that conscript at scale are wiped out. Tuned over batches of 40 scripted runs."
     },
     "pc_refusal_max": {
       "value": 1,
@@ -2099,7 +2099,7 @@
         -14,
         -4
       ],
-      "rationale": "The first band whose lower bound is not 18, and the one the polling most favours: it is 6 points more willing than the default and has a quarter more people in it. What the poll cannot see is who is being taken. Every one of them is settled in work at or near peak earnings (gdp_age_multiplier_26_40 is the highest of the four, 0.862), so the resistance is not the conscripts' but their employers' and their MPs'. Sized against the willingness gain it buys: crossing willingness_low_threshold_pct stops a standing 2 a month, which is worth about 22 over a Division run, so 8 up front is a real price and not a prohibitive one. Tuned over batches of 40 scripted runs."
+      "rationale": "The first band whose lower bound is not 18, and the one the polling most favours: it is 6 points more willing than the default and has a quarter more people in it. What the poll cannot see is who is being taken. Every one of them is settled in work at or near peak earnings (their output per head is the highest of the four bands, 0.862), so the resistance is not the conscripts' but their employers' and their MPs'. Sized against the willingness gain it buys: crossing the willingness threshold stops a standing 2 a month, which is worth about 22 over a Division run, so 8 up front is a real price and not a prohibitive one. Tuned over batches of 40 scripted runs."
     },
     "pc_cost_band_18_65": {
       "value": -14,
@@ -2115,7 +2115,7 @@
         -22,
         -8
       ],
-      "rationale": "Legislating to conscript 38 million people, up to and including pensioners, is a far larger parliamentary undertaking than any of the other three, and it reaches every employer in the country at once. Priced above 26-40 because it is the widest reach and because, like 26-40, it clears willingness_low_threshold_pct and so buys a standing monthly saving; without a price it was the strictly best band in the Bill, which is a clause that decides itself."
+      "rationale": "Legislating to conscript 38 million people, up to and including pensioners, is a far larger parliamentary undertaking than any of the other three, and it reaches every employer in the country at once. Priced above 26-40 because it is the widest reach and because, like 26-40, it clears the willingness threshold and so buys a standing monthly saving; without a price it was the strictly best band in the Bill, which is a clause that decides itself."
     },
     "pc_cost_expand_capacity": {
       "value": -3,
@@ -2243,7 +2243,7 @@
         -8,
         -2
       ],
-      "rationale": "Mirrors pc_blame_subsequent. Set below the idle penalty (3) on purpose: an address with nothing in it must cost more than saying nothing, or it becomes a free way to look busy."
+      "rationale": "Mirrors the cost of blaming your predecessors again. Set below the idle penalty (3) on purpose: an address with nothing in it must cost more than saying nothing, or it becomes a free way to look busy."
     },
     "address_willingness_boost_pct": {
       "value": 5,
@@ -2492,7 +2492,7 @@
       "label": "Strategic Reserve not on record, all three Services",
       "description": "Claimed Strategic Reserve less the Ex-Regular Reserve actually on record.",
       "section": "reserves",
-      "source": "Derived from strategic_reserve_claimed and ex_regular_tracked",
+      "source": "Derived from the claimed Strategic Reserve and the Ex-Regular Reserve on record",
       "url": "",
       "asOf": "2026-04-01",
       "confidence": "derived",
@@ -2512,7 +2512,7 @@
         -4,
         -1
       ],
-      "rationale": "Cheap, because a cadre course buys no buildings and no contracts: it is an internal personnel decision the Army can largely take for itself, where expanding the training estate (pc_cost_expand_capacity, -3) cannot. It is not free, because a lever with no price is a lever with no decision. An escalating price was tried - the shape pc_address_subsequent uses - and abandoned, because political capital is abundant at Division and scarce at Corps: charging more for later courses left the Division ceiling where it was (55% to 58% of seeds meeting the target) and took an all-out Corps programme from 28% resignations to 65%. It priced the rung that did not need it and missed the one that did. What bounds this lever is the course length and the one-course-at-a-time rule, not its price."
+      "rationale": "Cheap, because a cadre course buys no buildings and no contracts: it is an internal personnel decision the Army can largely take for itself, where expanding the training estate (-3) cannot. It is not free, because a lever with no price is a lever with no decision. An escalating price was tried - the shape the repeated address to the nation uses - and abandoned, because political capital is abundant at Division and scarce at Corps: charging more for later courses left the Division ceiling where it was (55% to 58% of seeds meeting the target) and took an all-out Corps programme from 28% resignations to 65%. It priced the rung that did not need it and missed the one that did. What bounds this lever is the course length and the one-course-at-a-time rule, not its price."
     }
   }
 }

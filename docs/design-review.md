@@ -1798,6 +1798,58 @@ build refuse it.
 **The general lesson.** Everything in `parameters.json` except `note` is
 published. It reads like a working file and is not one.
 
+**Checked afterwards in the game itself**, which is where the same popovers
+open: all 73 reachable from a month-4 turn screen, and all 174 on the
+methodology page, with the text read out of each. No dangling reference
+survived — but two things did.
+
+*Parameter ids in the prose.* Sixteen prose fields and twelve derivations
+named another parameter by its id: *"reserve_medical_fail_ex_regular puts the
+medical failure rate … at 0.48"*, *"crossing willingness_low_threshold_pct"*,
+*"Mirrors pc_blame_subsequent."* The methodology page prints an id under every
+label, so a reader there can resolve one; **the game's popover never shows an
+id at all**, so in the game it is a word with nothing behind it. All of them
+are now written in words — *the willingness threshold*, *the credit for
+delivery*, *the relaxed medical standard's 4 points*. Derivations were held to
+the same rule rather than exempted as arithmetic: *"Trade-trained strength over
+the junior-leader cadre = 70,951 / 29,563 = 2.4"* is no harder to check than
+the keyed form, and reads.
+
+*Four rationales wrote `GBP 5bn` where the popover's own headline value says
+`£200m`.* Twenty-one occurrences, now `£`.
+
+`validate-parameters.mjs` fails the build on a parameter id in any
+player-visible field, by the same route as the dangling references.
+
+---
+
+### F22 — The longest rationale did not fit on a phone · *Addressed*
+
+Found while reading the popovers for F21 rather than by looking for it.
+
+**Symptom.** `cost_pc_allowance_per_month` carries a 1,600-character argument.
+At 375×812 it rendered **953px tall in an 812px viewport**: it ran off the
+bottom of the screen, under the fixed footer, and reading it meant scrolling
+the page with the popover open. Ten of the turn screen's popovers overhung the
+fold.
+
+**Why the old rule could not save it.** `position()` placed the popover below
+the trigger and flipped it above only if the whole thing fitted there. A
+popover taller than the trigger's distance from either edge fits neither way,
+so it stayed below and hung over.
+
+**Fix, in two parts.** The popover scrolls inside itself (`max-height`,
+`overflow-y: auto`, `overscroll-behavior: contain`), and `position()` now cuts
+the height to whichever side has more room, **less the fixed footer's height**
+— the footer sits above the popover and was eating its last lines on the turn
+screen. Verified by opening all 73 turn-screen popovers at 375×812 and at
+667×375 (landscape) and asserting that none is clipped by the viewport or
+covered by the footer, and all 174 on the methodology page.
+
+**Watch for.** The rationales are long because the arguments are real, and the
+answer was the container rather than the prose. If a popover ever needs to be
+shortened, shorten it for a reason about the argument, not about the screen.
+
 ---
 
 ## The next mechanic, if one is wanted

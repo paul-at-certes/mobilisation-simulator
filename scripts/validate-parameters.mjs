@@ -32,6 +32,15 @@ const confidences = new Set(['primary', 'derived', 'assumption']);
 /** Fields the source popover and the methodology table read out to the player. */
 const PLAYER_VISIBLE = ['label', 'description', 'rationale', 'derivation', 'source'];
 
+/**
+ * A parameter id: snake_case, and meaningless in the game, where no id is ever
+ * shown. The methodology page prints one under every label, so a reader there
+ * can at least resolve it; in the popover it is a word with nothing behind it.
+ * Derivations are held to this too — an operand is clearer named than keyed,
+ * and the numbers are alongside it either way.
+ */
+const IDENTIFIER = /\b[a-z][a-z0-9]*(?:_[a-z0-9]+)+/;
+
 /** Things that exist only in this repository. */
 const DANGLING = [
   { re: /\bdocs\/[\w.-]+/, what: 'a file in docs/' },
@@ -82,6 +91,14 @@ for (const [id, p] of Object.entries(data.parameters)) {
     if (typeof v !== 'string') continue;
     for (const { re, what } of DANGLING) {
       if (re.test(v)) errors.push(`${id}: ${f} names ${what}, which the player cannot open — put it in "note"`);
+    }
+  }
+
+  /* And no parameter ids anywhere the player reads. Say it in words. */
+  for (const f of PLAYER_VISIBLE) {
+    const v = p[f];
+    if (typeof v === 'string' && IDENTIFIER.test(v)) {
+      errors.push(`${id}: ${f} names a parameter id (${v.match(IDENTIFIER)[0]}) — write it in words; ids belong in "note"`);
     }
   }
 }

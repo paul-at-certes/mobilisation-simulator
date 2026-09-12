@@ -136,6 +136,17 @@ function closePopover(): void {
   if (popover) popover.hidden = true;
 }
 
+/**
+ * Fit the popover to the space the trigger leaves it, rather than hoping.
+ *
+ * The old rule placed it below the trigger and flipped it above only when the
+ * whole thing fitted there. A long rationale fits neither way: ten of the
+ * turn screen's popovers hung 27px below the fold on a 375x812 phone, under
+ * the fixed footer. So the height is cut to whichever side has more room and
+ * the popover scrolls inside itself, which is what the CSS cap already
+ * assumed. The footer is subtracted where there is one — it sits above the
+ * popover's stacking context and would otherwise eat the last three lines.
+ */
 function position(trigger: HTMLElement): void {
   if (!popover) return;
   const r = trigger.getBoundingClientRect();
@@ -144,11 +155,23 @@ function position(trigger: HTMLElement): void {
   let left = r.left + window.scrollX;
   if (left + pw > window.scrollX + window.innerWidth - 8) left = window.scrollX + window.innerWidth - pw - 8;
   if (left < 8) left = 8;
+
+  const gap = 6;
+  const margin = 8;
+  const footer = document.querySelector<HTMLElement>('.turnfoot');
+  const floor = window.innerHeight - (footer?.getBoundingClientRect().height ?? 0) - margin;
+  const spaceBelow = floor - r.bottom - gap;
+  const spaceAbove = r.top - gap - margin;
+  const below = spaceBelow >= spaceAbove;
+  // A popover shorter than this is not worth reading; on a screen that short
+  // it is clamped into view below instead, and scrolls.
+  popover.style.maxHeight = Math.max(140, Math.floor(below ? spaceBelow : spaceAbove)) + 'px';
+
   const ph = popover.offsetHeight;
-  let top = r.bottom + window.scrollY + 6;
-  if (r.bottom + ph + 12 > window.innerHeight && r.top - ph - 6 > 0) top = r.top + window.scrollY - ph - 6;
+  let top = below ? r.bottom + gap : r.top - ph - gap;
+  top = Math.min(Math.max(margin, top), Math.max(margin, floor - ph));
   popover.style.left = left + 'px';
-  popover.style.top = top + 'px';
+  popover.style.top = top + window.scrollY + 'px';
 }
 
 function fmtRange(p: Parameter): string {
