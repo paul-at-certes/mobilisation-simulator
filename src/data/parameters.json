@@ -440,7 +440,7 @@
         2,
         4
       ],
-      "rationale": "Recall notices must be served at recorded addresses; the design brief gives 2–4 months."
+      "rationale": "Recall notices must be served at recorded addresses; the game allows 2–4 months."
     },
     "ex_regular_report_ceiling": {
       "value": 0.5,
@@ -456,7 +456,7 @@
         0.3,
         0.52
       ],
-      "rationale": "The MoD has acknowledged that address records for the Regular Reserve are incomplete; medical and age exemptions remove more. Now an upper bound rather than a central estimate: reserve_medical_fail_ex_regular puts the medical failure rate for ex-regulars who actually reported at 0.48 (HC 57 paragraph 119), so the medical alone leaves 0.52 before any allowance for records or age. Lowering it is a balance change and has not been made; see docs/design-review.md F11."
+      "rationale": "The MoD has acknowledged that address records for the Regular Reserve are incomplete; medical and age exemptions remove more. Now an upper bound rather than a central estimate: reserve_medical_fail_ex_regular puts the medical failure rate for ex-regulars who actually reported at 0.48 (HC 57 paragraph 119), so the medical alone leaves 0.52 before any allowance for records or age. Lowering it would be a balance change, and has not been made."
     },
     "ex_regular_report_rate_monthly": {
       "value": 0.2,
@@ -528,7 +528,7 @@
         0.1,
         0.3
       ],
-      "rationale": "Design brief range 20–50%."
+      "rationale": "Game design, within a 20–50% range."
     },
     "strategic_trace_yield_max": {
       "value": 0.5,
@@ -544,7 +544,7 @@
         0.4,
         0.6
       ],
-      "rationale": "Design brief range 20–50%."
+      "rationale": "Game design, within a 20–50% range."
     },
     "strategic_report_fraction": {
       "value": 0.5,
@@ -616,7 +616,7 @@
       "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
       "asOf": "2025-06-30",
       "confidence": "derived",
-      "derivation": "ew_pop_18_40 - ew_pop_18_25 = 18,665,415 - 5,938,195 = 12,727,220. Both are inclusive of their end years, so removing 18-25 from 18-40 leaves exactly 26-40; no figure outside the two already in this file is used. Checked against docs/ew_population_single_year_mid2025.csv (ONS MYE2 by single year of age, in this repository): the subtraction matches the summed single years exactly."
+      "derivation": "ew_pop_18_40 - ew_pop_18_25 = 18,665,415 - 5,938,195 = 12,727,220. Both are inclusive of their end years, so removing 18-25 from 18-40 leaves exactly 26-40; no figure outside the two already in this file is used. Checked against the ONS mid-2025 single-year-of-age table (MYE2): the subtraction matches the summed single years exactly."
     },
     "ew_pop_f_26_40": {
       "value": 6520779,
@@ -628,7 +628,7 @@
       "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
       "asOf": "2025-06-30",
       "confidence": "derived",
-      "derivation": "ew_pop_f_18_40 - ew_pop_f_18_25 = 9,419,482 - 2,898,703 = 6,520,779. Checked against docs/ew_population_single_year_mid2025.csv (ONS MYE2 by single year of age, in this repository): the subtraction matches the summed single years exactly."
+      "derivation": "ew_pop_f_18_40 - ew_pop_f_18_25 = 9,419,482 - 2,898,703 = 6,520,779. Checked against the ONS mid-2025 single-year-of-age table (MYE2): the subtraction matches the summed single years exactly."
     },
     "ew_pop_18_65": {
       "value": 38201921,
@@ -822,7 +822,7 @@
         0.55,
         0.65
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "medical_pass_wartime": {
       "value": 0.75,
@@ -838,7 +838,7 @@
         0.7,
         0.8
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "exemption_strict": {
       "value": 0.15,
@@ -854,7 +854,7 @@
         0.1,
         0.2
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "exemption_broad": {
       "value": 0.35,
@@ -870,7 +870,7 @@
         0.3,
         0.45
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "exemption_minimal": {
       "value": 0.05,
@@ -886,7 +886,7 @@
         0.03,
         0.1
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "bill_months_emergency": {
       "value": 3,
@@ -902,7 +902,7 @@
         1,
         4
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "bill_months_normal": {
       "value": 6,
@@ -918,7 +918,7 @@
         4,
         9
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "phase1_weeks": {
       "value": 14,
@@ -962,7 +962,7 @@
         8,
         12
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "phase2_weeks_compressed": {
       "value": 12,
@@ -978,7 +978,7 @@
         8,
         16
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "syllabus_throughput_multiplier": {
       "value": 1.5,
@@ -1006,7 +1006,7 @@
         0.1,
         0.25
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "attrition_compressed_add": {
       "value": 0.05,
@@ -1022,7 +1022,7 @@
         0.03,
         0.1
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "attrition_wartime_medical_add": {
       "value": 0.1,
@@ -1038,7 +1038,7 @@
         0.05,
         0.15
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "attrition_relaxed_medical_add": {
       "value": 0.04,
@@ -1102,7 +1102,7 @@
         0.0,
         0.1
       ],
-      "rationale": "No figure for British Army training attrition by age at entry is published: the quarterly service personnel statistics give untrained intake and outflow but do not break either by age, so this is a frank assumption rather than a derivation, in the way conscription_refusal_conversion is. What it stands for is real and one-directional - a recruit in their thirties is more likely to be injured, medically downgraded or to leave for reasons outside training than one at 19 - and it is set at 5 points against a base of 26 because that is the same order as attrition_relaxed_medical_add (4) and below attrition_wartime_medical_add (10), which are the two comparable adjustments already in the model. It exists because it is the only place an older band's cost can actually land: it charges throughput, where medical_pass_* and exemption_* only resize an eligible pool that never binds (design review F3, F4). Replace it if attrition by age at entry is ever published."
+      "rationale": "No figure for British Army training attrition by age at entry is published: the quarterly service personnel statistics give untrained intake and outflow but do not break either by age, so this is a frank assumption rather than a derivation, in the way conscription_refusal_conversion is. What it stands for is real and one-directional - a recruit in their thirties is more likely to be injured, medically downgraded or to leave for reasons outside training than one at 19 - and it is set at 5 points against a base of 26 because that is the same order as attrition_relaxed_medical_add (4) and below attrition_wartime_medical_add (10), which are the two comparable adjustments already in the model. It exists because it is the only place an older band's cost can actually land: it charges throughput, where the medical standard and the exemptions regime only resize an eligible pool that never binds. Replace it if attrition by age at entry is ever published."
     },
     "attrition_age_add_18_65": {
       "value": 0.03,
@@ -1126,7 +1126,7 @@
       "label": "Capacity per purchase",
       "description": "Additional annual trained output per training-capacity purchase.",
       "section": "pipeline",
-      "source": "Design brief",
+      "source": "Game design",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "assumption",
@@ -1150,7 +1150,7 @@
         1,
         4
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "capacity_purchase_cost": {
       "value": 50000000,
@@ -1166,7 +1166,7 @@
         25000000,
         150000000
       ],
-      "rationale": "Design brief; excludes the instructors, who are diverted rather than hired."
+      "rationale": "Game design; excludes the instructors, who are diverted rather than hired."
     },
     "civilian_instructor_capacity_annual": {
       "value": 2000,
@@ -1182,7 +1182,7 @@
         1000,
         4000
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "civilian_instructor_delay_months": {
       "value": 3,
@@ -1198,7 +1198,7 @@
         2,
         6
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "civilian_instructor_cost_annual": {
       "value": 15000000,
@@ -1230,7 +1230,7 @@
         2500,
         6000
       ],
-      "rationale": "£2,000 of clothing plus body armour, helmet, rifle and load-carrying equipment; the brief's £3.5–5k range is retained as plausible."
+      "rationale": "£2,000 of clothing plus body armour, helmet, rifle and load-carrying equipment; a £3.5–5k range is retained as plausible."
     },
     "equipment_lead_months": {
       "value": 4,
@@ -1246,7 +1246,7 @@
         4,
         12
       ],
-      "rationale": "Design brief. The NAO puts the evidence against it: a decade of \"lean\" stockpiles and \"just in time\" delivery of spares has left no buffer to draw on, the MoD has had to earmark more than GBP 5 billion over ten years to re-establish war holdings, and it records that \"the lead time for replenishing stock and establishing war holdings presents challenges\" (HC 315 para 2.20). The Army separately told the NAO that semiconductor lead times had gone from one to three weeks to more than fifty (para 2.5), though that is components rather than the clothing, body armour, helmet and rifle this parameter buys. Four months is therefore the optimistic end of the range, not the middle, and the range is widened upward to say so. Not raised, because moving it is a balance change and the NAO figures are not measurements of this quantity."
+      "rationale": "Game design. The NAO puts the evidence against it: a decade of \"lean\" stockpiles and \"just in time\" delivery of spares has left no buffer to draw on, the MoD has had to earmark more than GBP 5 billion over ten years to re-establish war holdings, and it records that \"the lead time for replenishing stock and establishing war holdings presents challenges\" (HC 315 para 2.20). The Army separately told the NAO that semiconductor lead times had gone from one to three weeks to more than fifty (para 2.5), though that is components rather than the clothing, body armour, helmet and rifle this parameter buys. Four months is therefore the optimistic end of the range, not the middle, and the range is widened upward to say so. Not raised, because moving it is a balance change and the NAO figures are not measurements of this quantity."
     },
     "junior_entry_attrition": {
       "value": 0.34,
@@ -1398,7 +1398,7 @@
         0.6,
         0.8
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "eff_conscript_compressed_start": {
       "value": 0.35,
@@ -1430,7 +1430,7 @@
         0.5,
         0.7
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "eff_conscript_growth_monthly": {
       "value": 0.05,
@@ -1446,7 +1446,7 @@
         0.03,
         0.08
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "eff_conscript_unequipped": {
       "value": 0.25,
@@ -1462,7 +1462,7 @@
         0.15,
         0.35
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "regular_pay_annual": {
       "value": 27282,
@@ -1553,7 +1553,7 @@
         100000000,
         400000000
       ],
-      "rationale": "Replaces a flat GBP 5bn threshold that could not fire at Brigade or Division and fired once at Corps (design review F13). The Treasury's tolerance is a budget voted for an operation, and a longer operation is voted a bigger one, so the allowance is sized to the campaign rather than fixed: 4 months buys GBP 0.8bn, 12 months GBP 2.4bn, 24 months GBP 4.8bn. The level is anchored on the defence budget: GBP 200m is 3.9% of one month of defence_budget_2025 (GBP 5.19bn), the order of in-year flexibility a department can absorb before the Treasury takes an interest; the range runs 1.9% to 7.7% of a month's defence budget. A flat threshold cannot do this job at all, because it is charged every month against a total that only grows: measured over 40 seeds, lowering the flat figure far enough to charge the sensible strategy 6 political capital across a Division run charged it 36 across a Corps one. Two properties fixed the level inside the range. Below about GBP 175m Corps gets materially harder than F6 and F9 left it (max_effort resignations 18% to 35-40%). And equipment_plan_contingency must stay worth less than one whole step at Corps (GBP 4.1bn against an allowance of GBP 4.8bn = 0.85 steps, where the old flat GBP 5bn gave 0.82), or drawing the contingency wins everywhere and the fork that action exists for closes. Above about GBP 250m the mechanic is dormant at every rung, which is where it was."
+      "rationale": "Replaces a flat GBP 5bn threshold that could not fire at Brigade or Division and fired once at Corps. The Treasury's tolerance is a budget voted for an operation, and a longer operation is voted a bigger one, so the allowance is sized to the campaign rather than fixed: 4 months buys GBP 0.8bn, 12 months GBP 2.4bn, 24 months GBP 4.8bn. The level is anchored on the defence budget: GBP 200m is 3.9% of one month of defence_budget_2025 (GBP 5.19bn), the order of in-year flexibility a department can absorb before the Treasury takes an interest; the range runs 1.9% to 7.7% of a month's defence budget. A flat threshold cannot do this job at all, because it is charged every month against a total that only grows: measured over 40 seeds, lowering the flat figure far enough to charge the sensible strategy 6 political capital across a Division run charged it 36 across a Corps one. Two properties fixed the level inside the range. Below about GBP 175m Corps gets materially harder than it is meant to be: a maximum-effort programme resigns on 35-40% of seeds rather than 18%. And equipment_plan_contingency must stay worth less than one whole step at Corps (GBP 4.1bn against an allowance of GBP 4.8bn = 0.85 steps, where the old flat GBP 5bn gave 0.82), or drawing the contingency wins everywhere and the fork that action exists for closes. Above about GBP 250m the mechanic is dormant at every rung, which is where it was."
     },
     "cost_pc_penalty_per_step": {
       "value": 2,
@@ -1569,7 +1569,7 @@
         1,
         4
       ],
-      "rationale": "Design brief. The quantity it multiplies changed from a flat GBP 5bn threshold to an allowance sized to the campaign (design review F13); the charge per step did not."
+      "rationale": "Game design. The quantity it multiplies changed from a flat GBP 5bn threshold to an allowance sized to the campaign; the charge per step did not."
     },
     "defence_budget_2025": {
       "value": 62300000000,
@@ -1645,7 +1645,7 @@
         0,
         3
       ],
-      "rationale": "The contingency exists to absorb unexpected cost increases (NAO 1.9). Spend it on the mobilisation and every subsequent overrun lands on the Plan instead of on the buffer, so the Treasury's tolerance narrows. Doubling cost_pc_penalty_per_step rather than adding one to it, because the crossover has to sit inside the spend the game actually produces: a full Corps run costs GBP 4.6-11.1bn, so at +1 the draw was better everywhere and the decision was no decision. At +2 the draw wins while it clears your only step of Treasury pressure and loses from the second step on — crossover at about GBP 9bn of cumulative cost, which sits between what a restrained Corps programme spends (6.8) and what max_effort spends (9.7)."
+      "rationale": "The contingency exists to absorb unexpected cost increases (NAO 1.9). Spend it on the mobilisation and every subsequent overrun lands on the Plan instead of on the buffer, so the Treasury's tolerance narrows. Doubling cost_pc_penalty_per_step rather than adding one to it, because the crossover has to sit inside the spend the game actually produces: a full Corps run costs GBP 4.6-11.1bn, so at +1 the draw was better everywhere and the decision was no decision. At +2 the draw wins while it clears your only step of Treasury pressure and loses from the second step on — crossover at about GBP 9bn of cumulative cost, which sits between what a restrained Corps programme spends (6.8) and what an all-out one spends (9.7)."
     },
     "contingency_equipment_delay_months": {
       "value": 3,
@@ -1763,7 +1763,7 @@
         50,
         70
       ],
-      "rationale": "Design brief gave 60. Raised to the top of the range in the balance pass so that a full programme of actions is feasible but tight (see DECISIONS.md)."
+      "rationale": "Started at 60 and was raised to the top of the range, so that a full programme of actions is feasible but tight."
     },
     "pc_baseline_drain": {
       "value": 1,
@@ -1779,7 +1779,7 @@
         0,
         2
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "pc_delivery_per_credit": {
       "value": 500,
@@ -1795,7 +1795,7 @@
         250,
         1500
       ],
-      "rationale": "One point per 500 delivered is one point per month's worth of the Army's own trained-strength gain (regular_gains_annual, 5,933 a year, is 494 a month). The minister earns political credit at the rate at which the Army in peacetime produces soldiers, and only above it. Replaces pc_momentum_bonus / pc_momentum_threshold, which were a share of target and so unreachable at Corps scale (see DECISIONS.md and docs/design-review.md F6)."
+      "rationale": "One point per 500 delivered is one point per month's worth of the Army's own trained-strength gain (regular_gains_annual, 5,933 a year, is 494 a month). The minister earns political credit at the rate at which the Army in peacetime produces soldiers, and only above it. It replaces an earlier bonus that was a share of the target and so unreachable at Corps scale."
     },
     "pc_delivery_max": {
       "value": 3,
@@ -1827,7 +1827,7 @@
         100,
         600
       ],
-      "rationale": "The mirror of pc_delivery_per_credit, and deliberately steeper: a soldier who arrives is a line in a statistical return, a conscript who refuses is a prosecution with a name. It replaced a flat 2 a month levied whenever willingness sat below a threshold - a switch that the Bill's age band, and nothing else in the game, reliably flipped (design review F15). Cases carry over: what is not charged this month stays on the list, so no refusal is ever free and the total charged across a run is the total who refused divided by this figure. The carry-over is load-bearing rather than tidy. An address to the nation moves the refusal rate by about a tenth; rounded off month by month a tenth of a small number is nothing, and the first attempt at this charge left the address worth exactly zero to the bots - the same insensitivity as the threshold it replaced, in different clothes. The level holds the benchmark where F9 left it: at 1 per 200, reserves_plus_light pays 16 across a Corps run against the 12 the threshold charged it, and resigns on 35% of seeds, which is the figure unchanged. Above about 400 a restrained programme pays almost nothing and Corps falls to 5% resignations; below about 150 the programmes that conscript at scale are wiped out. Tuned against npm run dist -- 40; see DECISIONS.md."
+      "rationale": "The mirror of pc_delivery_per_credit, and deliberately steeper: a soldier who arrives is a line in a statistical return, a conscript who refuses is a prosecution with a name. It replaced a flat 2 a month levied whenever willingness sat below a threshold - a switch that the Bill's age band, and nothing else in the game, reliably flipped. Cases carry over: what is not charged this month stays on the list, so no refusal is ever free and the total charged across a run is the total who refused divided by this figure. The carry-over is load-bearing rather than tidy. An address to the nation moves the refusal rate by about a tenth; rounded off month by month a tenth of a small number is nothing, and the first attempt at this charge left the address worth exactly zero in the scripted test runs - the same insensitivity as the threshold it replaced, in different clothes. The level holds the benchmark where the previous pass left it: at 1 per 200, a reserves-first programme pays 16 across a Corps run against the 12 the threshold charged it, and resigns on 35% of seeds, which is the figure unchanged. Above about 400 a restrained programme pays almost nothing and Corps falls to 5% resignations; below about 150 the programmes that conscript at scale are wiped out. Tuned over batches of 40 scripted runs."
     },
     "pc_refusal_max": {
       "value": 1,
@@ -1843,7 +1843,7 @@
         1,
         4
       ],
-      "rationale": "Court throughput, not a safety valve. However many refuse, only so many can be prosecuted in a month, so the charge is a standing drip rather than a spike - and because the remainder carries over, calling up more people makes the list run for longer instead of costing more per month. A minister who calls up several times the training estate's spare intake ends the run with a backlog the courts have not reached, which is reported and is the honest consequence: the government ends, the cases do not. The value is 1 because the step to 2 is the difference between max_effort resigning on 28% of Corps seeds and on 90% of them, against the 20% F9 left it at; there is nothing between them, political capital being an integer currency. The cost of that choice is recorded in F15: conscription_over_capacity refuses fourteen times as many people as a restrained programme and is charged the same 1 a month, so at Division it resigns on 45% of seeds where the flat threshold resigned it on 95%. It still fails the target by four fifths and still resigns on every Corps seed."
+      "rationale": "Court throughput, not a safety valve. However many refuse, only so many can be prosecuted in a month, so the charge is a standing drip rather than a spike - and because the remainder carries over, calling up more people makes the list run for longer instead of costing more per month. A minister who calls up several times the training estate's spare intake ends the run with a backlog the courts have not reached, which is reported and is the honest consequence: the government ends, the cases do not. The value is 1 because the step to 2 is the difference between a maximum-effort programme resigning on 28% of Corps seeds and on 90% of them, against the 20% the previous pass left it at; there is nothing between them, political capital being an integer currency. The cost of that choice: a programme that conscripts far past the training estate's capacity refuses fourteen times as many people as a restrained one and is charged the same 1 a month, so at Division it resigns on 45% of seeds where the flat threshold resigned it on 95%. It still fails the target by four fifths and still resigns on every Corps seed."
     },
     "pc_idle_grace_months": {
       "value": 2,
@@ -1891,7 +1891,7 @@
         -15,
         -5
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_ninety_day_notice": {
       "value": -4,
@@ -1907,7 +1907,7 @@
         -8,
         -3
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_recall_ex_regular": {
       "value": -6,
@@ -1923,7 +1923,7 @@
         -12,
         -4
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_trace_strategic": {
       "value": -2,
@@ -1939,7 +1939,7 @@
         -5,
         -1
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_stop_loss": {
       "value": -9,
@@ -1955,7 +1955,7 @@
         -16,
         -8
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_bill_emergency": {
       "value": -12,
@@ -1971,7 +1971,7 @@
         -20,
         -10
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_bill_normal": {
       "value": -6,
@@ -1987,7 +1987,7 @@
         -12,
         -5
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_exclude_women": {
       "value": -5,
@@ -2003,7 +2003,7 @@
         -8,
         -3
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "pc_cost_medical_relaxed": {
       "value": -2,
@@ -2019,7 +2019,7 @@
         -5,
         -1
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_medical_wartime": {
       "value": -6,
@@ -2035,7 +2035,7 @@
         -12,
         -5
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_exemptions_minimal": {
       "value": -8,
@@ -2051,7 +2051,7 @@
         -14,
         -6
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_band_18_25": {
       "value": 0,
@@ -2099,7 +2099,7 @@
         -14,
         -4
       ],
-      "rationale": "The first band whose lower bound is not 18, and the one the polling most favours: it is 6 points more willing than the default and has a quarter more people in it. What the poll cannot see is who is being taken. Every one of them is settled in work at or near peak earnings (gdp_age_multiplier_26_40 is the highest of the four, 0.862), so the resistance is not the conscripts' but their employers' and their MPs'. Sized against the willingness gain it buys: crossing willingness_low_threshold_pct stops a standing 2 a month, which is worth about 22 over a Division run, so 8 up front is a real price and not a prohibitive one. Tuned against npm run dist -- 40; see DECISIONS.md."
+      "rationale": "The first band whose lower bound is not 18, and the one the polling most favours: it is 6 points more willing than the default and has a quarter more people in it. What the poll cannot see is who is being taken. Every one of them is settled in work at or near peak earnings (gdp_age_multiplier_26_40 is the highest of the four, 0.862), so the resistance is not the conscripts' but their employers' and their MPs'. Sized against the willingness gain it buys: crossing willingness_low_threshold_pct stops a standing 2 a month, which is worth about 22 over a Division run, so 8 up front is a real price and not a prohibitive one. Tuned over batches of 40 scripted runs."
     },
     "pc_cost_band_18_65": {
       "value": -14,
@@ -2115,7 +2115,7 @@
         -22,
         -8
       ],
-      "rationale": "Legislating to conscript 38 million people, up to and including pensioners, is a far larger parliamentary undertaking than any of the other three, and it reaches every employer in the country at once. Priced above 26-40 because it is the widest reach and because, like 26-40, it clears willingness_low_threshold_pct and so buys a standing monthly saving; without a price it was the strictly best band in the Bill, which is what the design review's F14 warned against shipping."
+      "rationale": "Legislating to conscript 38 million people, up to and including pensioners, is a far larger parliamentary undertaking than any of the other three, and it reaches every employer in the country at once. Priced above 26-40 because it is the widest reach and because, like 26-40, it clears willingness_low_threshold_pct and so buys a standing monthly saving; without a price it was the strictly best band in the Bill, which is a clause that decides itself."
     },
     "pc_cost_expand_capacity": {
       "value": -3,
@@ -2131,7 +2131,7 @@
         -6,
         -2
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_compress_syllabus": {
       "value": -5,
@@ -2147,7 +2147,7 @@
         -9,
         -3
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_civilian_instructors": {
       "value": -2,
@@ -2163,7 +2163,7 @@
         -4,
         -1
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_cost_junior_entry": {
       "value": -1,
@@ -2179,7 +2179,7 @@
         -2,
         0
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "pc_cost_equipment_buy": {
       "value": -2,
@@ -2195,7 +2195,7 @@
         -5,
         -1
       ],
-      "rationale": "Design brief. Tuned in the balance pass (see DECISIONS.md)."
+      "rationale": "Game design, tuned for balance."
     },
     "pc_address_first": {
       "value": 8,
@@ -2211,7 +2211,7 @@
         5,
         12
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "pc_address_second": {
       "value": 4,
@@ -2227,7 +2227,7 @@
         2,
         6
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "pc_address_subsequent": {
       "value": -5,
@@ -2259,7 +2259,7 @@
         3,
         8
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "address_willingness_months": {
       "value": 3,
@@ -2275,7 +2275,7 @@
         2,
         4
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "pc_cost_raise_spending": {
       "value": -6,
@@ -2291,7 +2291,7 @@
         -9,
         -3
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "raise_spending_threshold_multiplier": {
       "value": 2,
@@ -2307,7 +2307,7 @@
         1.5,
         3
       ],
-      "rationale": "Interpretation of the brief's 'unlocks bigger £ budget'."
+      "rationale": "Game design: what 'unlocks a bigger budget' is taken to mean."
     },
     "pc_blame_first": {
       "value": 3,
@@ -2323,7 +2323,7 @@
         2,
         5
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "pc_blame_subsequent": {
       "value": -5,
@@ -2339,7 +2339,7 @@
         -8,
         -3
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "actions_per_turn": {
       "value": 2,
@@ -2347,7 +2347,7 @@
       "label": "Actions per month",
       "description": "Maximum decisions the Secretary of State can take in a month.",
       "section": "politics",
-      "source": "Design brief",
+      "source": "Game design",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "assumption",
@@ -2363,7 +2363,7 @@
       "label": "Brigade target",
       "description": "Effective-soldier equivalents required at Brigade difficulty.",
       "section": "difficulty",
-      "source": "Design brief",
+      "source": "Game design",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "assumption",
@@ -2379,7 +2379,7 @@
       "label": "Brigade deadline",
       "description": "Months to the deadline at Brigade difficulty.",
       "section": "difficulty",
-      "source": "Design brief",
+      "source": "Game design",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "assumption",
@@ -2387,7 +2387,7 @@
         4,
         12
       ],
-      "rationale": "Changed from the brief's 12 months in the balance pass: with 12 months the reserves alone make a brigade several times over. Five months means the Army Reserve's 180-day notice arrives too late; the puzzle is the 90-day amendment and the ex-regular recall."
+      "rationale": "Set below 12 months: with 12 months the reserves alone make a brigade several times over. Five months means the Army Reserve's 180-day notice arrives too late; the puzzle is the 90-day amendment and the ex-regular recall."
     },
     "target_division": {
       "value": 22000,
@@ -2395,7 +2395,7 @@
       "label": "Division target",
       "description": "Effective-soldier equivalents required at Division difficulty.",
       "section": "difficulty",
-      "source": "Design brief",
+      "source": "Game design",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "assumption",
@@ -2411,7 +2411,7 @@
       "label": "Division deadline",
       "description": "Months to the deadline at Division difficulty.",
       "section": "difficulty",
-      "source": "Design brief",
+      "source": "Game design",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "assumption",
@@ -2419,15 +2419,15 @@
         9,
         18
       ],
-      "rationale": "Design brief."
+      "rationale": "Game design."
     },
     "target_corps": {
       "value": 45000,
       "unit": "people",
       "label": "Corps target",
-      "description": "Effective-soldier equivalents required at Corps difficulty. The brief's 60,000 was not reachable by any strategy in the balance pass; 45,000 in 24 months is the hardest setting that a near-perfect run can make.",
+      "description": "Effective-soldier equivalents required at Corps difficulty. The 60,000 first asked for was not reachable by any strategy; 45,000 in 24 months is the hardest setting that a near-perfect run can make.",
       "section": "difficulty",
-      "source": "Design brief",
+      "source": "Game design",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "assumption",
@@ -2435,7 +2435,7 @@
         40000,
         80000
       ],
-      "rationale": "Changed from the brief's 60,000 in the balance pass: the best scripted run reached about 32,000 effective soldiers by month 15 before political capital ran out (see DECISIONS.md)."
+      "rationale": "Set below the 60,000 first asked for: the best scripted run reached about 32,000 effective soldiers by month 15 before political capital ran out."
     },
     "deadline_corps": {
       "value": 24,
@@ -2443,7 +2443,7 @@
       "label": "Corps deadline",
       "description": "Months to the deadline at Corps difficulty.",
       "section": "difficulty",
-      "source": "Design brief",
+      "source": "Game design",
       "url": "",
       "asOf": "2026-09-11",
       "confidence": "assumption",
@@ -2451,7 +2451,7 @@
         12,
         24
       ],
-      "rationale": "Changed from the brief's 18 months in the balance pass: 18 months does not allow enough conscript cohorts to graduate and mature for 60,000 to be reachable by any strategy (see DECISIONS.md)."
+      "rationale": "Set above the 18 months first asked for: 18 months does not allow enough conscript cohorts to graduate and mature for 60,000 to be reachable by any strategy."
     },
     "army_medical_rejections_jul24_jan26": {
       "value": 45680,
@@ -2512,7 +2512,7 @@
         -4,
         -1
       ],
-      "rationale": "Cheap, because a cadre course buys no buildings and no contracts: it is an internal personnel decision the Army can largely take for itself, where expanding the training estate (pc_cost_expand_capacity, -3) cannot. It is not free, because a lever with no price is a lever with no decision. An escalating price was tried - the shape pc_address_subsequent uses - and abandoned, because political capital is abundant at Division and scarce at Corps: charging more for later courses left the Division ceiling where it was (55% to 58% of seeds meeting the target) and took max_effort at Corps from 28% resignations to 65%. It priced the rung that did not need it and missed the one that did. What bounds this lever is the course length and the one-course-at-a-time rule, not its price."
+      "rationale": "Cheap, because a cadre course buys no buildings and no contracts: it is an internal personnel decision the Army can largely take for itself, where expanding the training estate (pc_cost_expand_capacity, -3) cannot. It is not free, because a lever with no price is a lever with no decision. An escalating price was tried - the shape pc_address_subsequent uses - and abandoned, because political capital is abundant at Division and scarce at Corps: charging more for later courses left the Division ceiling where it was (55% to 58% of seeds meeting the target) and took an all-out Corps programme from 28% resignations to 65%. It priced the rung that did not need it and missed the one that did. What bounds this lever is the course length and the one-course-at-a-time rule, not its price."
     }
   }
 }

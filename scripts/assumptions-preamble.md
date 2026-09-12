@@ -77,11 +77,12 @@ the source popover on that number.
    (time expiry, medical discharge); pay increases and the 2027 pension-rate
    change.
 
-10. **Verification status.** Figures the design brief attributed to sources
-    that could not be located were re-sourced or replaced: the £49,000
-    training cost became the verified £47,800 Phase 1 figure (Phase 2 cost
-    excluded); the ~20-week Phase 2 average became an assumption with the
-    published 15–27 week range; the £3.5–5k personal-equipment cost stays an
-    assumption because neither cited source could be found; the £53,000
-    labour-share output became the ONS-derived £51,100. Details in
-    `docs/source-verification.md`.
+10. **Verification status.** Where a figure was first written down with a
+    citation that could not be located, it was re-sourced or replaced rather
+    than kept: the £49,000 training cost became the verified £47,800 Phase 1
+    figure (Phase 2 cost excluded); the ~20-week Phase 2 average became an
+    assumption with the published 15–27 week range; the £3.5–5k
+    personal-equipment cost stays an assumption because neither cited source
+    could be found; the £53,000 labour-share output became the ONS-derived
+    £51,100. Every figure now carries the source it is actually read from, and
+    that source is on this page.

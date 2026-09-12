@@ -1939,3 +1939,21 @@ do not soften the events. Paul to say whether 53/63 is acceptable as it stands.
 four latent bugs and some spec drift; they are listed in `docs/next-task.md` so
 the next session does not re-find them.
 
+
+## Player-facing text stopped citing the repository (12 September 2026)
+
+Paul, on the methodology page: it referenced the design brief, this log and
+design-review finding numbers, and the average player will not go to GitHub to
+find them. The references were in `parameters.json` rather than the page —
+68 of 174 parameters, in the `rationale`, `derivation` and `source` fields that
+the source popover and the parameter table print — so they were in the game
+too. They are now written in plain terms ("Game design", "Game design, tuned
+for balance", "an all-out programme" for `max_effort`), and finding numbers
+are gone rather than reworded.
+
+Nothing was lost: the working trail belongs in `note`, which is rendered
+nowhere, and in this log and `docs/design-review.md` (F21). The point most
+worth keeping is that **everything in `parameters.json` except `note` is
+published** — `validate-parameters.mjs` now fails the build on a player-visible
+field that names a repository document, a finding number, a build command or a
+source file.

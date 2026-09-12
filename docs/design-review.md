@@ -1738,6 +1738,68 @@ recorded here so it is a choice rather than an oversight.
 
 ---
 
+### F21 — The player-facing text cited documents the player cannot open · *Addressed*
+
+**Raised by Paul**, 12 September 2026, of the methodology page: it referred to
+the design brief, to `DECISIONS.md` and to finding numbers like F14, none of
+which a player will ever see, and few of whom will go to the repository to
+look.
+
+**Where it actually was.** Not in the page's prose, which was clean — in
+`parameters.json`, in the fields that the source popover and the parameter
+table read out. **68 of 174 parameters** carried one:
+
+| in a player-visible field | count |
+|---|---|
+| `source: "Design brief"` — printed in the table's Source column | 8 |
+| `rationale: "Design brief."` — the whole rationale | 30 |
+| rationale citing `DECISIONS.md` | 20 |
+| visible field citing a finding number (F3, F6, F9, F11, F13, F14, F15) | 8 |
+| derivation citing a CSV in `docs/` | 2 |
+
+Because these are popover fields, they were in the game as well as on the
+methodology page. A citation that cannot be followed is worse than none: it
+advertises that something is being withheld.
+
+**Fix.** The internal names came out of the visible fields and the substance
+stayed:
+
+- *"Design brief."* → **"Game design."** and *"Design brief. Tuned in the
+  balance pass (see DECISIONS.md)."* → **"Game design, tuned for balance."** —
+  the register the rest of the file is written in, and true.
+- `source: "Design brief"` → **"Game design"**. Eight rows of the table now
+  name the game itself rather than a document, which is what they always meant.
+- The scripted strategies stopped being named in player text: `max_effort` is
+  *an all-out programme*, `reserves_plus_light` *a reserves-first programme*,
+  `conscription_over_capacity` *a programme that conscripts far past the
+  training estate's capacity*, *the bots* are *the scripted test runs*, and
+  *"Tuned against `npm run dist -- 40`"* is *"tuned over batches of 40 scripted
+  runs"*. The tuning arguments survive intact, which matters: they are the
+  best evidence on the page that the numbers were argued over.
+- Finding numbers were deleted, not translated. *"…which is what the design
+  review's F14 warned against shipping"* became *"…which is a clause that
+  decides itself"* — the reason, rather than the reference.
+- The preamble's verification item no longer opens with what "the design brief
+  attributed" or closes with `docs/source-verification.md`; it says what was
+  re-sourced and that every figure now carries the source it is read from.
+
+**The trail is not lost.** `note` is a field on a parameter that is rendered
+nowhere — not the popover, not the table, not `ASSUMPTIONS.md` — and 21
+parameters already used it. That is where a finding number belongs, alongside
+the documents themselves.
+
+**It cannot come back.** `validate-parameters.mjs` now fails the build if
+`label`, `description`, `rationale`, `derivation` or `source` names a file in
+`docs/`, the decisions log, the design brief, the design review, a finding
+number, a build command, a source file, or *"the balance pass"*. The error
+says where to put it instead. Verified by planting each kind and watching the
+build refuse it.
+
+**The general lesson.** Everything in `parameters.json` except `note` is
+published. It reads like a working file and is not one.
+
+---
+
 ## The next mechanic, if one is wanted
 
 The leadership wall now has a counter-lever (F17), so the obvious gap is

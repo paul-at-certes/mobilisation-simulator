@@ -10,6 +10,7 @@
  *  - assumption → range and rationale required
  *  - section must exist in `sections`
  *  - asOf must be an ISO date
+ *  - player-visible fields name nothing the player cannot open (see below)
  */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -27,6 +28,21 @@ if (typeof data.version !== 'string' || !data.version) errors.push('file: missin
 if (!/^\d{4}-\d{2}-\d{2}$/.test(data.generated ?? '')) errors.push('file: generated must be YYYY-MM-DD');
 const warnings = [];
 const confidences = new Set(['primary', 'derived', 'assumption']);
+
+/** Fields the source popover and the methodology table read out to the player. */
+const PLAYER_VISIBLE = ['label', 'description', 'rationale', 'derivation', 'source'];
+
+/** Things that exist only in this repository. */
+const DANGLING = [
+  { re: /\bdocs\/[\w.-]+/, what: 'a file in docs/' },
+  { re: /\bDECISIONS\.md\b/, what: 'the decisions log' },
+  { re: /\b[Dd]esign brief\b/, what: 'the design brief' },
+  { re: /\bdesign review\b|\bdesign-review\b/, what: 'the design review' },
+  { re: /(?<![A-Za-z0-9])F\d{1,2}(?![\d\w])/, what: 'a design-review finding number' },
+  { re: /\bnpm run\b/, what: 'a build command' },
+  { re: /\b\w+\.(ts|mjs|json)\b/, what: 'a source file' },
+  { re: /\bbalance pass\b/, what: "a stage of this repository's history" },
+];
 const required = ['value', 'unit', 'label', 'description', 'section', 'source', 'asOf', 'confidence'];
 
 for (const [id, p] of Object.entries(data.parameters)) {
@@ -45,6 +61,29 @@ for (const [id, p] of Object.entries(data.parameters)) {
     if (!p.rationale) errors.push(`${id}: assumptions need a rationale`);
   }
   if (p.confidence === 'derived' && !p.url && !p.derivation) warnings.push(`${id}: derived figure has neither url nor derivation`);
+
+  /*
+   * Nothing the player cannot open.
+   *
+   * `label`, `description`, `rationale`, `derivation` and `source` are read
+   * out in the source popover and the methodology page's parameter table, so
+   * they are player-facing prose. They used to cite the design brief, the
+   * decisions log and design-review finding numbers — documents that live in
+   * the repository and nowhere the player will ever look, and a citation that
+   * cannot be followed is worse than none, because it advertises that
+   * something is being withheld.
+   *
+   * The working trail is not lost: it belongs in `note`, which is rendered
+   * nowhere, or in the documents themselves. Add to this list, don't route
+   * around it.
+   */
+  for (const f of PLAYER_VISIBLE) {
+    const v = p[f];
+    if (typeof v !== 'string') continue;
+    for (const { re, what } of DANGLING) {
+      if (re.test(v)) errors.push(`${id}: ${f} names ${what}, which the player cannot open — put it in "note"`);
+    }
+  }
 }
 
 // `generated` means the date the parameter set was last revised, and it is what
