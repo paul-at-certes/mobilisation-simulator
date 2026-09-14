@@ -19,15 +19,20 @@ export default defineConfig({
       transformIndexHtml: (html) => html.replaceAll('%SITE_URL%', siteUrl),
     },
     {
-      // Dev only. The `?card=og` route draws the link-preview card in the
-      // browser, where the typefaces are, and sends the PNG here to be saved
-      // as public/og-image.png. Regenerate it after any change to the card.
+      // Dev only. The `?card=og` route draws the link-preview cards in the
+      // browser, where the typefaces are, and sends each PNG here to be saved:
+      // the page's own og:image, and the 1280×640 card GitHub shows for the
+      // repository, which is uploaded by hand under Settings, Social preview.
+      // Regenerate both after any change to the card.
       name: 'og-image-writer',
       apply: 'serve',
       configureServer(server) {
-        server.ws.on('og:save', (data: { png: string }) => {
-          writeFileSync(resolve(__dirname, 'public/og-image.png'), Buffer.from(data.png, 'base64'));
-          server.config.logger.info('public/og-image.png written');
+        const targets: Record<string, string> = { 'og-image.png': 'public/og-image.png', 'social-preview.png': 'docs/social-preview.png' };
+        server.ws.on('og:save', (data: { name: string; png: string }) => {
+          const target = targets[data.name];
+          if (!target) return;
+          writeFileSync(resolve(__dirname, target), Buffer.from(data.png, 'base64'));
+          server.config.logger.info(`${target} written`);
         });
       },
     },

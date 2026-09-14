@@ -136,14 +136,17 @@ function renderCurrent(): void {
   // saved as public/og-image.png after a change to the card. Not in the build.
   if (import.meta.env.DEV && params.get('card') === 'og') {
     // The published address, not this dev server's: the card is for the link preview.
-    const card = renderTeaserCard(document.querySelector<HTMLMetaElement>('meta[property="og:url"]')?.content || siteUrl());
+    const url = document.querySelector<HTMLMetaElement>('meta[property="og:url"]')?.content || siteUrl();
+    const card = renderTeaserCard(url);
+    // GitHub's repository card: 1280×640, everything 40px in from the edge.
+    const social = renderTeaserCard(url, { width: 1280, height: 640, offset: [40, 5] });
     const note = h('span', { class: 'small muted' });
-    const saveBtn = h('button', { class: 'btn', onclick: async () => {
+    const saveBtn = (canvas: HTMLCanvasElement, name: string) => h('button', { class: 'btn', onclick: async () => {
       await document.fonts.ready;
-      import.meta.hot?.send('og:save', { png: card.toDataURL('image/png').split(',')[1] });
-      note.textContent = 'Sent to the dev server; see its log.';
-    } }, 'Save as og-image.png');
-    show(h('div', { class: 'ogcard' }, h('h1', { class: 'visually-hidden' }, 'Link preview card'), card, h('div', { class: 'btn-row' }, saveBtn, note)));
+      import.meta.hot?.send('og:save', { name, png: canvas.toDataURL('image/png').split(',')[1] });
+      note.textContent = `${name} sent to the dev server; see its log.`;
+    } }, `Save ${name}`);
+    show(h('div', { class: 'ogcard' }, h('h1', { class: 'visually-hidden' }, 'Link preview cards'), card, social, h('div', { class: 'btn-row' }, saveBtn(card, 'og-image.png'), saveBtn(social, 'social-preview.png'), note)));
     return;
   }
   const saved = load();

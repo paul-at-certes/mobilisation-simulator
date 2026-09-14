@@ -45,20 +45,27 @@ export function renderShareCard(input: ShareCardInput): HTMLCanvasElement {
   return card((ctx) => paintResult(ctx, input));
 }
 
-export function renderTeaserCard(siteUrl: string): HTMLCanvasElement {
-  return card((ctx) => paintTeaser(ctx, siteUrl));
+/**
+ * The link-preview card for the site. `sheet` sets a larger canvas with the
+ * same page drawn inside a margin: GitHub's repository card is 1280×640 and
+ * wants everything that matters 40px in from the edges, so the 1200×630 page
+ * is laid at (40, 5) and only the decorative bottom rule reaches the edge.
+ */
+export function renderTeaserCard(siteUrl: string, sheet?: { width: number; height: number; offset: [number, number] }): HTMLCanvasElement {
+  return card((ctx) => paintTeaser(ctx, siteUrl), sheet);
 }
 
-function card(paint: (ctx: Ctx) => void): HTMLCanvasElement {
+function card(paint: (ctx: Ctx) => void, sheet?: { width: number; height: number; offset: [number, number] }): HTMLCanvasElement {
   const c = document.createElement('canvas');
-  c.width = W;
-  c.height = H;
+  c.width = sheet?.width ?? W;
+  c.height = sheet?.height ?? H;
   const ctx = c.getContext('2d')!;
   const draw = () => {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     setSpacing(ctx, 0);
+    if (sheet) ctx.translate(sheet.offset[0], sheet.offset[1]);
     paint(ctx);
   };
   draw();
@@ -190,8 +197,15 @@ function paintTeaser(ctx: Ctx, siteUrl: string): void {
 
 /** Paper, nameplate, the typed edition line, the stamp, and the rules under them. */
 function masthead(ctx: Ctx, edition: string): void {
+  // Paper and the red rule along the foot belong to the whole canvas, whatever
+  // sheet the page is laid on.
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = COLOURS.paper;
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillStyle = COLOURS.red;
+  ctx.fillRect(0, ctx.canvas.height - 10, ctx.canvas.width, 10);
+  ctx.restore();
 
   ctx.fillStyle = COLOURS.ink;
   ctx.font = `800 40px ${SERIF}`;
@@ -228,9 +242,6 @@ function masthead(ctx: Ctx, edition: string): void {
   ctx.fillRect(56, 118, W - 112, 1);
   ctx.fillRect(56, 124, W - 112, 1);
   ctx.fillRect(56, 128, W - 112, 1);
-  ctx.fillRect(0, H - 10, W, 10);
-  ctx.fillStyle = COLOURS.red;
-  ctx.fillRect(0, H - 10, W, 10);
 }
 
 /** The banner: a big line and a smaller one under it, in the result's colour. */

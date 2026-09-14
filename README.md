@@ -108,7 +108,10 @@ Pages with source "GitHub Actions" in the repository settings before the
 first push. The preview image is `public/og-image.png` and the favicon
 `public/favicon.svg`. The preview image is drawn by the same code as the
 share card: after changing either, run the dev server, open `/?card=og`, and
-press *Save as og-image.png*; the dev server writes the file. LinkedIn caches
+press *Save og-image.png*; the dev server writes the file. The same page saves
+*social-preview.png* to `docs/`, at the 1280×640 with a 40px safe border that
+GitHub's repository card wants; upload it by hand under Settings, General,
+Social preview, since there is no API for it. LinkedIn caches
 a link's card for about a week, so after deploying a new image put the URL
 through its Post Inspector to refresh it.
 
