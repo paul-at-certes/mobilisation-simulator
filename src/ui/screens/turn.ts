@@ -29,7 +29,16 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
   const menu = renderActionMenu(state, d.availability, () => {});
   endBtn.addEventListener('click', () => {
     endBtn.disabled = true;
-    d.onEndTurn({ actions: menu.selectedActions(), eventChoice });
+    const input = { actions: menu.selectedActions(), eventChoice };
+    // The month closes under a rubber stamp: APPROVED if the minister decided
+    // anything, NOTED if not, DEADLINE on the last. The state advances while
+    // the stamp is down, so the next month is on the desk when it lifts.
+    // Under reduced motion there is no stamp and no wait.
+    const final = state.turn >= state.deadlineMonths - 1;
+    const word = final ? 'Deadline' : input.actions.length ? 'Approved' : 'Noted';
+    const delay = stamp(word);
+    if (delay === 0) d.onEndTurn(input);
+    else window.setTimeout(() => d.onEndTurn(input), delay);
   });
 
   const eventEl = event ? renderEvent(event, state.turn === 0 ? 'Day 0' : `Month ${state.turn}`, (i) => {
@@ -154,4 +163,25 @@ export function minuteHead(ref: string): HTMLElement {
     h('dt', {}, 'To:'), h('dd', {}, 'Secretary of State'),
     h('dt', {}, 'Ref:'), h('dd', {}, ref),
   );
+}
+
+/**
+ * Slam a stamp over the screen and return how long to hold the next screen
+ * back, in milliseconds. Zero, and no stamp, when the player has asked for
+ * reduced motion. The overlay lives on <body>, outside #app, so it survives
+ * the re-render underneath it and takes itself off when its fade ends.
+ */
+function stamp(word: string): number {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return 0;
+  const overlay = h('div', { class: 'stamp-overlay', 'aria-hidden': 'true' }, h('span', { class: 'stamp stamp-big' }, word));
+  document.body.append(overlay);
+  overlay.addEventListener('animationend', (e) => {
+    if (e.animationName === 'stamp-out') overlay.remove();
+  });
+  // A belt to the braces: no browser event, no leak.
+  window.setTimeout(() => overlay.remove(), 1600);
+  // A tap's worth of haptic where the platform offers it, and only after a
+  // real gesture: a scripted click would otherwise log a warning.
+  if (navigator.userActivation?.hasBeenActive) navigator.vibrate?.(12);
+  return 620;
 }

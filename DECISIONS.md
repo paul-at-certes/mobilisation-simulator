@@ -1994,3 +1994,13 @@ the fielded bars' five greys indistinguishable; they are now one ink and four
 textures (solid, hatch, cross-hatch, dots) with conscripts alone in red, which
 survives greyscale and colour blindness and is how a newspaper chart of the
 period would have done it. The card and the screen share the fills.
+
+**Phase 3, the same day.** Motion, and one rule for it: nothing animated
+carries information, so every piece is off under `prefers-reduced-motion` and
+the game reads the same without it. The month closes under a rubber stamp,
+APPROVED if the minister decided anything, NOTED if not, DEADLINE on the last;
+the state advances while the stamp is down, so the next month is on the desk
+when it lifts. A new screen settles like a sheet laid down rather than
+fading; a tick pops when it lands; the pencilled line is written half a second
+after the minute; a press cutting lands a beat after the page. No parade or
+chart animates: the numbers are the point and should not move.
