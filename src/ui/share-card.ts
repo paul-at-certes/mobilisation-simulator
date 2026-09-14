@@ -21,12 +21,15 @@ export interface ShareCardInput {
 
 const W = 1200;
 const H = 630;
+// Type floor. A feed shows the card about 550px wide, under half size, so
+// nothing a reader needs is set below 20px here and the typed edition line,
+// which is dressing, not below 18px.
 
 const COLOURS = {
   paper: '#f6f2e8',
   ink: '#1a1916',
   ink2: '#4a4843',
-  ink3: '#64615a',
+  ink3: '#55524b',
   rule: '#a89f8c',
   red: '#8b1a1a',
   ok: '#2a5a3a',
@@ -37,7 +40,7 @@ const COND = '"Barlow Condensed", "Arial Narrow", "Helvetica Neue", Helvetica, A
 const MONO = '"Courier Prime", "Courier New", Courier, monospace';
 
 /** The faces the card sets, so it can wait for them and draw again. */
-const FACES = ['800 132px "Barlow Condensed"', '700 18px "Barlow Condensed"', '800 40px "Newsreader"', '600 27px "Newsreader"', 'italic 400 19px "Newsreader"', '400 14px "Courier Prime"', '700 22px "Courier Prime"'];
+const FACES = ['800 132px "Barlow Condensed"', '700 20px "Barlow Condensed"', '600 16px "Barlow Condensed"', '800 40px "Newsreader"', '600 27px "Newsreader"', 'italic 400 22px "Newsreader"', '400 22px "Courier Prime"', '700 24px "Courier Prime"'];
 
 type Ctx = CanvasRenderingContext2D;
 
@@ -116,14 +119,15 @@ function paintResult(ctx: Ctx, input: ShareCardInput): void {
   ];
   const maxV = Math.max(score.headcount, score.target, 1);
   const trackX = 700;
-  const trackW = 386;
+  // Leaves room after the track for a seven-digit total at 24px inside the margin.
+  const trackW = 335;
   const rows: [string, 0 | 1, number, string][] = [
     ['Bodies', 0, 200, COLOURS.ink],
     ['Effective', 1, 280, COLOURS.red],
   ];
   for (const [name, idx, y, valueColour] of rows) {
     ctx.fillStyle = COLOURS.ink;
-    ctx.font = `400 20px ${MONO}`;
+    ctx.font = `400 22px ${MONO}`;
     ctx.fillText(name, trackX, y);
     ctx.strokeStyle = COLOURS.rule;
     ctx.lineWidth = 1;
@@ -138,7 +142,7 @@ function paintResult(ctx: Ctx, input: ShareCardInput): void {
       x += w;
     }
     ctx.fillStyle = valueColour;
-    ctx.font = `700 22px ${MONO}`;
+    ctx.font = `700 24px ${MONO}`;
     ctx.fillText(fmt(idx === 0 ? score.headcount : ese), trackX + trackW + 8, y + 33);
   }
   const tx = Math.min(trackX + trackW - 1, trackX + (score.target / maxV) * trackW);
@@ -151,14 +155,14 @@ function paintResult(ctx: Ctx, input: ShareCardInput): void {
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.fillStyle = COLOURS.ink3;
-  ctx.font = `400 15px ${MONO}`;
+  ctx.font = `400 22px ${MONO}`;
   ctx.textAlign = tx > trackX + trackW * 0.8 ? 'right' : 'center';
   ctx.fillText(`target ${fmt(score.target)}`, tx, 350);
   ctx.textAlign = 'left';
 
   ctx.fillStyle = COLOURS.ink2;
-  ctx.font = `italic 400 19px ${SERIF}`;
-  wrapText(ctx, `“${score.verdictOneLiner}”`, 700, 400, 440, 26, 4);
+  ctx.font = `italic 400 22px ${SERIF}`;
+  wrapText(ctx, `“${score.verdictOneLiner}”`, 700, 400, 444, 28, 4);
 
   footer(ctx, 'Play it yourself · every number sourced', `${input.siteUrl}${score.seedUrl}`);
 }
@@ -179,15 +183,19 @@ function paintTeaser(ctx: Ctx, siteUrl: string): void {
   ];
   const scale = 5.2;
   weights.forEach(([name, value], i) => {
-    const x = 700 + i * 165;
+    const x = 700 + i * 160;
     figure(ctx, x, 190, scale, value);
+    // Name over value: on one line at this size, "conscript 0.5" runs off the card.
+    const base = 190 + FIGURE_H * scale + 34;
     ctx.fillStyle = COLOURS.ink;
-    ctx.font = `400 18px ${MONO}`;
-    ctx.fillText(`${name} ${value.toFixed(1)}`, x, 190 + FIGURE_H * scale + 34);
+    ctx.font = `400 22px ${MONO}`;
+    ctx.fillText(name, x, base);
+    ctx.font = `700 24px ${MONO}`;
+    ctx.fillText(value.toFixed(1), x, base + 30);
   });
   ctx.fillStyle = COLOURS.ink2;
-  ctx.font = `italic 400 19px ${SERIF}`;
-  wrapText(ctx, '“A reservist after a refresher is 0.8. A conscript fresh out of training is 0.5, and less if there are not enough junior leaders to lead them.”', 700, 430, 440, 26, 4);
+  ctx.font = `italic 400 22px ${SERIF}`;
+  wrapText(ctx, '“A reservist after a refresher is 0.8. A conscript fresh out of training is 0.5, and less if there are not enough junior leaders to lead them.”', 700, 424, 444, 28, 4);
   footer(ctx, 'Ten minutes, on a phone · every number sourced', siteUrl);
 }
 
@@ -211,8 +219,8 @@ function masthead(ctx: Ctx, edition: string): void {
   ctx.font = `800 40px ${SERIF}`;
   setSpacing(ctx, 2.4);
   ctx.fillText('THE MORNING DESPATCH', 56, 74);
-  ctx.font = `400 14px ${MONO}`;
-  setSpacing(ctx, 0.7);
+  ctx.font = `400 18px ${MONO}`;
+  setSpacing(ctx, 0.5);
   ctx.fillStyle = COLOURS.ink3;
   ctx.fillText(edition, 56, 100);
   setSpacing(ctx, 0);
@@ -231,9 +239,9 @@ function masthead(ctx: Ctx, edition: string): void {
   ctx.font = `700 18px ${COND}`;
   setSpacing(ctx, 1.8);
   ctx.fillText('OFFICIAL-SENSITIVE', 95, 29);
-  ctx.font = `600 12px ${COND}`;
-  setSpacing(ctx, 2.4);
-  ctx.fillText('FICTION', 95, 47);
+  ctx.font = `600 16px ${COND}`;
+  setSpacing(ctx, 2);
+  ctx.fillText('FICTION', 95, 48);
   setSpacing(ctx, 0);
   ctx.restore();
   ctx.textAlign = 'left';
@@ -258,22 +266,36 @@ function banner(ctx: Ctx, lines: [string, string], colour: string): void {
 
 function column(ctx: Ctx): void {
   ctx.fillStyle = COLOURS.ink;
-  ctx.fillRect(668, 150, 1, 420);
+  ctx.fillRect(668, 150, 1, 370);
 }
 
 function label(ctx: Ctx, text: string, x: number, y: number): void {
   ctx.fillStyle = COLOURS.ink;
-  ctx.font = `700 18px ${COND}`;
-  setSpacing(ctx, 2.5);
+  ctx.font = `700 20px ${COND}`;
+  setSpacing(ctx, 2.2);
   ctx.fillText(text.toUpperCase(), x, y);
   setSpacing(ctx, 0);
 }
 
+/**
+ * The foot of the page, across both columns under a rule: at a readable size
+ * the replay link is wider than the right-hand column. The second line ends
+ * inside GitHub's 40px safe border when the page is laid on its sheet.
+ */
 function footer(ctx: Ctx, line: string, url: string): void {
+  ctx.fillStyle = COLOURS.ink;
+  ctx.fillRect(56, 528, W - 112, 1);
   ctx.fillStyle = COLOURS.ink3;
-  ctx.font = `400 13px ${MONO}`;
-  ctx.fillText(line, 700, 560);
-  ctx.fillText(url.replace(/^https?:\/\//, ''), 700, 582);
+  ctx.font = `400 22px ${MONO}`;
+  ctx.fillText(line, 56, 558);
+  // A replay link carries a seed of up to ten digits, and a typed one can be
+  // longer: step the size down until it fits the measure, and no further than 16px.
+  const link = url.replace(/^https?:\/\//, '');
+  for (let size = 22; size >= 16; size--) {
+    ctx.font = `400 ${size}px ${MONO}`;
+    if (ctx.measureText(link).width <= W - 112) break;
+  }
+  ctx.fillText(link, 56, 586);
 }
 
 /** One soldier figure, `scale` times its 14×26 units, filled from the feet up to `frac`. */

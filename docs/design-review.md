@@ -2047,6 +2047,17 @@ scroll.
    one line; from *Month 4 of 12* the wider tab puts it on two, and the header
    is 88px.
 
+**The share card and the link preview, the same day.** A feed shows the
+1200×630 card about 550px wide, so its 12–15px small print (the footer, the
+stamp's *fiction*, the edition line, the target label) was 6–7px on a desktop
+feed. The card's floor is now 20px for anything a reader needs and 18px for the
+typed edition line, with the same darker grey. At that size the foot no longer
+fits the right-hand column, so it runs across the page under a rule; the
+figures' labels stack name over value; the bars narrow from 386 to 335 so a
+seven-digit total ends on the 1144px margin; and the replay link steps down
+from 22px until it fits, since a seed runs to ten digits. `public/og-image.png`
+and `docs/social-preview.png` are regenerated from `?card=og`.
+
 ---
 
 ## The next mechanic, if one is wanted
