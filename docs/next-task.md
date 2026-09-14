@@ -161,8 +161,9 @@ shifted and whether that was deliberate, and anything worth a new finding.
 - **A phone-layout pass.** Already checked on 12 September: Day 0 at 375x812 is
   **3.47 screens and 414 words**, against the 4.5 screens and 643 words recorded
   when F7 was closed. `accelerate_promotion` is the sixteenth action but it
-  lives in the training-pipeline group, which is shut on Day 0 and costs 45px.
-  F7 has not regressed.
+  lived in the training-pipeline group, which was shut on Day 0 and cost 45px.
+  F7 had not regressed. (Since 14 September that group opens on Day 0, so these
+  figures are now an underestimate; re-measure before quoting them.)
 - **Playtesting the 55% ceiling (F17).** Real, and Paul's rather than a fresh
   session's: it needs a human who does not already know where the lever is.
 

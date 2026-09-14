@@ -490,6 +490,10 @@ while making them:
    there is a Bill or somebody to train. Closed is one tap away, never hidden —
    pre-building capacity ahead of the legislation is a real strategy. A group
    the player opens by hand stays open in later months.
+   *Amended 14 September 2026, on Paul's instruction:* the training pipeline
+   now opens from Day 0 like conscription. Shut, it was easily missed, and
+   missing it hides the game's central constraint. Day 0 on a phone is longer
+   for it.
 4. **A bug.** `.action-options` set `display: flex`, which beats the user
    agent's `[hidden]` rule, so every action's dropdowns were on screen from the
    start whether or not the action was ticked — five of them on the Bill alone.

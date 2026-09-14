@@ -29,18 +29,11 @@ const GROUP_ORDER: ActionGroup[] = ['reserves', 'conscription', 'pipeline', 'pol
  */
 const openOverrides = new Map<ActionGroup, boolean>();
 
-/** Anything in the estate to train, or about to be. Governs whether the pipeline group opens. */
-const somethingToTrain = (state: GameState): boolean =>
-  state.billStatus === 'passed' || state.trainingCohorts.length > 0 || state.pools.holdingPool > 0;
-
 /**
- * Which groups are open on arrival. The Day 0 action list is some 2,900px on a
- * 375px screen (F7) and most of it is not a live decision yet: there is nobody
- * to train until there is a Bill. Closed is one tap away, never hidden —
- * buying training capacity ahead of the legislation is a real strategy and has
- * to stay reachable.
+ * Which groups are open on arrival. Closed is one tap away, never hidden, but
+ * a closed group is easily read as nothing in it.
  */
-function defaultOpen(group: ActionGroup, state: GameState, liveCount: number): boolean {
+function defaultOpen(group: ActionGroup, liveCount: number): boolean {
   switch (group) {
     // Closes itself once every reserve lever has been pulled, which is most of the middle game.
     case 'reserves':
@@ -48,8 +41,11 @@ function defaultOpen(group: ActionGroup, state: GameState, liveCount: number): b
     // The Bill is the headline decision of Day 0, and the monthly call-up lives here once it passes.
     case 'conscription':
       return true;
+    // Open from Day 0. It used to stay shut until there was a Bill or somebody
+    // to train, and players missed it: buying training capacity ahead of the
+    // legislation is the constraint the game is about, so it has to be seen.
     case 'pipeline':
-      return somethingToTrain(state);
+      return true;
     case 'political':
       return true;
   }
@@ -139,7 +135,7 @@ export function renderActionMenu(state: GameState, availability: ActionAvailabil
   updateCounter();
 
   function groupEl(group: ActionGroup, children: HTMLElement[], live: number): HTMLElement {
-    const byDefault = defaultOpen(group, state, live);
+    const byDefault = defaultOpen(group, live);
     const el = h(
       'details',
       { class: 'action-group', open: openOverrides.get(group) ?? byDefault },
