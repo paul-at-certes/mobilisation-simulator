@@ -4,6 +4,7 @@ import { h } from '../dom';
 import { sourced, getParam } from '../components/sourced';
 import { formatInt } from '../../format';
 import { minuteHead } from './turn';
+import { figureGlyph } from '../components/figure';
 
 export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: number; onStart: (d: Difficulty, seed: number) => void }): HTMLElement {
   const pv = (id: string) => getParam(id)?.value ?? 0;
@@ -18,10 +19,20 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
       h('span', {}, h('span', { class: 'd-title' }, title), h('br'), h('span', { class: 'd-desc' }, desc)),
     );
 
+  // One regular, one reservist, one conscript, filled to what each counts for.
+  const weight = (label: string, value: number, id: string | null) =>
+    h('span', { class: 'weight', role: 'listitem' }, figureGlyph(value, `wf-${Math.round(value * 100)}`), `${label} `, id ? sourced(value.toFixed(1), id) : value.toFixed(1));
+
   return h(
     'div',
     { class: 'fade-in' },
-    h('h1', {}, 'Day 0'),
+    h(
+      'div',
+      { class: 'opening-head' },
+      h('div', { class: 'redbox', 'aria-hidden': 'true', html: RED_BOX }),
+      h('h1', {}, 'Day 0'),
+      h('div', { class: 'typed opening-sub' }, 'The box is on your desk'),
+    ),
     h(
       'div',
       { class: 'note' },
@@ -62,6 +73,13 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
       ', and less if there are not enough junior leaders to lead them. Every number can be tapped for its source. The weightings are modelling assumptions and are labelled as such.',
     ),
     h(
+      'div',
+      { class: 'weights', role: 'list', 'aria-label': 'What one person counts for' },
+      weight('regular', 1, null),
+      weight('reservist', pv('eff_reserve_volunteer'), 'eff_reserve_volunteer'),
+      weight('conscript', pv('eff_conscript_normal_start'), 'eff_conscript_normal_start'),
+    ),
+    h(
       'p',
       {},
       'Almost nothing arrives in the month you decide it. Under Force Ready the Department publishes a projection: where the decisions already taken will land by the deadline, if you take no others. It assumes no further decisions and no news, so it is a statement about your orders rather than a prediction of the year.',
@@ -85,3 +103,18 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
     h('p', { class: 'small muted' }, 'The mechanics of mobilisation. No combat, no maps. Ten minutes, on a phone.'),
   );
 }
+
+/** The ministerial red box, flat, on the edge of a desk. Decorative: hidden from assistive technology. */
+const RED_BOX = `<svg viewBox="0 0 300 168" xmlns="http://www.w3.org/2000/svg" focusable="false">
+  <rect x="0" y="152" width="300" height="2" fill="#1a1916" opacity="0.5"/>
+  <ellipse cx="150" cy="154" rx="132" ry="6" fill="#1a1916" opacity="0.12"/>
+  <rect x="126" y="18" width="48" height="16" rx="7" fill="none" stroke="#5e1010" stroke-width="5"/>
+  <rect x="34" y="30" width="232" height="26" rx="3" fill="#6e1414"/>
+  <rect x="30" y="52" width="240" height="98" rx="4" fill="#8b1a1a"/>
+  <rect x="30" y="52" width="240" height="4" fill="#5e1010"/>
+  <rect x="44" y="66" width="212" height="70" rx="2" fill="none" stroke="#d9b45c" stroke-width="1"/>
+  <text x="150" y="98" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="12" letter-spacing="2.2" fill="#d9b45c">SECRETARY OF STATE</text>
+  <text x="150" y="115" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="12" letter-spacing="2.2" fill="#d9b45c">FOR DEFENCE</text>
+  <rect x="141" y="52" width="18" height="12" rx="1.5" fill="#d9b45c"/>
+  <rect x="146" y="56" width="8" height="5" rx="1" fill="#8b1a1a"/>
+</svg>`;

@@ -32,7 +32,7 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
     d.onEndTurn({ actions: menu.selectedActions(), eventChoice });
   });
 
-  const eventEl = event ? renderEvent(event, (i) => {
+  const eventEl = event ? renderEvent(event, state.turn === 0 ? 'Day 0' : `Month ${state.turn}`, (i) => {
     eventChoice = i;
     endBtn.disabled = false;
     hint.textContent = '';
@@ -88,7 +88,18 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
   );
 }
 
-function renderEvent(ev: GameEvent, onChoose: (i: number) => void): HTMLElement {
+/**
+ * The month's news, on the paper it arrived on: a torn press cutting under
+ * the fictional paper's name, a Commons paper, or a letter or report in the
+ * Department's in-tray. The decision is taken beneath it in a red-ruled box.
+ */
+function renderEvent(ev: GameEvent, dateLabel: string, onChoose: (i: number) => void): HTMLElement {
+  const heads: Record<GameEvent['via'], [string, string]> = {
+    press: ['The Morning Despatch', `${dateLabel} \u00b7 p.2`],
+    house: ['House of Commons', dateLabel],
+    paper: ['In-tray', `${dateLabel} \u00b7 Secretary of State`],
+  };
+  const [paper, edition] = heads[ev.via];
   const choices = h('div', { class: 'choices', role: 'group', 'aria-label': 'Choices' });
   const buttons: HTMLButtonElement[] = [];
   ev.choices.forEach((c, i) => {
@@ -116,7 +127,19 @@ function renderEvent(ev: GameEvent, onChoose: (i: number) => void): HTMLElement 
         ...(ev.source.paramIds ?? []).map((id) => [' · ', sourced(getParam(id)?.label ?? id.replace(/_/g, ' '), id)]),
       )
     : null;
-  return h('section', { class: 'event', 'aria-label': 'Event' }, h('h3', {}, ev.title), h('p', { html: escapeHtml(ev.text) }), ev.choices.length ? choices : h('p', { class: 'small muted' }, 'No decision required.'), src);
+  return h(
+    'section',
+    { class: `event event-${ev.via}`, 'aria-label': 'Event' },
+    h(
+      'div',
+      { class: 'event-body' },
+      h('div', { class: 'cutting-head', 'aria-hidden': 'true' }, h('span', {}, paper), h('span', {}, edition)),
+      h('h3', {}, ev.title),
+      h('p', { html: escapeHtml(ev.text) }),
+    ),
+    ev.choices.length ? choices : h('p', { class: 'small muted' }, 'No decision required.'),
+    src,
+  );
 }
 
 /**

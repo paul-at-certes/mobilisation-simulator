@@ -29,6 +29,18 @@ function append(el: HTMLElement, children: Child[]): void {
   }
 }
 
+/**
+ * The SVG twin of `h`: namespaced elements, string attributes only. Children
+ * are nodes or text, as in `h`. Used for the drawn readings (the isotype, the
+ * political-capital scale, the fielded bars), which are built from state.
+ */
+export function s<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number | undefined> = {}, ...children: (Node | string | null | undefined | false)[]): SVGElementTagNameMap[K] {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs)) if (v !== undefined) el.setAttribute(k, String(v));
+  for (const c of children) if (c) el.append(typeof c === 'string' ? document.createTextNode(c) : c);
+  return el;
+}
+
 export function clear(el: Element): void {
   while (el.firstChild) el.removeChild(el.firstChild);
 }

@@ -16,7 +16,8 @@ import { initSourcedPopover } from './ui/components/sourced';
 import { renderOpening } from './ui/screens/opening';
 import { renderTurn } from './ui/screens/turn';
 import { renderScoring } from './ui/screens/scoring';
-import { clear } from './ui/dom';
+import { clear, h } from './ui/dom';
+import { renderTeaserCard } from './ui/share-card';
 import { STRATEGIES, type StrategyId } from './sim/strategies';
 
 const EVENTS = eventsFile as GameEvent[];
@@ -131,6 +132,20 @@ function renderCurrent(): void {
 // Boot: a URL with seed+difficulty and no saved run starts fresh; otherwise resume.
 (function boot() {
   const params = new URLSearchParams(window.location.search);
+  // Dev only: `?card=og` shows the link-preview card at full size, so it can be
+  // saved as public/og-image.png after a change to the card. Not in the build.
+  if (import.meta.env.DEV && params.get('card') === 'og') {
+    // The published address, not this dev server's: the card is for the link preview.
+    const card = renderTeaserCard(document.querySelector<HTMLMetaElement>('meta[property="og:url"]')?.content || siteUrl());
+    const note = h('span', { class: 'small muted' });
+    const saveBtn = h('button', { class: 'btn', onclick: async () => {
+      await document.fonts.ready;
+      import.meta.hot?.send('og:save', { png: card.toDataURL('image/png').split(',')[1] });
+      note.textContent = 'Sent to the dev server; see its log.';
+    } }, 'Save as og-image.png');
+    show(h('div', { class: 'ogcard' }, h('h1', { class: 'visually-hidden' }, 'Link preview card'), card, h('div', { class: 'btn-row' }, saveBtn, note)));
+    return;
+  }
   const saved = load();
   const seed = Number(params.get('seed'));
   const d = params.get('difficulty') as Difficulty | null;

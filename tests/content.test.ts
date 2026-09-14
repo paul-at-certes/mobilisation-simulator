@@ -173,6 +173,7 @@ describe('events.json', () => {
 
   it('uses only valid condition keys, ops, weights and turn ranges', () => {
     for (const e of events) {
+      expect(['press', 'house', 'paper'], `${e.id}: via names the paper the event arrives on`).toContain(e.via);
       expect(Number.isInteger(e.weight) && e.weight >= 1 && e.weight <= 5, `${e.id}: weight`).toBe(true);
       const t = e.trigger;
       if (t.minTurn !== undefined) expect(Number.isInteger(t.minTurn)).toBe(true);

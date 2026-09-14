@@ -1980,3 +1980,17 @@ Permanent Secretary (`src/ui/pencil.ts`), one a month at most, keyed on state
 and silent when nothing new applies. Neither quotes a parameter, so neither
 needs a source. Paul also asked for "the gap is the point" to go, as reading
 machine-written; the bar caption now says what each bar counts.
+
+**Phase 2, the same day.** The set pieces from the mockups: the red box on the
+opening; Force Ready as a parade of figures, one per round unit of the target
+(`figureUnit`), filled from the front and hatched to the projection; political
+capital as a pen mark on a scale; the result as the front page of a fictional
+paper, "The Morning Despatch", with the share card and the link-preview image
+drawn as the same page. Two decisions of substance. First, every event now
+carries `via`: `press` (13, a torn cutting under the paper's name), `house`
+(3, a Commons paper) or `paper` (17, the Department's in-tray), so a private
+letter from the Chancellor is no longer dressed as news. Second, Paul found
+the fielded bars' five greys indistinguishable; they are now one ink and four
+textures (solid, hatch, cross-hatch, dots) with conscripts alone in red, which
+survives greyscale and colour blindness and is how a newspaper chart of the
+period would have done it. The card and the screen share the fills.

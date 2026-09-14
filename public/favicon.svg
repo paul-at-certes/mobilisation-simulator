@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="6" fill="#f6f4ee"/>
-  <rect x="0" y="0" width="64" height="7" fill="#7a1f1f"/>
-  <text x="32" y="50" text-anchor="middle" font-family="Iowan Old Style, Palatino, Georgia, serif" font-weight="600" font-size="40" fill="#1c1b18">M</text>
+  <rect width="64" height="64" rx="6" fill="#f3eee2"/>
+  <rect x="22" y="9" width="20" height="8" rx="4" fill="none" stroke="#5e1010" stroke-width="3"/>
+  <rect x="8" y="15" width="48" height="8" rx="1.5" fill="#6e1414"/>
+  <rect x="6" y="22" width="52" height="34" rx="2" fill="#8b1a1a"/>
+  <rect x="11" y="28" width="42" height="22" rx="1" fill="none" stroke="#d9b45c" stroke-width="1.2"/>
+  <rect x="28" y="22" width="8" height="5" rx="1" fill="#d9b45c"/>
 </svg>

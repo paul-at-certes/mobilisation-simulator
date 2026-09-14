@@ -232,7 +232,15 @@ export interface GameEvent {
   choices: EventChoice[];
   /** Required if `text` quotes a number as fact. */
   source?: { name: string; url: string; paramIds?: string[] };
+  /**
+   * How the news reaches the minister, which decides the paper it is printed
+   * on: a press cutting, a Commons paper, or a letter, report or minute in
+   * the Department's own in-tray.
+   */
+  via: EventChannel;
 }
+
+export type EventChannel = 'press' | 'house' | 'paper';
 
 // ---------------------------------------------------------------------------
 // Verdicts

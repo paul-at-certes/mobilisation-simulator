@@ -47,7 +47,8 @@
         "ex_regular_tracked_tri_service",
         "strategic_reserve_claimed"
       ]
-    }
+    },
+    "via": "press"
   },
   {
     "id": "ninety_day_amendment",
@@ -98,7 +99,8 @@
         "reserve_notice_days_default",
         "reserve_notice_days_amended"
       ]
-    }
+    },
+    "via": "house"
   },
   {
     "id": "instructor_revolt",
@@ -139,7 +141,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "paper"
   },
   {
     "id": "medical_scandal",
@@ -182,7 +185,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "press"
   },
   {
     "id": "refusal_test_case",
@@ -249,7 +253,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "press"
   },
   {
     "id": "treasury_letter",
@@ -304,7 +309,8 @@
         "defence_budget_deficit_10yr",
         "army_capability_gap"
       ]
-    }
+    },
+    "via": "paper"
   },
   {
     "id": "ally_asks",
@@ -346,7 +352,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "paper"
   },
   {
     "id": "ally_asks_behind",
@@ -388,7 +395,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "paper"
   },
   {
     "id": "equipment_delay",
@@ -435,7 +443,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "paper"
   },
   {
     "id": "poll_bounce",
@@ -464,7 +473,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "press"
   },
   {
     "id": "reservist_employers",
@@ -514,7 +524,8 @@
         "reserve_exemption_application_rate",
         "reserve_exemption_employer_share"
       ]
-    }
+    },
+    "via": "paper"
   },
   {
     "id": "strategic_records",
@@ -561,7 +572,8 @@
         "strategic_reserve_claimed",
         "ex_regular_tracked_tri_service"
       ]
-    }
+    },
+    "via": "press"
   },
   {
     "id": "employer_assistance_cap",
@@ -615,7 +627,8 @@
       "paramIds": [
         "employer_assistance_daily"
       ]
-    }
+    },
+    "via": "press"
   },
   {
     "id": "holding_pool_scandal",
@@ -657,7 +670,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "press"
   },
   {
     "id": "body_armour_shortage",
@@ -706,7 +720,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "paper"
   },
   {
     "id": "junior_leader_exhaustion",
@@ -761,7 +776,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "paper"
   },
   {
     "id": "phase1_instructor_shortage",
@@ -811,7 +827,8 @@
       "paramIds": [
         "phase1_weeks"
       ]
-    }
+    },
+    "via": "paper"
   },
   {
     "id": "pac_hearing",
@@ -872,7 +889,8 @@
         "training_cost_per_recruit",
         "equipment_plan_deficit"
       ]
-    }
+    },
+    "via": "house"
   },
   {
     "id": "gdp_employers",
@@ -926,7 +944,8 @@
         "output_per_worker_labour_share",
         "output_per_worker_gross"
       ]
-    }
+    },
+    "via": "paper"
   },
   {
     "id": "judicial_review",
@@ -988,7 +1007,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "press"
   },
   {
     "id": "devolved_objection",
@@ -1035,7 +1055,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "press"
   },
   {
     "id": "nato_liaison",
@@ -1060,7 +1081,8 @@
       ]
     },
     "weight": 3,
-    "choices": []
+    "choices": [],
+    "via": "paper"
   },
   {
     "id": "briefing_leak",
@@ -1100,7 +1122,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "press"
   },
   {
     "id": "recruiting_surge",
@@ -1151,7 +1174,8 @@
       "paramIds": [
         "regular_untrained_intake_annual"
       ]
-    }
+    },
+    "via": "press"
   },
   {
     "id": "regular_retention_wobble",
@@ -1215,7 +1239,8 @@
         "regular_voluntary_outflow_annual",
         "regular_outflow_intent_pct"
       ]
-    }
+    },
+    "via": "paper"
   },
   {
     "id": "opposition_motion",
@@ -1273,7 +1298,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "house"
   },
   {
     "id": "strategic_trace_result",
@@ -1297,7 +1323,8 @@
       "paramIds": [
         "strategic_reserve_untracked_tri_service"
       ]
-    }
+    },
+    "via": "paper"
   },
   {
     "id": "junior_entry_useless",
@@ -1322,7 +1349,8 @@
         "junior_entry_attrition",
         "junior_entry_lead_months"
       ]
-    }
+    },
+    "via": "paper"
   },
   {
     "id": "women_clause_row",
@@ -1352,7 +1380,8 @@
         "ew_pop_18_30",
         "ew_pop_f_18_30"
       ]
-    }
+    },
+    "via": "press"
   },
   {
     "id": "medical_rejections_reality",
@@ -1400,7 +1429,8 @@
       "paramIds": [
         "army_medical_rejections_jul24_jan26"
       ]
-    }
+    },
+    "via": "paper"
   },
   {
     "id": "vetting_backlog",
@@ -1462,7 +1492,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "paper"
   },
   {
     "id": "police_vetting_row",
@@ -1512,7 +1543,8 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "paper"
   },
   {
     "id": "vetting_failure",
@@ -1567,6 +1599,7 @@
           }
         ]
       }
-    ]
+    ],
+    "via": "press"
   }
 ]
