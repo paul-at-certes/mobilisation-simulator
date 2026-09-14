@@ -63,7 +63,7 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
     h('p', { class: `headline ${score.met && !score.resigned ? 'met' : 'missed'}` }, headline),
     score.resigned ? h('p', { class: 'muted' }, 'Scored as things stood on the day you left.') : null,
     h('h2', {}, 'What you actually fielded'),
-    h('p', { class: 'small muted' }, `Bodies on the top bar. Effective soldiers on the bottom. The gap is the point. The dashed line is the target of ${formatInt(score.target)}.`),
+    h('p', { class: 'small muted' }, `The top bar counts heads. The bottom bar counts what they add up to as effective soldiers. The dashed line is the ${formatInt(score.target)} you were asked for.`),
     h(
       'div',
       { class: 'stacked' },

@@ -7,6 +7,7 @@ import { renderHoldingPool } from '../components/holding';
 import { renderLedger } from '../components/ledger';
 import { renderActionMenu } from '../components/action-menu';
 import { sourced, escapeHtml, getParam } from '../components/sourced';
+import { pencilNote } from '../pencil';
 
 export interface TurnScreenDeps {
   state: GameState;
@@ -39,6 +40,8 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
 
   const monthLabel = state.turn === 0 ? 'Day 0' : `Month ${state.turn} of ${state.deadlineMonths}`;
   const remaining = state.deadlineMonths - state.turn;
+  const projection = forecast(state);
+  const pencil = pencilNote(state, projection);
 
   return h(
     'div',
@@ -58,13 +61,19 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
       ),
       renderStatusStrip(state),
     ),
-    renderGauges(state, forecast(state)),
+    renderGauges(state, projection),
     renderHoldingPool(state),
-    // From and to. "Permanent Secretary · Month 3" read as the player's own
-    // badge in a game called Mobilisation Minister; the player is the
-    // Secretary of State, and this is their official writing to them. The
-    // month goes because the sticky head above already carries it.
-    h('div', { class: 'note' }, h('div', { class: 'note-head' }, 'Permanent Secretary to the Secretary of State'), ...d.briefing.map((s) => h('p', { html: s }))),
+    // A minute sheet. The typed header says who is writing to whom: the
+    // player is the Secretary of State, and this is their official writing
+    // to them. The reference carries the month in the form a registry would.
+    h(
+      'div',
+      { class: 'note' },
+      minuteHead(`PUS/MOB/${state.turn} \u00b7 ${monthLabel}`),
+      ...d.briefing.map((s) => h('p', { html: s })),
+      // The Permanent Secretary's pencilled line, when the month has earned one.
+      pencil ? h('div', { class: 'pencil' }, h('span', { class: 'visually-hidden' }, 'Pencilled in the margin: '), pencil) : null,
+    ),
     eventEl,
     menu.element,
     renderLedger(state),
@@ -85,14 +94,9 @@ function renderEvent(ev: GameEvent, onChoose: (i: number) => void): HTMLElement 
   ev.choices.forEach((c, i) => {
     const b = h('button', { class: 'choice', type: 'button', 'aria-pressed': 'false' }, h('span', { class: 'choice-label' }, c.label), h('span', { class: 'choice-summary' }, c.summary)) as HTMLButtonElement;
     b.addEventListener('click', () => {
-      buttons.forEach((x) => {
-        x.setAttribute('aria-pressed', 'false');
-        x.style.borderColor = '';
-        x.style.boxShadow = '';
-      });
+      // The tick is drawn by the stylesheet from aria-pressed.
+      buttons.forEach((x) => x.setAttribute('aria-pressed', 'false'));
       b.setAttribute('aria-pressed', 'true');
-      b.style.borderColor = 'var(--accent)';
-      b.style.boxShadow = 'inset 0 0 0 1px var(--accent)';
       onChoose(i);
     });
     buttons.push(b);
@@ -113,4 +117,18 @@ function renderEvent(ev: GameEvent, onChoose: (i: number) => void): HTMLElement 
       )
     : null;
   return h('section', { class: 'event', 'aria-label': 'Event' }, h('h3', {}, ev.title), h('p', { html: escapeHtml(ev.text) }), ev.choices.length ? choices : h('p', { class: 'small muted' }, 'No decision required.'), src);
+}
+
+/**
+ * The typed header of a minute sheet. A <dl> so a screen reader hears
+ * "From, Permanent Secretary" rather than a run of loose words.
+ */
+export function minuteHead(ref: string): HTMLElement {
+  return h(
+    'dl',
+    { class: 'minute-head' },
+    h('dt', {}, 'From:'), h('dd', {}, 'Permanent Secretary'),
+    h('dt', {}, 'To:'), h('dd', {}, 'Secretary of State'),
+    h('dt', {}, 'Ref:'), h('dd', {}, ref),
+  );
 }

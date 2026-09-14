@@ -1957,3 +1957,26 @@ worth keeping is that **everything in `parameters.json` except `note` is
 published** — `validate-parameters.mjs` now fails the build on a player-visible
 field that names a repository document, a finding number, a build command or a
 source file.
+
+
+## The look: Whitehall inside, Fleet Street outside (14 September 2026)
+
+Paul declared the game design finished and turned to appearance: the app
+"looks very AI-built. Clean, but no character." The brief's default (line 320:
+restrained government document, one accent, system fonts) is superseded. He
+chose, from four directions shown as mockups, the blend of two: the Department
+is paper, folder tabs, minute sheets and rubber stamps; the world outside it,
+events, the result and the share card, is newsprint and a fictional front page.
+Characterful but sober, simple inline-SVG pictograms only, no stock imagery,
+and four open-licence typefaces self-hosted from `public/fonts` (Newsreader,
+Barlow Condensed, Courier Prime, Caveat; OFL texts beside them). The brief's
+tone rule and WCAG AA stand. The work is four bounded phases and then stops:
+foundation; set pieces; motion; methodology page, accessibility and LinkedIn
+preview.
+
+Two additions of content, both Paul's explicit yes: the Prime Minister's line
+in the margin of the Day 0 minute, and a pool of ten pencilled lines from the
+Permanent Secretary (`src/ui/pencil.ts`), one a month at most, keyed on state
+and silent when nothing new applies. Neither quotes a parameter, so neither
+needs a source. Paul also asked for "the gap is the point" to go, as reading
+machine-written; the bar caption now says what each bar counts.

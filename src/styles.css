@@ -1,89 +1,149 @@
-/* Mobilisation Minister — design system.
-   Restrained government-document aesthetic: off-white paper, one accent,
-   system fonts. Mobile first. WCAG AA contrast throughout. */
+/* Mobilisation Minister — the look.
+   Whitehall inside, Fleet Street outside. Paper, folder tabs, minute sheets
+   and rubber stamps for the Department; newsprint for the world beyond it.
+   Mobile first. WCAG AA contrast throughout: every pair below was checked
+   against the paper it sits on (docs/design-review.md). */
+
+/* Type. Four open-licence faces, self-hosted from public/fonts (OFL texts
+   beside them), latin subsets only. Newsreader carries the reading; Barlow
+   Condensed the headlines, labels, stamps and buttons; Courier Prime the typed
+   minute headers, costs and small print; Caveat one line of handwriting per
+   screen. */
+@font-face { font-family: 'Newsreader'; font-style: normal; font-weight: 400 800; font-display: swap; src: url('/fonts/newsreader-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Newsreader'; font-style: italic; font-weight: 400 800; font-display: swap; src: url('/fonts/newsreader-italic-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/barlow-condensed-600-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/barlow-condensed-700-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/barlow-condensed-800-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Courier Prime'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/courier-prime-400-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Courier Prime'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/courier-prime-700-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 500 600; font-display: swap; src: url('/fonts/caveat-latin.woff2') format('woff2'); }
 
 :root {
-  --paper: #f6f4ee;
-  --paper-2: #ecE9e0;
-  --ink: #1c1b18;
+  /* Paper stocks: the page, the buff folder the Department's readings sit in,
+     the folder's tab, and the white minute sheet. */
+  --paper: #f3eee2;
+  --buff: #ede3c8;
+  --tab: #e6d5ab;
+  --tab-rule: #c9b57f;
+  --sheet: #fbf8ef;
+  --newsprint: #fcfaf3;
+  --ink: #1a1916;
   --ink-2: #4a4843;
-  --ink-3: #6f6c65;
-  --rule: #c9c5b8;
-  --accent: #7a1f1f;
-  --accent-ink: #ffffff;
+  --ink-3: #64615a;
+  --rule: #d9d1bc;
+  --rule-dark: #a89f8c;
+  /* Red-box leather, fountain-pen blue, a Hansard green, a pencil grey. */
+  --red: #8b1a1a;
+  --red-ink: #f6efe0;
+  --blue: #23385c;
+  --ok: #2a5a3a;
+  --warn: #7a4d00;
+  --bad: #8b1a1a;
+  --pencil: #5b5a55;
+  /* Kept under their old names: components still say `accent`. */
+  --accent: var(--red);
+  --accent-ink: var(--red-ink);
   --accent-soft: #f1e3e3;
-  --ok: #2f5d3a;
-  --warn: #8a5a00;
-  --bad: #7a1f1f;
-  --primary-badge: #2f5d3a;
-  --derived-badge: #3b4f73;
-  --assumption-badge: #8a5a00;
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --paper-2: var(--buff);
+  --primary-badge: #2a5a3a;
+  --derived-badge: #23385c;
+  --assumption-badge: #7a4d00;
+  --serif: 'Newsreader', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --sans: 'Barlow Condensed', 'Arial Narrow', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'Courier Prime', 'Courier New', Courier, monospace;
+  --hand: 'Caveat', 'Bradley Hand', 'Segoe Print', cursive;
   --maxw: 44rem;
-  --radius: 3px;
+  --radius: 0;
+  /* Paper grain: a tile of SVG noise at 9% over the paper colour. */
+  --grain: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0.09'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--paper);
+  background-color: var(--paper);
+  background-image: var(--grain);
   color: var(--ink);
-  font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.5;
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
 }
-h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.2; margin: 0 0 0.5rem; }
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.3rem; margin-top: 1.5rem; }
-h3 { font-size: 1.1rem; margin-top: 1.25rem; }
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.15; margin: 0 0 0.5rem; }
+h1 { font-family: var(--sans); font-weight: 800; font-size: 2.4rem; text-transform: uppercase; letter-spacing: 0.01em; line-height: 1; }
+h2 { font-size: 1.45rem; margin-top: 1.75rem; padding-bottom: 0.2rem; border-bottom: 3px double var(--ink); }
+h3 { font-size: 1.15rem; margin-top: 1.25rem; }
 p { margin: 0 0 0.85rem; }
-a { color: var(--accent); }
-a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, [tabindex]:focus-visible {
-  outline: 3px solid var(--accent); outline-offset: 2px;
+a { color: var(--red); }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid var(--red); outline-offset: 2px;
 }
+/* main.ts moves focus to each new screen's heading for screen readers. A
+   heading is not operable, so the ring it would otherwise draw says nothing. */
+h1[tabindex="-1"]:focus { outline: none; }
 code { font-family: var(--mono); font-size: 0.9em; }
-hr { border: 0; border-top: 1px solid var(--rule); margin: 1.5rem 0; }
+hr { border: 0; border-top: 1px solid var(--rule-dark); margin: 1.5rem 0; }
 table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
 th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-weight: 600; color: var(--ink-2); }
+th { font-family: var(--sans); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1px solid var(--ink); }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .table-wrap { overflow-x: auto; }
 .muted { color: var(--ink-3); }
 .small { font-size: 0.85rem; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+/* The small typed and printed labels the whole game shares. */
+.label, .gauge-label, .holding-label, .note-head, .stat-label, .forecast-label, .ss-label, .group-title, .field label, .dateline {
+  font-family: var(--sans); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+}
+.typed { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.02em; }
+
+/* A rubber stamp: red ink, a double rule, a little off true. */
+.stamp {
+  display: inline-block; font-family: var(--sans); font-weight: 700; font-size: 0.72rem; line-height: 1.05;
+  letter-spacing: 0.1em; text-transform: uppercase; text-align: center; color: var(--red);
+  border: 3px double var(--red); padding: 0.2rem 0.55rem 0.15rem; transform: rotate(-5deg);
+  mix-blend-mode: multiply; opacity: 0.9;
+}
+.stamp small { display: block; font-size: 0.58rem; font-weight: 600; letter-spacing: 0.16em; }
+
+/* A folder tab. */
+.tab {
+  display: inline-flex; align-items: baseline; gap: 0.5rem;
+  background: var(--tab); border: 1px solid var(--tab-rule); border-bottom: 0; border-radius: 7px 7px 0 0;
+  padding: 0.4rem 0.9rem 0.3rem; font-family: var(--sans); font-weight: 700; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink);
+}
+
 /* Layout */
 .page { max-width: var(--maxw); margin: 0 auto; padding: 0 1rem 4rem; }
-.masthead {
-  display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap;
-  padding: 0.9rem 0 0.6rem; border-bottom: 2px solid var(--ink);
-  font-family: var(--serif);
+.masthead { padding: 0.9rem 0 0.55rem; border-bottom: 3px double var(--ink); }
+.masthead-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.masthead .wordmark {
+  font-family: var(--sans); font-weight: 800; font-size: 1.6rem; line-height: 0.92; letter-spacing: 0.01em;
+  text-transform: uppercase; color: var(--ink); text-decoration: none;
 }
-.masthead nav { margin-left: auto; white-space: nowrap; }
-@media (max-width: 480px) {
-  .masthead .classification { font-size: 0.6rem; letter-spacing: 0.08em; order: 3; flex-basis: 100%; width: max-content; }
-  .masthead nav a { margin-left: 0; }
-}
-.masthead .title { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.01em; }
-.masthead .title a { color: inherit; text-decoration: none; }
-.masthead .classification { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 0.1rem 0.4rem; }
-.masthead nav a { font-family: var(--sans); font-size: 0.85rem; margin-left: 0.75rem; }
-footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: 0.8rem; color: var(--ink-3); }
+.masthead .classification { margin-top: 0.2rem; flex: none; }
+.masthead-sub { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-top: 0.45rem; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.04em; color: var(--ink-3); white-space: nowrap; }
+.masthead-sub nav a { color: var(--red); white-space: nowrap; }
+footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var(--rule-dark); font-family: var(--mono); font-size: 0.72rem; line-height: 1.55; color: var(--ink-3); }
 
-/* Buttons */
+/* Buttons. The primary is red-box leather: a thin light rule set just inside
+   the edge is the box's tooling. */
 .btn {
-  font: inherit; font-size: 0.95rem; cursor: pointer;
-  background: var(--accent); color: var(--accent-ink);
-  border: 1px solid var(--accent); border-radius: var(--radius);
-  padding: 0.55rem 1rem; min-height: 44px;
+  font-family: var(--sans); font-weight: 800; font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+  background: var(--red); color: var(--red-ink);
+  border: 1px solid var(--red); border-radius: var(--radius);
+  box-shadow: inset 0 0 0 2px var(--red), inset 0 0 0 3px rgba(255, 235, 200, 0.35);
+  padding: 0.6rem 1.25rem; min-height: 46px;
 }
 .btn:hover { filter: brightness(1.08); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-secondary { background: transparent; color: var(--accent); }
-.btn-quiet { background: transparent; color: var(--ink-2); border-color: var(--rule); }
+.btn-secondary { background: transparent; color: var(--red); box-shadow: none; }
+.btn-quiet {
+  background: transparent; color: var(--ink); border: 1.5px solid var(--ink); box-shadow: none;
+  font-family: var(--mono); font-weight: 400; font-size: 0.82rem; letter-spacing: 0.04em; text-transform: none;
+}
 .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
 
 /* Sourced values */
@@ -92,11 +152,11 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
   cursor: pointer; text-decoration: underline dotted var(--ink-3); text-decoration-thickness: 1.5px; text-underline-offset: 3px;
   font-variant-numeric: tabular-nums;
 }
-.sourced:hover { text-decoration-color: var(--accent); color: var(--accent); }
+.sourced:hover { text-decoration-color: var(--red); color: var(--red); }
 .popover {
-  position: absolute; z-index: 50; background: #fff; color: var(--ink);
-  border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: var(--radius);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.15); padding: 0.75rem 0.9rem; font-size: 0.9rem;
+  position: absolute; z-index: 50; background: var(--sheet); color: var(--ink);
+  border: 1px solid var(--rule-dark); border-top: 3px solid var(--red); border-radius: var(--radius);
+  box-shadow: 0 6px 24px rgba(40, 30, 10, 0.18); padding: 0.75rem 0.9rem; font-size: 0.92rem;
   /* The longest rationale is a 1,600-character argument, which rendered 953px
      tall in an 812px phone viewport: it ran off the bottom of the screen and
      under the fixed footer, and reading it meant scrolling the page with the
@@ -106,111 +166,154 @@ footer.footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(-
   max-height: min(60vh, 26rem); overflow-y: auto; overscroll-behavior: contain;
 }
 .popover-head { display: flex; align-items: center; gap: 0.5rem; }
-.popover-value { font-family: var(--serif); font-size: 1.25rem; font-weight: 600; }
+.popover-value { font-family: var(--serif); font-size: 1.3rem; font-weight: 600; }
 .popover-close { margin-left: auto; font: inherit; font-size: 1.25rem; line-height: 1; background: none; border: 0; cursor: pointer; color: var(--ink-2); padding: 0.25rem 0.4rem; }
 .popover-label { font-weight: 600; margin: 0.25rem 0 0.35rem; }
 .popover-body { margin: 0 0 0.5rem; }
 .popover-rationale { margin: 0 0 0.5rem; font-style: italic; color: var(--ink-2); }
-.popover-meta { margin: 0 0 0.4rem; font-size: 0.8rem; color: var(--ink-3); }
+.popover-meta { margin: 0 0 0.4rem; font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); }
 .popover-link { font-size: 0.85rem; }
 .badge {
-  display: inline-block; font-family: var(--sans); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
-  color: #fff; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle;
+  display: inline-block; font-family: var(--sans); font-weight: 700; font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #fff; padding: 0.12rem 0.4rem 0.08rem; border-radius: 0; vertical-align: middle;
 }
 .badge-primary { background: var(--primary-badge); }
 .badge-derived { background: var(--derived-badge); }
 .badge-assumption { background: var(--assumption-badge); }
 
-/* Gauges */
-.gauges { display: grid; grid-template-columns: 1fr; gap: 0.6rem; margin: 0.9rem 0; }
-@media (min-width: 560px) { .gauges { grid-template-columns: 1fr 1fr 1fr; } }
-.gauge { background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.55rem 0.7rem; }
-.gauge-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); display: flex; justify-content: space-between; }
-.gauge-value { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.gauge-value small { font-family: var(--sans); font-size: 0.8rem; font-weight: 400; color: var(--ink-3); }
-.bar { height: 8px; background: var(--paper-2); border-radius: 4px; overflow: hidden; margin-top: 0.35rem; }
-.bar > span { display: block; height: 100%; background: var(--accent); width: 0; transition: width 600ms ease; }
+/* Gauges: the Department's three readings, on one buff folder. */
+.gauges {
+  display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin: 0 0 1rem;
+  background: var(--buff); border: 1px solid var(--tab-rule); padding: 0.75rem 0.9rem 0.85rem;
+}
+@media (min-width: 560px) { .gauges { grid-template-columns: 1fr 1fr 1fr; gap: 1rem; } }
+.gauge { padding: 0; }
+.gauge + .gauge { border-top: 1px solid var(--tab-rule); padding-top: 0.6rem; }
+@media (min-width: 560px) { .gauge + .gauge { border-top: 0; border-left: 1px solid var(--tab-rule); padding-top: 0; padding-left: 1rem; } }
+.gauge-label { display: flex; justify-content: space-between; gap: 0.5rem; }
+.gauge-label span:last-child { font-family: var(--mono); font-weight: 400; letter-spacing: 0.02em; text-transform: none; }
+.gauge-value { font-family: var(--serif); font-size: 1.7rem; font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.gauge-value small { font-family: var(--mono); font-size: 0.75rem; font-weight: 400; color: var(--ink-3); }
+.bar { height: 8px; background: transparent; border: 1px solid var(--rule-dark); border-radius: 0; overflow: hidden; margin-top: 0.4rem; }
+.bar > span { display: block; height: 100%; background: var(--red); width: 0; transition: width 600ms ease; }
 .bar.bar-ok > span { background: var(--ok); }
 .bar.bar-warn > span { background: var(--warn); }
-.gauge-note { font-size: 0.75rem; color: var(--ink-3); margin-top: 0.25rem; }
+.gauge-note { font-family: var(--mono); font-size: 0.72rem; line-height: 1.45; color: var(--ink-3); margin-top: 0.35rem; }
 /* A projection, not a measurement: no dotted underline, which in this UI means "tap for a source". */
-.forecast { border-top: 1px dashed var(--rule); padding-top: 0.25rem; }
-.forecast-label { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.68rem; }
-.holding { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.6rem; background: #fff; border: 1px solid var(--rule); border-left: 3px solid var(--warn); border-radius: var(--radius); padding: 0.5rem 0.7rem; margin: 0.9rem 0; }
-.holding-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
-.holding-value { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.holding-note { flex-basis: 100%; font-size: 0.75rem; color: var(--ink-3); }
+.forecast { border-top: 1px dashed var(--tab-rule); padding-top: 0.3rem; }
+.forecast-label { font-size: 0.68rem; }
+.holding { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.6rem; background: var(--buff); border: 1px solid var(--tab-rule); border-left: 4px solid var(--warn); padding: 0.5rem 0.8rem; margin: 0 0 1rem; }
+.holding-value { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.holding-note { flex-basis: 100%; font-size: 0.85rem; line-height: 1.4; color: var(--ink-2); }
 .holding.holding-lost { border-left-color: var(--bad); }
-.holding.holding-lost .holding-note { color: var(--ink-2); }
 
 /* The scoring screen's dateline, in the share card's idiom: the same line the
    card carries, so the screen and the PNG say the same thing. */
-.dateline { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.35rem; }
+.dateline { font-family: var(--mono); font-weight: 400; letter-spacing: 0.06em; color: var(--red); margin-bottom: 0.35rem; }
 
-/* Briefing note */
+/* The minute sheet: the Permanent Secretary's note, typed header, white stock. */
 .note {
-  background: #fff; border: 1px solid var(--rule); border-left: 4px solid var(--accent);
-  padding: 0.9rem 1rem; margin: 1rem 0; font-family: var(--serif); font-size: 1.02rem;
+  position: relative; background: var(--sheet); border: 1px solid var(--rule);
+  box-shadow: 0 1px 0 var(--rule), 0 6px 14px rgba(50, 35, 10, 0.1);
+  padding: 0.9rem 1rem 1rem; margin: 1.1rem 0; font-family: var(--serif); font-size: 1.05rem; line-height: 1.42;
 }
-.note .note-head { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 0.4rem; }
-.note p:last-child { margin-bottom: 0; }
+.note .note-head { margin-bottom: 0.4rem; }
+.note p:last-of-type { margin-bottom: 0; }
+.minute-head {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.05rem 0.75rem;
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink);
+  border-bottom: 1px solid var(--ink); padding-bottom: 0.45rem; margin-bottom: 0.7rem;
+}
+.minute-head dt, .minute-head dd { margin: 0; }
+.minute-head dd { text-transform: none; }
+.note .stamp { position: absolute; right: 0.7rem; top: -0.65rem; transform: rotate(6deg); }
+/* The margin. Pencil for the Permanent Secretary, fountain pen for the Prime
+   Minister. Both in flow, pulled up into the sheet's bottom edge, so a long
+   note wraps instead of colliding with the paragraph above it. */
+.pencil, .scrawl {
+  font-family: var(--hand); text-align: right; line-height: 1; display: block;
+  margin: 0.6rem -0.2rem -1.35rem 2rem; transform: rotate(-3deg); transform-origin: right bottom;
+}
+.pencil { font-size: 1.3rem; font-weight: 500; color: var(--pencil); }
+.scrawl { font-size: 1.65rem; font-weight: 600; color: var(--blue); transform: rotate(-4deg); margin-bottom: -1.5rem; }
 
-/* Event card */
-.event { background: var(--accent-soft); border: 1px solid #d9b8b8; padding: 0.9rem 1rem; margin: 1rem 0; border-radius: var(--radius); }
-.event h3 { margin-top: 0; }
-.choices { display: grid; gap: 0.5rem; margin-top: 0.75rem; }
-.choice { text-align: left; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.6rem 0.8rem; font: inherit; cursor: pointer; min-height: 44px; }
-.choice:hover { border-color: var(--accent); }
-.choice .choice-label { font-weight: 600; display: block; }
-.choice .choice-summary { font-size: 0.88rem; color: var(--ink-2); display: block; }
+/* Event card: the world outside, on newsprint. The decision beneath it is
+   taken in a red-ruled box, ticked in red ink. */
+.event { background: var(--newsprint); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 0.9rem 1rem 1rem; margin: 1.25rem 0; }
+.event h3 { margin-top: 0; font-family: var(--sans); font-weight: 800; font-size: 1.85rem; line-height: 0.95; text-transform: uppercase; letter-spacing: -0.005em; }
+.event > p { font-size: 1rem; line-height: 1.42; }
+.choices { display: grid; gap: 0.25rem; margin-top: 0.75rem; border: 2px solid var(--red); padding: 0.6rem 0.75rem 0.7rem; position: relative; }
+.choices::before { content: 'Minister\2019s decision'; display: block; font-family: var(--sans); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); margin-bottom: 0.2rem; }
+.choice {
+  display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 0.7rem; align-items: start; text-align: left;
+  background: transparent; border: 0; border-radius: 0; padding: 0.5rem 0; font: inherit; color: inherit; cursor: pointer; min-height: 44px;
+}
+.choice + .choice { border-top: 1px dotted var(--rule-dark); }
+.choice::before { content: ''; grid-row: span 2; width: 22px; height: 22px; margin-top: 0.1rem; border: 1.5px solid var(--ink); background: var(--sheet) center / 30px 30px no-repeat; }
+.choice[aria-pressed="true"]::before, .action input[type="checkbox"]:checked, .difficulty input:checked {
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 12.5l5.5 5.5L21 4' fill='none' stroke='%238b1a1a' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.choice:hover .choice-label { color: var(--red); }
+.choice .choice-label { font-weight: 600; display: block; font-size: 1.05rem; }
+.choice .choice-summary { font-size: 0.9rem; color: var(--ink-2); display: block; line-height: 1.35; }
+.event .small.muted { font-family: var(--mono); font-size: 0.72rem; line-height: 1.5; margin: 0.6rem 0 0; }
 
 /* Action menu */
-.actions { margin: 1rem 0; }
+.actions { margin: 1.5rem 0 1rem; }
 .actions-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 0.75rem; }
-.actions-head h2 { margin-bottom: 0.25rem; }
+.actions-head h2 { margin-bottom: 0.25rem; flex: 1 1 100%; }
 /* Its own line under the heading at every width: it is a subtitle to
    "Decisions", not a right-hand scrap, and the head keeps space-between for
    anything that does belong beside the heading. */
 .actions-hint { flex: 0 0 100%; margin-bottom: 0.25rem; }
-/* Groups are <details>: the list is too long for a phone with everything open (F7). */
-.action-group { margin-top: 0.5rem; border-top: 1px solid var(--rule); }
+/* Groups are <details>: the list is too long for a phone with everything open (F7).
+   Each group's summary is a folder tab on a rule. */
+.action-group { margin-top: 0.75rem; }
 .action-group > summary {
-  cursor: pointer; list-style: none; display: flex; align-items: baseline; gap: 0.5rem;
-  padding: 0.6rem 0.1rem; min-height: 44px;
+  cursor: pointer; list-style: none; display: flex; align-items: flex-end; gap: 0.5rem;
+  padding: 0; min-height: 44px; border-bottom: 1px solid var(--tab-rule);
 }
 .action-group > summary::-webkit-details-marker { display: none; }
-.action-group .group-title { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
-.action-group .group-count { flex: none; margin-left: auto; font-size: 0.78rem; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.action-group[open] > summary { border-bottom: 1px solid var(--rule); margin-bottom: 0.4rem; }
-.action { display: flex; gap: 0.6rem; align-items: flex-start; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.55rem 0.7rem; margin-bottom: 0.4rem; }
-.action.selected { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.action-group .group-title {
+  display: inline-block; background: var(--paper); border: 1px solid var(--tab-rule); border-bottom: 0; border-radius: 7px 7px 0 0;
+  padding: 0.45rem 0.9rem 0.35rem; margin-bottom: -1px; font-size: 0.85rem; color: var(--ink); letter-spacing: 0.08em;
+}
+.action-group[open] .group-title { background: var(--tab); }
+.action-group .group-count { flex: none; margin-left: auto; font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; padding-bottom: 0.45rem; }
+.action-group[open] > summary { margin-bottom: 0; }
+.action { display: flex; gap: 0.7rem; align-items: flex-start; background: transparent; border: 0; border-bottom: 1px dotted var(--rule-dark); padding: 0.7rem 0.15rem; margin: 0; }
+.action.selected { border-bottom-color: var(--red); }
 .action.unavailable { opacity: 0.6; }
-.action input[type="checkbox"] { width: 22px; height: 22px; margin-top: 0.15rem; flex: none; accent-color: var(--accent); }
+.action input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none; width: 22px; height: 22px; margin: 0.15rem 0 0; flex: none; cursor: pointer;
+  border: 1.5px solid var(--ink); background: var(--paper) center / 30px 30px no-repeat;
+}
+.action input[type="checkbox"]:disabled { cursor: default; border-color: var(--rule-dark); }
 /* The title became the disclosure control, so it is no longer the checkbox's
    label. This gives the checkbox a 44px tap target of its own without the row
    growing: the padding reaches back over the row's own padding, and the
    negative margins keep it out of the layout. */
 .action .action-tick {
   flex: none; display: flex; align-items: flex-start; cursor: pointer;
-  min-height: 44px; margin: -0.55rem 0 -0.55rem -0.7rem; padding: 0.55rem 0.35rem 0 0.7rem;
+  min-height: 44px; margin: -0.7rem 0 -0.7rem -0.15rem; padding: 0.7rem 0.35rem 0 0.15rem;
 }
 .action.unavailable .action-tick { cursor: default; }
 .action .action-body { flex: 1; min-width: 0; }
-.action .action-title { font-weight: 600; display: flex; align-items: baseline; gap: 0.5rem; }
+.action .action-title { font-weight: 600; display: flex; align-items: baseline; gap: 0.5rem; line-height: 1.3; }
 /* The cost sits at the right, and the caret after it. `margin-left: auto` does
    the spacing that `justify-content: space-between` used to, so adding the
    caret as a third item does not strand the cost in the middle. `flex: none`
    because the cost is `nowrap`: allowed to shrink, it overflowed its own text
    and the caret sat on top of the "PC". The title is the part that wraps. */
-.action .action-pc { flex: none; margin-left: auto; font-variant-numeric: tabular-nums; color: var(--ink-3); font-weight: 400; white-space: nowrap; }
-.action .action-desc { font-size: 0.88rem; color: var(--ink-2); }
+.action .action-pc { flex: none; margin-left: auto; font-family: var(--mono); font-size: 0.8rem; font-variant-numeric: tabular-nums; color: var(--ink-3); font-weight: 400; white-space: nowrap; }
+.action .action-desc { font-size: 0.92rem; color: var(--ink-2); line-height: 1.4; }
 /* Title and cost first, the paragraph behind a tap (F7). The summary line is
    exactly the height the title line was, so the disclosure itself costs
    nothing. */
 .action-detail { min-width: 0; }
 .action-detail > summary { cursor: pointer; list-style: none; display: block; }
 .action-detail > summary::-webkit-details-marker { display: none; }
-.action-detail > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.action-detail > summary:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 /*
  * One disclosure marker for the whole game: a caret.
  *
@@ -233,6 +336,7 @@ details.ledger > summary::after,
   border-bottom: 4px solid transparent;
   transition: transform 120ms ease;
 }
+.action-group > summary::after { align-self: flex-end; margin-bottom: 0.7rem; }
 /* The action row's title can wrap to two lines, and a centred caret then reads
    as belonging to neither. This puts it on the first line, beside the cost. */
 .action-detail > summary .action-title::after { align-self: flex-start; margin-top: 0.42em; }
@@ -246,40 +350,46 @@ details.ledger[open] > summary::after,
 }
 .action-detail > .action-desc { margin-top: 0.3rem; }
 .action.unavailable .action-detail > summary { cursor: default; }
-.action .action-reason { font-size: 0.8rem; color: var(--warn); }
-.action .action-options { margin-top: 0.4rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 0.88rem; }
+.action .action-reason { font-family: var(--mono); font-size: 0.74rem; line-height: 1.4; color: var(--red); }
+.action .action-options { margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 0.9rem; }
 /* The options are revealed by ticking the action. `display: flex` above beats the
    user agent's [hidden] rule on specificity, so say it again here or every
    dropdown — five of them on the Bill — is on screen from the start. */
 .action .action-options[hidden] { display: none; }
-.action select, .action input[type="number"] { max-width: 100%; font: inherit; font-size: 0.9rem; padding: 0.3rem; min-height: 36px; border: 1px solid var(--rule); border-radius: var(--radius); background: #fff; }
+.action select, .action input[type="number"] { max-width: 100%; font-family: var(--mono); font-size: 0.85rem; padding: 0.3rem 0.4rem; min-height: 36px; border: 1px solid var(--ink); border-radius: 0; background: var(--sheet); color: var(--ink); }
 .action input[type="number"] { width: 7.5rem; }
-.field { display: inline-flex; flex-direction: column; gap: 0.15rem; max-width: 100%; }
-.field label { font-size: 0.78rem; color: var(--ink-3); }
+.field { display: inline-flex; flex-direction: column; gap: 0.2rem; max-width: 100%; }
+.field label { font-size: 0.68rem; }
 
-/* Ledger */
-details.ledger { margin: 1rem 0; border: 1px solid var(--rule); border-radius: var(--radius); background: #fff; }
-details.ledger summary { cursor: pointer; padding: 0.6rem 0.8rem; font-weight: 600; list-style: none; display: flex; align-items: baseline; gap: 0.5rem; }
+/* Ledger: a typed line on two rules, opening to the figures. */
+details.ledger { margin: 1.5rem 0 1rem; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); background: transparent; }
+details.ledger summary { cursor: pointer; padding: 0.65rem 0.15rem; list-style: none; display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--mono); font-size: 0.8rem; }
+details.ledger summary > span:first-child { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 details.ledger summary::-webkit-details-marker { display: none; }
 details.ledger summary > :last-of-type { margin-left: auto; }
-details.ledger .ledger-body { padding: 0 0.8rem 0.8rem; }
-.kv { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 1rem; font-size: 0.9rem; }
+details.ledger .ledger-body { padding: 0 0.15rem 0.8rem; }
+details.ledger h4 { font-family: var(--sans); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin: 0.9rem 0 0.3rem; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 1rem; font-size: 0.92rem; margin: 0; }
 .kv dt { color: var(--ink-2); }
-.kv dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.kv dd { margin: 0; text-align: right; font-family: var(--mono); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
 .kv dd.neg { color: var(--bad); }
 
 /* Turn bar and the sticky status strip under it */
-.turnhead { position: sticky; top: 0; z-index: 10; background: var(--paper); border-bottom: 1px solid var(--rule); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.turnbar { padding: 0.5rem 0 0.35rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
-.turnbar .turn { font-family: var(--serif); font-weight: 600; white-space: nowrap; }
+.turnhead { position: sticky; top: 0; z-index: 10; background-color: var(--paper); background-image: var(--grain); border-bottom: 1px solid var(--tab-rule); box-shadow: 0 2px 8px rgba(40, 30, 10, 0.06); }
+.turnbar { padding: 0.7rem 0 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 0.6rem; }
+.turnbar .turn {
+  display: inline-block; background: var(--tab); border: 1px solid var(--tab-rule); border-bottom: 0; border-radius: 7px 7px 0 0;
+  padding: 0.4rem 0.65rem 0.3rem; margin-bottom: -1px; font-family: var(--sans); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+}
 /* The deadline gives way rather than wrapping the bar onto a second line. */
-.turnbar .small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-@media (max-width: 420px) { .turnbar .small { font-size: 0.78rem; } }
-.statusstrip { display: flex; gap: 0.9rem; align-items: baseline; padding: 0 0 0.4rem; font-size: 0.82rem; overflow-x: auto; }
+.turnbar .small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--mono); font-size: 0.72rem; padding-bottom: 0.45rem; }
+.turnbar .btn { margin-bottom: 0.35rem; }
+@media (max-width: 420px) { .turnbar .small { font-size: 0.68rem; } }
+.statusstrip { display: flex; gap: 0.9rem; align-items: baseline; padding: 0.35rem 0 0.4rem; border-top: 1px solid var(--tab-rule); font-size: 0.82rem; overflow-x: auto; }
 .statusstrip .ss-item { display: flex; gap: 0.3rem; align-items: baseline; white-space: nowrap; }
-.statusstrip .ss-label { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.statusstrip .ss-label { font-size: 0.62rem; letter-spacing: 0.1em; }
 .statusstrip .ss-value { font-family: var(--serif); font-weight: 600; font-variant-numeric: tabular-nums; }
-.statusstrip .ss-sub { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.statusstrip .ss-sub { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .tone-ok { color: var(--ok); }
 .tone-warn { color: var(--warn); }
 .tone-bad { color: var(--bad); }
@@ -287,12 +397,13 @@ details.ledger .ledger-body { padding: 0 0.8rem 0.8rem; }
 /* Fixed decision footer: *End month* and the action counter, always in reach (F7) */
 .turnfoot {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
-  background: var(--paper); border-top: 1px solid var(--rule); box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+  background-color: var(--paper); background-image: var(--grain); border-top: 1px solid var(--tab-rule); box-shadow: 0 -3px 10px rgba(40, 30, 10, 0.08);
   padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
 }
 .turnfoot .turnfoot-inner { max-width: var(--maxw); margin: 0 auto; display: flex; align-items: center; gap: 0.6rem; }
 /* Counter over hint, so the bar keeps its height in the months that carry an event. */
-.turnfoot .turnfoot-status { display: flex; flex-direction: column; min-width: 0; font-size: 0.8rem; line-height: 1.3; }
+.turnfoot .turnfoot-status { display: flex; flex-direction: column; min-width: 0; font-family: var(--mono); font-size: 0.72rem; line-height: 1.35; color: var(--ink-3); }
+.turnfoot .turnfoot-status > :first-child { color: var(--ink); }
 .turnfoot .btn { margin-left: auto; flex: none; }
 body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)); }
 
@@ -310,11 +421,11 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
   /* `contents` so the bar's three children become children of the head and can
      be ordered around the strip; the bar's own padding goes with it. */
   .turnbar { display: contents; }
-  .turnbar .turn { order: 1; }
+  .turnbar .turn { order: 1; border-bottom: 1px solid var(--tab-rule); border-radius: 4px; margin-bottom: 0; }
   /* "9 months to the deadline" is already in "Month 3 of 12". */
   .turnbar .small { display: none; }
-  .turnbar .btn { order: 3; }
-  .statusstrip { order: 2; flex: 1 1 auto; min-width: 0; padding: 0; }
+  .turnbar .btn { order: 3; margin-bottom: 0; }
+  .statusstrip { order: 2; flex: 1 1 auto; min-width: 0; padding: 0; border-top: 0; }
 }
 
 /* The footer shrinks on any short screen; the head's one-line form above needs
@@ -327,20 +438,23 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
 
 /* Opening */
 .premise { font-family: var(--serif); font-size: 1.08rem; }
-.difficulty { display: grid; gap: 0.5rem; margin: 1rem 0; }
-.difficulty label { display: flex; gap: 0.7rem; align-items: flex-start; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.7rem; cursor: pointer; }
-.difficulty label:has(input:checked) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.difficulty input { width: 22px; height: 22px; accent-color: var(--accent); flex: none; margin-top: 0.1rem; }
+.difficulty { display: grid; gap: 0; margin: 0.75rem 0 1rem; }
+.difficulty label { display: flex; gap: 0.75rem; align-items: flex-start; background: transparent; border: 0; border-bottom: 1px dotted var(--rule-dark); padding: 0.7rem 0.15rem; cursor: pointer; min-height: 44px; }
+.difficulty input {
+  appearance: none; -webkit-appearance: none; width: 22px; height: 22px; margin: 0.15rem 0 0; flex: none; cursor: pointer;
+  border: 1.5px solid var(--ink); border-radius: 50%; background: var(--paper) center / 30px 30px no-repeat;
+}
 .difficulty .d-title { font-weight: 600; }
-.difficulty .d-desc { font-size: 0.88rem; color: var(--ink-2); }
+.difficulty .d-desc { font-size: 0.92rem; color: var(--ink-2); line-height: 1.4; }
+#seed { font-family: var(--mono); font-size: 0.9rem; padding: 0.4rem 0.6rem; min-height: 40px; border: 1px solid var(--rule-dark); background: var(--sheet); color: var(--ink); }
 
 /* Scoring */
-.headline { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; margin: 1rem 0 0.5rem; }
+.headline { font-family: var(--sans); font-weight: 800; font-size: 2.1rem; line-height: 0.95; text-transform: uppercase; letter-spacing: -0.005em; margin: 0.75rem 0 0.75rem; }
 .headline.met { color: var(--ok); }
 .headline.missed { color: var(--bad); }
 .stacked { margin: 1rem 0; }
-.stacked .row { display: grid; grid-template-columns: 6.5rem 1fr 5rem; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.9rem; }
-.stacked .track { position: relative; height: 22px; background: var(--paper-2); border-radius: 3px; overflow: hidden; display: flex; }
+.stacked .row { display: grid; grid-template-columns: 6.5rem 1fr 5rem; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: var(--mono); font-size: 0.82rem; }
+.stacked .track { position: relative; height: 22px; background: transparent; border: 1px solid var(--rule-dark); overflow: hidden; display: flex; }
 .stacked .seg { height: 100%; }
 /* The target, in the share card's idiom: the card has always drawn this line
    and the screen it is made from had not. Its `left` is a calc() ending in
@@ -348,25 +462,24 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
    and the line lands at 100% — it stays inside `overflow: hidden` instead of
    being clipped against the end of the track. */
 .stacked .target-mark { position: absolute; top: 0; bottom: 0; border-left: 1px dashed var(--ink); pointer-events: none; }
-.seg-regulars { background: #2f3e5c; }
-.seg-reservists { background: #4f6a8f; }
-.seg-exregulars { background: #8a9bb5; }
-.seg-strategic { background: #b7c2d3; }
-.seg-conscripts { background: var(--accent); }
-.legend { display: grid; gap: 0.25rem; font-size: 0.85rem; margin-top: 0.5rem; }
-.legend .swatch { display: inline-block; width: 12px; height: 12px; margin-right: 0.45rem; vertical-align: -1px; border-radius: 2px; }
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin: 1rem 0; }
-.stat { background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.6rem 0.7rem; }
-.stat .stat-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
-.stat .stat-value { font-family: var(--serif); font-size: 1.3rem; font-weight: 600; }
-.stat .stat-sub { font-size: 0.8rem; color: var(--ink-3); }
-.verdict { font-family: var(--serif); font-size: 1.08rem; background: #fff; border: 1px solid var(--rule); padding: 1rem; margin: 1rem 0; }
-.verdict .note-head { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 0.4rem; }
-.share-card { width: 100%; max-width: 600px; height: auto; border: 1px solid var(--rule); display: block; margin: 0.5rem 0; }
+.seg-regulars { background: #1a1916; }
+.seg-reservists { background: #4a4843; }
+.seg-exregulars { background: #7d7a72; }
+.seg-strategic { background: #b3ada0; }
+.seg-conscripts { background: var(--red); }
+.legend { display: grid; gap: 0.25rem; font-family: var(--mono); font-size: 0.74rem; margin-top: 0.5rem; }
+.legend .swatch { display: inline-block; width: 12px; height: 12px; margin-right: 0.45rem; vertical-align: -1px; }
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1rem; margin: 1.25rem 0; }
+.stat { background: transparent; border: 0; border-top: 1px solid var(--ink); padding: 0.45rem 0 0; }
+.stat .stat-value { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; line-height: 1.15; }
+.stat .stat-sub { font-family: var(--mono); font-size: 0.72rem; line-height: 1.45; color: var(--ink-3); }
+.verdict { font-family: var(--serif); font-size: 1.05rem; background: var(--sheet); border: 1px solid var(--rule); box-shadow: 0 1px 0 var(--rule), 0 6px 14px rgba(50, 35, 10, 0.1); padding: 0.9rem 1rem; margin: 1rem 0; }
+.verdict .note-head { margin-bottom: 0.4rem; }
+.share-card { width: 100%; max-width: 600px; height: auto; border: 1px solid var(--rule-dark); display: block; margin: 0.5rem 0; }
 
 /* Methodology */
 .param-table td:first-child { font-weight: 600; }
-.toc { font-size: 0.9rem; }
+.toc { font-family: var(--mono); font-size: 0.8rem; line-height: 1.8; }
 .toc a { margin-right: 0.75rem; }
 
 /* Transitions */

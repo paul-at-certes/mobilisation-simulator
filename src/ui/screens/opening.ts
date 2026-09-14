@@ -3,6 +3,7 @@ import type { Difficulty } from '../../types';
 import { h } from '../dom';
 import { sourced, getParam } from '../components/sourced';
 import { formatInt } from '../../format';
+import { minuteHead } from './turn';
 
 export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: number; onStart: (d: Difficulty, seed: number) => void }): HTMLElement {
   const pv = (id: string) => getParam(id)?.value ?? 0;
@@ -24,7 +25,8 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
     h(
       'div',
       { class: 'note' },
-      h('div', { class: 'note-head' }, 'Permanent Secretary to the Secretary of State · Personal'),
+      h('span', { class: 'stamp', 'aria-hidden': 'true' }, 'Personal'),
+      minuteHead('PUS/MOB/0 · Day 0 · Personal'),
       h(
         'p',
         {},
@@ -44,6 +46,8 @@ export function renderOpening(opts: { defaultDifficulty: Difficulty; seed: numbe
         ' without breaking commitments we already have. The rest of the division has to be found.',
       ),
       h('p', {}, 'You are the Secretary of State for Defence. The Prime Minister has asked you to make it happen.'),
+      // The Prime Minister's line in the margin, in fountain pen.
+      h('div', { class: 'scrawl' }, h('span', { class: 'visually-hidden' }, 'Written in the margin: '), 'Make it happen. \u2014 PM'),
     ),
     h('h2', {}, 'What counts'),
     h(
