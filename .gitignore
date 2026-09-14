@@ -2,3 +2,7 @@ node_modules
 dist
 .DS_Store
 *.log
+
+# Working notes, kept locally
+mobilisation-minister-design-brief.md
+DECISIONS.md

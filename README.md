@@ -50,8 +50,11 @@ docs/sim-spec.md                the model, section by section
 docs/design-review.md           standing findings on playability, with benchmarks
 docs/                           source verification, transcribed source CSVs
 ASSUMPTIONS.md                  generated; every assumption with range and rationale
-DECISIONS.md                    decisions taken during the build, with reasoning
 ```
+
+The decision log (`DECISIONS.md`) and the original design brief are kept
+locally and are not in the repository, so references to them in the docs and
+code comments point to files outside it.
 
 `docs/design-review.md` is the standing record of what makes the game hard to
 play, what has been fixed and what has not, and the seed-distribution
@@ -91,7 +94,8 @@ each quarter. The 1 October 2026 edition is due in December 2026. To update:
    balance criteria in the brief no longer hold, adjust only assumption-tagged
    parameters within their ranges, or change the difficulty table. Never
    adjust a primary figure to make the game work.
-6. Bump `version` in `parameters.json` and note the change in `DECISIONS.md`.
+6. Bump `version` in `parameters.json` and give the reasoning in the commit
+   message.
 
 ONS mid-year population estimates follow the same pattern (`ew_pop_*`
 entries, dataset MYE2, England and Wales row) and `uk_population_scaling`
