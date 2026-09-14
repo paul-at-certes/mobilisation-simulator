@@ -67,7 +67,7 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
         // The month is the screen's heading: the tab is how it dresses.
         h('h1', { class: 'turn' }, monthLabel),
         h('span', { class: 'small muted' }, remaining > 0 ? `${remaining} month${remaining === 1 ? '' : 's'} to the deadline` : 'Deadline'),
-        h('button', { class: 'btn btn-quiet', style: 'min-height:36px;padding:0.3rem 0.6rem;font-size:0.8rem', onclick: d.onRestart }, 'Restart'),
+        h('button', { class: 'btn btn-quiet', style: 'min-height:36px;padding:0.3rem 0.5rem;font-size:var(--fs-min)', onclick: d.onRestart }, 'Restart'),
       ),
       renderStatusStrip(state),
     ),

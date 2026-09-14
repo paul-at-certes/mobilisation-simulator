@@ -29,7 +29,7 @@
   --newsprint: #fcfaf3;
   --ink: #1a1916;
   --ink-2: #4a4843;
-  --ink-3: #64615a;
+  --ink-3: #55524b;
   --rule: #d9d1bc;
   --rule-dark: #a89f8c;
   /* Red-box leather, fountain-pen blue, a Hansard green, a pencil grey. */
@@ -52,6 +52,10 @@
   --sans: 'Barlow Condensed', 'Arial Narrow', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --mono: 'Courier Prime', 'Courier New', Courier, monospace;
   --hand: 'Caveat', 'Bradley Hand', 'Segoe Print', cursive;
+  /* Type floor. Nothing on screen is set below 13px; Courier Prime's hairline
+     strokes read fainter than their size, so its mixed-case small print is 14px. */
+  --fs-min: 0.8125rem;
+  --fs-mono: 0.875rem;
   --maxw: 44rem;
   --radius: 0;
   /* Paper grain: a tile of SVG noise at 9% over the paper colour. */
@@ -82,11 +86,11 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 /* main.ts moves focus to each new screen's heading for screen readers. A
    heading is not operable, so the ring it would otherwise draw says nothing. */
 h1[tabindex="-1"]:focus { outline: none; }
-code { font-family: var(--mono); font-size: 0.9em; }
+code { font-family: var(--mono); font-size: max(0.9em, var(--fs-min)); }
 hr { border: 0; border-top: 1px solid var(--rule-dark); margin: 1.5rem 0; }
 table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
 th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-family: var(--sans); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1px solid var(--ink); }
+th { font-family: var(--sans); font-weight: 700; font-size: var(--fs-min); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1px solid var(--ink); }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .table-wrap { overflow-x: auto; }
 .muted { color: var(--ink-3); }
@@ -95,18 +99,18 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* The small typed and printed labels the whole game shares. */
 .label, .gauge-label, .holding-label, .note-head, .stat-label, .forecast-label, .ss-label, .group-title, .field label, .dateline {
-  font-family: var(--sans); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+  font-family: var(--sans); font-weight: 700; font-size: var(--fs-min); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
 }
-.typed { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.02em; }
+.typed { font-family: var(--mono); font-size: var(--fs-mono); letter-spacing: 0.02em; }
 
 /* A rubber stamp: red ink, a double rule, a little off true. */
 .stamp {
-  display: inline-block; font-family: var(--sans); font-weight: 700; font-size: 0.72rem; line-height: 1.05;
+  display: inline-block; font-family: var(--sans); font-weight: 700; font-size: var(--fs-min); line-height: 1.05;
   letter-spacing: 0.1em; text-transform: uppercase; text-align: center; color: var(--red);
   border: 3px double var(--red); padding: 0.2rem 0.55rem 0.15rem; transform: rotate(-5deg);
   mix-blend-mode: multiply; opacity: 0.9;
 }
-.stamp small { display: block; font-size: 0.58rem; font-weight: 600; letter-spacing: 0.16em; }
+.stamp small { display: block; font-size: var(--fs-min); font-weight: 600; letter-spacing: 0.16em; }
 
 /* A folder tab. */
 .tab {
@@ -124,9 +128,10 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   text-transform: uppercase; color: var(--ink); text-decoration: none;
 }
 .masthead .classification { margin-top: 0.2rem; flex: none; }
-.masthead-sub { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-top: 0.45rem; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.04em; color: var(--ink-3); white-space: nowrap; }
+.masthead-sub { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.1rem 1rem; margin-top: 0.45rem; font-family: var(--mono); font-size: var(--fs-mono); letter-spacing: 0.02em; color: var(--ink-3); }
+.masthead-sub > * { white-space: nowrap; }
 .masthead-sub nav a { color: var(--red); white-space: nowrap; }
-footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var(--rule-dark); font-family: var(--mono); font-size: 0.72rem; line-height: 1.55; color: var(--ink-3); }
+footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var(--rule-dark); font-family: var(--mono); font-size: var(--fs-mono); line-height: 1.55; color: var(--ink-3); }
 
 /* Buttons. The primary is red-box leather: a thin light rule set just inside
    the edge is the box's tooling. */
@@ -171,10 +176,10 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
 .popover-label { font-weight: 600; margin: 0.25rem 0 0.35rem; }
 .popover-body { margin: 0 0 0.5rem; }
 .popover-rationale { margin: 0 0 0.5rem; font-style: italic; color: var(--ink-2); }
-.popover-meta { margin: 0 0 0.4rem; font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); }
+.popover-meta { margin: 0 0 0.4rem; font-family: var(--mono); font-size: var(--fs-mono); color: var(--ink-3); }
 .popover-link { font-size: 0.85rem; }
 .badge {
-  display: inline-block; font-family: var(--sans); font-weight: 700; font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase;
+  display: inline-block; font-family: var(--sans); font-weight: 700; font-size: var(--fs-min); letter-spacing: 0.1em; text-transform: uppercase;
   color: #fff; padding: 0.12rem 0.4rem 0.08rem; border-radius: 0; vertical-align: middle;
 }
 .badge-primary { background: var(--primary-badge); }
@@ -194,7 +199,7 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
 .gauge-label { display: flex; justify-content: space-between; gap: 0.5rem; }
 .gauge-label span:last-child { font-family: var(--mono); font-weight: 400; letter-spacing: 0.02em; text-transform: none; white-space: nowrap; }
 .gauge-value { font-family: var(--serif); font-size: 1.7rem; font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums; }
-.gauge-value small { font-family: var(--mono); font-size: 0.75rem; font-weight: 400; color: var(--ink-3); }
+.gauge-value small { font-family: var(--mono); font-size: var(--fs-mono); font-weight: 400; color: var(--ink-3); }
 .bar { height: 8px; background: transparent; border: 1px solid var(--rule-dark); border-radius: 0; overflow: hidden; margin-top: 0.4rem; }
 .bar > span { display: block; height: 100%; background: var(--red); width: 0; transition: width 600ms ease; }
 .bar.bar-ok > span { background: var(--ok); }
@@ -208,7 +213,7 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
 .iso-ready { fill: currentColor; }
 .iso-forecast { fill: url(#iso-hatch); stroke: currentColor; stroke-width: 0.8; }
 #iso-hatch rect, #pc-hatch rect { fill: currentColor; }
-.iso-legend { display: flex; flex-wrap: wrap; gap: 0.2rem 0.9rem; margin-top: 0.4rem; font-family: var(--mono); font-size: 0.7rem; line-height: 1.4; color: var(--ink-3); }
+.iso-legend { display: flex; flex-wrap: wrap; gap: 0.2rem 0.9rem; margin-top: 0.4rem; font-family: var(--mono); font-size: var(--fs-mono); line-height: 1.4; color: var(--ink-3); }
 .iso-item { display: inline-flex; align-items: center; gap: 0.35rem; }
 .iso-swatch { flex: none; color: var(--red); }
 .iso-swatch .iso-empty { stroke: var(--rule-dark); }
@@ -219,11 +224,13 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
 .pc-axis, .pc-tick { stroke: var(--ink); stroke-width: 1; }
 .pc-danger { color: var(--red); }
 .pc-pen { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
-.pc-text { font-family: var(--mono); font-size: 9px; fill: var(--ink-3); }
-.gauge-note { font-family: var(--mono); font-size: 0.72rem; line-height: 1.45; color: var(--ink-3); margin-top: 0.35rem; }
+/* In viewBox units. In a half-width gauge on a phone the scale draws at about
+   0.87 of its own width, so 15 renders near 13px. */
+.pc-text { font-family: var(--mono); font-size: 15px; fill: var(--ink-3); }
+.gauge-note { font-family: var(--mono); font-size: var(--fs-mono); line-height: 1.45; color: var(--ink-3); margin-top: 0.35rem; }
 /* A projection, not a measurement: no dotted underline, which in this UI means "tap for a source". */
 .forecast { border-top: 1px dashed var(--tab-rule); padding-top: 0.3rem; }
-.forecast-label { font-size: 0.68rem; }
+.forecast-label { font-size: var(--fs-min); }
 .holding { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.6rem; background: var(--buff); border: 1px solid var(--tab-rule); border-left: 4px solid var(--warn); padding: 0.5rem 0.8rem; margin: 0 0 1rem; }
 .holding-value { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .holding-note { flex-basis: 100%; font-size: 0.85rem; line-height: 1.4; color: var(--ink-2); }
@@ -243,7 +250,7 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
 .note p:last-of-type { margin-bottom: 0; }
 .minute-head {
   display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.05rem 0.75rem;
-  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink);
+  font-family: var(--mono); font-size: var(--fs-min); letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink);
   border-bottom: 1px solid var(--ink); padding-bottom: 0.45rem; margin-bottom: 0.7rem;
 }
 .minute-head dt, .minute-head dd { margin: 0; }
@@ -279,7 +286,7 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
 }
 .event-house .event-body { border-top: 4px solid var(--ok); }
 .cutting-head {
-  display: flex; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase;
+  display: flex; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: var(--fs-min); letter-spacing: 0.06em; text-transform: uppercase;
   border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 0.2rem 0; margin-bottom: 0.6rem;
 }
 .event-house .cutting-head, .event-paper .cutting-head { border-top: 0; padding-top: 0; }
@@ -289,7 +296,7 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
 .event-press .event-body > p { font-size: 0.95rem; line-height: 1.38; text-align: justify; hyphens: auto; }
 @media (min-width: 380px) { .event-press .event-body > p { column-count: 2; column-gap: 0.9rem; } }
 .choices { display: grid; gap: 0.25rem; margin: 0.9rem 0 0; border: 2px solid var(--red); padding: 0.6rem 0.75rem 0.7rem; position: relative; }
-.choices::before { content: 'Minister\2019s decision'; display: block; font-family: var(--sans); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); margin-bottom: 0.2rem; }
+.choices::before { content: 'Minister\2019s decision'; display: block; font-family: var(--sans); font-weight: 700; font-size: var(--fs-min); letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); margin-bottom: 0.2rem; }
 .choice {
   display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 0.7rem; align-items: start; text-align: left;
   background: transparent; border: 0; border-radius: 0; padding: 0.5rem 0; font: inherit; color: inherit; cursor: pointer; min-height: 44px;
@@ -302,7 +309,7 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
 .choice:hover .choice-label { color: var(--red); }
 .choice .choice-label { font-weight: 600; display: block; font-size: 1.05rem; }
 .choice .choice-summary { font-size: 0.9rem; color: var(--ink-2); display: block; line-height: 1.35; }
-.event .small.muted { font-family: var(--mono); font-size: 0.72rem; line-height: 1.5; margin: 0.6rem 0 0; }
+.event .small.muted { font-family: var(--mono); font-size: var(--fs-mono); line-height: 1.5; margin: 0.6rem 0 0; }
 
 /* Action menu */
 .actions { margin: 1.5rem 0 1rem; }
@@ -325,7 +332,7 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
   padding: 0.45rem 0.9rem 0.35rem; margin-bottom: -1px; font-size: 0.85rem; color: var(--ink); letter-spacing: 0.08em;
 }
 .action-group[open] .group-title { background: var(--tab); }
-.action-group .group-count { flex: none; margin-left: auto; font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; padding-bottom: 0.45rem; }
+.action-group .group-count { flex: none; margin-left: auto; font-family: var(--mono); font-size: var(--fs-mono); color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; padding-bottom: 0.45rem; }
 .action-group[open] > summary { margin-bottom: 0; }
 .action { display: flex; gap: 0.7rem; align-items: flex-start; background: transparent; border: 0; border-bottom: 1px dotted var(--rule-dark); padding: 0.7rem 0.15rem; margin: 0; }
 .action.selected { border-bottom-color: var(--red); }
@@ -351,7 +358,7 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
    caret as a third item does not strand the cost in the middle. `flex: none`
    because the cost is `nowrap`: allowed to shrink, it overflowed its own text
    and the caret sat on top of the "PC". The title is the part that wraps. */
-.action .action-pc { flex: none; margin-left: auto; font-family: var(--mono); font-size: 0.8rem; font-variant-numeric: tabular-nums; color: var(--ink-3); font-weight: 400; white-space: nowrap; }
+.action .action-pc { flex: none; margin-left: auto; font-family: var(--mono); font-size: var(--fs-mono); font-variant-numeric: tabular-nums; color: var(--ink-3); font-weight: 400; white-space: nowrap; }
 .action .action-desc { font-size: 0.92rem; color: var(--ink-2); line-height: 1.4; }
 /* Title and cost first, the paragraph behind a tap (F7). The summary line is
    exactly the height the title line was, so the disclosure itself costs
@@ -396,7 +403,7 @@ details.ledger[open] > summary::after,
 }
 .action-detail > .action-desc { margin-top: 0.3rem; }
 .action.unavailable .action-detail > summary { cursor: default; }
-.action .action-reason { font-family: var(--mono); font-size: 0.74rem; line-height: 1.4; color: var(--red); }
+.action .action-reason { font-family: var(--mono); font-size: var(--fs-mono); line-height: 1.4; color: var(--red); }
 .action .action-options { margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 0.9rem; }
 /* The options are revealed by ticking the action. `display: flex` above beats the
    user agent's [hidden] rule on specificity, so say it again here or every
@@ -405,16 +412,16 @@ details.ledger[open] > summary::after,
 .action select, .action input[type="number"] { max-width: 100%; font-family: var(--mono); font-size: 0.85rem; padding: 0.3rem 0.4rem; min-height: 36px; border: 1px solid var(--ink); border-radius: 0; background: var(--sheet); color: var(--ink); }
 .action input[type="number"] { width: 7.5rem; }
 .field { display: inline-flex; flex-direction: column; gap: 0.2rem; max-width: 100%; }
-.field label { font-size: 0.68rem; }
+.field label { font-size: var(--fs-min); }
 
 /* Ledger: a typed line on two rules, opening to the figures. */
 details.ledger { margin: 1.5rem 0 1rem; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); background: transparent; }
-details.ledger summary { cursor: pointer; padding: 0.65rem 0.15rem; list-style: none; display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--mono); font-size: 0.8rem; }
+details.ledger summary { cursor: pointer; padding: 0.65rem 0.15rem; list-style: none; display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--mono); font-size: var(--fs-mono); }
 details.ledger summary > span:first-child { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 details.ledger summary::-webkit-details-marker { display: none; }
 details.ledger summary > :last-of-type { margin-left: auto; }
 details.ledger .ledger-body { padding: 0 0.15rem 0.8rem; }
-details.ledger h4 { font-family: var(--sans); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin: 0.9rem 0 0.3rem; }
+details.ledger h4 { font-family: var(--sans); font-weight: 700; font-size: var(--fs-min); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin: 0.9rem 0 0.3rem; }
 .kv { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 1rem; font-size: 0.92rem; margin: 0; }
 .kv dt { color: var(--ink-2); }
 .kv dd { margin: 0; text-align: right; font-family: var(--mono); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
@@ -422,20 +429,20 @@ details.ledger h4 { font-family: var(--sans); font-weight: 700; font-size: 0.78r
 
 /* Turn bar and the sticky status strip under it */
 .turnhead { position: sticky; top: 0; z-index: 10; background-color: var(--paper); background-image: var(--grain); border-bottom: 1px solid var(--tab-rule); box-shadow: 0 2px 8px rgba(40, 30, 10, 0.06); }
-.turnbar { padding: 0.7rem 0 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 0.6rem; }
+.turnbar { padding: 0.7rem 0 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 0.4rem; }
 .turnbar .turn {
   display: inline-block; background: var(--tab); border: 1px solid var(--tab-rule); border-bottom: 0; border-radius: 7px 7px 0 0;
   padding: 0.4rem 0.65rem 0.3rem; margin: 0 0 -1px; font-family: var(--sans); font-weight: 700; font-size: 0.95rem; line-height: 1.2; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
 }
 /* The deadline gives way rather than wrapping the bar onto a second line. */
-.turnbar .small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--mono); font-size: 0.72rem; padding-bottom: 0.45rem; }
+/* Wraps rather than truncating: a later month's tab is wider than Day 0's. */
+.turnbar .small { min-width: 0; font-family: var(--mono); font-size: var(--fs-min); line-height: 1.25; padding-bottom: 0.45rem; }
 .turnbar .btn { margin-bottom: 0.35rem; }
-@media (max-width: 420px) { .turnbar .small { font-size: 0.68rem; } }
 .statusstrip { display: flex; gap: 0.9rem; align-items: baseline; padding: 0.35rem 0 0.4rem; border-top: 1px solid var(--tab-rule); font-size: 0.82rem; overflow-x: auto; }
 .statusstrip .ss-item { display: flex; gap: 0.3rem; align-items: baseline; white-space: nowrap; }
-.statusstrip .ss-label { font-size: 0.62rem; letter-spacing: 0.1em; }
+.statusstrip .ss-label { font-size: var(--fs-min); letter-spacing: 0.1em; }
 .statusstrip .ss-value { font-family: var(--serif); font-weight: 600; font-variant-numeric: tabular-nums; }
-.statusstrip .ss-sub { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.statusstrip .ss-sub { font-family: var(--mono); font-size: var(--fs-min); color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .tone-ok { color: var(--ok); }
 .tone-warn { color: var(--warn); }
 .tone-bad { color: var(--bad); }
@@ -448,7 +455,7 @@ details.ledger h4 { font-family: var(--sans); font-weight: 700; font-size: 0.78r
 }
 .turnfoot .turnfoot-inner { max-width: var(--maxw); margin: 0 auto; display: flex; align-items: center; gap: 0.6rem; }
 /* Counter over hint, so the bar keeps its height in the months that carry an event. */
-.turnfoot .turnfoot-status { display: flex; flex-direction: column; min-width: 0; font-family: var(--mono); font-size: 0.72rem; line-height: 1.35; color: var(--ink-3); }
+.turnfoot .turnfoot-status { display: flex; flex-direction: column; min-width: 0; font-family: var(--mono); font-size: var(--fs-mono); line-height: 1.35; color: var(--ink-3); }
 .turnfoot .turnfoot-status > :first-child { color: var(--ink); }
 .turnfoot .btn { margin-left: auto; flex: none; }
 body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)); }
@@ -488,8 +495,8 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
 .opening-head h1 { margin: 0.6rem 0 0.15rem; }
 .redbox { width: min(286px, 78%); }
 .redbox svg { display: block; width: 100%; height: auto; }
-.opening-sub { letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); font-size: 0.68rem; }
-.weights { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; margin: 0.25rem 0 1rem; font-family: var(--mono); font-size: 0.78rem; }
+.opening-sub { letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); font-size: var(--fs-min); }
+.weights { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; margin: 0.25rem 0 1rem; font-family: var(--mono); font-size: var(--fs-mono); }
 .weight { display: inline-flex; align-items: center; gap: 0.45rem; }
 .weight svg { flex: none; color: var(--red); }
 .fig-empty { fill: none; stroke: currentColor; stroke-width: 0.9; }
@@ -509,26 +516,29 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
 .frontpage { background: var(--newsprint); clip-path: var(--torn); padding: 1.4rem 1.1rem 1.6rem; }
 .nameplate { font-family: var(--serif); font-weight: 800; font-size: 1.75rem; letter-spacing: 0.06em; text-transform: uppercase; text-align: center; line-height: 1; }
 .fp-dateline {
-  display: flex; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.05em; text-transform: uppercase;
+  display: flex; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: var(--fs-min); letter-spacing: 0.05em; text-transform: uppercase;
   border-top: 1px solid var(--ink); border-bottom: 3px double var(--ink); padding: 0.2rem 0; margin: 0.5rem 0 0.6rem;
 }
 .frontpage .dateline { margin-bottom: 0.4rem; }
 .fp-headline { font-family: var(--sans); font-weight: 800; font-size: 3.6rem; line-height: 0.88; text-transform: uppercase; letter-spacing: -0.01em; margin: 0 0 0.6rem; color: var(--bad); }
 .fp-headline.met { color: var(--ok); }
 .fp-standfirst { font-size: 1.15rem; font-weight: 600; line-height: 1.25; margin: 0 0 0.45rem; }
-.fp-byline { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.04em; color: var(--ink-3); margin: 0 0 0.8rem; }
+.fp-byline { font-family: var(--mono); font-size: var(--fs-mono); letter-spacing: 0.04em; color: var(--ink-3); margin: 0 0 0.8rem; }
 .fp-fielded { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 0.7rem 0 0.8rem; }
-.frontpage h2.fp-label { font-family: var(--sans); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); border: 0; margin: 0 0 0.3rem; padding: 0; }
+.frontpage h2.fp-label { font-family: var(--sans); font-weight: 700; font-size: var(--fs-min); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); border: 0; margin: 0 0 0.3rem; padding: 0; }
 .fp-caption { font-size: 0.82rem; color: var(--ink-2); line-height: 1.35; margin: 0 0 0.5rem; }
 /* The bars: one ink and four textures. The patterns are defined in the chart
    and shared by the legend's swatches. */
-.fp-bars { display: block; width: 100%; height: auto; }
-.fp-bars text { font-family: var(--mono); font-size: 10.5px; fill: var(--ink); }
-.fp-bars .fp-val { font-weight: 700; font-size: 11px; }
+/* Capped so the labels, which scale with the chart, stop near 20px on a wide screen. */
+.fp-bars { display: block; width: 100%; max-width: 27rem; height: auto; }
+/* In viewBox units. The chart is 340 wide and draws at about 316px on a phone,
+   so 16 renders near 15px and 15 near 14px; wider screens scale it up. */
+.fp-bars text { font-family: var(--mono); font-size: 16px; fill: var(--ink); }
+.fp-bars .fp-val { font-weight: 700; font-size: 16px; }
 .fp-bars .fp-val-red { fill: var(--red); }
 .fp-track { fill: none; stroke: var(--rule-dark); stroke-width: 0.8; }
 .fp-target { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 2; }
-.fp-bars .fp-target-text { font-size: 9.5px; fill: var(--ink-3); }
+.fp-bars .fp-target-text { font-size: 15px; fill: var(--ink-3); }
 .fp-solid { fill: var(--ink); }
 .fp-red { fill: var(--red); }
 .fp-hatch { fill: url(#fp-hatch); }
@@ -536,13 +546,15 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
 .fp-dots { fill: url(#fp-dots); }
 #fp-hatch rect, #fp-dots circle { fill: var(--ink); }
 #fp-cross path { stroke: var(--ink); stroke-width: 1; }
-.legend { display: grid; gap: 0.25rem; font-family: var(--mono); font-size: 0.74rem; margin-top: 0.5rem; }
+.legend { display: grid; gap: 0.3rem; font-family: var(--mono); font-size: var(--fs-mono); margin-top: 0.5rem; }
+/* A hanging indent: an item that wraps lines up after its swatch, not under it. */
+.legend-item { padding-left: calc(12px + 0.45rem); text-indent: calc(-12px - 0.45rem); }
 .legend .swatch { display: inline-block; width: 12px; height: 12px; margin-right: 0.45rem; vertical-align: -1px; }
 .frontpage .stat-grid { margin: 0.8rem 0 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--ink); }
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1rem; margin: 1.25rem 0; }
 .stat { background: transparent; border: 0; padding: 0; }
 .stat .stat-value { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; line-height: 1.15; }
-.stat .stat-sub { font-family: var(--mono); font-size: 0.72rem; line-height: 1.45; color: var(--ink-3); }
+.stat .stat-sub { font-family: var(--mono); font-size: var(--fs-mono); line-height: 1.45; color: var(--ink-3); }
 .frontpage .verdict { background: transparent; border: 0; box-shadow: none; padding: 0; margin: 0.8rem 0 0; font-size: 1rem; }
 .frontpage .verdict .note-head { color: var(--ink); margin-bottom: 0.35rem; }
 .fp-verdict { margin: 0; }
@@ -556,7 +568,7 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
 /* Methodology */
 #methodology > h1 { margin-top: 1.1rem; }
 .param-table td:first-child { font-weight: 600; }
-.toc { font-family: var(--mono); font-size: 0.8rem; line-height: 1.8; }
+.toc { font-family: var(--mono); font-size: var(--fs-mono); line-height: 1.8; }
 .toc a { margin-right: 0.75rem; }
 
 /* Motion. One rule: nothing here carries information, so all of it goes

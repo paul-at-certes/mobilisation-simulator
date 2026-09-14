@@ -113,8 +113,8 @@ const RED_BOX = `<svg viewBox="0 0 300 168" xmlns="http://www.w3.org/2000/svg" f
   <rect x="30" y="52" width="240" height="98" rx="4" fill="#8b1a1a"/>
   <rect x="30" y="52" width="240" height="4" fill="#5e1010"/>
   <rect x="44" y="66" width="212" height="70" rx="2" fill="none" stroke="#d9b45c" stroke-width="1"/>
-  <text x="150" y="98" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="12" letter-spacing="2.2" fill="#d9b45c">SECRETARY OF STATE</text>
-  <text x="150" y="115" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="12" letter-spacing="2.2" fill="#d9b45c">FOR DEFENCE</text>
+  <text x="150" y="97" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="15" letter-spacing="2" fill="#d9b45c">SECRETARY OF STATE</text>
+  <text x="150" y="117" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="15" letter-spacing="2" fill="#d9b45c">FOR DEFENCE</text>
   <rect x="141" y="52" width="18" height="12" rx="1.5" fill="#d9b45c"/>
   <rect x="146" y="56" width="8" height="5" rx="1" fill="#8b1a1a"/>
 </svg>`;

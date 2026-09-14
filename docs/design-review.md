@@ -2005,6 +2005,48 @@ is a second rendering of a screen, and twice now it has been the better one —
 it named the office the player holds (F20) and it drew the target. When the two
 disagree, the card is worth reading as a review of the screen.
 
+### F26 — The small print was too small to read · *Addressed*
+
+**Reported by Paul** on 14 September 2026: the masthead line, and the front
+page's legend (*"Regulars: 3,672 bodies, 3,672 effective"*), which he also found
+low in contrast.
+
+**Measured at 375×812**, the small print ran well under what the stylesheet
+suggested, because `rem` is the browser's 16px rather than the body's 17px and
+the drawn charts shrink their text with the chart:
+
+| text | before | after |
+|---|---|---|
+| masthead line | 10.6px | **14px** |
+| scoring legend | 11.8px | **14px** |
+| scoring chart labels | 9.2–10.7px | **13.9–14.9px** |
+| capital scale labels | 7.8px | **13.1px** |
+| red box lettering | 10.7px | **13.4px** |
+| stamp *fiction* | 9.3px | **13px** |
+
+**The legend's contrast was never the number.** Its ink is near black on
+newsprint, 16.8:1. It read as faint because Courier Prime's hairlines thin out
+below 12px, so the fix is size. The grey was a real failure elsewhere, though:
+`--ink-3` at #64615a was **4.26:1 on the folder-tab colour**, under AA for small
+text. It is now #55524b: 5.37:1 on the tab, 6.09:1 on buff, 6.73:1 on paper.
+
+**The rule, so it holds:** nothing on screen below 13px (`--fs-min`);
+mixed-case Courier small print at 14px (`--fs-mono`); SVG text sized in viewBox
+units for what it renders at on a phone, with a comment giving the scale. A
+script over every text node on the opening, Day 0, month 4 with an event, the
+front page and the methodology page found nothing under 13px and no horizontal
+scroll.
+
+**Two layouts gave way, and are worth not breaking.**
+
+1. **The scoring chart's track** moved from x 62 to 92 and narrowed from 212 to
+   175 in a 340-wide viewBox, so *Effective* and a seven-digit total fit at the
+   larger size. The chart is capped at 27rem, or its labels, which scale with
+   it, reach 30px on a desktop.
+2. **The turn header's countdown** wraps instead of truncating. Day 0 fits on
+   one line; from *Month 4 of 12* the wider tab puts it on two, and the header
+   is 88px.
+
 ---
 
 ## The next mechanic, if one is wanted

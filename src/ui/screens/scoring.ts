@@ -131,8 +131,10 @@ export function renderScoring(opts: { state: GameState; score: Score; siteUrl: s
  */
 function fieldedChart(score: Score, segs: [string, string, number, number][]): SVGSVGElement {
   const maxV = Math.max(score.headcount, score.target, 1);
-  const trackX = 62;
-  const trackW = 212;
+  // Room either side of the track for the labels at a readable size: "Effective"
+  // on the left, a seven-character total such as "105,000" on the right.
+  const trackX = 92;
+  const trackW = 175;
   const rows: [string, 2 | 3, number, string][] = [
     ['Bodies', 2, 4, ''],
     ['Effective', 3, 34, 'fp-val-red'],
@@ -140,7 +142,7 @@ function fieldedChart(score: Score, segs: [string, string, number, number][]): S
   const describe = (idx: 2 | 3) => segs.map((seg) => `${seg[0]} ${formatInt(seg[idx])}`).join(', ');
   const svg = s('svg', {
     class: 'fp-bars',
-    viewBox: '0 0 326 74',
+    viewBox: '0 0 340 76',
     role: 'img',
     'aria-label': `Bodies ${formatInt(score.headcount)} (${describe(2)}). Effective soldiers ${formatInt(displayEse(score.ese))} (${describe(3)}). Target ${formatInt(score.target)}.`,
   });
@@ -154,7 +156,7 @@ function fieldedChart(score: Score, segs: [string, string, number, number][]): S
     ),
   );
   for (const [label, idx, y, valClass] of rows) {
-    svg.append(s('text', { x: 0, y: y + 11 }, label), s('rect', { class: 'fp-track', x: trackX, y, width: trackW, height: 14 }));
+    svg.append(s('text', { x: 0, y: y + 12 }, label), s('rect', { class: 'fp-track', x: trackX, y, width: trackW, height: 14 }));
     let x = trackX;
     for (const seg of segs) {
       const w = (seg[idx] / maxV) * trackW;
@@ -162,13 +164,13 @@ function fieldedChart(score: Score, segs: [string, string, number, number][]): S
       x += w;
     }
     const total = idx === 2 ? score.headcount : displayEse(score.ese);
-    svg.append(s('text', { class: `fp-val ${valClass}`, x: trackX + trackW + 6, y: y + 11 }, formatInt(total)));
+    svg.append(s('text', { class: `fp-val ${valClass}`, x: trackX + trackW + 6, y: y + 12 }, formatInt(total)));
   }
   const tx = Math.min(trackX + trackW - 1, trackX + (score.target / maxV) * trackW);
   const anchorEnd = tx > trackX + trackW * 0.8;
   svg.append(
     s('line', { class: 'fp-target', x1: tx, y1: 0, x2: tx, y2: 54 }),
-    s('text', { class: 'fp-target-text', x: tx, y: 66, 'text-anchor': anchorEnd ? 'end' : 'middle' }, `target ${formatInt(score.target)}`),
+    s('text', { class: 'fp-target-text', x: tx, y: 70, 'text-anchor': anchorEnd ? 'end' : 'middle' }, `target ${formatInt(score.target)}`),
   );
   return svg;
 }
