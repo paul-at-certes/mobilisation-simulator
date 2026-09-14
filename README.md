@@ -106,7 +106,11 @@ into the `og:url` and `og:image` tags that give a pasted link its preview
 card; for a custom domain, remove the first and change the second. Enable
 Pages with source "GitHub Actions" in the repository settings before the
 first push. The preview image is `public/og-image.png` and the favicon
-`public/favicon.svg`.
+`public/favicon.svg`. The preview image is drawn by the same code as the
+share card: after changing either, run the dev server, open `/?card=og`, and
+press *Save as og-image.png*; the dev server writes the file. LinkedIn caches
+a link's card for about a week, so after deploying a new image put the URL
+through its Post Inspector to refresh it.
 
 ## Sourcing rules
 

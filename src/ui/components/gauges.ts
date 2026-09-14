@@ -156,15 +156,15 @@ function isotypeLegend(state: GameState, projection?: Forecast): HTMLElement {
  */
 function pcScale(pc: number, tone: Tone): SVGSVGElement {
   const x = Math.max(0, Math.min(100, pc)) * 1.6;
-  const svg = s('svg', { class: `pcscale tone-${tone}`, viewBox: '0 0 160 27', role: 'img', 'aria-label': `Political capital ${Math.round(pc)} of 100. Resignation at 0.` });
+  const svg = s('svg', { class: `pcscale tone-${tone}`, viewBox: '0 0 160 29', role: 'img', 'aria-label': `Political capital ${Math.round(pc)} of 100. Resignation at 0.` });
   svg.append(
     s('defs', {}, s('pattern', { id: 'pc-hatch', width: 3, height: 3, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, s('rect', { width: 1.4, height: 3 }))),
     s('rect', { class: 'pc-danger', x: 0, y: 9, width: 32, height: 6, fill: 'url(#pc-hatch)' }),
     s('line', { class: 'pc-axis', x1: 0, y1: 12, x2: 160, y2: 12 }),
     ...[0, 32, 64, 96, 128, 160].map((t, i) => s('line', { class: 'pc-tick', x1: t, y1: i % 2 ? 10 : 8, x2: t, y2: i % 2 ? 14 : 16 })),
     s('path', { class: 'pc-pen', d: `M${(x - 1).toFixed(1)} 4.5c1 4 1.5 9 1.2 15` }),
-    s('text', { class: 'pc-text', x: 0, y: 25 }, 'resigns'),
-    s('text', { class: 'pc-text', x: 160, y: 25, 'text-anchor': 'end' }, '100'),
+    s('text', { class: 'pc-text', x: 0, y: 27 }, 'resigns'),
+    s('text', { class: 'pc-text', x: 160, y: 27, 'text-anchor': 'end' }, '100'),
   );
   return svg;
 }

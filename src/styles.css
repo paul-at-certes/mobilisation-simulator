@@ -219,7 +219,7 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
 .pc-axis, .pc-tick { stroke: var(--ink); stroke-width: 1; }
 .pc-danger { color: var(--red); }
 .pc-pen { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
-.pc-text { font-family: var(--mono); font-size: 7.5px; fill: var(--ink-3); }
+.pc-text { font-family: var(--mono); font-size: 9px; fill: var(--ink-3); }
 .gauge-note { font-family: var(--mono); font-size: 0.72rem; line-height: 1.45; color: var(--ink-3); margin-top: 0.35rem; }
 /* A projection, not a measurement: no dotted underline, which in this UI means "tap for a source". */
 .forecast { border-top: 1px dashed var(--tab-rule); padding-top: 0.3rem; }
@@ -283,8 +283,8 @@ footer.footer { margin-top: 3rem; padding-top: 0.8rem; border-top: 1px solid var
   border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 0.2rem 0; margin-bottom: 0.6rem;
 }
 .event-house .cutting-head, .event-paper .cutting-head { border-top: 0; padding-top: 0; }
-.event h3 { margin-top: 0; font-family: var(--sans); font-weight: 800; font-size: 1.85rem; line-height: 0.95; text-transform: uppercase; letter-spacing: -0.005em; }
-.event-paper h3, .event-house h3 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; text-transform: none; line-height: 1.2; letter-spacing: 0; }
+.event h2 { margin: 0 0 0.5rem; padding: 0; border: 0; font-family: var(--sans); font-weight: 800; font-size: 1.85rem; line-height: 0.95; text-transform: uppercase; letter-spacing: -0.005em; }
+.event-paper h2, .event-house h2 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; text-transform: none; line-height: 1.2; letter-spacing: 0; }
 .event-body > p { font-size: 1rem; line-height: 1.42; margin: 0; }
 .event-press .event-body > p { font-size: 0.95rem; line-height: 1.38; text-align: justify; hyphens: auto; }
 @media (min-width: 380px) { .event-press .event-body > p { column-count: 2; column-gap: 0.9rem; } }
@@ -425,7 +425,7 @@ details.ledger h4 { font-family: var(--sans); font-weight: 700; font-size: 0.78r
 .turnbar { padding: 0.7rem 0 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 0.6rem; }
 .turnbar .turn {
   display: inline-block; background: var(--tab); border: 1px solid var(--tab-rule); border-bottom: 0; border-radius: 7px 7px 0 0;
-  padding: 0.4rem 0.65rem 0.3rem; margin-bottom: -1px; font-family: var(--sans); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+  padding: 0.4rem 0.65rem 0.3rem; margin: 0 0 -1px; font-family: var(--sans); font-weight: 700; font-size: 0.95rem; line-height: 1.2; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
 }
 /* The deadline gives way rather than wrapping the bar onto a second line. */
 .turnbar .small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--mono); font-size: 0.72rem; padding-bottom: 0.45rem; }
@@ -528,7 +528,7 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
 .fp-bars .fp-val-red { fill: var(--red); }
 .fp-track { fill: none; stroke: var(--rule-dark); stroke-width: 0.8; }
 .fp-target { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 2; }
-.fp-bars .fp-target-text { font-size: 9px; fill: var(--ink-3); }
+.fp-bars .fp-target-text { font-size: 9.5px; fill: var(--ink-3); }
 .fp-solid { fill: var(--ink); }
 .fp-red { fill: var(--red); }
 .fp-hatch { fill: url(#fp-hatch); }
@@ -554,6 +554,7 @@ body.has-turnfoot .page { padding-bottom: calc(6rem + env(safe-area-inset-bottom
 .ogcard canvas { display: block; width: 100%; max-width: 1200px; height: auto; margin: 1rem 0; }
 
 /* Methodology */
+#methodology > h1 { margin-top: 1.1rem; }
 .param-table td:first-child { font-weight: 600; }
 .toc { font-family: var(--mono); font-size: 0.8rem; line-height: 1.8; }
 .toc a { margin-right: 0.75rem; }

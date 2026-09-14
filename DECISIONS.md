@@ -2004,3 +2004,16 @@ when it lifts. A new screen settles like a sheet laid down rather than
 fading; a tick pops when it lands; the pencilled line is written half a second
 after the minute; a press cutting lands a beat after the page. No parade or
 chart animates: the numbers are the point and should not move.
+
+**Phase 4, the same day, and the end of the look.** An axe-core pass at AA
+plus best practice over the opening, a turn with an event, the front page and
+the methodology page found two things, both on the turn screen: no level-one
+heading, which the month tab now is, and the event's title an h3 under it,
+which is now an h2 beside "Decisions". The two smallest labels on the drawn
+readings were enlarged. The methodology page needed no more than a little room
+under the masthead: the shared stylesheet already carried it. The link-preview
+image is regenerated from the share-card code through the dev route, and the
+README says how; the build's Open Graph tags were checked against it. LinkedIn
+cannot be checked from here: after the next deploy, the URL goes through its
+Post Inspector, since it caches a card for about a week. That closes the four
+phases. No fifth.

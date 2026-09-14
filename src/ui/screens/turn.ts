@@ -64,7 +64,8 @@ export function renderTurn(d: TurnScreenDeps): HTMLElement {
       h(
         'div',
         { class: 'turnbar' },
-        h('span', { class: 'turn' }, monthLabel),
+        // The month is the screen's heading: the tab is how it dresses.
+        h('h1', { class: 'turn' }, monthLabel),
         h('span', { class: 'small muted' }, remaining > 0 ? `${remaining} month${remaining === 1 ? '' : 's'} to the deadline` : 'Deadline'),
         h('button', { class: 'btn btn-quiet', style: 'min-height:36px;padding:0.3rem 0.6rem;font-size:0.8rem', onclick: d.onRestart }, 'Restart'),
       ),
@@ -143,7 +144,7 @@ function renderEvent(ev: GameEvent, dateLabel: string, onChoose: (i: number) => 
       'div',
       { class: 'event-body' },
       h('div', { class: 'cutting-head', 'aria-hidden': 'true' }, h('span', {}, paper), h('span', {}, edition)),
-      h('h3', {}, ev.title),
+      h('h2', {}, ev.title),
       h('p', { html: escapeHtml(ev.text) }),
     ),
     ev.choices.length ? choices : h('p', { class: 'small muted' }, 'No decision required.'),
